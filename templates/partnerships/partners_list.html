@@ -23,7 +23,7 @@
         <i class="fa fa-filter"></i>
       </button>
       <div class="collapse" id="partner-filters">
-        <form action="{% url "partnerships:partners_list" %}" method="get">
+        <form action="{% url "partnerships:partners:list" %}" method="get">
           {{ form.as_p }}
           <button type="submit" class="btn btn-primary">{% trans "filter" %}</button>
         </form>

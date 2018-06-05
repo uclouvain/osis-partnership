@@ -27,7 +27,6 @@ class PartnerTag(models.Model):
 
 
 class Partner(models.Model):
-    external_id = models.CharField(max_length=255, unique=True)
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
@@ -91,7 +90,7 @@ class Partner(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('partnerships:partner_detail', kwargs={'pk': self.pk})
+        return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
 
     @property
     def is_actif(self):
@@ -132,7 +131,6 @@ class Partnership(models.Model):
         ('NA', _('mobility_type_na')),
     )
 
-    external_id = models.CharField(max_length=255, unique=True)
     is_valid = models.BooleanField(_('is_valid'), default=False)
     partner = models.ForeignKey(
         Partner,
@@ -186,4 +184,4 @@ class Partnership(models.Model):
         )
 
     def __str__(self):
-        return _('partnership_with_{partner}').format(self.partner)
+        return _('partnership_with_{partner}').format(partner=self.partner)

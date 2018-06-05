@@ -20,7 +20,6 @@ class Migration(migrations.Migration):
             name='Partner',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('external_id', models.CharField(max_length=255, unique=True)),
                 ('is_valid', models.BooleanField(default=False, verbose_name='is_valid')),
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('is_ies', models.BooleanField(default=False, verbose_name='is_ies')),
@@ -50,7 +49,6 @@ class Migration(migrations.Migration):
             name='Partnership',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('external_id', models.CharField(max_length=255, unique=True)),
                 ('is_valid', models.BooleanField(default=False, verbose_name='is_valid')),
                 ('start_date', models.DateField(blank=True, null=True, verbose_name='start_date')),
                 ('end_date', models.DateField(blank=True, null=True, verbose_name='end_date')),
