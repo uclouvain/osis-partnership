@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.user import UserFactory
-from partnerships.tests.factories import PartnerFactory
+from partnership.tests.factories import PartnerFactory
 
 
 class PartnersListView(TestCase):

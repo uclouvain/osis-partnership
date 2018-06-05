@@ -3,7 +3,7 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
-from partnerships.models import PartnerType, PartnerTag, Partner, Partnership
+from partnership.models import PartnerType, PartnerTag, Partner, Partnership
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):

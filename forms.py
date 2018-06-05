@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from partnerships.models import PartnerType, PartnerTag
+from partnership.models import PartnerType, PartnerTag
 
 
 class PartnerFilterForm(forms.Form):

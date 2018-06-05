@@ -4,8 +4,8 @@ from django.db.models.functions import Now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
-from partnerships.forms import PartnerFilterForm
-from partnerships.models import Partner, Partnership
+from partnership.forms import PartnerFilterForm
+from partnership.models import Partner, Partnership
 
 
 class PartnersList(LoginRequiredMixin, FormMixin, ListView):

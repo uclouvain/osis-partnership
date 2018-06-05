@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 
-from partnerships.views import PartnerDetail, PartnersList, PartnershipsList
+from partnership.views import PartnerDetail, PartnersList, PartnershipsList
 
 urlpatterns = [
     url(r'^$', PartnershipsList.as_view(), name="partnerships_list"),

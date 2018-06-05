@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from partnerships.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag
+from partnership.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag
 
 
 class PartnerAdmin(admin.ModelAdmin):
