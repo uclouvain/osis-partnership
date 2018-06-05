@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import Now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
@@ -12,8 +13,36 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partners'
     form_class = PartnerFilterForm
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnersList, self).get_form_kwargs()
+        kwargs['data'] = self.request.GET
+        return kwargs
+
     def get_queryset(self):
         queryset = Partner.objects.all().annotate(partnerships_count=Count('partnerships'))
+        form = self.get_form()
+        if form.is_valid():
+            data = form.cleaned_data
+            if data['name']:
+                queryset = queryset.filter(name__icontains=data['name'])
+            if data['partner_type']:
+                queryset = queryset.filter(partner_type=data['partner_type'])
+            if data['pic_code']:
+                queryset = queryset.filter(pic_code__icontains=data['pic_code'])
+            if data['is_ies'] is not None:
+                queryset = queryset.filter(is_ies=data['is_ies'])
+            if data['is_valid'] is not None:
+                queryset = queryset.filter(is_valid=data['is_valid'])
+            if data['is_actif'] is not None:
+                if data['is_actif']:
+                    queryset = queryset.filter(
+                        (Q(start_date__isnull=True) & Q(end_date__isnull=True))
+                        | (Q(start_date__lte=Now()) & Q(end_date__gte=Now()))
+                    )
+                else:
+                    queryset = queryset.filter(Q(start_date__gt=Now()) | Q(end_date__lt=Now()))
+            if data['tags']:
+                queryset = queryset.filter(tags=data['tags'])
         return queryset
 
 
