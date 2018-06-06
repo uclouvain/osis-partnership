@@ -1,0 +1,12 @@
+language: python
+python: "3.4.5"
+
+install:
+  - "git clone https://github.com/uclouvain/osis.git"
+  - "pip install -r osis/travis-requirements.txt"
+
+script: "cd osis && python3 manage.py compilemessages && coverage run manage.py test --exclude-tag=selenium partnership"
+
+after_success:
+ - pip install coveralls
+ - coveralls
