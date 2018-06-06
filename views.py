@@ -15,7 +15,8 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
 
     def get_form_kwargs(self):
         kwargs = super(PartnersList, self).get_form_kwargs()
-        kwargs['data'] = self.request.GET
+        if self.request.GET:
+            kwargs['data'] = self.request.GET
         return kwargs
 
     def get_queryset(self):

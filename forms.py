@@ -1,10 +1,11 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from base.forms.bootstrap import BootstrapForm
 from partnership.models import PartnerType, PartnerTag
 
 
-class PartnerFilterForm(forms.Form):
+class PartnerFilterForm(BootstrapForm):
     name = forms.CharField(label=_('name'), required=False)
     partner_type = forms.ModelChoiceField(
         label=_('partner_type'),
