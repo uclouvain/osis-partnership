@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateField(auto_now_add=True, verbose_name='created')),
                 ('modified', models.DateField(auto_now=True, verbose_name='modified')),
                 ('author', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL, verbose_name='author')),
-                ('now_known_as', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='old_partners', to='partnerships.Partner', verbose_name='new_partner')),
+                ('now_known_as', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='old_partners', to='partnership.Partner', verbose_name='new_partner')),
             ],
             options={
                 'permissions': (('can_access_partners', 'can_access_partners'),),
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateField(auto_now_add=True, verbose_name='created')),
                 ('modified', models.DateField(auto_now=True, verbose_name='modified')),
                 ('author', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL, verbose_name='author')),
-                ('partner', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='partnerships.Partner', verbose_name='partner')),
+                ('partner', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='partnership.Partner', verbose_name='partner')),
             ],
             options={
                 'permissions': (('can_access_partners', 'can_access_partnerships'),),
@@ -94,21 +94,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partnership',
             name='partner_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='partnerships.PartnershipType', verbose_name='partnership_type'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='partnership.PartnershipType', verbose_name='partnership_type'),
         ),
         migrations.AddField(
             model_name='partnership',
             name='tags',
-            field=models.ManyToManyField(blank=True, related_name='partnerships', to='partnerships.PartnershipTag', verbose_name='tags'),
+            field=models.ManyToManyField(blank=True, related_name='partnerships', to='partnership.PartnershipTag', verbose_name='tags'),
         ),
         migrations.AddField(
             model_name='partner',
             name='partner_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partners', to='partnerships.PartnerType', verbose_name='partner_type'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partners', to='partnership.PartnerType', verbose_name='partner_type'),
         ),
         migrations.AddField(
             model_name='partner',
             name='tags',
-            field=models.ManyToManyField(blank=True, related_name='partners', to='partnerships.PartnerTag', verbose_name='tags'),
+            field=models.ManyToManyField(blank=True, related_name='partners', to='partnership.PartnerTag', verbose_name='tags'),
         ),
     ]
