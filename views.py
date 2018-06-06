@@ -12,12 +12,24 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
     template_name = 'partnerships/partners_list.html'
     context_object_name = 'partners'
     form_class = PartnerFilterForm
+    paginate_by = 5
+    paginate_orphans = 5
+    paginate_neighbours = 4
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnersList, self).get_context_data(**kwargs)
+        context['paginate_neighbours'] = self.paginate_neighbours
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(PartnersList, self).get_form_kwargs()
         if self.request.GET:
             kwargs['data'] = self.request.GET
         return kwargs
+
+    def get_ordering(self):
+        # TODO
+        return '-created'
 
     def get_queryset(self):
         queryset = Partner.objects.all().annotate(partnerships_count=Count('partnerships'))
@@ -44,6 +56,9 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
                     queryset = queryset.filter(Q(start_date__gt=Now()) | Q(end_date__lt=Now()))
             if data['tags']:
                 queryset = queryset.filter(tags=data['tags'])
+        ordering = self.get_ordering()
+        if ordering:
+            queryset = queryset.order_by(ordering)
         return queryset
 
 

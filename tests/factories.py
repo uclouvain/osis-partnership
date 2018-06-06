@@ -3,7 +3,7 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
-from partnership.models import PartnerType, PartnerTag, Partner, Partnership
+from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -53,24 +53,24 @@ class PartnerFactory(factory.DjangoModelFactory):
 
 class PartnershipTypeFactory(factory.DjangoModelFactory):
     class Meta:
-        model = PartnerType
+        model = PartnershipType
 
     value = factory.Sequence(lambda n: 'PartnershipType-é-{0}'.format(n))
 
 
 class PartnershipTagFactory(factory.DjangoModelFactory):
     class Meta:
-        model = PartnerTag
+        model = PartnershipTag
 
     value = factory.Sequence(lambda n: 'PartnershipTag-é-{0}'.format(n))
 
 
-class PartnershipsFactory(factory.DjangoModelFactory):
+class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
 
     is_valid = True
-    partner = factory.SubFactory(Partner)
+    partner = factory.SubFactory(PartnerFactory)
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
     end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
