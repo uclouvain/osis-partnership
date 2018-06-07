@@ -1,0 +1,31 @@
+{% load i18n %}
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <td>{% trans "partner" %}</td>
+      <td>{% trans "country" %}</td>
+      <td>{% trans "city" %}</td>
+      <td>{% trans "code" %}</td>
+      <td>{% trans "type" %}</td>
+      <td>{% trans "current_partnership" %}</td>
+      <td>{% trans "valid" %}</td>
+      <td>{% trans "still_actif" %}</td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for partner in partners %}
+    <tr>
+      <td>{{ partner }}</td>
+      <td></td>
+      <td></td>
+      <td>{{ partner.partner_code }}</td>
+      <td>{{ partner.partner_type }}</td>
+      <td>{{ partner.partnerships_count }}</td>
+      <td><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+      <td><i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+      <td><a href="{{ partner.get_absolute_url }}" class="btn btn-default"><i class="fa fa-eye"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
