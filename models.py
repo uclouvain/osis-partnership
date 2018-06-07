@@ -207,9 +207,24 @@ class Partnership(models.Model):
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
-    # partner_entity = ?
-    # university => entity
-    # university_labo => entity
+    partner_entity = models.ForeignKey(
+        PartnerEntity,
+        verbose_name=_('partner_entity'),
+        on_delete=models.PROTECT,
+        related_name='partnerships',
+    )
+    ucl_university = models.ForeignKey(
+        'base.EntityVersion',
+        verbose_name=_('partner_entity'),
+        on_delete=models.PROTECT,
+        related_name='partnerships',
+    )
+    ucl_university_labo = models.ForeignKey(
+        'base.EntityVersion',
+        verbose_name=_('partner_entity'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
     # university_offers = ?
     # supervisor = ?
 
@@ -227,7 +242,13 @@ class Partnership(models.Model):
     )
 
     # Accord signé ?
-    # Contacts ?
+
+    contacts = models.ManyToManyField(
+        'partnership.Contact',
+        verbose_name=_('contacts'),
+        related_name='+',
+        blank=True,
+    )
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
