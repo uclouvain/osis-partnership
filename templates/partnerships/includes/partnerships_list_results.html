@@ -1,0 +1,15 @@
+{% load i18n %}
+<table class="table table-stripped table-hover">
+  <thead>
+    <tr>
+      <td>{% trans "value" %}</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for partnership in partnerships %}
+      <tr>
+        <td>{{ partnership.value }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
