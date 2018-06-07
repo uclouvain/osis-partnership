@@ -382,3 +382,7 @@ class AddressForm(BootstrapForm, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddressForm, self).__init__(*args, **kwargs)
         self.fields['country'].queryset = Country.objects.all().order_by('name')
+
+
+class PartnershipFilterForm(BootstrapForm):
+    value = forms.NullBooleanField(label=_('value'), required=False)
