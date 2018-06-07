@@ -26,6 +26,64 @@ class PartnerTag(models.Model):
         return self.value
 
 
+class PartnerEntity(models.Model):
+    partner = models.ForeignKey(
+        'partnership.Partner',
+        verbose_name=_('partner'),
+        on_delete=models.CASCADE,
+        related_name='entities',
+    )
+    name = models.CharField(_('name'), max_length=255)
+    address = models.ForeignKey(
+        'partnership.Address',
+        verbose_name=_('address'),
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+    contact_in = models.ForeignKey(
+        'partnership.Contact',
+        verbose_name=_('address'),
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+    contact_out = models.ForeignKey(
+        'partnership.Contact',
+        verbose_name=_('address'),
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+    parent = models.ForeignKey(
+        'self',
+        verbose_name=_('parent_entity'),
+        on_delete=models.PROTECT,
+        related_name='childs',
+        blank=True,
+        null=True,
+    )
+    comment = models.TextField(_('comment'), default='')
+    created = models.DateField(_('created'), auto_now_add=True, editable=False)
+    modified = models.DateField(_('modified'), auto_now=True, editable=False)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('author'),
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+    )
+
+    class Meta:
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
 class Partner(models.Model):
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('name'), max_length=255)
@@ -44,13 +102,20 @@ class Partner(models.Model):
     now_known_as = models.ForeignKey(
         'self',
         verbose_name=_('now_known_as'),
-        related_name='formely_known_as',
         on_delete=models.PROTECT,
+        related_name='formely_known_as',
         null=True,
         blank=True,
     )
 
-    # contact_address = TODO
+    contact_address = models.ForeignKey(
+        'partnership.Address',
+        verbose_name=_('address'),
+        on_delete=models.PROTECT,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
     website = models.URLField(_('website'))
     email = models.EmailField(_('email'), null=True, blank=True)
     phone = models.CharField(_('phone'), max_length=255, null=True, blank=True)
@@ -67,7 +132,12 @@ class Partner(models.Model):
         blank=True,
     )
 
-    # MEDIAS => Modèle déjà existant ?
+    medias = models.ManyToManyField(
+        'partnership.Media',
+        verbose_name=_('medias'),
+        related_name='+',
+        blank=True,
+    )
 
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
@@ -75,10 +145,9 @@ class Partner(models.Model):
         settings.AUTH_USER_MODEL,
         verbose_name=_('author'),
         on_delete=models.PROTECT,
+        related_name='+',
         editable=False,
     )
-
-    # Entités => model base.Entity ?
 
     class Meta:
         ordering = ('-created',)
@@ -135,8 +204,8 @@ class Partnership(models.Model):
     partner = models.ForeignKey(
         Partner,
         verbose_name=_('partner'),
-        related_name='partnerships',
         on_delete=models.PROTECT,
+        related_name='partnerships',
     )
     # partner_entity = ?
     # university => entity
@@ -153,8 +222,8 @@ class Partnership(models.Model):
     partner_type = models.ForeignKey(
         PartnershipType,
         verbose_name=_('partnership_type'),
-        related_name='partnerships',
         on_delete=models.PROTECT,
+        related_name='partnerships',
     )
 
     # Accord signé ?
@@ -174,6 +243,7 @@ class Partnership(models.Model):
         settings.AUTH_USER_MODEL,
         verbose_name=_('author'),
         on_delete=models.PROTECT,
+        related_name='+',
         editable=False,
     )
 
@@ -185,3 +255,97 @@ class Partnership(models.Model):
 
     def __str__(self):
         return _('partnership_with_{partner}').format(partner=self.partner)
+
+
+
+##### Generic Model which should be moved to a more generic app
+
+class ContactType(models.Model):
+    value = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ('value',)
+
+    def __str__(self):
+        return self.value
+
+
+class Contact(models.Model):
+    TITLE_CHOICES = (
+        ('mr', _('mister')),
+        ('mme', _('madame')),
+    )
+
+    type = models.ForeignKey(
+        ContactType,
+        verbose_name=_('contact_type'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+    title = models.CharField(
+        _('contact_title'),
+        max_length=50,
+        choices=TITLE_CHOICES,
+    )
+    last_name = models.CharField(_('last_name'), max_length=255, blank=True, null=True)
+    first_name = models.CharField(_('first_name'), max_length=255, blank=True, null=True)
+    society = models.CharField(_('society'), max_length=255, blank=True, null=True)
+    function = models.CharField(_('function'), max_length=255, blank=True, null=True)
+    phone = models.CharField(_('phone'), max_length=255, blank=True, null=True)
+    mobile_phone = models.CharField(_('mobile_phone'), max_length=255, blank=True, null=True)
+    fax = models.CharField(_('fax'), max_length=255, blank=True, null=True)
+    email = models.EmailField(_('email'), blank=True, null=True)
+    comment = models.TextField(_('comment'), default='')
+
+    def __str__(self):
+        if self.first_name:
+            return '{0} {1} {2}'.format(self.get_title_display(), self.last_name, self.first_name)
+        return '{0} {1}'.format(self.get_title_display(), self.last_name)
+
+
+class Address(models.Model):
+    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255)
+    address = models.TextField(_('address'))
+    postal_code = models.CharField(_('postal_code'), max_length=20, blank=True, null=True)
+    city = models.CharField(_('city'), max_length=255, blank=True, null=True)
+    city_french = models.CharField(_('city_french'), max_length=255, blank=True, null=True)
+    city_english = models.CharField(_('city_english'), max_length=255, blank=True, null=True)
+    country = models.ForeignKey(
+        'reference.Country',
+        verbose_name=_('country'),
+        on_delete=models.PROTECT,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Media(models.Model):
+    VISIBILITY_PUBLIC = 'public'
+    VISIBILITY_STAFF = 'staff'
+    VISIBILITY_STAFF_STUDENT = 'staff_student'
+    VISIBILITY_CHOICES = (
+        (VISIBILITY_PUBLIC, _('visibility_public')),
+        (VISIBILITY_STAFF, _('visibility_staff')),
+        (VISIBILITY_STAFF_STUDENT, _('visibility_staff_student')),
+    )
+
+    name = models.CharField(_('name'), max_length=255)
+    description = models.TextField(_('description'), default='')
+    document_file = models.ForeignKey(
+        'osis_common.DocumentFile',
+        verbose_name=_('document'),
+        on_delete=models.CASCADE,
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+    url = models.URLField(_('url'), blank=True, null=True)
+    visibility = models.CharField(
+        _('visibility'),
+        max_length=50,
+        choices=VISIBILITY_CHOICES,
+    )

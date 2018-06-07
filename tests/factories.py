@@ -3,7 +3,8 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
-from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType
+from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
+    PartnerEntity
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -49,6 +50,15 @@ class PartnerFactory(factory.DjangoModelFactory):
                 obj.tags = extracted
             else:
                 obj.tags = [PartnerTagFactory(), PartnerTagFactory()]
+
+
+class PartnerEntityFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnerEntity
+
+    partner = factory.SubFactory(PartnerFactory)
+    name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
+    author = factory.SubFactory('base.tests.factories.user.UserFactory')
 
 
 class PartnershipTypeFactory(factory.DjangoModelFactory):
