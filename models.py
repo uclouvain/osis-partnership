@@ -44,7 +44,7 @@ class PartnerEntity(models.Model):
     )
     contact_in = models.ForeignKey(
         'partnership.Contact',
-        verbose_name=_('address'),
+        verbose_name=_('contact_in'),
         on_delete=models.SET_NULL,
         related_name='+',
         blank=True,
@@ -52,7 +52,7 @@ class PartnerEntity(models.Model):
     )
     contact_out = models.ForeignKey(
         'partnership.Contact',
-        verbose_name=_('address'),
+        verbose_name=_('contact_out'),
         on_delete=models.SET_NULL,
         related_name='+',
         blank=True,
@@ -66,7 +66,7 @@ class PartnerEntity(models.Model):
         blank=True,
         null=True,
     )
-    comment = models.TextField(_('comment'), default='')
+    comment = models.TextField(_('comment'), default='', blank=True)
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
@@ -295,7 +295,7 @@ class Contact(models.Model):
     mobile_phone = models.CharField(_('mobile_phone'), max_length=255, blank=True, null=True)
     fax = models.CharField(_('fax'), max_length=255, blank=True, null=True)
     email = models.EmailField(_('email'), blank=True, null=True)
-    comment = models.TextField(_('comment'), default='')
+    comment = models.TextField(_('comment'), default='', blank=True)
 
     def __str__(self):
         if self.first_name:
@@ -334,7 +334,7 @@ class Media(models.Model):
     )
 
     name = models.CharField(_('name'), max_length=255)
-    description = models.TextField(_('description'), default='')
+    description = models.TextField(_('description'), default='', blank=True)
     document_file = models.ForeignKey(
         'osis_common.DocumentFile',
         verbose_name=_('document'),

@@ -1,11 +1,17 @@
 from django.contrib import admin
 
-from partnership.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag
+from partnership.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag, \
+    PartnerEntity
+
+
+class PartnerEntityAdmin(admin.TabularInline):
+    model = PartnerEntity
 
 
 class PartnerAdmin(admin.ModelAdmin):
-    class Meta:
-        fields = '__all__'
+    inlines = [
+        PartnerEntityAdmin,
+    ]
 
     def save_form(self, request, form, change):
         """
@@ -16,10 +22,21 @@ class PartnerAdmin(admin.ModelAdmin):
             partner.author = request.user
         return partner
 
+    def save_formset(self, request, form, formset, change):
+        """
+        Given an inline formset save it to the database.
+        """
+        if formset.model is PartnerEntity:
+            entities = formset.save(commit=False)
+            for entity in entities:
+                if entity.pk is None:
+                    entity.author = request.user
+                entity.save()
+        else:
+            formset.save()
+
 
 class PartnershipAdmin(admin.ModelAdmin):
-    class Meta:
-        fields = '__all__'
 
     def get_queryset(self, request):
         return Partnership.objects.select_related('partner')
@@ -35,8 +52,6 @@ class PartnershipAdmin(admin.ModelAdmin):
 
 
 class ValueAdmin(admin.ModelAdmin):
-    class Meta:
-        fields = ['value']
 
     def get_model_perms(self, request):
         """
