@@ -6,8 +6,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
 
-from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm
-from partnership.models import Partner, Partnership, PartnerEntity
+from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm, PartnerEntitiesFormset, PartnershipFilterForm
+from partnership.models import Partner, Partnership, Media, PartnerEntity
 from partnership.utils import user_is_adri
 
 
@@ -311,10 +311,11 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         return self.template_name
 
 
-class PartnershipsList(LoginRequiredMixin, ListView):
+class PartnershipsList(LoginRequiredMixin, FormMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
+    form_class = PartnershipFilterForm
     paginate_by = 5
     paginate_orphans = 5
     paginate_neighbours = 4
@@ -326,4 +327,14 @@ class PartnershipsList(LoginRequiredMixin, ListView):
 
     def get_ordering(self):
         # TODO
-        return '-created'
+        return 'value'
+
+    def get_queryset(self):
+        queryset = Partnership.objects.all()
+        form = get_form()
+        if form.is_valid():
+            data = form.cleaned_data
+            if data['value']:
+                queryset = queryset.filter('value')
+        return queryset
+    
