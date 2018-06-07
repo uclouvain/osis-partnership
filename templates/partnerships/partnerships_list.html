@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% load i18n %}
+
+{% block breadcrumb %}
+  <li class="active">{% trans 'partnerships' %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>
+      {% trans 'partnerships' %}
+    </h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="well">
+        <div class="row">
+          <div class="col-sm-12">
+            <button class="btn btn-default pull-right" type="button"
+                    data-toggle="collapse" data-target="#partnership-filters"
+                    aria-expanded="false" aria-controls="partnership-filters">
+              <i class="fa fa-filter"></i>
+            </button>
+          </div>
+        </div>
+        <div class="collapse" id="partnership-filters">
+          <div class="row">
+            {% comment %}
+            <form action="{% url "partnerships:partnerships_list" %}" method="get">
+              <div class="form-group">
+                <div class="col-sm-12 col-md-8">{{ form.value }}</div>
+              </div>
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-primary pull-right">{% trans "filter %}</button>
+              </div>
+            </form>
+            {% endcomment %}
+          </div>
+        </div>
+      </div>
+      
+      <div id="results">
+        {% include "partnerships/includes/partnerships_list_results.html" %}
+      </div>
+
+      {% include "partnerships/includes/pagination.html" %}
+    </div>
+  </div>
+    
+{% endblock %}

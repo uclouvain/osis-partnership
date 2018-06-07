@@ -315,3 +315,15 @@ class PartnershipsList(LoginRequiredMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
+    paginate_by = 5
+    paginate_orphans = 5
+    paginate_neighbours = 4
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipsList, self).get_context_data(**kwargs)
+        context['paginate_neighbours'] = self.paginate_neighbours
+        return context
+
+    def get_ordering(self):
+        # TODO
+        return '-created'
