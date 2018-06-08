@@ -2,20 +2,24 @@ language: python
 python: "3.4.5"
 
 install:
+  - "export PROJECT_DIR=`pwd`"
+  - "cd /tmp"
   - "git clone https://github.com/uclouvain/osis.git"
   - "cd osis"
   - "git submodule init"
   - "git submodule update"
   - "pip install -r travis-requirements.txt"
   - "rm -Rf partnership"
-  - "ln -s .. partnership"
+  - "ln -s $PROJECT_DIR partnership"
   - "cp .env.example .env"
   - "echo 'INSTALLED_APPS += (\"partnership\",)' >> backoffice/settings/local.py"
   - "echo 'APPS_TO_TEST += (\"partnership\",)' >> backoffice/settings/local.py"
   - "echo 'DATABASES[\"default\"][\"ENGINE\"] = \"django.db.backends.sqlite3\"' >> backoffice/settings/local.py"
+  - "python3 manage.py compilemessages"
 
 script:
-  - "python3 manage.py compilemessages"
+  - "python manage.py shell -c 'from django.conf import settings; print(settings.INSTALLED_APPS)'"
+  - "git status"
   - "coverage run manage.py test --exclude-tag=selenium partnership"
 
 after_success:
