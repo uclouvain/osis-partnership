@@ -1,0 +1,262 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-08 11:10+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Unknown"
+msgstr "Inconnu"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
+
+msgid "name"
+msgstr "Nom"
+
+msgid "partner_name"
+msgstr "Nom du partenaire"
+
+msgid "partner_type"
+msgstr "Type du partenaire"
+
+msgid "pic_code"
+msgstr "Code PIC"
+
+msgid "is_ies"
+msgstr "Est IES"
+
+msgid "is_valid"
+msgstr "Validé"
+
+msgid "is_actif"
+msgstr "Actif"
+
+msgid "tags"
+msgstr "Tags"
+
+msgid "partner"
+msgstr "Partenaire"
+
+msgid "address"
+msgstr "Adresse"
+
+msgid "contact_in"
+msgstr "Contact IN"
+
+msgid "contact_out"
+msgstr "Contact OUT"
+
+msgid "parent_entity"
+msgstr "Entité parente"
+
+msgid "comment"
+msgstr "Commentaire"
+
+msgid "created"
+msgstr "Créé"
+
+msgid "modified"
+msgstr "Modifié"
+
+msgid "author"
+msgstr "Auteur"
+
+msgid "partner_code"
+msgstr "Code du partenaire"
+
+msgid "erasmus_code"
+msgstr "Code Erasmus"
+
+msgid "start_date"
+msgstr "Date de début"
+
+msgid "end_date"
+msgstr "Date de fin"
+
+msgid "now_known_as"
+msgstr "Est devenu / Fait partie de"
+
+msgid "website"
+msgstr "Site web"
+
+msgid "email"
+msgstr "Email"
+
+msgid "phone"
+msgstr "Téléphone"
+
+msgid "is_nonprofit"
+msgstr "À but non lucratif"
+
+msgid "is_public"
+msgstr "Public"
+
+msgid "organisation_type"
+msgstr "Type d'organisation"
+
+msgid "use_egracons"
+msgstr "Utilise Egracons"
+
+msgid "medias"
+msgstr "Médias"
+
+msgid "can_access_partners"
+msgstr "Peux accéder aux partenaires"
+
+msgid "mobility_type_sms"
+msgstr "SMS"
+
+msgid "mobility_type_smp"
+msgstr "SMP"
+
+msgid "mobility_type_sta"
+msgstr "STA"
+
+msgid "mobility_type_stt"
+msgstr "STT"
+
+msgid "mobility_type_na"
+msgstr "N/A"
+
+msgid "partner_entity"
+msgstr "Entité partenaire"
+
+msgid "mobility_type"
+msgstr "Type de mobilité"
+
+msgid "partnership_type"
+msgstr "Type de partenariat"
+
+msgid "contacts"
+msgstr "Contacts"
+
+msgid "can_access_partnerships"
+msgstr "Peux accéder aux partenariats"
+
+#, python-brace-format
+msgid "partnership_with_{partner}"
+msgstr "Partenariat avec {partner}"
+
+msgid "mister"
+msgstr "Monsieur"
+
+msgid "madame"
+msgstr "Madame"
+
+msgid "contact_type"
+msgstr "Type de contact"
+
+msgid "contact_title"
+msgstr "Titre du contact"
+
+msgid "last_name"
+msgstr "Nom"
+
+msgid "first_name"
+msgstr "Prénom"
+
+msgid "society"
+msgstr "Société"
+
+msgid "function"
+msgstr "Fonction"
+
+msgid "mobile_phone"
+msgstr "Téléphone mobile"
+
+msgid "fax"
+msgstr "Fax"
+
+msgid "address_name_help_text"
+msgstr "Nom de la faculté, de l’entreprise, …"
+
+msgid "postal_code"
+msgstr "Code postal"
+
+msgid "city"
+msgstr "Ville"
+
+msgid "city_french"
+msgstr "Ville en français"
+
+msgid "city_english"
+msgstr "Ville en anglais"
+
+msgid "country"
+msgstr "Pays"
+
+msgid "visibility_public"
+msgstr "Public"
+
+msgid "visibility_staff"
+msgstr "Personnels"
+
+msgid "visibility_staff_student"
+msgstr "Personnels et étudiants"
+
+msgid "description"
+msgstr "Description"
+
+msgid "document"
+msgstr "Document"
+
+msgid "url"
+msgstr "URL"
+
+msgid "visibility"
+msgstr "Visibilité"
+
+msgid "first"
+msgstr "Premier"
+
+msgid "previous"
+msgstr "Précédent"
+
+msgid "next"
+msgstr "Suivant"
+
+msgid "last"
+msgstr "Dernier"
+
+msgid "code"
+msgstr "Code"
+
+msgid "type"
+msgstr "Type"
+
+msgid "current_partnership"
+msgstr "Parternariats en cours"
+
+msgid "valid"
+msgstr "Valide"
+
+msgid "still_actif"
+msgstr "Toujours actif"
+
+msgid "partnerships"
+msgstr "Partenariats"
+
+msgid "partners"
+msgstr "Partenaire"
+
+msgid "filter_partners"
+msgstr "Filtrer les partenaires"
+
+msgid "filter"
+msgstr "Filtrer"
