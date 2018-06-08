@@ -3,9 +3,20 @@ python: "3.4.5"
 
 install:
   - "git clone https://github.com/uclouvain/osis.git"
-  - "pip install -r osis/travis-requirements.txt"
+  - "cd osis"
+  - "git submodule init"
+  - "git submodule update"
+  - "pip install -r travis-requirements.txt"
+  - "rm -Rf partnership"
+  - "ln -s .. partnership"
+  - "cp .env.example .env"
+  - "echo 'INSTALLED_APPS += (\"partnership\",)' >> backoffice/settings/local.py"
+  - "echo 'APPS_TO_TEST += (\"partnership\",)' >> backoffice/settings/local.py"
+  - "echo 'DATABASES[\"default\"][\"ENGINE\"] = \"django.db.backends.sqlite3\"' >> backoffice/settings/local.py"
 
-script: "cd osis && python3 manage.py compilemessages && coverage run manage.py test --exclude-tag=selenium partnership"
+script:
+  - "python3 manage.py compilemessages"
+  - "coverage run manage.py test --exclude-tag=selenium partnership"
 
 after_success:
  - pip install coveralls
