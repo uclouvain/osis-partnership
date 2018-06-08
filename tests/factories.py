@@ -51,6 +51,14 @@ class PartnerFactory(factory.DjangoModelFactory):
             else:
                 obj.tags = [PartnerTagFactory(), PartnerTagFactory()]
 
+    @factory.post_generation
+    def entities(obj, create, extracted, **kwargs):
+        if create:
+            if extracted:
+                obj.entities = extracted
+            else:
+                obj.entities = [PartnerEntityFactory()]
+
 
 class PartnerEntityFactory(factory.DjangoModelFactory):
     class Meta:
@@ -85,7 +93,10 @@ class PartnershipFactory(factory.DjangoModelFactory):
     end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
     mobility_type = factory.Faker('random_element', elements=dict(Partnership.MOBILITY_TYPE_CHOICES).keys())
-    partner_type = factory.SubFactory(PartnershipTypeFactory)
+    partnership_type = factory.SubFactory(PartnershipTypeFactory)
+
+    partner_entity = factory.SubFactory(PartnerEntityFactory)
+    ucl_university = factory.SubFactory('base.tests.factories.entity_version.EntityVersionFactory')
 
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
 

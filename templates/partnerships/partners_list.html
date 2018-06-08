@@ -6,6 +6,11 @@
   <li class="active">{% trans 'partners' %}</li>
 {% endblock %}
 
+{% block style %}
+  <style>
+  </style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1>{% trans 'partners' %}</h1>
@@ -22,7 +27,7 @@
           <button class="btn btn-default pull-right" type="button"
                   data-toggle="collapse" data-target="#partner-filters"
                   aria-expanded="false" aria-controls="partner-filters">
-            <i class="fa fa-filter"></i>
+            <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partners" %}</span>
           </button>
         </div>
       </div>

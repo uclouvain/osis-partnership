@@ -12,7 +12,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
     template_name = 'partnerships/partners_list.html'
     context_object_name = 'partners'
     form_class = PartnerFilterForm
-    paginate_by = 5
+    paginate_by = 20
     paginate_orphans = 5
     paginate_neighbours = 4
 

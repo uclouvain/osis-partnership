@@ -224,6 +224,8 @@ class Partnership(models.Model):
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='+',
+        blank=True,
+        null=True,
     )
     # university_offers = ?
     # supervisor = ?
@@ -234,7 +236,7 @@ class Partnership(models.Model):
     # domaine etudes ?
     # niveaux etude ?
     mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
-    partner_type = models.ForeignKey(
+    partnership_type = models.ForeignKey(
         PartnershipType,
         verbose_name=_('partnership_type'),
         on_delete=models.PROTECT,

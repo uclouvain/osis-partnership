@@ -1,0 +1,262 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-08 11:10+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "name"
+msgstr ""
+
+msgid "partner_name"
+msgstr ""
+
+msgid "partner_type"
+msgstr ""
+
+msgid "pic_code"
+msgstr ""
+
+msgid "is_ies"
+msgstr ""
+
+msgid "is_valid"
+msgstr ""
+
+msgid "is_actif"
+msgstr ""
+
+msgid "tags"
+msgstr ""
+
+msgid "partner"
+msgstr ""
+
+msgid "address"
+msgstr ""
+
+msgid "contact_in"
+msgstr ""
+
+msgid "contact_out"
+msgstr ""
+
+msgid "parent_entity"
+msgstr ""
+
+msgid "comment"
+msgstr ""
+
+msgid "created"
+msgstr ""
+
+msgid "modified"
+msgstr ""
+
+msgid "author"
+msgstr ""
+
+msgid "partner_code"
+msgstr ""
+
+msgid "erasmus_code"
+msgstr ""
+
+msgid "start_date"
+msgstr ""
+
+msgid "end_date"
+msgstr ""
+
+msgid "now_known_as"
+msgstr ""
+
+msgid "website"
+msgstr ""
+
+msgid "email"
+msgstr ""
+
+msgid "phone"
+msgstr ""
+
+msgid "is_nonprofit"
+msgstr ""
+
+msgid "is_public"
+msgstr ""
+
+msgid "organisation_type"
+msgstr ""
+
+msgid "use_egracons"
+msgstr ""
+
+msgid "medias"
+msgstr ""
+
+msgid "can_access_partners"
+msgstr ""
+
+msgid "mobility_type_sms"
+msgstr ""
+
+msgid "mobility_type_smp"
+msgstr ""
+
+msgid "mobility_type_sta"
+msgstr ""
+
+msgid "mobility_type_stt"
+msgstr ""
+
+msgid "mobility_type_na"
+msgstr ""
+
+msgid "partner_entity"
+msgstr ""
+
+msgid "mobility_type"
+msgstr ""
+
+msgid "partnership_type"
+msgstr ""
+
+msgid "contacts"
+msgstr ""
+
+msgid "can_access_partnerships"
+msgstr ""
+
+#, python-brace-format
+msgid "partnership_with_{partner}"
+msgstr ""
+
+msgid "mister"
+msgstr ""
+
+msgid "madame"
+msgstr ""
+
+msgid "contact_type"
+msgstr ""
+
+msgid "contact_title"
+msgstr ""
+
+msgid "last_name"
+msgstr ""
+
+msgid "first_name"
+msgstr ""
+
+msgid "society"
+msgstr ""
+
+msgid "function"
+msgstr ""
+
+msgid "mobile_phone"
+msgstr ""
+
+msgid "fax"
+msgstr ""
+
+msgid "address_name_help_text"
+msgstr ""
+
+msgid "postal_code"
+msgstr ""
+
+msgid "city"
+msgstr ""
+
+msgid "city_french"
+msgstr ""
+
+msgid "city_english"
+msgstr ""
+
+msgid "country"
+msgstr ""
+
+msgid "visibility_public"
+msgstr ""
+
+msgid "visibility_staff"
+msgstr ""
+
+msgid "visibility_staff_student"
+msgstr ""
+
+msgid "description"
+msgstr ""
+
+msgid "document"
+msgstr ""
+
+msgid "url"
+msgstr ""
+
+msgid "visibility"
+msgstr ""
+
+msgid "first"
+msgstr ""
+
+msgid "previous"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "last"
+msgstr ""
+
+msgid "code"
+msgstr ""
+
+msgid "type"
+msgstr ""
+
+msgid "current_partnership"
+msgstr ""
+
+msgid "valid"
+msgstr ""
+
+msgid "still_actif"
+msgstr ""
+
+msgid "partnerships"
+msgstr ""
+
+msgid "partners"
+msgstr ""
+
+msgid "filter_partners"
+msgstr ""
+
+msgid "filter"
+msgstr ""
