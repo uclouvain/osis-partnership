@@ -28,8 +28,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
         return kwargs
 
     def get_ordering(self):
-        # TODO
-        return '-created'
+        return self.request.GET.get('ordering', '-created')
 
     def get_queryset(self):
         queryset = Partner.objects.all().annotate(partnerships_count=Count('partnerships'))
