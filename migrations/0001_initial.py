@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         ('reference', '0017_language_changed'),
         ('osis_common', '0014_messagequeuecache'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0280_auto_20180607_1246'),
+        ('base', '0283_learningunityear_existing_proposal_in_epc'),
     ]
 
     operations = [
