@@ -18,8 +18,6 @@ install:
   - "python3 manage.py compilemessages"
 
 script:
-  - "python manage.py shell -c 'from django.conf import settings; print(settings.INSTALLED_APPS)'"
-  - "git status"
   - "coverage run manage.py test --exclude-tag=selenium partnership"
 
 after_success:
