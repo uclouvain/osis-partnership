@@ -37,7 +37,7 @@
       </div>
       <div class="collapse{% if form.is_bound %} in{% endif %}" id="partner-filters">
         <div class="row">
-          <form action="{% url "partnerships:partners:list" %}" method="get">
+          <form action="{% url "partnerships:partners:list" %}" id="filter-form" method="get">
             <div class="form-group">
               <div class="col-sm-12 col-md-8">{{ form.name }}</div>
               <div class="col-sm-12 col-md-4">{{ form.is_ies }}</div>
