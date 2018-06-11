@@ -9,12 +9,17 @@ from partnership.models import Partner, Partnership
 
 
 class PartnersList(LoginRequiredMixin, FormMixin, ListView):
-    template_name = 'partnerships/partners_list.html'
     context_object_name = 'partners'
     form_class = PartnerFilterForm
     paginate_by = 20
     paginate_orphans = 5
     paginate_neighbours = 4
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partners_list_results.html'
+        else:
+            return 'partnerships/partners_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(PartnersList, self).get_context_data(**kwargs)

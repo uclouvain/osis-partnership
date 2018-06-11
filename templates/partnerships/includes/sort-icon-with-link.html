@@ -1,8 +1,8 @@
 {% load url_utils %}
 {% if request.GET.ordering == ordering_field %}
-  <a href="{% change_current_url_param 'ordering' '-'|add:ordering_field request.GET.urlencode %}"><i class="fa fa-sort-desc"></i></a>
+  <a href="{% change_current_url_param 'ordering' '-'|add:ordering_field request.GET.urlencode %}" class="ajax-results"><i class="fa fa-sort-desc"></i></a>
 {% elif request.GET.ordering == '-'|add:ordering_field %}
-  <a href="{% change_current_url_param 'ordering' ordering_field request.GET.urlencode %}"><i class="fa fa-sort-asc"></i></a>
+  <a href="{% change_current_url_param 'ordering' ordering_field request.GET.urlencode %}" class="ajax-results"><i class="fa fa-sort-asc"></i></a>
 {% else %}
-  <a href="{% change_current_url_param 'ordering' ordering_field request.GET.urlencode %}"><i class="fa fa-sort"></i></a>
+  <a href="{% change_current_url_param 'ordering' ordering_field request.GET.urlencode %}" class="ajax-results"><i class="fa fa-sort"></i></a>
 {% endif %}

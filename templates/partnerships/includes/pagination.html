@@ -4,12 +4,12 @@
   <ul class="pagination">
     {% if page_obj.has_previous %}
     <li>
-      <a href="{% change_current_url_param 'page' '1' request.GET.urlencode %}" aria-label="{% trans "first" %}">
+      <a href="{% change_current_url_param 'page' '1' request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "first" %}">
         <span aria-hidden="true"><i class="fa fa-step-backward"></i></span>
       </a>
     </li>
     <li>
-      <a href="{% change_current_url_param 'page' page_obj.previous_page_number request.GET.urlencode %}" aria-label="{% trans "previous" %}">
+      <a href="{% change_current_url_param 'page' page_obj.previous_page_number request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "previous" %}">
         <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
       </a>
     </li>
@@ -22,18 +22,18 @@
         {% if page_number == page_obj.number %}
         <li class="active"><a href="{% change_current_url_param 'page' page_number request.GET.urlencode %}">{{ page_number }}</a></li>
         {% else %}
-        <li><a href="{% change_current_url_param 'page' page_number request.GET.urlencode %}">{{ page_number }}</a></li>
+        <li><a href="{% change_current_url_param 'page' page_number request.GET.urlencode %}" class="ajax-results">{{ page_number }}</a></li>
         {% endif %}
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
     <li>
-      <a href="{% change_current_url_param 'page' page_obj.next_page_number request.GET.urlencode %}" aria-label="{% trans "next" %}">
+      <a href="{% change_current_url_param 'page' page_obj.next_page_number request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "next" %}">
         <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
       </a>
     </li>
     <li>
-      <a href="{% change_current_url_param 'page' paginator.num_pages request.GET.urlencode %}" aria-label="{% trans "last" %}">
+      <a href="{% change_current_url_param 'page' paginator.num_pages request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "last" %}">
         <span aria-hidden="true"><i class="fa fa-step-forward"></i></span>
       </a>
     </li>
