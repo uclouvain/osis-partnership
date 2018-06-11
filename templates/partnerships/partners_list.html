@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
@@ -9,6 +9,10 @@
 {% block style %}
   <style>
   </style>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "partnerships/fetch_results.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -61,7 +65,6 @@
       {% include "partnerships/includes/partners_list_results.html" %}
     </div>
 
-    {% include "partnerships/includes/pagination.html" %}
   </div>
 </div>
 {% endblock %}
