@@ -36,7 +36,12 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
         return self.request.GET.get('ordering', '-created')
 
     def get_queryset(self):
-        queryset = Partner.objects.all().annotate(partnerships_count=Count('partnerships'))
+        queryset = (
+            Partner.objects
+                .all()
+                .select_related('partner_type')
+                .annotate(partnerships_count=Count('partnerships'))
+        )
         form = self.get_form()
         if form.is_valid():
             data = form.cleaned_data
