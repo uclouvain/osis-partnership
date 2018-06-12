@@ -35,6 +35,11 @@ class PartnerFilterForm(BootstrapForm):
         widget=forms.TextInput(attrs={'placeholder': _('pic_code')}),
         required=False,
     )
+    erasmus_code = forms.CharField(
+        label=_('erasmus_code'),
+        widget=forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
+        required=False,
+    )
     # city
     # country
     # continent

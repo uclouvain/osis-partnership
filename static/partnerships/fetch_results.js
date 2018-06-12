@@ -39,4 +39,8 @@
             hideLoader();
         });
     });
+
+    $('#filter-form #id_tags').select2({
+        language: "fr",
+    });
 })(jQuery);

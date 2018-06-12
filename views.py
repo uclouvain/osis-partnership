@@ -51,6 +51,8 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter(partner_type=data['partner_type'])
             if data['pic_code']:
                 queryset = queryset.filter(pic_code__icontains=data['pic_code'])
+            if data['erasmus_code']:
+                queryset = queryset.filter(erasmus_code__icontains=data['erasmus_code'])
             if data['is_ies'] is not None:
                 queryset = queryset.filter(is_ies=data['is_ies'])
             if data['is_valid'] is not None:
@@ -64,7 +66,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
                 else:
                     queryset = queryset.filter(Q(start_date__gt=Now()) | Q(end_date__lt=Now()))
             if data['tags']:
-                queryset = queryset.filter(tags=data['tags'])
+                queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
         if ordering:
             queryset = queryset.order_by(ordering)
