@@ -35,28 +35,28 @@
         </div>
       </div>
       <div class="collapse{% if form.is_bound %} in{% endif %}" id="partner-filters">
-        <div class="row">
           <form action="{% url "partnerships:partners:list" %}" id="filter-form" method="get">
-            <div class="form-group">
+            <div class="row">
               <div class="col-sm-12 col-md-8">{{ form.name }}</div>
               <div class="col-sm-12 col-md-4">{{ form.is_ies }}</div>
             </div>
-            <div class="form-group">
+            <div class="row">
               <div class="col-sm-12 col-md-4">{{ form.partner_type }}</div>
               <div class="col-sm-12 col-md-4">{{ form.pic_code }}</div>
             </div>
-            <div class="form-group">
+            <div class="row">
               <div class="col-sm-12 col-md-4">{{ form.is_valid }}</div>
               <div class="col-sm-12 col-md-4">{{ form.is_actif }}</div>
             </div>
-            <div class="form-group">
+            <div class="row">
               <div class="col-sm-12 col-md-12">{{ form.tags }}</div>
             </div>
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary pull-right">{% trans "filter" %}</button>
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary pull-right">{% trans "filter" %}</button>
+              </div>
             </div>
           </form>
-        </div>
       </div>
     </div>
 
