@@ -1,12 +1,25 @@
 (function ($) {
+    var showLoader = function() {
+        $('#results .loader').show(500);
+    };
+
+    var hideLoader = function() {
+        $('#results .loader').hide(0);
+    };
+
     // Pagination/ordering in AJAX
     $(document).on('click', 'a.ajax-results', function(event) {
         event.preventDefault();
         event.stopPropagation();
 
         var url = $(this).attr('href');
+        showLoader();
         $.get(url, function(data) {
             $('#results').html(data);
+            hideLoader();
+        }).fail(function(error) {
+            console.error(error);
+            hideLoader();
         });
     });
 
@@ -17,8 +30,13 @@
         var $form = $(this);
 
         var url = $form.attr('action') + '?' + $form.serialize();
+        showLoader();
         $.get(url, function(data) {
             $('#results').html(data);
+            hideLoader();
+        }).fail(function(error) {
+            console.error(error);
+            hideLoader();
         });
     });
 })(jQuery);
