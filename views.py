@@ -74,9 +74,11 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
 
 
 class PartnerDetail(LoginRequiredMixin, DetailView):
-    model = Partner
     template_name = 'partnerships/partner_detail.html'
     context_object_name = 'partner'
+
+    def get_queryset(self):
+        return Partner.objects.select_related('partner_type').prefetch_related('entities')
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
