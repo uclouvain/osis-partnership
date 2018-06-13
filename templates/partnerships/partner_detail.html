@@ -1,10 +1,14 @@
 {% extends "layout.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
   <li class="active">{{ partner }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
 {% endblock %}
 
 {% block content %}
@@ -78,6 +82,16 @@
         </dl>
 
         <p><em>{{ partner.comment }}</em></p>
+      </div>
+    </div>
+    <h2>{% trans "associated_tags" %}</h2>
+    <div class="row">
+      <div class="col-sm-12">
+        <ul class="tags-list">
+        {% for tag in partner.tags.all %}
+          <li>{{ tag }}</li>
+        {% endfor %}
+        </ul>
       </div>
     </div>
   </div>
