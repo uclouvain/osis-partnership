@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-08 11:10+0200\n"
+"POT-Creation-Date: 2018-06-13 14:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,9 @@ msgid "partner_type"
 msgstr ""
 
 msgid "pic_code"
+msgstr ""
+
+msgid "erasmus_code"
 msgstr ""
 
 msgid "is_ies"
@@ -78,9 +81,6 @@ msgid "author"
 msgstr ""
 
 msgid "partner_code"
-msgstr ""
-
-msgid "erasmus_code"
 msgstr ""
 
 msgid "start_date"
@@ -253,6 +253,19 @@ msgid "partnerships"
 msgstr ""
 
 msgid "partners"
+msgstr ""
+
+#, python-format
+msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "contact_address"
 msgstr ""
 
 msgid "filter_partners"

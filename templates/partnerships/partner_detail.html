@@ -16,8 +16,70 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <table class="table table-striped table-hover">
-      {{ partner }}
+    <div class="row">
+      <div class="col-sm-12">
+        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
+        <dl class="dl-horizontal">
+          <dt>{% trans "partner_type" %}</dt>
+          <dd>{{ partner.partner_type }}</dd>
+
+          <dt>{% trans "partner_code" %}</dt>
+          <dd>{{ partner.partner_code }}</dd>
+
+          <dt>{% trans "pic_code" %}</dt>
+          <dd>{{ partner.pic_code }}</dd>
+
+          <dt>{% trans "erasmus_code" %}</dt>
+          <dd>{{ partner.erasmus_code }}</dd>
+
+          {% if partner.is_ies %}<dd>{% trans "is_ies" %}</dd>{% endif %}
+
+          {% if partner.now_known_as %}
+          <dt>{% trans "now_known_as" %}</dt>
+          <dd>{{ partner.now_known_as }}</dd>
+          {% endif %}
+
+          <dt>{% trans "is_nonprofit" %}</dt>
+          <dd>{% if partner.is_nonprofit %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+
+          <dt>{% trans "is_public" %}</dt>
+          <dd>{% if partner.is_public %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+
+          <dt>{% trans "contact_type" %}</dt>
+          <dd>{{ partner.contact_type }}</dd>
+
+          <dt>{% trans "use_egracons" %}</dt>
+          <dd>{% if partner.use_egracons %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+        </dl>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <dl class="dl-horizontal">
+          <dt>{% trans "is_valid" %}</dt>
+          <dd>{% if partner.is_valid %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+
+          <dt>{% trans "is_actif" %}</dt>
+          <dd>{% if partner.is_actif %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+
+          <dt>{% trans "contact_address" %}</dt>
+          <dd>{{ partner.address }}</dd>
+
+          <dt>{% trans "website" %}</dt>
+          <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
+
+          <dt>{% trans "email" %}</dt>
+          <dd>{% if partner.email %}<a href="mailto:{{ partner.email }}">{{ partner.email }}</a>{% endif %}</dd>
+
+          <dt>{% trans "phone" %}</dt>
+          <dd>{{ partner.phone }}</dd>
+        </dl>
+
+        <p><em>{{ partner.comment }}</em></p>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
