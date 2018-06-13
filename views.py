@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
 from partnership.forms import PartnerFilterForm
-from partnership.models import Partner, Partnership
+from partnership.models import Partner, Partnership, Media
 
 
 class PartnersList(LoginRequiredMixin, FormMixin, ListView):
@@ -78,7 +78,15 @@ class PartnerDetail(LoginRequiredMixin, DetailView):
     context_object_name = 'partner'
 
     def get_queryset(self):
-        return Partner.objects.select_related('partner_type').prefetch_related('entities')
+        return (
+            Partner.objects
+                .select_related('partner_type')
+                .prefetch_related(
+                    'entities',
+                    'tags',
+                    Prefetch('medias', queryset=Media.objects.select_related('document_file')),
+                )
+        )
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
