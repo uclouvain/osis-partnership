@@ -84,7 +84,11 @@
         <p><em>{{ partner.comment }}</em></p>
       </div>
     </div>
-    <h2>{% trans "associated_tags" %}</h2>
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "associated_tags" %}</h2>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-12">
         <ul class="tags-list">
@@ -94,6 +98,43 @@
         </ul>
       </div>
     </div>
+    {% if partner.medias.all %}
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "medias" %}</h2>
+      </div>
+    </div>
+    <div class="row">
+      {% for media in partner.medias.all %}
+      <div class="col-sm-12 col-md-6">
+        <div class="row">
+          <div class="col-sm-9">
+            <strong>{{ media.name }}</strong> <em>{{ media.get_visibility.display }}</em>
+          </div>
+          <div class="col-sm-3">
+            {% if media.url %}
+              {% trans "external_link" %}
+            {% else %}
+              {{ media.document_file.get_content_type_display }}/{{ media.document_file.size|filesizeformat }}
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-9">
+            <p>{{ media.description }}</p>
+          </div>
+          <div class="col-sm-3">
+            {% if media.url %}
+            <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+            {% else %}
+            TODO
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

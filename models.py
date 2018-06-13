@@ -372,3 +372,6 @@ class Media(models.Model):
         max_length=50,
         choices=VISIBILITY_CHOICES,
     )
+
+    def __str__(self):
+        return self.name
