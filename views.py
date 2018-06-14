@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
 from partnership.forms import PartnerFilterForm
-from partnership.models import Partner, Partnership, Media
+from partnership.models import Partner, Partnership, Media, PartnerEntity
 
 
 class PartnersList(LoginRequiredMixin, FormMixin, ListView):
@@ -82,7 +82,9 @@ class PartnerDetail(LoginRequiredMixin, DetailView):
             Partner.objects
                 .select_related('partner_type', 'author')
                 .prefetch_related(
-                    'entities',
+                    Prefetch('entities', queryset=PartnerEntity.objects.select_related(
+                        'contact_in', 'contact_out', 'address', 'parent', 'author',
+                    )),
                     'tags',
                     Prefetch('medias', queryset=Media.objects.select_related('document_file')),
                 )
