@@ -83,6 +83,12 @@ class PartnerEntity(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return '{0}#partner-entity-{1}'.format(
+            reverse('partnerships:partners:detail', kwargs={'pk': self.partner_id}),
+            self.id,
+        )
+
 
 class Partner(models.Model):
     is_valid = models.BooleanField(_('is_valid'), default=False)
@@ -344,6 +350,15 @@ class Address(models.Model):
 
     def __str__(self):
         return self.name
+
+    def one_line_display(self):
+        return '{name} {address}, {postal_code} {city}, {country}'.format(
+            name=self.name,
+            address=self.address,
+            postal_code=self.postal_code,
+            city=self.city,
+            country=str(self.country).upper(),
+        )
 
 
 class Media(models.Model):

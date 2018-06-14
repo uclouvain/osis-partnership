@@ -36,3 +36,11 @@ ul.tags-list li {
   float: left;
   margin-right: 15px;
 }
+
+.partner-entity {
+  margin-bottom: 15px;
+}
+
+.partner-entity h3 {
+  margin-top: 0;
+}
