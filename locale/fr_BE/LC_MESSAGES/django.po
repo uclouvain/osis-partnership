@@ -253,7 +253,7 @@ msgid "partnerships"
 msgstr "Partenariats"
 
 msgid "partners"
-msgstr "Partenaire"
+msgstr "Partenaires"
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"

@@ -5,8 +5,8 @@
   <thead>
     <tr>
       <td>{% trans "partner" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="name" %}</td>
-      <td>{% trans "country" %}</td>
-      <td>{% trans "city" %}</td>
+      <td>{% trans "country" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="contact_address__country__name" %}</td>
+      <td>{% trans "city" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="contact_address__city" %}</td>
       <td>{% trans "code" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner_code" %}</td>
       <td>{% trans "type" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner_type" %}</td>
       <td>{% trans "current_partnership" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnerships_count" %}</td>
@@ -19,8 +19,8 @@
     {% for partner in partners %}
     <tr>
       <td>{{ partner }}</td>
-      <td></td>
-      <td></td>
+      <td>{{ partner.contact_address.country.name }}</td>
+      <td>{{ partner.contact_address.city }}</td>
       <td>{{ partner.partner_code }}</td>
       <td>{{ partner.partner_type }}</td>
       <td>{{ partner.partnerships_count }}</td>

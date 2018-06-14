@@ -39,7 +39,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partner.objects
                 .all()
-                .select_related('partner_type')
+                .select_related('partner_type', 'contact_address__country')
                 .annotate(partnerships_count=Count('partnerships'))
         )
         form = self.get_form()
@@ -53,6 +53,12 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter(pic_code__icontains=data['pic_code'])
             if data['erasmus_code']:
                 queryset = queryset.filter(erasmus_code__icontains=data['erasmus_code'])
+            if data['city']:
+                queryset = queryset.filter(contact_address__city__icontains=data['city'])
+            if data['country']:
+                queryset = queryset.filter(contact_address__country=data['country'])
+            if data['continent']:
+                queryset = queryset.filter(contact_address__country__continent=data['continent'])
             if data['is_ies'] is not None:
                 queryset = queryset.filter(is_ies=data['is_ies'])
             if data['is_valid'] is not None:

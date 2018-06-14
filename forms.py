@@ -2,7 +2,9 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
-from partnership.models import PartnerType, PartnerTag
+from partnership.models import PartnerType, PartnerTag, Address
+from reference.models.continent import Continent
+from reference.models.country import Country
 
 
 class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
@@ -40,9 +42,23 @@ class PartnerFilterForm(BootstrapForm):
         widget=forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
         required=False,
     )
-    # city
-    # country
-    # continent
+    city = forms.ChoiceField(
+        label=_('city'),
+        choices=((None, _('city')),),
+        required=False,
+    )
+    country = forms.ModelChoiceField(
+        label=_('country'),
+        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name'),
+        empty_label=_('country'),
+        required=False,
+    )
+    continent = forms.ModelChoiceField(
+        label=_('continent'),
+        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name'),
+        empty_label=_('continent'),
+        required=False,
+    )
     is_ies = forms.NullBooleanField(
         label=_('is_ies'),
         widget=CustomLabelNullBooleanSelect(empty_label=_('is_ies')),
@@ -63,3 +79,14 @@ class PartnerFilterForm(BootstrapForm):
         queryset=PartnerTag.objects.all(),
         required = False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(PartnerFilterForm, self).__init__(*args, **kwargs)
+        cities = (
+            Address.objects
+                .filter(partners__isnull=False, city__isnull=False)
+                .values_list('city', flat=True)
+                .order_by('city')
+                .distinct('city')
+        )
+        self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
