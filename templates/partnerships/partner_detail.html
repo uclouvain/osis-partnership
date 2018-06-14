@@ -127,7 +127,7 @@
             {% if media.url %}
             <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
             {% else %}
-            TODO
+            <a href="{{ media.document_file.file.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
             {% endif %}
           </div>
         </div>
