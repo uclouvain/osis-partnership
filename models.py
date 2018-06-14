@@ -118,7 +118,7 @@ class Partner(models.Model):
         'partnership.Address',
         verbose_name=_('address'),
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name='partners',
         blank=True,
         null=True,
     )
@@ -343,7 +343,6 @@ class Address(models.Model):
         'reference.Country',
         verbose_name=_('country'),
         on_delete=models.PROTECT,
-        related_name='+',
         blank=True,
         null=True,
     )
