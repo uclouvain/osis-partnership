@@ -80,7 +80,7 @@ class PartnerDetail(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return (
             Partner.objects
-                .select_related('partner_type')
+                .select_related('partner_type', 'author')
                 .prefetch_related(
                     'entities',
                     'tags',
