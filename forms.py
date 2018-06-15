@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
-from partnership.models import PartnerType, PartnerTag, Address
+from partnership.models import PartnerType, PartnerTag, Address, Partner
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -18,6 +18,12 @@ class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
             ('3', _('No')),
         )
         super(forms.NullBooleanSelect, self).__init__(attrs, choices)
+
+
+class PartnerForm(BootstrapForm, forms.ModelForm):
+    class Meta:
+        model = Partner
+        exclude = ['contact_address', 'tags', 'medias']
 
 
 class PartnerFilterForm(BootstrapForm):
