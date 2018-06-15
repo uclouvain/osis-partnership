@@ -98,6 +98,7 @@
         </ul>
       </div>
     </div>
+
     {% if partner.medias.all %}
     <div class="row">
       <div class="col-sm-12">
@@ -115,7 +116,7 @@
             {% if media.url %}
               {% trans "external_link" %}
             {% else %}
-              {{ media.document_file.get_content_type_display }}/{{ media.document_file.size|filesizeformat }}
+              {{ media.get_document_file_type }}/{{ media.get_document_file_size|filesizeformat }}
             {% endif %}
           </div>
         </div>
