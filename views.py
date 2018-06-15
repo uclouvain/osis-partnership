@@ -1,14 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, CreateView
 
-from partnership.forms import PartnerFilterForm
+from partnership.forms import PartnerFilterForm, PartnerForm
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 
 
-class PartnersList(LoginRequiredMixin, FormMixin, ListView):
+class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partners'
     form_class = PartnerFilterForm
     paginate_by = 20
@@ -79,7 +80,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
         return queryset
 
 
-class PartnerDetail(LoginRequiredMixin, DetailView):
+class PartnerDetailView(LoginRequiredMixin, DetailView):
     template_name = 'partnerships/partner_detail.html'
     context_object_name = 'partner'
 
@@ -95,6 +96,19 @@ class PartnerDetail(LoginRequiredMixin, DetailView):
                     Prefetch('medias', queryset=Media.objects.select_related('document_file')),
                 )
         )
+
+
+class PartnerCreateView(LoginRequiredMixin, CreateView):
+    form_class = PartnerForm
+    template_name = 'partnerships/partner_create.html'
+    prefix = 'partner'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        form.save_m2m()
+        return redirect(self.object)
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
