@@ -389,3 +389,9 @@ class Media(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_document_file_type(self):
+        return self.document_file.content_type.split('/')[-1]
+
+    def get_document_file_size(self):
+        return self.document_file.file.size
