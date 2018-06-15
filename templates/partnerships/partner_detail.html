@@ -160,6 +160,7 @@
       <div class="row">
         {% if entity.contact_in %}
         <div class="col-sm-12 col-md-6">
+          {% trans "contact_mobility_in" %}
           {% include "partnerships/includes/contact.html" with contact=entity.contact_in %}
         </div>
         {% endif %}
@@ -175,6 +176,7 @@
       <div class="row">
         {% if entity.contact_out %}
         <div class="col-sm-12 col-md-6">
+          {% trans "contact_mobility_out" %}
           {% include "partnerships/includes/contact.html" with contact=entity.contact_out %}
         </div>
         {% endif %}
