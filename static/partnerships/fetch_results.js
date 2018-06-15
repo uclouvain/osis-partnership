@@ -1,6 +1,6 @@
 (function ($) {
     var showLoader = function() {
-        $('#results .loader').show(500);
+        $('#results .loader').delay(200).show(500);
     };
 
     var hideLoader = function() {
