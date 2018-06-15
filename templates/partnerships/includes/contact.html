@@ -1,6 +1,5 @@
 {% load i18n %}
 <p>
-  {% trans "contact_mobility_in" %}<br>
   <strong>{{ contact }}</strong> {{ contact.function }}{% if contact.function and contact.society %}, {% endif %}{{ contact.society }}<br>
   {% if contact.phone %}<i class="fa fa-fw fa-phone" title="{% trans "phone" %}"></i> {{ contact.phone }}{% endif %}
   {% if contact.mobile_phone %}<i class="fa fa-fw fa-mobile" title="{% trans "mobile_phone" %}"></i> {{ contact.mobile_phone }}{% endif %}

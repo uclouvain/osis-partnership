@@ -42,5 +42,7 @@
 
     $('#filter-form #id_tags').select2({
         language: "fr",
+        width: "100%",
+        placeholder: "Tags"
     });
 })(jQuery);
