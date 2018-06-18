@@ -52,6 +52,9 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
 
 
 class PartnerEntityForm(BootstrapForm, forms.ModelForm):
+    """
+    This form include fields for related models Address and two Contact.
+    """
 
     # Address
 
@@ -168,6 +171,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         }
 
     def get_initial_for_field(self, field, field_name):
+        """ Set value of foreign keys fields """
         value = super(PartnerEntityForm, self).get_initial_for_field(field, field_name)
         if value is None:
             if field_name.startswith('address_'):
@@ -177,6 +181,58 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
             elif field_name.startswith('contact_out_'):
                 value = getattr(self.instance.contact_out, field_name[len('contact_out_'):], None)
         return value
+
+    def save_address(self, partner_entity):
+        address = partner_entity.address
+        if address is None:
+            address = Address()
+        address.name = self.clean_data['address_name']
+        address.address = self.clean_data['address_address']
+        address.postal_code = self.clean_data['address_postal_code']
+        address.city = self.clean_data['address_city']
+        address.country = self.clean_data['address_country']
+        return address
+
+    def save_contact_in(self, partner_entity):
+        contact_in = partner_entity.contact_in
+        if contact_in is None:
+            contact_in = Contact()
+        contact_in.title = self.cleaned_data['contact_in_title']
+        contact_in.last_name = self.cleaned_data['contact_in_last_name']
+        contact_in.first_name = self.cleaned_data['contact_in_first_name']
+        contact_in.function = self.cleaned_data['contact_in_function']
+        contact_in.phone = self.cleaned_data['contact_in_phone']
+        contact_in.mobile_phone = self.cleaned_data['contact_in_mobile_phone']
+        contact_in.fax = self.cleaned_data['contact_in_fax']
+        contact_in.email = self.cleaned_data['contact_in_email']
+        return contact_in
+
+    def save_contact_out(self, partner_entity):
+        contact_out = partner_entity.contact_out
+        if contact_out is None:
+            contact_out = Contact()
+        contact_out.title = self.cleaned_data['contact_out_title']
+        contact_out.last_name = self.cleaned_data['contact_out_last_name']
+        contact_out.first_name = self.cleaned_data['contact_out_first_name']
+        contact_out.function = self.cleaned_data['contact_out_function']
+        contact_out.phone = self.cleaned_data['contact_out_phone']
+        contact_out.mobile_phone = self.cleaned_data['contact_out_mobile_phone']
+        contact_out.fax = self.cleaned_data['contact_out_fax']
+        contact_out.email = self.cleaned_data['contact_out_email']
+        return contact_out
+
+    def save(self, commit=True):
+        partner_entity = super(PartnerEntityForm, self).save(commit=False)
+        address = self.save_address(partner_entity)
+        contact_in = self.save_contact_in(partner_entity)
+        contact_out = self.save_contact_out(partner_entity)
+        if commit:
+            address.save()
+            contact_in.save()
+            contact_out.save()
+            partner_entity.save()
+            self.save_m2m()
+        return partner_entity
 
 
 PartnerEntitiesFormset = inlineformset_factory(
