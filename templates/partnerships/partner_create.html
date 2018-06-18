@@ -7,13 +7,17 @@
   <li class="active">{% trans 'new_partner' %}</li>
 {% endblock %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
 {% block content %}
   <div class="page-header">
     <h1>{% trans 'add_partner' %}</h1>
   </div>
 
   <div class="panel panel-default">
-    <div class="panel-body">
+    <div class="panel-body partner-form">
       <form action="{% url "partnerships:partners:create" %}" method="post">
         {% csrf_token %}
         <div class="row">
@@ -21,7 +25,8 @@
             {{ form.name }}
           </div>
           <div class="col-sm-12 col-md-6">
-            {{ form.valid }}
+            <label for="id_partner-is_valid">{% trans "is_valid" %}</label>
+            {{ form.is_valid }}
           </div>
         </div>
 
@@ -47,6 +52,12 @@
         </div>
 
         <div class="row">
+          <div class="col-sm-12">
+            {{ form.partner_type }}
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col-sm-12 col-md-4">
             {{ form.partner_code }}
           </div>
@@ -61,15 +72,19 @@
         <div class="row">
           <div class="col-sm-12 col-md-3">
             {{ form.is_ies }}
+            <label for="id_partner-is_ies">{% trans "is_ies" %}</label>
           </div>
           <div class="col-sm-12 col-md-3">
             {{ form.is_nonprofit }}
+            <label for="id_partner-is_nonprofit">{% trans "is_nonprofit" %}</label>
           </div>
           <div class="col-sm-12 col-md-3">
             {{ form.is_public }}
+            <label for="id_partner-is_public">{% trans "is_public" %}</label>
           </div>
           <div class="col-sm-12 col-md-3">
             {{ form.use_egracons }}
+            <label for="id_partner-use_egracons">{% trans "use_egracons" %}</label>
           </div>
         </div>
 
