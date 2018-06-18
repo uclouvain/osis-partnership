@@ -21,9 +21,33 @@ class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
 
 
 class PartnerForm(BootstrapForm, forms.ModelForm):
+    partner_type = forms.ModelChoiceField(
+        label=_('partner_type'),
+        queryset=PartnerType.objects.all(),
+        empty_label=_('partner_type'),
+    )
+
     class Meta:
         model = Partner
         exclude = ['contact_address', 'tags', 'medias']
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': _('partner_name')}),
+            'is_valid': forms.CheckboxInput(),
+            'start_date': forms.TextInput(attrs={'placeholder': _('start_date')}),
+            'end_date': forms.TextInput(attrs={'placeholder': _('end_date')}),
+            'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
+            'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
+            'erasmus_code': forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
+            'is_ies': forms.CheckboxInput(),
+            'is_nonprofit': forms.CheckboxInput(),
+            'is_public': forms.CheckboxInput(),
+            'use_egracons': forms.CheckboxInput(),
+            'type': forms.TextInput(attrs={'placeholder': _('type')}),
+            'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
+            'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
+            'website': forms.URLInput(attrs={'placeholder': _('website')}),
+            'email': forms.EmailInput(attrs={'placeholder': _('email')}),
+        }
 
 
 class PartnerFilterForm(BootstrapForm):
