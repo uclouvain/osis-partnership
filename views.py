@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView
 
-from partnership.forms import PartnerFilterForm, PartnerForm
+from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 
 
@@ -103,12 +103,36 @@ class PartnerCreateView(LoginRequiredMixin, CreateView):
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
 
-    def form_valid(self, form):
+    def get_entities_formset(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'entities'
+        return PartnerEntitiesFormset(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        if 'entities_formset' not in kwargs:
+            kwargs['entities_formset'] = self.get_entities_formset()
+        return super(PartnerCreateView, self).get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        entities_formset = self.get_entities_formset()
+        if form.is_valid() and entities_formset.is_valid():
+            return self.form_valid(form, entities_formset)
+        else:
+            return self.form_invalid(form, entities_formset)
+
+    def form_valid(self, form, entities_formset):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
         form.save_m2m()
         return redirect(self.object)
+
+    def form_invalid(self, form, entities_formset):
+        return self.render_to_response(self.get_context_data(
+            form=form,
+            entities_formset=entities_formset,
+        ))
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
