@@ -8,7 +8,7 @@ from base.tests.factories.user import UserFactory
 from partnership.tests.factories import PartnerFactory
 
 
-class PartnersListView(TestCase):
+class PartnerDetailViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
