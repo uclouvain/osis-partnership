@@ -28,31 +28,38 @@
     <h1>{% trans 'add_partner' %}</h1>
   </div>
 
+  {{ form.non_field_errors }}
+
   <div class="panel panel-default">
     <div class="panel-body partner-form">
       <form action="{% url "partnerships:partners:create" %}" method="post">
         {% csrf_token %}
         <div class="row">
           <div class="col-sm-12 col-md-6">
+            {{ form.name.errors }}
             {{ form.name }}
           </div>
           <div class="col-sm-12 col-md-6">
-            <label for="id_partner-is_valid">{% trans "is_valid" %}</label>
+            {{ form.is_valid.errors }}
+            {{ form.is_valid.label_tag }}
             {{ form.is_valid }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12 col-md-6">
+            {{ form.start_date.errors }}
             {{ form.start_date }}
           </div>
           <div class="col-sm-12 col-md-6">
+            {{ form.end_date.errors }}
             {{ form.end_date }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12">
+            {{ form.now_know_as.errors }}
             {{ form.now_know_as }}
           </div>
         </div>
@@ -65,49 +72,59 @@
 
         <div class="row">
           <div class="col-sm-12">
+            {{ form.partner_type.errors }}
             {{ form.partner_type }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12 col-md-4">
+            {{ form.partner_code.errors }}
             {{ form.partner_code }}
           </div>
           <div class="col-sm-12 col-md-4">
+            {{ form.pic_code.errors }}
             {{ form.pic_code }}
           </div>
           <div class="col-sm-12 col-md-4">
+            {{ form.erasmus_code.errors }}
             {{ form.erasmus_code }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12 col-md-3">
+            {{ form.is_ies.errors }}
             {{ form.is_ies }}
-            <label for="id_partner-is_ies">{% trans "is_ies" %}</label>
+            {{ form.is_ies.label_tag }}
           </div>
           <div class="col-sm-12 col-md-3">
+            {{ form.is_nonprofit.errors }}
             {{ form.is_nonprofit }}
-            <label for="id_partner-is_nonprofit">{% trans "is_nonprofit" %}</label>
+            {{ form.is_nonprofit.label_tag }}
           </div>
           <div class="col-sm-12 col-md-3">
+            {{ form.is_public.errors }}
             {{ form.is_public }}
-            <label for="id_partner-is_public">{% trans "is_public" %}</label>
+            {{ form.is_public.label_tag }}
           </div>
           <div class="col-sm-12 col-md-3">
+            {{ form.use_egracons.errors }}
             {{ form.use_egracons }}
-            <label for="id_partner-use_egracons">{% trans "use_egracons" %}</label>
+            {{ form.use_egracons.label_tag }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12">
+            {{ form.type.errors }}
             {{ form.type }}
           </div>
         </div>
 
         <div class="row">
           <div class="col-sm-12">
+            {{ form.comment.errors }}
             {{ form.comment }}
           </div>
         </div>
@@ -120,12 +137,15 @@
 
         <div class="row">
           <div class="col-sm-12 col-md-3">
+            {{ form.phone.errors }}
             {{ form.phone }}
           </div>
           <div class="col-sm-12 col-md-4">
+            {{ form.website.errors }}
             {{ form.website }}
           </div>
           <div class="col-sm-12 col-md-5">
+            {{ form.email.errors }}
             {{ form.email }}
           </div>
         </div>
@@ -138,6 +158,7 @@
 
         <div class="row">
           <div class="col-sm-12">
+            {{ form.tags.errors }}
             {{ form.tags }}
           </div>
         </div>
@@ -161,6 +182,9 @@
             <h2>{% trans "associated_entities" %}</h2>
           </div>
         </div>
+
+        {{ entities_formset.non_field_errors }}
+        {{ entities_formset.management_form }}
 
         {% for entity_form in entities_formset %}
           {% include "partnerships/includes/partner_entity_form.html" with form=entity_form %}
