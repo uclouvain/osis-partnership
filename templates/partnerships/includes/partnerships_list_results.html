@@ -2,13 +2,31 @@
 <table class="table table-stripped table-hover">
   <thead>
     <tr>
-      <td>{% trans "value" %}</td>
+      <td>{% trans "partner" %}</td>
+      <td>{% trans "UCL" %}</td>
+      <td>{% trans "partnership type" %}</td>
+      <td>{% trans "Start date" %}</td>
+      <td>{% trans "End date" %}</td>
+      <td>{% trans "Validated" %}</td>
+      <td>{% trans "Signed" %}</td>
+      <td></td>
     </tr>
   </thead>
   <tbody>
     {% for partnership in partnerships %}
       <tr>
-        <td>{{ partnership.value }}</td>
+        <td>{{ partnership.partner }}</td>
+        <td>UCL</td>
+        <td>{{ partnership.partner_type }}</td>
+        <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
+        <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>
+        <td>{{ partnership.is_valid }}</td>
+        <td>{{ partnership.is_signed }}</td>
+        <td>
+          <a href="{% url 'partnerships:partnership_detail' pk=partnership.id %}">
+            {% trans "detail" %}
+          </a>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
