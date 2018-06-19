@@ -6,7 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
 
-from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm, PartnerEntitiesFormset, PartnershipFilterForm
+from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm, PartnershipFilterForm, PartnershipFilterForm, PartnershipModelForm
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 from partnership.utils import user_is_adri
 
@@ -328,13 +328,39 @@ class PartnershipsList(LoginRequiredMixin, FormMixin, ListView):
     def get_ordering(self):
         # TODO
         return 'value'
-
+    
     def get_queryset(self):
         queryset = Partnership.objects.all()
-        form = get_form()
+        form = self.get_form()
         if form.is_valid():
             data = form.cleaned_data
             if data['value']:
                 queryset = queryset.filter('value')
         return queryset
     
+class PartnershipDetail(LoginRequiredMixin, DetailView):
+    model = Partnership
+    context_object_name = 'partnership'
+    template_name = 'partnerships/partnership_detail.html'
+
+class PartnershipCreate(LoginRequiredMixin, CreateView):
+    form_class = PartnershipModelForm
+    template_name = "partnerships/partnership_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+class PartnershipUpdate(LoginRequiredMixin, UpdateView):
+    model = Partnership
+    form_class = PartnershipModelForm
+    template_name = "partnerships/partnership_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+class PartnershipDelete(LoginRequiredMixin, DeleteView):
+    model = Partnership

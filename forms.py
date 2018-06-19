@@ -2,9 +2,9 @@ from django import forms
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
-from base.forms.bootstrap import BootstrapForm
+from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType
+from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, Partnership
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -386,3 +386,14 @@ class AddressForm(BootstrapForm, forms.ModelForm):
 
 class PartnershipFilterForm(BootstrapForm):
     value = forms.NullBooleanField(label=_('value'), required=False)
+
+
+class PartnershipModelForm(BootstrapModelForm):
+
+    class Meta:
+        model = Partnership
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)

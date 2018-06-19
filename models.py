@@ -268,6 +268,10 @@ class Partnership(models.Model):
         blank=True,
         null=True,
     )
+
+    # partner_entity = ?
+    # university => entity
+    # university_labo => entity
     # university_offers = ?
     # supervisor = ?
 
@@ -284,14 +288,14 @@ class Partnership(models.Model):
         related_name='partnerships',
     )
 
-    # Accord signé ?
-
     contacts = models.ManyToManyField(
         'partnership.Contact',
         verbose_name=_('contacts'),
         related_name='+',
         blank=True,
     )
+
+    is_signed = models.BooleanField(_('is_signed'), default=False)
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
