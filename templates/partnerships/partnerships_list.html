@@ -30,16 +30,18 @@
         </div>
         <div class="collapse" id="partnership-filters">
           <div class="row">
-            {% comment %}
             <form action="{% url "partnerships:partnerships_list" %}" method="get">
+              {% csrf_token %}
+              {{ form.as_p }}              
+              {% comment %}
               <div class="form-group">
                 <div class="col-sm-12 col-md-8">{{ form.value }}</div>
               </div>
+              {% endcomment %}
               <div class="col-md-12">
-                <button type="submit" class="btn btn-primary pull-right">{% trans "filter %}</button>
+                <button type="submit" class="btn btn-primary pull-right">{% trans "filter" %}</button>
               </div>
             </form>
-            {% endcomment %}
           </div>
         </div>
       </div>
