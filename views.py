@@ -1,4 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import date
+
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
@@ -6,8 +8,31 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView
 
+from base.models.entity import Entity
 from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
+
+
+class IsAdriOrGf(UserPassesTestMixin):
+
+    def test_func(self):
+        is_adri = (
+            self.request.user
+                .person
+                .personentity_set
+                .filter(Q(entity__entityversion_set__end_date__gte=date.today())
+                        | Q(entity__entityversion_set__end_date__isnull=True),
+                        entity__entityversion_set__start_date__lte=date.today())
+                .filter(entity__entityversion_set__acronym='ADRI')
+                .exists()
+        )
+        is_gf = (
+            self.request.user
+                .person
+                .entitymanager_set.all()
+                .exists()
+        )
+        return is_adri or is_gf
 
 
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
