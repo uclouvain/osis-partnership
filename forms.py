@@ -386,6 +386,7 @@ class AddressForm(BootstrapForm, forms.ModelForm):
 
 class PartnershipFilterForm(BootstrapForm):
     value = forms.NullBooleanField(label=_('value'), required=False)
+    partner = forms.ModelChoiceField(queryset=Partner.objects.all())
 
 
 class PartnershipModelForm(BootstrapModelForm):
