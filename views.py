@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
 from django.shortcuts import redirect
@@ -23,12 +24,12 @@ class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
             return 'partnerships/partners_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PartnersList, self).get_context_data(**kwargs)
+        context = super(PartnersListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(PartnersList, self).get_form_kwargs()
+        kwargs = super(PartnersListView, self).get_form_kwargs()
         if self.request.GET:
             kwargs['data'] = self.request.GET
         return kwargs
@@ -114,6 +115,7 @@ class PartnerCreateView(LoginRequiredMixin, CreateView):
         return super(PartnerCreateView, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
+        self.object = None
         form = self.get_form()
         entities_formset = self.get_entities_formset()
         if form.is_valid() and entities_formset.is_valid():
@@ -121,12 +123,28 @@ class PartnerCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form, entities_formset)
 
+    @transaction.atomic
     def form_valid(self, form, entities_formset):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
+        partner = form.save(commit=False)
+        partner.author = self.request.user
+        partner.save()
+        entities = entities_formset.save(commit=False)
+        # Save one by one to save related models
+        for entity in entities:
+            # We need to set the partner
+            #  because the one on the entity is not saved yet
+            entity.partner = partner
+            entity.author = self.request.user
+            entity.address.save()
+            entity.address_id = entity.address.id
+            entity.contact_in.save()
+            entity.contact_in_id = entity.contact_in.id
+            entity.contact_out.save()
+            entity.contact_out_id = entity.contact_out.id
+            entity.save()
+        entities_formset.save_m2m()
         form.save_m2m()
-        return redirect(self.object)
+        return redirect(partner)
 
     def form_invalid(self, form, entities_formset):
         return self.render_to_response(self.get_context_data(

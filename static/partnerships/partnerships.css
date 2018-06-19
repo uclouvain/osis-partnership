@@ -44,3 +44,7 @@ ul.tags-list li {
 .partner-entity h3 {
   margin-top: 0;
 }
+
+.errorlist {
+  color: #a94442;
+}

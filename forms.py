@@ -3,7 +3,7 @@ from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact
+from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -82,6 +82,12 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     # Contact in
 
+    contact_in_type = forms.ModelChoiceField(
+        label=_('type'),
+        queryset=ContactType.objects.all(),
+        empty_label=_('contact_type'),
+    )
+
     contact_in_title = forms.ChoiceField(
         label=_('title'),
         choices=Contact.TITLE_CHOICES,
@@ -122,6 +128,12 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
     )
 
     # Contact out
+
+    contact_out_type = forms.ModelChoiceField(
+        label=_('type'),
+        queryset=ContactType.objects.all(),
+        empty_label=_('contact_type'),
+    )
 
     contact_out_title = forms.ChoiceField(
         label=_('title'),
@@ -182,21 +194,25 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
                 value = getattr(self.instance.contact_out, field_name[len('contact_out_'):], None)
         return value
 
-    def save_address(self, partner_entity):
+    def save_address(self, partner_entity, commit=True):
+        if partner_entity.address is None:
+            partner_entity.address = Address()
         address = partner_entity.address
-        if address is None:
-            address = Address()
-        address.name = self.clean_data['address_name']
-        address.address = self.clean_data['address_address']
-        address.postal_code = self.clean_data['address_postal_code']
-        address.city = self.clean_data['address_city']
-        address.country = self.clean_data['address_country']
+        address.name = self.cleaned_data['address_name']
+        address.address = self.cleaned_data['address_address']
+        address.postal_code = self.cleaned_data['address_postal_code']
+        address.city = self.cleaned_data['address_city']
+        address.country = self.cleaned_data['address_country']
+        if commit:
+            address.save()
+            partner_entity.address_id = address.id
         return address
 
-    def save_contact_in(self, partner_entity):
+    def save_contact_in(self, partner_entity, commit=True):
+        if partner_entity.contact_in is None:
+            partner_entity.contact_in = Contact()
         contact_in = partner_entity.contact_in
-        if contact_in is None:
-            contact_in = Contact()
+        contact_in.type = self.cleaned_data['contact_in_type']
         contact_in.title = self.cleaned_data['contact_in_title']
         contact_in.last_name = self.cleaned_data['contact_in_last_name']
         contact_in.first_name = self.cleaned_data['contact_in_first_name']
@@ -205,12 +221,16 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         contact_in.mobile_phone = self.cleaned_data['contact_in_mobile_phone']
         contact_in.fax = self.cleaned_data['contact_in_fax']
         contact_in.email = self.cleaned_data['contact_in_email']
+        if commit:
+            contact_in.save()
+            partner_entity.contact_in_id = contact_in.id
         return contact_in
 
-    def save_contact_out(self, partner_entity):
+    def save_contact_out(self, partner_entity, commit=True):
+        if partner_entity.contact_out is None:
+            partner_entity.contact_out = Contact()
         contact_out = partner_entity.contact_out
-        if contact_out is None:
-            contact_out = Contact()
+        contact_out.type = self.cleaned_data['contact_out_type']
         contact_out.title = self.cleaned_data['contact_out_title']
         contact_out.last_name = self.cleaned_data['contact_out_last_name']
         contact_out.first_name = self.cleaned_data['contact_out_first_name']
@@ -219,17 +239,17 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         contact_out.mobile_phone = self.cleaned_data['contact_out_mobile_phone']
         contact_out.fax = self.cleaned_data['contact_out_fax']
         contact_out.email = self.cleaned_data['contact_out_email']
+        if commit:
+            contact_out.save()
+            partner_entity.contact_out_id = contact_out.id
         return contact_out
 
     def save(self, commit=True):
         partner_entity = super(PartnerEntityForm, self).save(commit=False)
-        address = self.save_address(partner_entity)
-        contact_in = self.save_contact_in(partner_entity)
-        contact_out = self.save_contact_out(partner_entity)
+        self.save_address(partner_entity, commit=commit)
+        self.save_contact_in(partner_entity, commit=commit)
+        self.save_contact_out(partner_entity, commit=commit)
         if commit:
-            address.save()
-            contact_in.save()
-            contact_out.save()
             partner_entity.save()
             self.save_m2m()
         return partner_entity
