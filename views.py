@@ -8,31 +8,34 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView
 
-from base.models.entity import Entity
+from base.models.person import Person
 from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 
 
-class IsAdriOrGf(UserPassesTestMixin):
+class IsAdriOrGfMixin(UserPassesTestMixin):
 
     def test_func(self):
-        is_adri = (
-            self.request.user
-                .person
-                .personentity_set
-                .filter(Q(entity__entityversion_set__end_date__gte=date.today())
-                        | Q(entity__entityversion_set__end_date__isnull=True),
-                        entity__entityversion_set__start_date__lte=date.today())
-                .filter(entity__entityversion_set__acronym='ADRI')
-                .exists()
-        )
-        is_gf = (
-            self.request.user
-                .person
-                .entitymanager_set.all()
-                .exists()
-        )
-        return is_adri or is_gf
+        try:
+            is_adri = (
+                self.request.user
+                    .person
+                    .personentity_set
+                    .filter(Q(entity__entityversion__end_date__gte=date.today())
+                            | Q(entity__entityversion__end_date__isnull=True),
+                            entity__entityversion__start_date__lte=date.today())
+                    .filter(entity__entityversion__acronym='ADRI')
+                    .exists()
+            )
+            is_gf = (
+                self.request.user
+                    .person
+                    .entitymanager_set.all()
+                    .exists()
+            )
+            return is_adri or is_gf
+        except Person.DoesNotExist:
+            return False
 
 
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
@@ -124,7 +127,7 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
         )
 
 
-class PartnerCreateView(LoginRequiredMixin, CreateView):
+class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, CreateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
