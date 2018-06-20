@@ -29,11 +29,16 @@
     <div class="well">
       <div class="row">
         <div class="col-sm-12">
-          <button class="btn btn-default pull-right" type="button"
-                  data-toggle="collapse" data-target="#partner-filters"
-                  aria-expanded="false" aria-controls="partner-filters">
-            <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partners" %}</span>
-          </button>
+          <div class="pull-right">
+            {% if can_add_partner %}
+            <a href="{% url "partnerships:partners:create" %}" class="btn btn-default" title="{% trans "add_partner" %}"><i class="fa fa-fw fa-plus"></i></a>
+            {% endif %}
+            <button class="btn btn-default" type="button"
+                    data-toggle="collapse" data-target="#partner-filters"
+                    aria-expanded="false" aria-controls="partner-filters">
+              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partners" %}</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="partner-form collapse{% if form.is_bound %} in{% endif %}" id="partner-filters">
