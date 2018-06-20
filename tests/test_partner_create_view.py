@@ -1,9 +1,9 @@
-from datetime import timedelta
-
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
 
+from base.tests.factories.entity_manager import EntityManagerFactory
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
 from partnership.tests.factories import PartnerFactory, PartnerTagFactory, PartnerTypeFactory
@@ -17,28 +17,31 @@ class PartnerCreateViewTest(TestCase):
         cls.partner = PartnerFactory()
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
+        entity_version = EntityVersionFactory(acronym='ADRI')
+        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
+        EntityManagerFactory(person__user=cls.user_gf)
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.url = reverse('partnerships:partners:create')
 
-    def test_get_list_anonymous(self):
+    def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partner_create.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
-    def test_get_list_authenticated(self):
+    def test_get_view_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partner_create.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, 'registration/login.html')
 
-    def test_get_list_as_adri(self):
+    def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partner_create.html')
 
-    def test_get_list_as_gf(self):
+    def test_get_view_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partner_create.html')
