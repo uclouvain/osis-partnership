@@ -326,8 +326,9 @@ class ContactType(models.Model):
 
 
 class Contact(models.Model):
+    TITLE_MISTER = 'mr'
     TITLE_CHOICES = (
-        ('mr', _('mister')),
+        (TITLE_MISTER, _('mister')),
         ('mme', _('madame')),
     )
 

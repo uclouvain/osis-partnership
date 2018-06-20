@@ -32,7 +32,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body partner-form">
-      <form action="{% url "partnerships:partners:create" %}" method="post">
+      <form action="{% url "partnerships:partners:update" partner.id %}" method="post">
         {% csrf_token %}
 
         {% include "partnerships/includes/partner_form.html" %}
@@ -45,7 +45,7 @@
 
         <div class="row">
           <div class="col-sm-12">
-            <p>{% trans "add_media_after_creation" %}</p>
+            <p>TODO</p>
           </div>
         </div>
 
@@ -67,7 +67,7 @@
 
         <div class="row">
           <div class="col-sm-12">
-            <button type="submit" class="btn btn-primary pull-right">{% trans "add_partner" %}</button>
+            <button type="submit" class="btn btn-primary pull-right">{% trans "update_partner" %}</button>
           </div>
         </div>
       </form>

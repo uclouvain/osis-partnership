@@ -1,6 +1,10 @@
 {% load i18n %}
 {{ form.non_field_errors }}
 
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+{% endfor %}
+
 <div class="row">
   <div class="col-sm-12">
     {{ form.name.errors }}
@@ -17,7 +21,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h3>{% trans "address" %}</h3>
+    <h4>{% trans "address" %}</h4>
   </div>
 </div>
 
@@ -53,7 +57,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h3>{% trans "contact_in" %}</h3>
+    <h4>{% trans "contact_in" %}</h4>
   </div>
 </div>
 
@@ -108,7 +112,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h3>{% trans "contact_out" %}</h3>
+    <h4>{% trans "contact_out" %}</h4>
   </div>
 </div>
 
@@ -162,7 +166,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h3>{% trans "parent_entity" %}</h3>
+    <h4>{% trans "parent_entity" %}</h4>
   </div>
 </div>
 
