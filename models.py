@@ -2,8 +2,11 @@ from datetime import date
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+
+from base.models.person import Person
 
 
 class PartnerType(models.Model):
@@ -166,6 +169,29 @@ class Partner(models.Model):
 
     def get_absolute_url(self):
         return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
+
+    @staticmethod
+    def user_can_add(user):
+        try:
+            is_adri = (
+                user
+                    .person
+                    .personentity_set
+                    .filter(Q(entity__entityversion__end_date__gte=date.today())
+                            | Q(entity__entityversion__end_date__isnull=True),
+                            entity__entityversion__start_date__lte=date.today())
+                    .filter(entity__entityversion__acronym='ADRI')
+                    .exists()
+            )
+            is_gf = (
+                user
+                    .person
+                    .entitymanager_set.all()
+                    .exists()
+            )
+            return is_adri or is_gf
+        except Person.DoesNotExist:
+            return False
 
     @property
     def is_actif(self):

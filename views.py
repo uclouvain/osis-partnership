@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Q, Prefetch
@@ -8,7 +6,6 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView
 
-from base.models.person import Person
 from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 
@@ -16,26 +13,7 @@ from partnership.models import Partner, Partnership, Media, PartnerEntity
 class IsAdriOrGfMixin(UserPassesTestMixin):
 
     def test_func(self):
-        try:
-            is_adri = (
-                self.request.user
-                    .person
-                    .personentity_set
-                    .filter(Q(entity__entityversion__end_date__gte=date.today())
-                            | Q(entity__entityversion__end_date__isnull=True),
-                            entity__entityversion__start_date__lte=date.today())
-                    .filter(entity__entityversion__acronym='ADRI')
-                    .exists()
-            )
-            is_gf = (
-                self.request.user
-                    .person
-                    .entitymanager_set.all()
-                    .exists()
-            )
-            return is_adri or is_gf
-        except Person.DoesNotExist:
-            return False
+        return Partner.user_can_add(self.request.user)
 
 
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
@@ -54,6 +32,7 @@ class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PartnersListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_add_partner'] = Partner.user_can_add(self.request.user)
         return context
 
     def get_form_kwargs(self):
