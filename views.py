@@ -4,7 +4,7 @@ from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormMixin, CreateView
+from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
 from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
@@ -106,10 +106,7 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
         )
 
 
-class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, CreateView):
-    form_class = PartnerForm
-    template_name = 'partnerships/partner_create.html'
-    prefix = 'partner'
+class PartnerFormMixin(object):
 
     def get_entities_formset(self):
         kwargs = self.get_form_kwargs()
@@ -119,10 +116,9 @@ class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, CreateView):
     def get_context_data(self, **kwargs):
         if 'entities_formset' not in kwargs:
             kwargs['entities_formset'] = self.get_entities_formset()
-        return super(PartnerCreateView, self).get_context_data(**kwargs)
+        return super(PartnerFormMixin, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.object = None
         form = self.get_form()
         entities_formset = self.get_entities_formset()
         if form.is_valid() and entities_formset.is_valid():
@@ -158,6 +154,29 @@ class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, CreateView):
             form=form,
             entities_formset=entities_formset,
         ))
+
+
+class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, PartnerFormMixin, CreateView):
+    form_class = PartnerForm
+    template_name = 'partnerships/partner_create.html'
+    prefix = 'partner'
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super(PartnerCreateView, self).post(request, *args, **kwargs)
+
+
+class PartnerUpdateView(LoginRequiredMixin, IsAdriOrGfMixin, PartnerFormMixin, UpdateView):
+    form_class = PartnerForm
+    template_name = 'partnerships/partner_update.html'
+    prefix = 'partner'
+    queryset = Partner.objects.prefetch_related(
+        Prefetch('entities', queryset=PartnerEntity.objects.select_related('address', 'contact_in', 'contact_out')),
+    )
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PartnerUpdateView, self).post(request, *args, **kwargs)
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
