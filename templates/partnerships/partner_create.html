@@ -61,8 +61,19 @@
         {{ entities_formset.management_form }}
 
         {% for entity_form in entities_formset %}
-          <h3>{% trans "entity" %}</h3>
-          {% include "partnerships/includes/partner_entity_form.html" with form=entity_form %}
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4><a role="button" data-toggle="collapse" href="#partner-entity-{{ forloop.counter }}" aria-expanded="true" aria-controls="partner-entity-{{ forloop.counter }}">
+                {% trans "entity" %}
+              </a></h4>
+            </div>
+
+            <div id="partner-entity-{{ forloop.counter }}" class="panel-collapse collapse in">
+              <div class="panel-body">
+                {% include "partnerships/includes/partner_entity_form.html" with form=entity_form %}
+              </div>
+            </div>
+          </div>
         {% endfor %}
 
         <div class="row">
