@@ -351,3 +351,11 @@ class PartnerFilterForm(BootstrapForm):
                 .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+
+
+class MediaForm(BootstrapForm, forms.ModelForm):
+    # FIXME Move with Media model to a more generic app
+
+    class Meta:
+        model = Media
+        exclude = ('document_file',)

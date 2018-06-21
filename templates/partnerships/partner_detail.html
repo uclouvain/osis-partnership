@@ -97,7 +97,6 @@
       </div>
     </div>
 
-    {% if partner.medias.all %}
     <div class="row">
       <div class="col-sm-12">
         <h2>{% trans "medias" %}</h2>
@@ -131,7 +130,15 @@
           </div>
         </div>
       </div>
+      {% empty %}
+      <div class="col-sm-12">{% trans "no_media_yet" %}</div>
       {% endfor %}
+    </div>
+    {% if can_update_partner %}
+    <div class="row">
+      <div class="col-sm-12">
+        <a href="{% url "partnerships:partners:medias:create" partner.id %}" class="btn btn-default pull-right">{% trans "add_media" %}</a>
+      </div>
     </div>
     {% endif %}
 
