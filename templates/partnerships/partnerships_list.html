@@ -1,9 +1,19 @@
 {% extends "layout.html" %}
 
-{% load i18n %}
+{% load i18n static %}
 
 {% block breadcrumb %}
   <li class="active">{% trans 'partnerships' %}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "css/select2.min.css" %}">
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "js/select2.min.js" %}"></script>
+  <script src="{% static "partnerships/list.js" %}"></script>
 {% endblock %}
 
 {% block content %}

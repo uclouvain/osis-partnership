@@ -2,13 +2,13 @@
 <table class="table table-stripped table-hover">
   <thead>
     <tr>
-      <td>{% trans "partner" %}</td>
-      <td>{% trans "UCL" %}</td>
-      <td>{% trans "partnership type" %}</td>
-      <td>{% trans "Start date" %}</td>
-      <td>{% trans "End date" %}</td>
-      <td>{% trans "Validated" %}</td>
-      <td>{% trans "Signed" %}</td>
+      <td>{% trans "partner" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner" %}</td>
+      <td>{% trans "UCL" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="UCL" %}</td>
+      <td>{% trans "partnership type" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnership_type" %}</td>
+      <td>{% trans "Start date" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="start_date" %}</td>
+      <td>{% trans "End date" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="end_date" %}</td>
+      <td>{% trans "Validated" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="validated" %}</td>
+      <td>{% trans "Signed" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="signed" %}</td>
       <td></td>
     </tr>
   </thead>
@@ -31,3 +31,5 @@
     {% endfor %}
   </tbody>
 </table>
+
+{% include "partnerships/includes/pagination.html" %}
