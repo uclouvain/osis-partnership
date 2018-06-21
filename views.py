@@ -311,7 +311,7 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         return self.template_name
 
 
-class PartnershipsList(LoginRequiredMixin, FormMixin, ListView):
+class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
@@ -320,8 +320,14 @@ class PartnershipsList(LoginRequiredMixin, FormMixin, ListView):
     paginate_orphans = 5
     paginate_neighbours = 4
 
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partnerships_list_results.html'
+        else:
+            return 'partnerships/partnerships_list.html'
+    
     def get_context_data(self, **kwargs):
-        context = super(PartnershipsList, self).get_context_data(**kwargs)
+        context = super(PartnershipsListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
         return context
 
@@ -338,12 +344,12 @@ class PartnershipsList(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter('value')
         return queryset
     
-class PartnershipDetail(LoginRequiredMixin, DetailView):
+class PartnershipDetailView(LoginRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
     template_name = 'partnerships/partnership_detail.html'
 
-class PartnershipCreate(LoginRequiredMixin, CreateView):
+class PartnershipCreateView(LoginRequiredMixin, CreateView):
     form_class = PartnershipModelForm
     template_name = "partnerships/partnership_form.html"
 
@@ -352,7 +358,7 @@ class PartnershipCreate(LoginRequiredMixin, CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
-class PartnershipUpdate(LoginRequiredMixin, UpdateView):
+class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
     model = Partnership
     form_class = PartnershipModelForm
     template_name = "partnerships/partnership_form.html"
@@ -362,5 +368,5 @@ class PartnershipUpdate(LoginRequiredMixin, UpdateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
-class PartnershipDelete(LoginRequiredMixin, DeleteView):
+class PartnershipDeleteView(LoginRequiredMixin, DeleteView):
     model = Partnership
