@@ -8,12 +8,7 @@ from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
 from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
 from partnership.models import Partner, Partnership, Media, PartnerEntity
-
-
-class IsAdriOrGfMixin(UserPassesTestMixin):
-
-    def test_func(self):
-        return Partner.user_can_add(self.request.user)
+from partnership.utils import user_is_adri
 
 
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
@@ -105,8 +100,18 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
                 )
         )
 
+    def get_context_data(self, **kwargs):
+        context = super(PartnerDetailView, self).get_context_data(**kwargs)
+        context['can_update_partner'] = self.object.user_can_change(self.request.user)
+        return context
+
 
 class PartnerFormMixin(object):
+
+    def get_form_kwargs(self):
+        kwargs = super(PartnerFormMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_entities_formset(self):
         kwargs = self.get_form_kwargs()
@@ -116,6 +121,7 @@ class PartnerFormMixin(object):
     def get_context_data(self, **kwargs):
         if 'entities_formset' not in kwargs:
             kwargs['entities_formset'] = self.get_entities_formset()
+        kwargs['user_is_adri'] = user_is_adri(self.request.user)
         return super(PartnerFormMixin, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -156,17 +162,20 @@ class PartnerFormMixin(object):
         ))
 
 
-class PartnerCreateView(LoginRequiredMixin, IsAdriOrGfMixin, PartnerFormMixin, CreateView):
+class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, CreateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
+
+    def test_func(self):
+        return Partner.user_can_add(self.request.user)
 
     def post(self, request, *args, **kwargs):
         self.object = None
         return super(PartnerCreateView, self).post(request, *args, **kwargs)
 
 
-class PartnerUpdateView(LoginRequiredMixin, IsAdriOrGfMixin, PartnerFormMixin, UpdateView):
+class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, UpdateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_update.html'
     prefix = 'partner'
@@ -174,9 +183,9 @@ class PartnerUpdateView(LoginRequiredMixin, IsAdriOrGfMixin, PartnerFormMixin, U
         Prefetch('entities', queryset=PartnerEntity.objects.select_related('address', 'contact_in', 'contact_out')),
     )
 
-    def post(self, request, *args, **kwargs):
+    def test_func(self):
         self.object = self.get_object()
-        return super(PartnerUpdateView, self).post(request, *args, **kwargs)
+        return self.object.user_can_change(self.request.user)
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):

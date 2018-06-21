@@ -1,9 +1,10 @@
 from django import forms
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType
+from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -49,6 +50,12 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
             'website': forms.URLInput(attrs={'placeholder': _('website')}),
             'email': forms.EmailInput(attrs={'placeholder': _('email')}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(PartnerForm, self).__init__(*args, **kwargs)
+        if not user_is_adri(user):
+            del self.fields['is_valid']
 
 
 class PartnerEntityForm(BootstrapForm, forms.ModelForm):
@@ -257,9 +264,18 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         return partner_entity
 
 
+class PartnerEntitiesBaseInlineFormSet(BaseInlineFormSet):
+
+    def __init__(self, *args, **kwargs):
+        # We need that because we use the same get_form_kwargs in the view for both forms
+        user = kwargs.pop('user')
+        super(PartnerEntitiesBaseInlineFormSet, self).__init__(*args, **kwargs)
+
+
 PartnerEntitiesFormset = inlineformset_factory(
     Partner,
     PartnerEntity,
+    formset=PartnerEntitiesBaseInlineFormSet,
     form=PartnerEntityForm,
     extra=1,
 )

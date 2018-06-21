@@ -191,11 +191,13 @@
     </div>
     {% endfor %}
 
+    {% if can_update_partner %}
     <div class="row">
       <div class="col-sm-12">
         <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right">{% trans "update_partner" %}</a>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
