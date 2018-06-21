@@ -187,13 +187,14 @@ class Partner(models.Model):
             return False
 
     def user_can_change(self, user):
+
         try:
             is_adri = user_is_adri(user)
             is_gf_of_partner = (
                 user
                     .person
                     .entitymanager_set.filter(
-                        entity__in=Entity.objects.filter(entitymanager__person=self.author.person)
+                        entity__in=Entity.objects.filter(entitymanager__person__user=self.author)
                     )
                     .exists()
             )
