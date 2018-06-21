@@ -2,11 +2,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
-from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset
+from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset, MediaForm
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 from partnership.utils import user_is_adri
 
@@ -192,3 +192,20 @@ class PartnershipsList(LoginRequiredMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
+
+
+class PartnerMediaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    # FIXME Make a more generic view and move it with Media in a more generic app
+    model = Media
+    form = MediaForm
+    template_name = 'partnerships/media_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
+        return super(PartnerMediaCreateView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.partner.medias.all()
+
+    def test_func(self):
+        return self.partner.user_can_change(self.request.user)
