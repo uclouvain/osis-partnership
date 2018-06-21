@@ -6,7 +6,9 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from base.models.entity import Entity
 from base.models.person import Person
+from partnership.utils import user_is_adri
 
 
 class PartnerType(models.Model):
@@ -173,16 +175,7 @@ class Partner(models.Model):
     @staticmethod
     def user_can_add(user):
         try:
-            is_adri = (
-                user
-                    .person
-                    .personentity_set
-                    .filter(Q(entity__entityversion__end_date__gte=date.today())
-                            | Q(entity__entityversion__end_date__isnull=True),
-                            entity__entityversion__start_date__lte=date.today())
-                    .filter(entity__entityversion__acronym='ADRI')
-                    .exists()
-            )
+            is_adri = user_is_adri(user)
             is_gf = (
                 user
                     .person
@@ -190,6 +183,21 @@ class Partner(models.Model):
                     .exists()
             )
             return is_adri or is_gf
+        except Person.DoesNotExist:
+            return False
+
+    def user_can_change(self, user):
+        try:
+            is_adri = user_is_adri(user)
+            is_gf_of_partner = (
+                user
+                    .person
+                    .entitymanager_set.filter(
+                        entity__in=Entity.objects.filter(entitymanager__person=self.author.person)
+                    )
+                    .exists()
+            )
+            return user == self.author or is_adri or is_gf_of_partner
         except Person.DoesNotExist:
             return False
 
@@ -313,7 +321,7 @@ class Partnership(models.Model):
 
 
 
-##### Generic Model which should be moved to a more generic app
+##### FIXME Generic Model which should be moved to a more generic app
 
 class ContactType(models.Model):
     value = models.CharField(max_length=255, unique=True)
