@@ -1,0 +1,131 @@
+{% load i18n %}
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    {{ form.name.errors }}
+    {{ form.name }}
+  </div>
+  {% if user_is_adri %}
+  <div class="col-sm-12 col-md-6">
+    {{ form.is_valid.errors }}
+    {{ form.is_valid.label_tag }}
+    {{ form.is_valid }}
+  </div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    {{ form.start_date.errors }}
+    {{ form.start_date }}
+  </div>
+  <div class="col-sm-12 col-md-6">
+    {{ form.end_date.errors }}
+    {{ form.end_date }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.now_know_as.errors }}
+    {{ form.now_know_as }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "informations" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.partner_type.errors }}
+    {{ form.partner_type }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-4">
+    {{ form.partner_code.errors }}
+    {{ form.partner_code }}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {{ form.pic_code.errors }}
+    {{ form.pic_code }}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {{ form.erasmus_code.errors }}
+    {{ form.erasmus_code }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {{ form.is_ies.errors }}
+    {{ form.is_ies }}
+    {{ form.is_ies.label_tag }}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {{ form.is_nonprofit.errors }}
+    {{ form.is_nonprofit }}
+    {{ form.is_nonprofit.label_tag }}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {{ form.is_public.errors }}
+    {{ form.is_public }}
+    {{ form.is_public.label_tag }}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {{ form.use_egracons.errors }}
+    {{ form.use_egracons }}
+    {{ form.use_egracons.label_tag }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.type.errors }}
+    {{ form.type }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.comment.errors }}
+    {{ form.comment }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "contact_information" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {{ form.phone.errors }}
+    {{ form.phone }}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {{ form.website.errors }}
+    {{ form.website }}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {{ form.email.errors }}
+    {{ form.email }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "tags" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.tags.errors }}
+    {{ form.tags }}
+  </div>
+</div>
