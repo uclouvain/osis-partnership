@@ -10,7 +10,8 @@ from partnership.models import PartnerType, PartnerTag, Partner, Partnership, Pa
 class PartnerTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnerType
-
+        django_get_or_create = ('value',)
+        
     value = factory.Sequence(lambda n: 'PartnerType-é-{0}'.format(n))
 
 
@@ -24,6 +25,7 @@ class PartnerTagFactory(factory.DjangoModelFactory):
 class PartnerFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partner
+        django_get_or_create = ('partner_type',)
 
     is_valid = True
     name = factory.Sequence(lambda n: 'Partner-é-{0}'.format(n))
