@@ -88,6 +88,7 @@ class PartnershipTagFactory(factory.DjangoModelFactory):
 class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
+        django_get_or_create = ('',)
 
     is_valid = True
     partner = factory.SubFactory(PartnerFactory)
