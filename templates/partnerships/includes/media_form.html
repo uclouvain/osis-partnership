@@ -1,43 +1,39 @@
 {% load i18n %}
-<form action="{% url "partnerships:partners:medias:create" partner.id %}" method="post" class="partner-form" enctype="multipart/form-data">
-  {% csrf_token %}
+{% csrf_token %}
 
-  {{ form.non_field_errors }}
+{{ form.non_field_errors }}
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form.name.errors }}
-      {{ form.name }}
-    </div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.name.errors }}
+    {{ form.name }}
   </div>
+</div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form.description.errors }}
-      {{ form.description }}
-    </div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.description.errors }}
+    {{ form.description }}
   </div>
+</div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form.file.errors }}
-      {{ form.file }}
-    </div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.file.errors }}
+    {{ form.file }}
   </div>
+</div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form.url.errors }}
-      {{ form.url }}
-    </div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.url.errors }}
+    {{ form.url }}
   </div>
+</div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ form.visibility.errors }}
-      {{ form.visibility }}
-    </div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ form.visibility.errors }}
+    {{ form.visibility }}
   </div>
-
-  <button type="submit" class="btn btn-primary">{% trans "add_media" %}</button>
-</form>
+</div>

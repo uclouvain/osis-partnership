@@ -1,14 +1,15 @@
 (function ($) {
     // Pagination/ordering in AJAX
-    var $modal = $('#modal-media-create');
-    var $modal_body = $('#modal-media-create .modal-body');
 
-    $(document).on('click', '#add-media', function(event) {
+    $(document).on('click', '.modal-link', function(event) {
         event.preventDefault();
         event.stopPropagation();
 
+        var $modal = $('#' + $(this).attr('data-modal'));
+        var $modal_body = $modal.find('.modal-body');
         var url = $(this).attr('href');
 
+        $modal.find('form').attr('action', url);
         $modal_body.html('<i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>');
         $modal.modal('show');
 
@@ -19,12 +20,5 @@
             console.error(error);
             $modal.modal('hide');
         });
-    });
-
-    $(document).on('click', '#modal-media-create .submit', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        $modal_body.find('form').submit();
     });
 })(jQuery);
