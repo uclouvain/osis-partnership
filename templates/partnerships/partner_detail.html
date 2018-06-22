@@ -11,6 +11,10 @@
   <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
 {% endblock %}
 
+{% block script %}
+  <script src="{% static "partnerships/detail.js" %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1>{{ partner }}</h1>
@@ -137,7 +141,7 @@
     {% if can_update_partner %}
     <div class="row">
       <div class="col-sm-12">
-        <a href="{% url "partnerships:partners:medias:create" partner.id %}" class="btn btn-default pull-right">{% trans "add_media" %}</a>
+        <a href="{% url "partnerships:partners:medias:create" partner.id %}" id="add-media" class="btn btn-default pull-right">{% trans "add_media" %}</a>
       </div>
     </div>
     {% endif %}
@@ -205,6 +209,24 @@
       </div>
     </div>
     {% endif %}
+  </div>
+</div>
+
+<div class="modal fade" id="modal-media-create" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+        <h4 class="modal-title" id="myModalLabel">{% trans "new_media" %}</h4>
+      </div>
+      <div class="modal-body">
+        <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "close" %}</button>
+        <button type="button" class="btn btn-primary submit">{% trans "new_media" %}</button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
