@@ -196,13 +196,12 @@ class PartnershipsList(LoginRequiredMixin, ListView):
     context_object_name = 'partnerships'
 
 
-class PartnerMediaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    # FIXME Make a more generic view and move it with Media in a more generic app
+class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
     form_class = MediaForm
 
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
-        return super(PartnerMediaCreateView, self).dispatch(request, *args, **kwargs)
+        return super(PartnerMediaFormMixin, self).dispatch(request, *args, **kwargs)
 
     def test_func(self):
         return self.partner.user_can_change(self.request.user)
@@ -213,13 +212,13 @@ class PartnerMediaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
     def get_template_names(self):
         if self.request.is_ajax():
             return 'partnerships/includes/media_form.html'
-        return 'partnerships/partner_media_create.html'
+        return self.template_name
 
     def get_success_url(self):
         return self.partner.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = super(PartnerMediaCreateView, self).get_context_data(**kwargs)
+        context = super(PartnerMediaFormMixin, self).get_context_data(**kwargs)
         context['partner'] = self.partner
         return context
 
@@ -257,3 +256,14 @@ class PartnerMediaCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
         form.save_m2m()
         self.partner.medias.add(media)
         return redirect(self.partner)
+
+
+# FIXME Make a more generic view and move it with Media in a more generic app
+class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
+    template_name = 'partnerships/partner_media_create.html'
+
+
+# FIXME Make a more generic view and move it with Media in a more generic app
+class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
+    template_name = 'partnerships/partner_media_update.html'
+    context_object_name = 'media'

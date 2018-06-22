@@ -126,6 +126,9 @@
             <p>{{ media.description }}</p>
           </div>
           <div class="col-sm-3">
+            {% if can_update_partner %}
+            <a href="{% url "partnerships:partners:medias:update" partner.id media.id %}" class="btn btn-default modal-link" data-modal="modal-media-update"><i class="fa fa-pencil fa-fw"></i></a>
+            {% endif %}
             {% if media.url %}
             <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
             {% else %}
@@ -141,7 +144,7 @@
     {% if can_update_partner %}
     <div class="row">
       <div class="col-sm-12">
-        <a href="{% url "partnerships:partners:medias:create" partner.id %}" id="add-media" class="btn btn-default pull-right">{% trans "add_media" %}</a>
+        <a href="{% url "partnerships:partners:medias:create" partner.id %}" id="add-media" class="btn btn-default pull-right modal-link" data-modal="modal-media-create">{% trans "add_media" %}</a>
       </div>
     </div>
     {% endif %}
@@ -215,17 +218,39 @@
 <div class="modal fade" id="modal-media-create" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
-        <h4 class="modal-title" id="myModalLabel">{% trans "new_media" %}</h4>
-      </div>
-      <div class="modal-body">
-        <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "close" %}</button>
-        <button type="button" class="btn btn-primary submit">{% trans "new_media" %}</button>
-      </div>
+      <form action="{% url "partnerships:partners:medias:create" partner.id %}" method="post" class="partner-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <h4 class="modal-title" id="myModalLabel">{% trans "new_media" %}</h4>
+        </div>
+        <div class="modal-body">
+          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "close" %}</button>
+          <button type="submit" class="btn btn-primary">{% trans "new_media" %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-media-update" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="{% url "partnerships:partners:medias:update" partner.id 0 %}" method="post" class="partner-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <h4 class="modal-title" id="myModalLabel">{% trans "new_media" %}</h4>
+        </div>
+        <div class="modal-body">
+          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "close" %}</button>
+          <button type="submit" class="btn btn-primary">{% trans "update_media" %}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
