@@ -185,7 +185,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     class Meta:
         model = PartnerEntity
-        exclude = ('address', 'contact_in', 'contact_out')
+        exclude = ('partner', 'address', 'contact_in', 'contact_out')
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('name')}),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
@@ -262,23 +262,6 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
             partner_entity.save()
             self.save_m2m()
         return partner_entity
-
-
-class PartnerEntitiesBaseInlineFormSet(BaseInlineFormSet):
-
-    def __init__(self, *args, **kwargs):
-        # We need that because we use the same get_form_kwargs in the view for both forms
-        user = kwargs.pop('user')
-        super(PartnerEntitiesBaseInlineFormSet, self).__init__(*args, **kwargs)
-
-
-PartnerEntitiesFormset = inlineformset_factory(
-    Partner,
-    PartnerEntity,
-    formset=PartnerEntitiesBaseInlineFormSet,
-    form=PartnerEntityForm,
-    extra=1,
-)
 
 
 class PartnerFilterForm(BootstrapForm):
