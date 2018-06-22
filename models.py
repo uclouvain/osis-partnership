@@ -187,20 +187,7 @@ class Partner(models.Model):
             return False
 
     def user_can_change(self, user):
-
-        try:
-            is_adri = user_is_adri(user)
-            is_gf_of_partner = (
-                user
-                    .person
-                    .entitymanager_set.filter(
-                        entity__in=Entity.objects.filter(entitymanager__person__user=self.author)
-                    )
-                    .exists()
-            )
-            return user == self.author or is_adri or is_gf_of_partner
-        except Person.DoesNotExist:
-            return False
+        return user_is_adri(user)
 
     @property
     def is_actif(self):

@@ -8,7 +8,7 @@ from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
 from osis_common.models.document_file import DocumentFile, CONTENT_TYPE_CHOICES
 from osis_common.models.enum import storage_duration
-from partnership.forms import PartnerFilterForm, PartnerForm, PartnerEntitiesFormset, MediaForm
+from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 from partnership.utils import user_is_adri
 
@@ -105,66 +105,11 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(PartnerDetailView, self).get_context_data(**kwargs)
         context['can_update_partner'] = self.object.user_can_change(self.request.user)
+        context['can_add_entities'] = Partner.user_can_add(self.request.user)
         return context
 
 
-class PartnerFormMixin(object):
-
-    def get_form_kwargs(self):
-        kwargs = super(PartnerFormMixin, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def get_entities_formset(self):
-        kwargs = self.get_form_kwargs()
-        kwargs['prefix'] = 'entities'
-        return PartnerEntitiesFormset(**kwargs)
-
-    def get_context_data(self, **kwargs):
-        if 'entities_formset' not in kwargs:
-            kwargs['entities_formset'] = self.get_entities_formset()
-        kwargs['user_is_adri'] = user_is_adri(self.request.user)
-        return super(PartnerFormMixin, self).get_context_data(**kwargs)
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        entities_formset = self.get_entities_formset()
-        if form.is_valid() and entities_formset.is_valid():
-            return self.form_valid(form, entities_formset)
-        else:
-            return self.form_invalid(form, entities_formset)
-
-    @transaction.atomic
-    def form_valid(self, form, entities_formset):
-        partner = form.save(commit=False)
-        partner.author = self.request.user
-        partner.save()
-        entities = entities_formset.save(commit=False)
-        # Save one by one to save related models
-        for entity in entities:
-            # We need to set the partner
-            #  because the one on the entity is not saved yet
-            entity.partner = partner
-            entity.author = self.request.user
-            entity.address.save()
-            entity.address_id = entity.address.id
-            entity.contact_in.save()
-            entity.contact_in_id = entity.contact_in.id
-            entity.contact_out.save()
-            entity.contact_out_id = entity.contact_out.id
-            entity.save()
-        entities_formset.save_m2m()
-        form.save_m2m()
-        return redirect(partner)
-
-    def form_invalid(self, form, entities_formset):
-        return self.render_to_response(self.get_context_data(
-            form=form,
-            entities_formset=entities_formset,
-        ))
-
-
-class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, CreateView):
+class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
@@ -172,12 +117,24 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     def test_func(self):
         return Partner.user_can_add(self.request.user)
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnerCreateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def post(self, request, *args, **kwargs):
         self.object = None
         return super(PartnerCreateView, self).post(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        partner = form.save(commit=False)
+        partner.author = self.request.user
+        partner.save()
+        form.save_m2m()
+        return redirect(partner)
 
-class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, UpdateView):
+
+class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_update.html'
     prefix = 'partner'
@@ -189,11 +146,67 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
         self.object = self.get_object()
         return self.object.user_can_change(self.request.user)
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnerCreateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
-class PartnershipsList(LoginRequiredMixin, ListView):
-    model = Partnership
-    template_name = 'partnerships/partnerships_list.html'
-    context_object_name = 'partnerships'
+
+class PartnerEntityFormMixin(FormMixin):
+    form_class = PartnerEntityForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
+        return super(PartnerEntityFormMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.partner.entities.all()
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partner_entity_form.html'
+        return self.template_name
+
+    def get_success_url(self):
+        return self.partner.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnerEntityFormMixin, self).get_context_data(**kwargs)
+        context['partner'] = self.partner
+        return context
+
+    @transaction.atomic
+    def form_valid(self, form):
+        entity = form.save(commit=False)
+        # We need to set the partner
+        #  because the one on the entity is not saved yet
+        entity.partner = self.partner
+        entity.author = self.request.user
+        entity.address.save()
+        entity.address_id = entity.address.id
+        entity.contact_in.save()
+        entity.contact_in_id = entity.contact_in.id
+        entity.contact_out.save()
+        entity.contact_out_id = entity.contact_out.id
+        entity.save()
+        form.save_m2m()
+        return redirect(self.partner)
+
+
+class PartnerEntityCreateView(UserPassesTestMixin, PartnerEntityFormMixin, CreateView):
+    template_name = 'partnerships/partner_entity_create.html'
+
+    def test_func(self):
+        return Partner.user_can_add(self.request.user)
+
+
+class PartnerEntityUpdateView(UserPassesTestMixin, PartnerEntityFormMixin, UpdateView):
+    template_name = 'partnerships/partner_entity_update.html'
+    context_object_name = 'partner_entity'
+
+    def test_func(self):
+        # FIXME CHECK IF USER IS FACULTY MANAGER AND LINKED TO ENTITY
+        return user_is_adri(self.request.user)
 
 
 class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
@@ -267,3 +280,9 @@ class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateVi
 class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
     template_name = 'partnerships/partner_media_update.html'
     context_object_name = 'media'
+
+
+class PartnershipsList(LoginRequiredMixin, ListView):
+    model = Partnership
+    template_name = 'partnerships/partnerships_list.html'
+    context_object_name = 'partnerships'

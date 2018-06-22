@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-15 09:30+0200\n"
+"POT-Creation-Date: 2018-06-22 15:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,13 +26,19 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-msgid "name"
+msgid "partner_type"
 msgstr ""
 
 msgid "partner_name"
 msgstr ""
 
-msgid "partner_type"
+msgid "start_date"
+msgstr ""
+
+msgid "end_date"
+msgstr ""
+
+msgid "partner_code"
 msgstr ""
 
 msgid "pic_code"
@@ -41,10 +47,58 @@ msgstr ""
 msgid "erasmus_code"
 msgstr ""
 
+msgid "type"
+msgstr ""
+
+msgid "comment"
+msgstr ""
+
+msgid "phone"
+msgstr ""
+
+msgid "website"
+msgstr ""
+
+msgid "email"
+msgstr ""
+
+msgid "name"
+msgstr ""
+
+msgid "address_name_help_text"
+msgstr ""
+
+msgid "address"
+msgstr ""
+
+msgid "postal_code"
+msgstr ""
+
 msgid "city"
 msgstr ""
 
 msgid "country"
+msgstr ""
+
+msgid "contact_type"
+msgstr ""
+
+msgid "title"
+msgstr ""
+
+msgid "last_name"
+msgstr ""
+
+msgid "first_name"
+msgstr ""
+
+msgid "function"
+msgstr ""
+
+msgid "mobile_phone"
+msgstr ""
+
+msgid "fax"
 msgstr ""
 
 msgid "continent"
@@ -62,10 +116,22 @@ msgstr ""
 msgid "tags"
 msgstr ""
 
-msgid "partner"
+msgid "file"
 msgstr ""
 
-msgid "address"
+msgid "description"
+msgstr ""
+
+msgid "url"
+msgstr ""
+
+msgid "file_or_url_only"
+msgstr ""
+
+msgid "file_or_url_required"
+msgstr ""
+
+msgid "partner"
 msgstr ""
 
 msgid "contact_in"
@@ -77,9 +143,6 @@ msgstr ""
 msgid "parent_entity"
 msgstr ""
 
-msgid "comment"
-msgstr ""
-
 msgid "created"
 msgstr ""
 
@@ -89,25 +152,7 @@ msgstr ""
 msgid "author"
 msgstr ""
 
-msgid "partner_code"
-msgstr ""
-
-msgid "start_date"
-msgstr ""
-
-msgid "end_date"
-msgstr ""
-
 msgid "now_known_as"
-msgstr ""
-
-msgid "website"
-msgstr ""
-
-msgid "email"
-msgstr ""
-
-msgid "phone"
 msgstr ""
 
 msgid "is_nonprofit"
@@ -168,34 +213,10 @@ msgstr ""
 msgid "madame"
 msgstr ""
 
-msgid "contact_type"
-msgstr ""
-
 msgid "contact_title"
 msgstr ""
 
-msgid "last_name"
-msgstr ""
-
-msgid "first_name"
-msgstr ""
-
 msgid "society"
-msgstr ""
-
-msgid "function"
-msgstr ""
-
-msgid "mobile_phone"
-msgstr ""
-
-msgid "fax"
-msgstr ""
-
-msgid "address_name_help_text"
-msgstr ""
-
-msgid "postal_code"
 msgstr ""
 
 msgid "city_french"
@@ -213,13 +234,7 @@ msgstr ""
 msgid "visibility_staff_student"
 msgstr ""
 
-msgid "description"
-msgstr ""
-
 msgid "document"
-msgstr ""
-
-msgid "url"
 msgstr ""
 
 msgid "visibility"
@@ -237,10 +252,13 @@ msgstr ""
 msgid "last"
 msgstr ""
 
-msgid "code"
+msgid "informations"
 msgstr ""
 
-msgid "type"
+msgid "contact_information"
+msgstr ""
+
+msgid "code"
 msgstr ""
 
 msgid "current_partnership"
@@ -256,6 +274,21 @@ msgid "partnerships"
 msgstr ""
 
 msgid "partners"
+msgstr ""
+
+msgid "new_partner"
+msgstr ""
+
+msgid "add_partner"
+msgstr ""
+
+msgid "add_media_after_creation"
+msgstr ""
+
+msgid "associated_entities"
+msgstr ""
+
+msgid "entity"
 msgstr ""
 
 #, python-format
@@ -277,6 +310,12 @@ msgstr ""
 msgid "external_link"
 msgstr ""
 
+msgid "no_media_yet"
+msgstr ""
+
+msgid "add_media"
+msgstr ""
+
 msgid "entities"
 msgstr ""
 
@@ -284,6 +323,21 @@ msgid "contact_mobility_in"
 msgstr ""
 
 msgid "contact_mobility_out"
+msgstr ""
+
+msgid "update_partner"
+msgstr ""
+
+msgid "close"
+msgstr ""
+
+msgid "new_media"
+msgstr ""
+
+msgid "update_media"
+msgstr ""
+
+msgid "new_entity"
 msgstr ""
 
 msgid "filter_partners"

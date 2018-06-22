@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-15 09:30+0200\n"
-"PO-Revision-Date: 2018-06-15 09:30+0200\n"
+"POT-Creation-Date: 2018-06-22 15:38+0200\n"
+"PO-Revision-Date: 2018-06-22 15:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -26,14 +26,20 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-msgid "name"
-msgstr "Nom"
+msgid "partner_type"
+msgstr "Type du partenaire"
 
 msgid "partner_name"
 msgstr "Nom du partenaire"
 
-msgid "partner_type"
-msgstr "Type du partenaire"
+msgid "start_date"
+msgstr "Date de début"
+
+msgid "end_date"
+msgstr "Date de fin"
+
+msgid "partner_code"
+msgstr "Code du partenaire"
 
 msgid "pic_code"
 msgstr "Code PIC"
@@ -41,11 +47,59 @@ msgstr "Code PIC"
 msgid "erasmus_code"
 msgstr "Code Erasmus"
 
+msgid "type"
+msgstr "Type"
+
+msgid "comment"
+msgstr "Commentaire"
+
+msgid "phone"
+msgstr "Téléphone"
+
+msgid "website"
+msgstr "Site web"
+
+msgid "email"
+msgstr "Email"
+
+msgid "name"
+msgstr "Nom"
+
+msgid "address_name_help_text"
+msgstr "Nom de la faculté, de l’entreprise, …"
+
+msgid "address"
+msgstr "Adresse"
+
+msgid "postal_code"
+msgstr "Code postal"
+
 msgid "city"
 msgstr "Ville"
 
 msgid "country"
 msgstr "Pays"
+
+msgid "contact_type"
+msgstr "Type de contact"
+
+msgid "title"
+msgstr "Titre"
+
+msgid "last_name"
+msgstr "Nom"
+
+msgid "first_name"
+msgstr "Prénom"
+
+msgid "function"
+msgstr "Fonction"
+
+msgid "mobile_phone"
+msgstr "Téléphone mobile"
+
+msgid "fax"
+msgstr "Fax"
 
 msgid "continent"
 msgstr "Continent"
@@ -62,11 +116,23 @@ msgstr "Actif"
 msgid "tags"
 msgstr "Tags"
 
+msgid "file"
+msgstr "Fichier"
+
+msgid "description"
+msgstr "Description"
+
+msgid "url"
+msgstr "URL"
+
+msgid "file_or_url_only"
+msgstr "Veuillez uniquement mettre un fichier ou une URL."
+
+msgid "file_or_url_required"
+msgstr "Un fichier ou une URL est requis."
+
 msgid "partner"
 msgstr "Partenaire"
-
-msgid "address"
-msgstr "Adresse"
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -77,9 +143,6 @@ msgstr "Contact de type mobilité out"
 msgid "parent_entity"
 msgstr "Entité parente"
 
-msgid "comment"
-msgstr "Commentaire"
-
 msgid "created"
 msgstr "Créé"
 
@@ -89,26 +152,8 @@ msgstr "Modifié"
 msgid "author"
 msgstr "Auteur"
 
-msgid "partner_code"
-msgstr "Code du partenaire"
-
-msgid "start_date"
-msgstr "Date de début"
-
-msgid "end_date"
-msgstr "Date de fin"
-
 msgid "now_known_as"
 msgstr "Est devenu / Fait partie de"
-
-msgid "website"
-msgstr "Site web"
-
-msgid "email"
-msgstr "Email"
-
-msgid "phone"
-msgstr "Téléphone"
 
 msgid "is_nonprofit"
 msgstr "À but non lucratif"
@@ -168,35 +213,11 @@ msgstr "Monsieur"
 msgid "madame"
 msgstr "Madame"
 
-msgid "contact_type"
-msgstr "Type de contact"
-
 msgid "contact_title"
 msgstr "Titre du contact"
 
-msgid "last_name"
-msgstr "Nom"
-
-msgid "first_name"
-msgstr "Prénom"
-
 msgid "society"
 msgstr "Société"
-
-msgid "function"
-msgstr "Fonction"
-
-msgid "mobile_phone"
-msgstr "Téléphone mobile"
-
-msgid "fax"
-msgstr "Fax"
-
-msgid "address_name_help_text"
-msgstr "Nom de la faculté, de l’entreprise, …"
-
-msgid "postal_code"
-msgstr "Code postal"
 
 msgid "city_french"
 msgstr "Ville en français"
@@ -213,14 +234,8 @@ msgstr "Personnels"
 msgid "visibility_staff_student"
 msgstr "Personnels et étudiants"
 
-msgid "description"
-msgstr "Description"
-
 msgid "document"
 msgstr "Document"
-
-msgid "url"
-msgstr "URL"
 
 msgid "visibility"
 msgstr "Visibilité"
@@ -237,11 +252,14 @@ msgstr "Suivant"
 msgid "last"
 msgstr "Dernier"
 
+msgid "informations"
+msgstr "Informations"
+
+msgid "contact_information"
+msgstr "Informations de contact"
+
 msgid "code"
 msgstr "Code"
-
-msgid "type"
-msgstr "Type"
 
 msgid "current_partnership"
 msgstr "Parternariats en cours"
@@ -257,6 +275,21 @@ msgstr "Partenariats"
 
 msgid "partners"
 msgstr "Partenaires"
+
+msgid "new_partner"
+msgstr "Nouveau partenaire"
+
+msgid "add_partner"
+msgstr "Ajouter un partenaire"
+
+msgid "add_media_after_creation"
+msgstr "Vous pourrez ajouter des médias après la création du partenaire."
+
+msgid "associated_entities"
+msgstr "Entitées associés"
+
+msgid "entity"
+msgstr "Entité"
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
@@ -277,6 +310,12 @@ msgstr "Tags associés"
 msgid "external_link"
 msgstr "Lien externe"
 
+msgid "no_media_yet"
+msgstr "Il n'y a pas encore de média."
+
+msgid "add_media"
+msgstr "Ajouter un média"
+
 msgid "entities"
 msgstr "Entités"
 
@@ -285,6 +324,21 @@ msgstr "Contact de type mobilité in"
 
 msgid "contact_mobility_out"
 msgstr "Contact de type mobilité out"
+
+msgid "update_partner"
+msgstr "Mettre à jour le partenaire"
+
+msgid "close"
+msgstr "Fermer"
+
+msgid "new_media"
+msgstr "Nouveau média"
+
+msgid "update_media"
+msgstr "Mettre à jour le média"
+
+msgid "new_entity"
+msgstr "Nouvelle entité"
 
 msgid "filter_partners"
 msgstr "Filtrer les partenaires"

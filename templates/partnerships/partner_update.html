@@ -37,36 +37,6 @@
 
         {% include "partnerships/includes/partner_form.html" %}
 
-        <hr>
-
-        <div class="row">
-          <div class="col-sm-12">
-            <h2>{% trans "associated_entities" %}</h2>
-          </div>
-        </div>
-
-        {{ entities_formset.non_field_errors }}
-        {{ entities_formset.management_form }}
-
-        <div class="panel-group">
-        {% for entity_form in entities_formset %}
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4><a role="button" data-toggle="collapse" href="#partner-entity-{{ forloop.counter }}" aria-expanded="true" aria-controls="partner-entity-{{ forloop.counter }}">
-                {% if forloop.last %}{% trans "new_entity" %}{% else %}{% trans "entity" %}{% endif %}
-              </a></h4>
-            </div>
-
-            <div id="partner-entity-{{ forloop.counter }}" class="panel-collapse collapse{% if not forloop.last %} in{% endif %}">
-              <div class="panel-body">
-                {% include "partnerships/includes/partner_entity_form.html" with form=entity_form %}
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-        </div>
-
         <div class="row">
           <div class="col-sm-12">
             <button type="submit" class="btn btn-primary pull-right">{% trans "update_partner" %}</button>
