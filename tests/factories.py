@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
-
+import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
     PartnerEntity, Media
 
@@ -12,28 +12,29 @@ class PartnerTypeFactory(factory.DjangoModelFactory):
         model = PartnerType
         django_get_or_create = ('value',)
         
-    value = factory.Sequence(lambda n: 'PartnerType-é-{0}'.format(n))
+    value = factory.Sequence(lambda n: 'PartnerType-{0}'.format(n))
 
 
 class PartnerTagFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnerTag
-
-    value = factory.Sequence(lambda n: 'PartnerTag-é-{0}'.format(n))
+        django_get_or_create=('value',)
+        
+    value = factory.Sequence(lambda n: 'PartnerTag-é-{0}-{1}'.format(n, uuid.uuid4()))
 
 
 class PartnerFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partner
-        django_get_or_create = ('partner_type',)
+        django_get_or_create = ('partner_type', 'partner_code')
 
     is_valid = True
     name = factory.Sequence(lambda n: 'Partner-é-{0}'.format(n))
     is_ies = factory.Faker('boolean')
     partner_type = factory.SubFactory(PartnerTypeFactory)
-    partner_code = factory.Sequence(lambda n: 'partner_code-é-{0}'.format(n))
-    pic_code = factory.Sequence(lambda n: 'pic_code-é-{0}'.format(n))
-    erasmus_code = factory.Sequence(lambda n: 'erasmus_code-é-{0}'.format(n))
+    partner_code = factory.Sequence(lambda n: 'partner_code-é-{0}-{1}'.format(n, uuid.uuid4()))
+    pic_code = factory.Sequence(lambda n: 'pic_code-é-{0}-{1}'.format(n, uuid.uuid4()))
+    erasmus_code = factory.Sequence(lambda n: 'erasmus_code-é-{0}-{1}'.format(n, uuid.uuid4()))
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
     end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
@@ -75,7 +76,7 @@ class PartnershipTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipType
 
-    value = factory.Sequence(lambda n: 'PartnershipType-é-{0}'.format(n))
+    value = factory.Sequence(lambda n: 'PartnershipType-é-{0}-{1}'.format(n, uuid.uuid4()))
 
 
 class PartnershipTagFactory(factory.DjangoModelFactory):
@@ -88,7 +89,7 @@ class PartnershipTagFactory(factory.DjangoModelFactory):
 class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
-        django_get_or_create = ('',)
+        django_get_or_create = ('tags', 'partner')
 
     is_valid = True
     partner = factory.SubFactory(PartnerFactory)
