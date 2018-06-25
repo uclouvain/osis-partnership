@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n static %}
+{% load bootstrap3 i18n static %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
@@ -9,10 +9,18 @@
 
 {% block style %}
   <link rel="stylesheet" href="{% static "css/select2.min.css" %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
 {% endblock %}
 
 {% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
   <script src="{% static "js/select2.min.js" %}"></script>
   <script>
   $('#id_partner-tags').select2({
@@ -28,7 +36,7 @@
     <h1>{{ partner }}</h1>
   </div>
 
-  {{ form.non_field_errors }}
+  {% bootstrap_form_errors form %}
 
   <div class="panel panel-default">
     <div class="panel-body partner-form">

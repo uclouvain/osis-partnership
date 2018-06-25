@@ -3,6 +3,7 @@ from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
+from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
@@ -35,8 +36,14 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('partner_name')}),
             'is_valid': forms.CheckboxInput(),
-            'start_date': forms.TextInput(attrs={'placeholder': _('start_date')}),
-            'end_date': forms.TextInput(attrs={'placeholder': _('end_date')}),
+            'start_date': DatePickerInput(
+                format=DATE_FORMAT,
+                attrs={'class': 'datepicker', 'placeholder': _('start_date')},
+            ),
+            'end_date': DatePickerInput(
+                format=DATE_FORMAT,
+                attrs={'class': 'datepicker', 'placeholder': _('end_date')},
+            ),
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
             'erasmus_code': forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
