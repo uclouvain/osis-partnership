@@ -6,10 +6,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
-from osis_common.models.document_file import DocumentFile, CONTENT_TYPE_CHOICES
-from osis_common.models.enum import storage_duration
 from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm
-from partnership.models import Partner, Partnership, Media, PartnerEntity
+from partnership.models import Partner, Partnership, PartnerEntity
 from partnership.utils import user_is_adri
 
 
@@ -98,7 +96,7 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
                         'contact_in', 'contact_out', 'address', 'parent', 'author',
                     )),
                     'tags',
-                    Prefetch('medias', queryset=Media.objects.select_related('document_file')),
+                    'medias',
                 )
         )
 
@@ -235,36 +233,11 @@ class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
         context['partner'] = self.partner
         return context
 
-    def _find_content_type(self, filename):
-        extension = filename.split('.')[-1]
-        if extension == 'jpg':
-            return 'image/jpeg'
-        if extension == 'txt':
-            return 'text/plain'
-        for content_type, _ in CONTENT_TYPE_CHOICES:
-            if content_type.split('/')[-1] == extension:
-                return content_type
-        return None
-
     @transaction.atomic
     def form_valid(self, form):
         media = form.save(commit=False)
-        file = form.cleaned_data.get('file', None)
-        # Create and link the document file if needed
-        if file is not None:
-            content_type = self._find_content_type(file.name)
-            if content_type is None:
-                # FIXME Allow empty content_type ?
-                content_type = 'text/plain'
-            document_file = DocumentFile.objects.create(
-                file_name=form.cleaned_data['name'],
-                file=file,
-                description=form.cleaned_data['description'],
-                size=file.size,
-                content_type=content_type,
-                storage_duration=storage_duration.FIVE_YEARS,
-            )
-            media.document_file = document_file
+        if media.pk is None:
+            media.author = self.request.user
         media.save()
         form.save_m2m()
         self.partner.medias.add(media)

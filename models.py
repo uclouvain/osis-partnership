@@ -395,26 +395,26 @@ class Media(models.Model):
 
     name = models.CharField(_('name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
-    document_file = models.ForeignKey(
-        'osis_common.DocumentFile',
-        verbose_name=_('document'),
-        on_delete=models.CASCADE,
-        related_name='+',
-        blank=True,
-        null=True,
-    )
+    file = models.FileField(_('file'), upload_to='medias/', blank=True, null=True)
     url = models.URLField(_('url'), blank=True, null=True)
     visibility = models.CharField(
         _('visibility'),
         max_length=50,
         choices=VISIBILITY_CHOICES,
     )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('author'),
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+    )
 
     def __str__(self):
         return self.name
 
     def get_document_file_type(self):
-        return self.document_file.content_type.split('/')[-1]
+        return self.file.name.split('.')[-1]
 
     def get_document_file_size(self):
-        return self.document_file.file.size
+        return self.file.size
