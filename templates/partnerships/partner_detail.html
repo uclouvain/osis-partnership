@@ -71,7 +71,7 @@
           <dd>{% if partner.is_actif %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
 
           <dt>{% trans "contact_address" %}</dt>
-          <dd>{{ partner.address }}</dd>
+          <dd>{{ partner.contact_address.one_line_display }}</dd>
 
           <dt>{% trans "website" %}</dt>
           <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>

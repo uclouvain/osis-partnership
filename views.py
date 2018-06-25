@@ -6,7 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
-from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm
+from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm
 from partnership.models import Partner, Partnership, PartnerEntity
 from partnership.utils import user_is_adri
 
@@ -107,7 +107,54 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class PartnerFormMixin(object):
+    def get_form_kwargs(self):
+        kwargs = super(PartnerFormMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_address_form(self):
+        kwargs = {
+            'prefix': 'contact_address',
+        }
+        if self.request.method in ('POST', 'PUT'):
+            kwargs['data'] = self.request.POST
+        if self.object is not None:
+            kwargs['instance'] = self.object.contact_address
+        return AddressForm(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        if 'form_address' not in kwargs:
+            kwargs['form_address'] = self.get_address_form()
+        return super(PartnerFormMixin, self).get_context_data(**kwargs)
+
+    @transaction.atomic
+    def form_valid(self, form, form_address):
+        contact_address = form_address.save()
+        partner = form.save(commit=False)
+        if partner.pk is None:
+            partner.author = self.request.user
+        partner.contact_address = contact_address
+        partner.save()
+        form.save_m2m()
+        return redirect(partner)
+
+    def form_invalid(self, form, form_address):
+        return self.render_to_response(self.get_context_data(
+            form=form,
+            form_address=form_address
+        ))
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        form_address = self.get_address_form()
+        if form.is_valid() and form_address.is_valid():
+            return self.form_valid(form, form_address)
+        else:
+            return self.form_invalid(form, form_address)
+
+
+class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, CreateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
@@ -115,39 +162,25 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def test_func(self):
         return Partner.user_can_add(self.request.user)
 
-    def get_form_kwargs(self):
-        kwargs = super(PartnerCreateView, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
     def post(self, request, *args, **kwargs):
         self.object = None
         return super(PartnerCreateView, self).post(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        partner = form.save(commit=False)
-        partner.author = self.request.user
-        partner.save()
-        form.save_m2m()
-        return redirect(partner)
 
-
-class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, UpdateView):
     form_class = PartnerForm
     template_name = 'partnerships/partner_update.html'
     prefix = 'partner'
-    queryset = Partner.objects.prefetch_related(
-        Prefetch('entities', queryset=PartnerEntity.objects.select_related('address', 'contact_in', 'contact_out')),
-    )
+    queryset = Partner.objects.select_related('contact_address')
+    context_object_name = 'partner'
 
     def test_func(self):
         self.object = self.get_object()
         return self.object.user_can_change(self.request.user)
 
-    def get_form_kwargs(self):
-        kwargs = super(PartnerCreateView, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PartnerUpdateView, self).post(request, *args, **kwargs)
 
 
 class PartnerEntityFormMixin(FormMixin):

@@ -357,3 +357,21 @@ class MediaForm(BootstrapForm, forms.ModelForm):
         if not file and not url:
             raise forms.ValidationError(_('file_or_url_required'))
         return self.cleaned_data
+
+
+class AddressForm(BootstrapForm, forms.ModelForm):
+    # FIXME Move with Address model to a more generic app
+
+    class Meta:
+        model = Address
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
+            'address': forms.TextInput(attrs={'placeholder': _('address')}),
+            'postal_code': forms.TextInput(attrs={'placeholder': _('postal_code')}),
+            'city': forms.TextInput(attrs={'placeholder': _('city')}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AddressForm, self).__init__(*args, **kwargs)
+        self.fields['country'].queryset = Country.objects.all().order_by('name')
