@@ -56,14 +56,16 @@ class PartnerCreateViewTest(TestCase):
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'partnerships/partner_update.html')
+        response = self.client.get(url, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'partnerships/partner_update.html')
+        response = self.client.get(url, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -85,36 +87,11 @@ class PartnerCreateViewTest(TestCase):
             'partner-website': 'http://localhost:8000',
             'partner-email': 'test@test.test',
             'partner-tags': [PartnerTagFactory().id],
-            'entities-TOTAL_FORMS': 1,
-            'entities-INITIAL_FORMS': 0,
-            'entities-MIN_NUM_FORMS': 0,
-            'entities-MAX_NUM_FORMS': 1000,
-            'entities-0-name': 'test',
-            'entities-0-comment': 'test',
-            'entities-0-address_name': 'test',
-            'entities-0-address_address': 'test',
-            'entities-0-address_postal_code': '13245',
-            'entities-0-address_city': 'test',
-            'entities-0-address_country': self.country.pk,
-            'entities-0-contact_in_type': self.contact_type.pk,
-            'entities-0-contact_in_title': 'mr',
-            'entities-0-contact_in_last_name': 'test',
-            'entities-0-contact_in_first_name': 'test',
-            'entities-0-contact_in_function': 'test',
-            'entities-0-contact_in_phone': 'test',
-            'entities-0-contact_in_mobile_phone': 'test',
-            'entities-0-contact_in_fax': 'test',
-            'entities-0-contact_in_email': 'test@test.test',
-            'entities-0-contact_out_type': self.contact_type.pk,
-            'entities-0-contact_out_title': 'mr',
-            'entities-0-contact_out_last_name': 'test',
-            'entities-0-contact_out_first_name': 'test',
-            'entities-0-contact_out_function': 'test',
-            'entities-0-contact_out_phone': 'test',
-            'entities-0-contact_out_mobile_phone': 'test',
-            'entities-0-contact_out_fax': 'test',
-            'entities-0-contact_out_email': 'test@test.test',
-            'entities-0-parent': '',
+            'contact_address-name': 'test',
+            'contact_address-address': 'test',
+            'contact_address-postal_code': 'test',
+            'contact_address-city': 'test',
+            'contact_address-country': self.country.pk,
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partner_detail.html')

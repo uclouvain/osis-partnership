@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
-    PartnerEntity
+    PartnerEntity, Media
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -107,3 +107,14 @@ class PartnershipFactory(factory.DjangoModelFactory):
                 obj.tags = extracted
             else:
                 obj.tags = [PartnershipTagFactory(), PartnershipTagFactory()]
+
+
+class MediaFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Media
+
+    name = factory.Faker('word')
+    description = factory.Faker('sentence')
+    url = factory.Faker('url')
+    visibility = Media.VISIBILITY_PUBLIC
+    author = factory.SubFactory('base.tests.factories.user.UserFactory')
