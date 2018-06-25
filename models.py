@@ -94,6 +94,19 @@ class PartnerEntity(models.Model):
             self.id,
         )
 
+    def user_can_change(self, user):
+        try:
+            user_is_in_author_faculty = (
+                user
+                    .person
+                    .entitymanager_set
+                    .filter(entity__entitymanager__person__user=self.author)
+                    .exists()
+            )
+        except Person.DoesNotExist:
+            user_is_in_author_faculty = False
+        return user == self.author or user_is_adri(user) or user_is_in_author_faculty
+
 
 class Partner(models.Model):
     is_valid = models.BooleanField(_('is_valid'), default=False)
