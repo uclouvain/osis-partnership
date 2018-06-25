@@ -374,13 +374,15 @@ class Address(models.Model):
         return self.name
 
     def one_line_display(self):
-        return '{name} {address}, {postal_code} {city}, {country}'.format(
+        address = '{name} {address}, {postal_code} {city}'.format(
             name=self.name,
             address=self.address,
             postal_code=self.postal_code,
             city=self.city,
-            country=str(self.country).upper(),
         )
+        if self.country is not None:
+            address += ', {0}'.format(str(self.country).upper())
+        return address
 
 
 class Media(models.Model):

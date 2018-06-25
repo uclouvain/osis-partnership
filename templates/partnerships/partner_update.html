@@ -4,7 +4,7 @@
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
-  <li class="active">{% trans 'new_partner' %}</li>
+  <li class="active">{{ partner }}</li>
 {% endblock %}
 
 {% block style %}
@@ -25,7 +25,7 @@
 
 {% block content %}
   <div class="page-header">
-    <h1>{% trans 'add_partner' %}</h1>
+    <h1>{{ partner }}</h1>
   </div>
 
   {{ form.non_field_errors }}

@@ -31,7 +31,7 @@
         <div class="col-sm-12">
           <div class="pull-right">
             {% if can_add_partner %}
-            <a href="{% url "partnerships:partners:create" %}" class="btn btn-default" title="{% trans "add_partner" %}"><i class="fa fa-fw fa-plus"></i></a>
+            <a href="{% url "partnerships:partners:create" %}" class="btn btn-default"><i class="fa fa-fw fa-plus"></i> {% trans "add_partner" %}</a>
             {% endif %}
             <button class="btn btn-default" type="button"
                     data-toggle="collapse" data-target="#partner-filters"

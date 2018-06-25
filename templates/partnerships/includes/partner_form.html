@@ -103,6 +103,35 @@
 </div>
 
 <div class="row">
+  <div class="col-sm-12">
+    {{ form_address.name.errors }}
+    {{ form_address.name }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {{ form_address.address.errors }}
+    {{ form_address.address }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {{ form_address.postal_code.errors }}
+    {{ form_address.postal_code }}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {{ form_address.city.errors }}
+    {{ form_address.city }}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {{ form_address.country.errors }}
+    {{ form_address.country }}
+  </div>
+</div>
+
+<div class="row">
   <div class="col-sm-12 col-md-3">
     {{ form.phone.errors }}
     {{ form.phone }}
