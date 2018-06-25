@@ -20,11 +20,11 @@
         <td>{{ partnership.partner_type }}</td>
         <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
         <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>
-        <td>{{ partnership.is_valid }}</td>
-        <td>{{ partnership.is_signed }}</td>
+        <td><i class="fa {{ partnership.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"</i></td>
+        <td><i class="fa {{ partnership.is_signed|yesno:"fa-check text-success,fa-times text-danger" }}"</i></td>
         <td>
-          <a href="{% url 'partnerships:partnership_detail' pk=partnership.id %}">
-            {% trans "detail" %}
+          <a href="{% url 'partnerships:partnership_detail' pk=partnership.id %}" class="btn btn-default">
+            <i class="fa fa-eye"></i>
           </a>
         </td>
       </tr>
