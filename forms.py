@@ -8,7 +8,7 @@ from partnership.models import PartnerType, PartnerTag, Address, Partner, Media,
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
-
+from base.models.entity_version import EntityVersion
 
 class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
 
@@ -385,9 +385,45 @@ class AddressForm(BootstrapForm, forms.ModelForm):
 
 
 class PartnershipFilterForm(BootstrapForm):
-    value = forms.NullBooleanField(label=_('value'), required=False)
-    partner = forms.ModelChoiceField(queryset=Partner.objects.all())
+    ucl_university = forms.ModelMultipleChoiceField(
+        label=_('UCL faculty'),
+        queryset=EntityVersion.objects.all(),
+        required=False,
+    )
 
+    ucl_university_labo = forms.ModelMultipleChoiceField(
+        label=_('UCL laboratory'),
+        queryset=EntityVersion.objects.all(),
+        required=False,
+    )
+
+    # ucl_offer = 
+    
+    partner = forms.ModelMultipleChoiceField(
+        label=_('partners'),
+        queryset=Partner.objects.all(),
+        required=False,
+    )
+    
+    partner_entity = forms.ModelMultipleChoiceField(
+        label=_('partner entities'),
+        queryset=PartnerEntity.objects.all(),
+        required=False,
+    )
+
+    partner_type = forms.ModelMultipleChoiceField(
+        label=_('partner type'),
+        queryset=PartnerType.objects.all(),
+        required=False,
+    )
+    
+    is_valid = forms.NullBooleanField(
+        label=_('is_valid'),
+        widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
+        required=False,
+    )
+    
+    
 
 class PartnershipModelForm(BootstrapModelForm):
 

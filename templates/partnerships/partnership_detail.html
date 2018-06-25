@@ -15,16 +15,15 @@
     <h1>{{ partnership }}</h1>
   </div>
 
-  {% comment %}
-  <div class="row">
-    <a href="{% url 'partnerships:partnerships_list' %}">{% trans 'back to the list' %}</a>
-    <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}">{% trans 'update' %}</a>
-    <a href="{% url 'partnerships:partnership_delete' pk=partnership.pk %}">{% trans 'delete' %}</a>
-  </div>
-  {% endcomment %}
-  
   <div class="panel panel-default">
     <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <a href="{% url 'partnerships:partnerships_list' %}">{% trans 'back to the list' %}</a>
+          <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}">{% trans 'update' %}</a>
+          <a href="{% url 'partnerships:partnership_delete' pk=partnership.pk %}">{% trans 'delete' %}</a>
+        </div>
+      </div>
       <div class="row">
         <div class="col-sm-12">
           <dl class="dl-horizontal">
@@ -38,10 +37,47 @@
             </dd>
 
             <dt>{% trans "Academic Responsible" %}</dt>
-            <dd></dd>
+            <dd>Not implemented yet?</dd>
+
+            {% if partnership.start_date or partnership.end_date %}
+              <dt>{% trans "Dates" %}</dt>
+              <dd>
+                {% if partnership.start_date %}{{ partnership.start_date }}{% endif %}
+                {% if partnership.start_date and partnership.end_date %} &gt; {% endif %}
+                {% if partnership.end_date %}{{ partnership.end_date }}{% endif %}
+              </dd>
+            {% endif %}
+
+            <dt>{% trans "Studies domain" %}</dt>
+            <dd>Not implemented yet</dd>
+
+            <dt>{% trans "Studies level" %}</dt>
+            <dd>Not implemented yet</dd>
+
+            <dt>{% trans "Mobility type" %}</dt>
+            <dd>{{ partnership.mobility_type }}</dd>
+
+            <dt>{% trans "Partnership type" %}</dt>
+            <dd>{{ partnership.partnership_type }}</dd>
           </dl>
         </div>
       </div>
+      {% if partnership.contacts.all %}
+        <h2>{% trans "Contacts" %}</h2>
+        <div class="row">
+          {% for contact in partnership.contacts.all %}
+            <div class="col-sm-12">
+              <address><b>{{ contact }}</b> {{ contact.function|default_if_none:'' }} {{ contact.society|default_if_none:'' }}<br/>
+                T: {{ contact.phone|default_if_none:"N/a" }} M: {{ contact.mobile_phone|default_if_none:"N/a" }} F: {{ concact.fax|default_if_none:"N/a" }}
+                {{ contact.email|default_if_none:'' }}
+                  <p>
+                    {{ contact.comment|default_if_none:'' }}
+                  </p>
+              </address>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div
   </div>
 {% endblock %}
