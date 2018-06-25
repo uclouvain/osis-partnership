@@ -224,14 +224,14 @@ class PartnerEntityFormMixin(FormMixin):
         return redirect(self.partner)
 
 
-class PartnerEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerEntityFormMixin, CreateView):
+class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
     template_name = 'partnerships/partner_entity_create.html'
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
 
 
-class PartnerEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerEntityFormMixin, UpdateView):
+class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, UpdateView):
     template_name = 'partnerships/partner_entity_update.html'
     context_object_name = 'partner_entity'
 
