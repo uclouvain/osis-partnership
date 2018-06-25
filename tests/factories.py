@@ -4,8 +4,9 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
-    PartnerEntity, Media
+    PartnerEntity, Media, Address
 
+from reference.models.country import Country
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
     class Meta:
@@ -23,6 +24,19 @@ class PartnerTagFactory(factory.DjangoModelFactory):
     value = factory.Sequence(lambda n: 'PartnerTag-é-{0}-{1}'.format(n, uuid.uuid4()))
 
 
+class AddressFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Address
+        #django_get_or_create = ('country',)
+
+    name = factory.Faker('name')
+    address = factory.Faker('street_name')
+    postal_code = factory.Faker('zipcode')
+    city = factory.Faker('city')
+    country = Country.objects.get_or_create(name="xyz", iso_code="XY")[0]
+    #country = factory.Iterator(Country.objects.all())
+    #country = factory.SubFactory('reference.tests.factories.country.CountryFactory')
+    
 class PartnerFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partner
@@ -38,6 +52,8 @@ class PartnerFactory(factory.DjangoModelFactory):
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
     end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
+    contact_address = factory.SubFactory(AddressFactory)
+    
     website = factory.Faker('url')
     email = factory.Faker('email')
     phone = factory.Faker('phone_number')
@@ -62,7 +78,6 @@ class PartnerFactory(factory.DjangoModelFactory):
             else:
                 obj.entities = [PartnerEntityFactory(partner=obj, author=obj.author)]
 
-
 class PartnerEntityFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnerEntity
@@ -70,7 +85,7 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
     partner = factory.SubFactory(PartnerFactory)
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
-
+    address = factory.SubFactory(AddressFactory)
 
 class PartnershipTypeFactory(factory.DjangoModelFactory):
     class Meta:
