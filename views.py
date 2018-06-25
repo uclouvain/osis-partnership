@@ -236,8 +236,7 @@ class PartnerEntityUpdateView(UserPassesTestMixin, PartnerEntityFormMixin, Updat
     context_object_name = 'partner_entity'
 
     def test_func(self):
-        # FIXME CHECK IF USER IS FACULTY MANAGER AND LINKED TO ENTITY
-        return user_is_adri(self.request.user)
+        return self.get_object().user_can_change(self.request.user)
 
 
 class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
