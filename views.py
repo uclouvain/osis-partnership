@@ -183,28 +183,30 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
         return super(PartnerUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartnerEntityFormMixin(FormMixin):
-    form_class = PartnerEntityForm
-
+class PartnerEntityMixin(object):
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
-        return super(PartnerEntityFormMixin, self).dispatch(request, *args, **kwargs)
+        return super(PartnerEntityMixin, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.partner.entities.all()
-
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partner_entity_form.html'
-        return self.template_name
 
     def get_success_url(self):
         return self.partner.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = super(PartnerEntityFormMixin, self).get_context_data(**kwargs)
+        context = super(PartnerEntityMixin, self).get_context_data(**kwargs)
         context['partner'] = self.partner
         return context
+
+
+class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
+    form_class = PartnerEntityForm
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partner_entity_form.html'
+        return self.template_name
 
     @transaction.atomic
     def form_valid(self, form):
@@ -237,6 +239,18 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
 
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
+
+
+class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView):
+    template_name = 'partnerships/partner_entity_delete.html'
+
+    def test_func(self):
+        return self.get_object().user_can_change(self.request.user)
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partner_entity_delete.html'
+        return self.template_name
 
 
 class PartnerMediaMixin(UserPassesTestMixin):
