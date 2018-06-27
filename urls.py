@@ -1,7 +1,8 @@
 from django.conf.urls import url, include
 
 from partnership.views import PartnerCreateView, PartnerDetailView, PartnersListView, PartnershipsList, \
-    PartnerUpdateView, PartnerMediaCreateView, PartnerMediaUpdateView, PartnerEntityCreateView, PartnerEntityUpdateView
+    PartnerUpdateView, PartnerMediaCreateView, PartnerMediaUpdateView, PartnerEntityCreateView, PartnerEntityUpdateView, \
+    PartnerMediaDeleteView
 
 urlpatterns = [
     url(r'^$', PartnershipsList.as_view(), name="partnerships_list"),
@@ -12,6 +13,7 @@ urlpatterns = [
         url(r'^(?P<partner_pk>\d+)/medias/', include([
             url('^new/$', PartnerMediaCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerMediaUpdateView.as_view(), name="update"),
+            url(r'^(?P<pk>\d+)/delete/$', PartnerMediaDeleteView.as_view(), name="delete"),
         ], namespace='medias')),
         url(r'^(?P<partner_pk>\d+)/entities/', include([
             url('^new/$', PartnerEntityCreateView.as_view(), name="create"),

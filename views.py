@@ -4,7 +4,7 @@ from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormMixin, CreateView, UpdateView
+from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
 
 from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm
 from partnership.models import Partner, Partnership, PartnerEntity
@@ -239,12 +239,11 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
         return self.get_object().user_can_change(self.request.user)
 
 
-class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
-    form_class = MediaForm
+class PartnerMediaMixin(UserPassesTestMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
-        return super(PartnerMediaFormMixin, self).dispatch(request, *args, **kwargs)
+        return super(PartnerMediaMixin, self).dispatch(request, *args, **kwargs)
 
     def test_func(self):
         return self.partner.user_can_change(self.request.user)
@@ -252,18 +251,22 @@ class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
     def get_queryset(self):
         return self.partner.medias.all()
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/media_form.html'
-        return self.template_name
-
     def get_success_url(self):
         return self.partner.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = super(PartnerMediaFormMixin, self).get_context_data(**kwargs)
+        context = super(PartnerMediaMixin, self).get_context_data(**kwargs)
         context['partner'] = self.partner
         return context
+
+
+class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
+    form_class = MediaForm
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/media_form.html'
+        return self.template_name
 
     @transaction.atomic
     def form_valid(self, form):
@@ -276,15 +279,22 @@ class PartnerMediaFormMixin(UserPassesTestMixin, FormMixin):
         return redirect(self.partner)
 
 
-# FIXME Make a more generic view and move it with Media in a more generic app
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
     template_name = 'partnerships/partner_media_create.html'
 
 
-# FIXME Make a more generic view and move it with Media in a more generic app
 class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
     template_name = 'partnerships/partner_media_update.html'
     context_object_name = 'media'
+
+
+class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
+    template_name = 'partnerships/partner_media_delete.html'
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/media_delete.html'
+        return self.template_name
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):
