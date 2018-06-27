@@ -197,13 +197,27 @@
             {{ entity }}
 
             {% if user|can_change_partner_entity:entity %}
-            <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
-               class="btn btn-default modal-link"
-               data-modal-submit="{% trans "update_partner_entity" %}"
-               data-modal-title="{{ entity }}"
-               data-modal="modal-form">
-              <i class="fa fa-pencil fa-fw"></i>
-            </a>
+            <div class="btn-group">
+              <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
+                 class="btn btn-default modal-link"
+                 data-modal-submit="{% trans "update_partner_entity" %}"
+                 data-modal-title="{{ entity }}"
+                 data-modal="modal-form">
+                <i class="fa fa-pencil fa-fw"></i>
+              </a>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="{% url "partnerships:partners:entities:delete" partner.id entity.id %}"
+                   class="modal-link"
+                   data-modal-danger
+                   data-modal-submit="{% trans "delete_partner_entity" %}"
+                   data-modal-title="{{ entity }}"
+                   data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partner_entity" %}</a></li>
+              </ul>
+            </div>
             {% endif %}
           </h3>
 
