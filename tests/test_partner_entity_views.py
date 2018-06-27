@@ -29,7 +29,7 @@ class PartnerEntityCreateViewTest(TestCase):
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
-        cls.url = reverse('partnerships:partners:medias:create', kwargs={'partner_pk': cls.partner.pk})
+        cls.url = reverse('partnerships:partners:entities:create', kwargs={'partner_pk': cls.partner.pk})
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -106,7 +106,7 @@ class PartnerEntityUpdateViewTest(TestCase):
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.partner_entity = cls.partner.entities.first()
-        cls.url = reverse('partnerships:partners:medias:update',
+        cls.url = reverse('partnerships:partners:entities:update',
                           kwargs={'partner_pk': cls.partner.pk, 'pk': cls.partner_entity.pk})
 
     def test_get_view_as_anonymous(self):
@@ -133,15 +133,15 @@ class PartnerEntityUpdateViewTest(TestCase):
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:partners:medias:create',
-                      kwargs={'partner_pk': self.partner.pk, 'pk': self.partner_gf.entities.first()})
+        url = reverse('partnerships:partners:entities:update',
+                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partner_entity_update.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:partners:medias:create',
-                      kwargs={'partner_pk': self.partner.pk, 'pk': self.partner_gf.entities.first()})
+        url = reverse('partnerships:partners:entities:update',
+                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partner_entity_update.html')
 

@@ -57,7 +57,7 @@ class PartnerFactory(factory.DjangoModelFactory):
             if extracted:
                 obj.entities = extracted
             else:
-                obj.entities = [PartnerEntityFactory(partner=obj)]
+                obj.entities = [PartnerEntityFactory(partner=obj, author=obj.author)]
 
 
 class PartnerEntityFactory(factory.DjangoModelFactory):
