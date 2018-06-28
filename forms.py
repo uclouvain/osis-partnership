@@ -2,12 +2,13 @@ from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity_version import EntityVersion
 from django import forms
-from django.forms import (BaseInlineFormSet, Form, ModelForm,
-                          inlineformset_factory)
 from django.utils.translation import ugettext_lazy as _
-from partnership.models import (Address, Contact, ContactType, Media, Partner,
-                                PartnerEntity, Partnership, PartnerTag,
-                                PartnerType)
+
+from base.forms.bootstrap import BootstrapForm
+from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
+from base.models.education_group_year import EducationGroupYear
+from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
+    Partnership, PartnershipTag, PartnershipType
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -405,63 +406,118 @@ class AddressForm(BootstrapForm, forms.ModelForm):
         self.fields['country'].queryset = Country.objects.all().order_by('name')
 
 
-class PartnershipFilterForm(Form):
-
-    STATE_CHOICES = (
-        (0, "STATE_1"),
-        (1, "STATE_2"),
-    )
+class PartnershipFilterForm(forms.Form):
 
     # UCL
 
-    ucl_university = forms.ModelMultipleChoiceField(
-        label=_('UCL faculty'),
-        queryset=EntityVersion.objects.none(),
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
+    ucl_university = forms.ModelChoiceField(
+        label=_('ucl_university'),
+        queryset=EntityVersion.objects.filter(partnerships__isnull=False),\
+        empty_label=_('ucl_university'),
         required=False,
     )
 
-    ucl_university_labo = forms.ModelMultipleChoiceField(
-        label=_('UCL laboratory'),
-        queryset=EntityVersion.objects.none(),
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
+    ucl_university_labo = forms.ModelChoiceField(
+        label=_('ucl_university_labo'),
+        queryset=EntityVersion.objects.filter(partnerships_labo__isnull=False),
+        empty_label=_('ucl_university_labo'),
+        required=False,
+    )
+
+    university_offers = forms.ModelChoiceField(
+        label=_('university_offers'),
+        queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
+        empty_label=_('university_offers'),
         required=False,
     )
 
     # Partner
 
-    partner = forms.ModelMultipleChoiceField(
-        label=_('partners'),
-        queryset=Partner.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
+    partner = forms.ModelChoiceField(
+        label=_('partner'),
+        queryset=Partner.objects.filter(partnerships__isnull=False),
+        empty_label=_('partner'),
+        required=False,
+    )
+    partner_entity = forms.ModelChoiceField(
+        label=_('partner_entity'),
+        queryset=PartnerEntity.objects.filter(partner__partnerships__isnull=False),
+        empty_label=_('partner_entity'),
+        required=False,
+    )
+    partner_type = forms.ModelChoiceField(
+        label=_('partner_type'),
+        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False),
+        empty_label=_('partner_type'),
+        required=False,
+    )
+    city = forms.ChoiceField(
+        label=_('city'),
+        choices=((None, _('city')),),
+        required=False,
+    )
+    country = forms.ModelChoiceField(
+        label=_('country'),
+
+        queryset=(
+            Country.objects
+                .filter(address__partners__partnerships__isnull=False)
+                .order_by('name')
+        ),
+        empty_label=_('country'),
+        required=False,
+    )
+    continent = forms.ModelChoiceField(
+        label=_('continent'),
+        queryset=(
+            Continent.objects
+                .filter(country__address__partners__partnerships__isnull=False)
+                .order_by('name')
+        ),
+        empty_label=_('continent'),
+        required=False,
+    )
+    partner_tags = forms.ModelMultipleChoiceField(
+        label=_('tags'),
+        queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False),
         required=False,
     )
 
-    partner_entity = forms.ModelMultipleChoiceField(
-        label=_('partner entities'),
-        queryset=PartnerEntity.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
+    # Partnerships
+
+    mobility_type = forms.ChoiceField(
+        label=_('mobility_type'),
+        choices=((None, _('mobility_type')),),
+        required=False,
+    )
+    partnership_type = forms.ModelChoiceField(
+        label=_('partnership_type'),
+        queryset=PartnershipType.objects.all(),
+        empty_label=_('partnership_type'),
+        required=False,
+    )
+    tags = forms.ModelMultipleChoiceField(
+        label=_('tags'),
+        queryset=PartnershipTag.objects.all(),
         required=False,
     )
 
-    partner_type = forms.ModelMultipleChoiceField(
-        label=_('partner type'),
-        queryset=PartnerType.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
-        required=False,
-    )
+    def __init__(self, *args, **kwargs):
+        super(PartnershipFilterForm, self).__init__(*args, **kwargs)
+        cities = (
+            Address.objects
+            .filter(partners__isnull=False, city__isnull=False)
+            .values_list('city', flat=True)
+            .order_by('city')
+            .distinct('city')
+        )
+        self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
-    state = forms.ChoiceField(
-        label=_('state'),
-        choices=STATE_CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
-        required=False,
-    )
-
-    is_valid = forms.NullBooleanField(
-        label=_('is_valid'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
-        required=False,
-    )
-
-    # Partnership
+        mobility_types = (
+            Partnership.objects
+                .values_list('mobility_type', flat=True)
+                .order_by('mobility_type')
+                .distinct('mobility_type')
+        )
+        mobility_types = tuple((mobility_type, mobility_type) for mobility_type in mobility_types)
+        self.fields['mobility_type'].choices = ((None, _('mobility_type')),) + mobility_types

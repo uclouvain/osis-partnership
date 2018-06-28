@@ -255,22 +255,21 @@ class Partnership(models.Model):
     )
     ucl_university = models.ForeignKey(
         'base.EntityVersion',
-        verbose_name=_('partner_entity'),
+        verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
     ucl_university_labo = models.ForeignKey(
         'base.EntityVersion',
-        verbose_name=_('partner_entity'),
+        verbose_name=_('ucl_university_labo'),
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name='partnerships_labo',
         blank=True,
         null=True,
     )
-
     university_offers = models.ManyToManyField(
         'base.EducationGroupYear',
-        verbose_name=_('UCL offer'),
+        verbose_name=_('university_offers'),
         related_name='partnerships',
     )
 

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% load i18n static %}
+{% load bootstrap3 i18n static %}
 
 {% block breadcrumb %}
   <li class="active">{% trans 'partnerships' %}</li>
@@ -32,7 +32,7 @@
             <button class="btn btn-default pull-right" type="button"
                     data-toggle="collapse" data-target="#partnership-filters"
                     aria-expanded="false" aria-controls="partnership-filters">
-              <i class="fa fa-filter"></i>
+              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partnerships" %}</span>
             </button>
           </div>
         </div>
@@ -45,102 +45,65 @@
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'Partnership' %}</a></li>
             </ul>
 
-            <form action="{% url "partnerships:partnerships_list" %}" method="get">
+            <form action="{% url "partnerships:partnerships_list" %}" id="filter-form" method="get">
               {% csrf_token %}
               <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
-                  <fieldset>
-                    <legend>{% trans 'UCL' %}</legend>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <label for="{{ form.ucl_university.id_for_label }}">{% trans "UCL faculty" %} :</label>
-                        {{ form.ucl_university }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.ucl_university_labo.id_for_label }}">{% trans "UCL laboratory" %} :</label>
-                        {{ form.ucl_university_labo }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.ucl_university_labo.id_for_label }}">{% trans "UCL offer" %} :</label>
-                        {{ form.ucl_university_labo }}
-                      </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.ucl_university show_label=False %}
                     </div>
-                  </fieldset>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.ucl_university_labo show_label=False %}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.university_offers show_label=False %}
+                    </div>
+                  </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partner">
-                  <fieldset>
-                    <legend>{% trans 'Partner' %}</legend>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner.id_for_label }}">{% trans "Partner" %} :</label>
-                        {{ form.partner }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner_entity.id_for_label }}">{% trans "Partner entity" %} :</label>
-                        {{ form.partner_entity }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Partner type" %} :</label>
-                        {{ form.partner_type }}
-                      </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.partner show_label=False %}
                     </div>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner_type.id_for_label }}">{% trans "City" %} :</label>
-                        {{ form.partner_type }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Country" %} :</label>
-                        {{ form.partner_type }}
-                      </div>
-                      <div class="col-sm-4">
-                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Continent" %} :</label>
-                        {{ form.partner_type }}
-                      </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.partner_entity show_label=False %}
                     </div>
-                    <p>
-                      <label for="{{ form.state.id_for_label }}">{% trans "Tags" %} :</label>
-                      {{ form.state }}
-                    </p>
-                  </fieldset>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.partner_type show_label=False %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.city show_label=False %}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.country show_label=False %}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.continent show_label=False %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      {% bootstrap_field form.partner_tags show_label=False %}
+                    </div>
+                  </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
-                  <fieldset>
-                    <legend>{% trans 'Partnership' %}</legend>
-                    <p>
-                      {% trans "State" %} {{ form.state }}
-                      {% trans "Partnerships ongoing in" %} {{ form.state }}
-                      {% trans "Partnerships going to an end in" %} {{ form.state }}
-                      {% trans "Partnerships being valid in" %} {{ form.state }}
-                      {% trans "Partnerships not being valid in" %} {{ form.state }}
-                    </p>
-                    <div class="row">
-                      <div class="col-sm-6">
-                        {{ form.state }}
-                      </div>
-                      <div class="col-sm-6">
-                        {{ form.state }}
-                      </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                      {% bootstrap_field form.mobility_type show_label=False %}
                     </div>
-                    <div class="row">
-                      <div class="col-sm-6">
-                        {{ form.state }}
-                      </div>
-                      <div class="col-sm-6">
-                        {{ form.state }}
-                      </div>
+                    <div class="col-sm-12 col-md-6">
+                      {% bootstrap_field form.partnership_type show_label=False %}
                     </div>
-                    <p>
-                      <label for="{{ form.state.id_for_label }}">{% trans "Tags" %} :</label>
-                      {{ form.state }}
-                    </p>
-                    <p>
-                      <label for="{{ form.state.id_for_label }}">{% trans "Comment" %} :</label>
-                      {{ form.state }}
-                    </p>
-
-                    
-                  </fieldset>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      {% bootstrap_field form.tags show_label=False %}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="row">
