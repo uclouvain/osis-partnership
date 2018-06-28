@@ -445,16 +445,4 @@ class PartnershipFilterForm(Form):
         required=False,
     )
 
-    # Partnership`
-    
-    
-
-class PartnershipModelForm(BootstrapModelForm):
-
-    class Meta:
-        model = Partnership
-        fields = '__all__'
-    
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        super().__init__(*args, **kwargs)
+    # Partnership
