@@ -27,6 +27,8 @@
       <div class="row">
         <div class="col-sm-12">
           <dl class="dl-horizontal">
+            <!-- Partnership -->
+            <h2>{% trans "Partnership" %}</h2>
             <dt>{% trans "partner" %}</dt>
             <dd>{{ partnership.partner }}</dd>
 
@@ -62,8 +64,10 @@
           </dl>
         </div>
       </div>
+      
+      <!-- Contacts -->
+      <h2>{% trans "Contacts" %}</h2>
       {% if partnership.contacts.all %}
-        <h2>{% trans "Contacts" %}</h2>
         <div class="row">
           {% for contact in partnership.contacts.all %}
             <div class="col-sm-12">
@@ -78,6 +82,25 @@
           {% endfor %}
         </div>
       {% endif %}
+
+      <!-- Accords -->
+      <h2>{% trans "Agreements" %}
+      <div>
+        <!-- TODO -->
+      </div>
+      
+      <!-- Tags -->
+      <h2>{% trans "Tags" %}</h2>
+      <div>
+        <ul>
+          {% for tag in partnership.tags.all %}
+            <li>{{ tag.value }}</li>
+          {% empty %}
+            {% trans "No tag yet" %}
+          {% endfor %}
+        </ul>
+      </div>
+      
     </div
   </div>
 {% endblock %}

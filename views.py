@@ -366,7 +366,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         self.partnership = (
             Partnership.objects
             .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type')
-            .prefetch_related('university_offers', 'contacts')
+            .prefetch_related('university_offers', 'contacts', 'tags')
             .get(pk=self.kwargs['pk'])
         )
         return self.partnership
