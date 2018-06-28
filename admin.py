@@ -39,7 +39,7 @@ class PartnerAdmin(admin.ModelAdmin):
 
 
 class PartnershipAdmin(admin.ModelAdmin):
-    raw_id_fields = ('ucl_university', 'ucl_university_labo')
+    raw_id_fields = ('ucl_university', 'ucl_university_labo', 'university_offers')
 
     def get_queryset(self, request):
         return Partnership.objects.select_related('partner')
