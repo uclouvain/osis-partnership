@@ -23,9 +23,6 @@
     </h1>
   </div>
 
-  <div class="row">
-    <a href="{% url 'partnerships:partnership_create' %}">{% trans 'new partnership' %}</a> 
-  </div>
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="well">
@@ -42,16 +39,16 @@
         <div class="collapse" id="partnership-filters">
           <div class="row">
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active"><a href="#ucl" aria-controls="ucl" role="tab" data-toggle="tab">{% trans 'UCL' %}</a></li>
-              <li role="presentation"><a href="#partner" aria-controls="profile" role="partner" data-toggle="tab">{% trans 'Partner' %}</a></li>
-              <li role="presentation"><a href="#partnership" aria-controls="messages" role="partnership" data-toggle="tab">{% trans 'Partnership' %}</a></li>
+              <li role="presentation" class="active"><a href="#filter-ucl" aria-controls="filter-ucl" role="tab" data-toggle="tab">{% trans 'UCL' %}</a></li>
+              <li role="presentation"><a href="#filter-partner" aria-controls="filter-profile" role="tab" data-toggle="tab">{% trans 'Partner' %}</a></li>
+              <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'Partnership' %}</a></li>
             </ul>
 
 
             <form action="{% url "partnerships:partnerships_list" %}" method="get">
               {% csrf_token %}
               <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="ucl">
+                <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
                   <fieldset>
                     <legend>{% trans 'UCL' %}</legend>
                     <div class="row">
@@ -70,7 +67,7 @@
                     </div>
                   </fieldset>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="partner">
+                <div role="tabpanel" class="tab-pane fade" id="filter-partner">
                   <fieldset>
                     <legend>{% trans 'Partner' %}</legend>
                     <div class="row">
@@ -107,7 +104,7 @@
                     </p>
                   </fieldset>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="partnership">
+                <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
                   <fieldset>
                     <legend>{% trans 'Partnership' %}</legend>
                     <p>
@@ -145,15 +142,11 @@
                     
                   </fieldset>
                 </div>
-                
-                {% comment %}{{ form.as_p }}{% endcomment %}
-              {% comment %}
-              <div class="form-group">
-                <div class="col-sm-12 col-md-8">{{ form.value }}</div>
               </div>
-              {% endcomment %}
-              <div class="col-md-12">
-                <button type="submit" class="btn btn-primary pull-right">{% trans "filter" %}</button>
+              <div class="row">
+                <div class="col-md-12">
+                  <button type="submit" class="btn btn-primary pull-right">{% trans "filter" %}</button>
+                </div>
               </div>
             </form>
           </div>

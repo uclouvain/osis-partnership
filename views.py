@@ -15,7 +15,7 @@ class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partners'
     form_class = PartnerFilterForm
     paginate_by = 20
-    paginate_orphans = 5
+    paginate_orphans = 2
     paginate_neighbours = 4
 
     def get_template_names(self):
@@ -317,7 +317,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partnerships'
     form_class = PartnershipFilterForm
     paginate_by = 20
-    paginate_orphans = 5
+    paginate_orphans = 2
     paginate_neighbours = 4
 
     def get_template_names(self):
@@ -343,7 +343,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['value']:
                 queryset = queryset.filter('value')
         return queryset
-    
+
+
 class PartnershipDetailView(LoginRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
