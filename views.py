@@ -367,6 +367,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
             Partnership.objects
             .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type')
             .prefetch_related('university_offers', 'contacts', 'tags')
+            .annotate(university_offers_count=Count('university_offers'))
             .get(pk=self.kwargs['pk'])
         )
         return self.partnership
