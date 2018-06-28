@@ -44,7 +44,6 @@
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'Partnership' %}</a></li>
             </ul>
 
-
             <form action="{% url "partnerships:partnerships_list" %}" method="get">
               {% csrf_token %}
               <div class="tab-content">
@@ -152,7 +151,7 @@
           </div>
         </div>
       </div>
-      
+
       <div id="results">
         {% include "partnerships/includes/partnerships_list_results.html" %}
       </div>
