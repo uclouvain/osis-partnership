@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import inlineformset_factory, BaseInlineFormSet
+from django.forms import inlineformset_factory, BaseInlineFormSet, ModelForm, Form
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
@@ -384,36 +384,58 @@ class AddressForm(BootstrapForm, forms.ModelForm):
         self.fields['country'].queryset = Country.objects.all().order_by('name')
 
 
-class PartnershipFilterForm(BootstrapForm):
+class PartnershipFilterForm(Form):
+
+    STATE_CHOICES = (
+        (0, "STATE_1"),
+        (1, "STATE_2"),
+    )
+
+    # UCL
+    
     ucl_university = forms.ModelMultipleChoiceField(
         label=_('UCL faculty'),
         queryset=EntityVersion.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
 
     ucl_university_labo = forms.ModelMultipleChoiceField(
         label=_('UCL laboratory'),
         queryset=EntityVersion.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
 
     # ucl_offer = 
+
+    # Partner
     
     partner = forms.ModelMultipleChoiceField(
         label=_('partners'),
         queryset=Partner.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
     
     partner_entity = forms.ModelMultipleChoiceField(
         label=_('partner entities'),
         queryset=PartnerEntity.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
 
     partner_type = forms.ModelMultipleChoiceField(
         label=_('partner type'),
         queryset=PartnerType.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
+        required=False,
+    )
+
+    state = forms.ChoiceField(
+        label=_('state'),
+        choices=STATE_CHOICES,
+        widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
     
@@ -422,6 +444,8 @@ class PartnershipFilterForm(BootstrapForm):
         widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
         required=False,
     )
+
+    # Partnership`
     
     
 
