@@ -25,7 +25,6 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      {% comment %}
       <div class="well">
         <div class="row">
           <div class="col-sm-12">
@@ -44,7 +43,6 @@
               <li role="presentation"><a href="#filter-partner" aria-controls="filter-profile" role="tab" data-toggle="tab">{% trans 'Partner' %}</a></li>
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'Partnership' %}</a></li>
             </ul>
-
 
             <form action="{% url "partnerships:partnerships_list" %}" method="get">
               {% csrf_token %}
@@ -153,8 +151,6 @@
           </div>
         </div>
       </div>
-      {% endcomment %}
-      
       <div id="results">
         {% include "partnerships/includes/partnerships_list_results.html" %}
       </div>
