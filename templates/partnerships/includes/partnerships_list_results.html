@@ -2,13 +2,13 @@
 <table class="table table-stripped table-hover">
   <thead>
     <tr>
-      <td>{% trans "partner" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner" %}</td>
-      <td>{% trans "UCL" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="UCL" %}</td>
-      <td>{% trans "partnership type" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnership_type" %}</td>
+      <td>{% trans "partner" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
+      <td>{% trans "university" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl_university__title" %}</td>
+      <td>{% trans "partnership type" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnership_type__value" %}</td>
       <td>{% trans "Start date" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="start_date" %}</td>
       <td>{% trans "End date" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="end_date" %}</td>
-      <td>{% trans "Validated" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="validated" %}</td>
-      <td>{% trans "Signed" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="signed" %}</td>
+      <td>{% trans "Validated" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="is_valid" %}</td>
+      <td>{% trans "Signed" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="is_signed" %}</td>
       <td></td>
     </tr>
   </thead>
@@ -16,7 +16,7 @@
     {% for partnership in partnerships %}
       <tr>
         <td>{{ partnership.partner }}</td>
-        <td>UCL</td>
+        <td>{{ partnership.ucl_university }}</td>
         <td>{{ partnership.partner_type }}</td>
         <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
         <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>
