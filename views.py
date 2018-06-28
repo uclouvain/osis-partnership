@@ -6,6 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
 
+from base.models.education_group_year import EducationGroupYear
 from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm, PartnershipFilterForm, PartnershipFilterForm
 from partnership.models import Partner, Partnership, Media, PartnerEntity
 from partnership.utils import user_is_adri
@@ -344,8 +345,10 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo')
-            .prefetch_related('university_offers')
+            .select_related('ucl_university', 'ucl_university_labo', 'partnership_type', 'partner')
+            .prefetch_related(
+                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
+            )
             .annotate(university_offers_count=Count('university_offers'))
         )
         form = self.get_form()
