@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 
 from partnership.views import PartnerCreateView, PartnerDetailView, PartnersListView, PartnershipsListView, \
     PartnerUpdateView, PartnerMediaCreateView, PartnerMediaUpdateView, PartnerEntityCreateView, PartnerEntityUpdateView, \
-    PartnerMediaDeleteView, PartnerEntityDeleteView,PartnershipDetailView
+    PartnerMediaDeleteView, PartnerEntityDeleteView, PartnershipDetailView
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),

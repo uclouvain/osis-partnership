@@ -10,6 +10,7 @@ from reference.models.continent import Continent
 from reference.models.country import Country
 from base.models.entity_version import EntityVersion
 
+
 class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
 
     def __init__(self, attrs=None, empty_label=None):
@@ -328,17 +329,17 @@ class PartnerFilterForm(BootstrapForm):
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnerTag.objects.all(),
-        required = False,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
         super(PartnerFilterForm, self).__init__(*args, **kwargs)
         cities = (
             Address.objects
-                .filter(partners__isnull=False, city__isnull=False)
-                .values_list('city', flat=True)
-                .order_by('city')
-                .distinct('city')
+            .filter(partners__isnull=False, city__isnull=False)
+            .values_list('city', flat=True)
+            .order_by('city')
+            .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
@@ -392,7 +393,7 @@ class PartnershipFilterForm(Form):
     )
 
     # UCL
-    
+
     ucl_university = forms.ModelMultipleChoiceField(
         label=_('UCL faculty'),
         queryset=EntityVersion.objects.none(),
@@ -407,17 +408,15 @@ class PartnershipFilterForm(Form):
         required=False,
     )
 
-    # ucl_offer = 
-
     # Partner
-    
+
     partner = forms.ModelMultipleChoiceField(
         label=_('partners'),
         queryset=Partner.objects.all(),
         widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
-    
+
     partner_entity = forms.ModelMultipleChoiceField(
         label=_('partner entities'),
         queryset=PartnerEntity.objects.all(),
@@ -438,7 +437,7 @@ class PartnershipFilterForm(Form):
         widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
-    
+
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
         widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
