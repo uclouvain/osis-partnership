@@ -15,10 +15,17 @@
   <tbody>
     {% for partnership in partnerships %}
       <tr>
-        <td>{{ partnership.partner }}</td>
         <td>
-          {{ partnership.ucl_university }}          
-          
+          {{ partnership.partner }}
+          {% if partnership.partner_entity is not None%}
+            <ul>
+              <li>{{ partnership.partner_entity.name }}</li>
+            </ul>
+          {% endif %}
+        </td>
+        <td>
+          {{ partnership.ucl_university }}
+          {% if partnership.ucl_university_labo is not None or partnership.university_offers_count > 0 %}
           <ul>
             {% if partnership.ucl_university_labo is not None %}
               <li>{{ partnership.ucl_university_labo }}</li>
@@ -33,6 +40,7 @@
               </li>
             {% endif %}
           </ul>
+          {% endif %}
         </td>
         <td>{{ partnership.partnership_type }}</td>
         <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
