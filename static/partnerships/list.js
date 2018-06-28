@@ -45,4 +45,9 @@
         width: "100%",
         placeholder: "Tags"
     });
+    $('#filter-form #id_partner_tags').select2({
+        language: "fr",
+        width: "100%",
+        placeholder: "Tags"
+    });
 })(jQuery);

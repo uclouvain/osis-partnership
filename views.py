@@ -334,6 +334,12 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         context['paginate_neighbours'] = self.paginate_neighbours
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnershipsListView, self).get_form_kwargs()
+        if self.request.GET:
+            kwargs['data'] = self.request.GET
+        return kwargs
+
     def get_ordering(self):
         return self.request.GET.get('ordering', '-created')
 
@@ -350,8 +356,32 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         form = self.get_form()
         if form.is_valid():
             data = form.cleaned_data
-            if data['value']:
-                queryset = queryset.filter('value')
+            if data['ucl_university']:
+                queryset = queryset.filter(ucl_university=data['ucl_university'])
+            if data['ucl_university_labo']:
+                queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
+            if data['university_offers']:
+                queryset = queryset.filter(university_offers=data['university_offers'])
+            if data['partner']:
+                queryset = queryset.filter(partner=data['partner'])
+            if data['partner_entity']:
+                queryset = queryset.filter(partner__entities=data['partner_entity'])
+            if data['partner_type']:
+                queryset = queryset.filter(partner__partner_type=data['partner_type'])
+            if data['city']:
+                queryset = queryset.filter(partner__contact_address__city__icontains=data['city'])
+            if data['country']:
+                queryset = queryset.filter(partner__contact_address__country=data['country'])
+            if data['continent']:
+                queryset = queryset.filter(partner__contact_address__country__continent=data['continent'])
+            if data['partner_tags']:
+                queryset = queryset.filter(partner__tags__in=data['partner_tags'])
+            if data['mobility_type']:
+                queryset = queryset.filter(mobility_type=data['mobility_type'])
+            if data['partnership_type']:
+                queryset = queryset.filter(partnership_type=data['partnership_type'])
+            if data['tags']:
+                queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
         queryset = queryset.order_by(ordering)
         return queryset
