@@ -269,10 +269,16 @@ class Partnership(models.Model):
         null=True,
     )
 
+    university_offer = models.ForeignKey(
+        'base.EducationGroupYear',
+        verbose_name=_('UCL offer'),
+        on_delete=models.PROTECT,
+        related_name='offers',
+    )
+    
     # partner_entity = ?
     # university => entity
     # university_labo => entity
-    # university_offers = ?
     # supervisor = ?
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)

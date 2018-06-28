@@ -39,25 +39,6 @@
           </div>
         </div>
 
-        {% comment %}
-          <div>
-          <!-- Nav tabs -->
-          <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
-            <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
-          </ul>
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="home">foo</div>
-            <div role="tabpanel" class="tab-pane" id="profile">bar</div>
-            <div role="tabpanel" class="tab-pane" id="messages">xyz</div>
-            <div role="tabpanel" class="tab-pane" id="settings">42</div>
-          </div>
-        </div>
-        {% endcomment %}
-        
         <div class="collapse" id="partnership-filters">
           <div class="row">
             <ul class="nav nav-tabs" role="tablist">
@@ -73,36 +54,95 @@
                 <div role="tabpanel" class="tab-pane fade in active" id="ucl">
                   <fieldset>
                     <legend>{% trans 'UCL' %}</legend>
-                    <p>
-                      <label for="{{ form.ucl_university.id_for_label }}">{% trans "UCL faculty" %} :</label>
-                      {{ form.ucl_university }}
-                    </p>
-                    <p>
-                      <label for="{{ form.ucl_university_labo.id_for_label }}">{% trans "UCL laboratory" %} :</label>
-                      {{ form.ucl_university_labo }}
-                    </p>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <label for="{{ form.ucl_university.id_for_label }}">{% trans "UCL faculty" %} :</label>
+                        {{ form.ucl_university }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.ucl_university_labo.id_for_label }}">{% trans "UCL laboratory" %} :</label>
+                        {{ form.ucl_university_labo }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.ucl_university_labo.id_for_label }}">{% trans "UCL offer" %} :</label>
+                        {{ form.ucl_university_labo }}
+                      </div>
+                    </div>
                   </fieldset>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="partner">
                   <fieldset>
                     <legend>{% trans 'Partner' %}</legend>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner.id_for_label }}">{% trans "Partner" %} :</label>
+                        {{ form.partner }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner_entity.id_for_label }}">{% trans "Partner entity" %} :</label>
+                        {{ form.partner_entity }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Partner type" %} :</label>
+                        {{ form.partner_type }}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner_type.id_for_label }}">{% trans "City" %} :</label>
+                        {{ form.partner_type }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Country" %} :</label>
+                        {{ form.partner_type }}
+                      </div>
+                      <div class="col-sm-4">
+                        <label for="{{ form.partner_type.id_for_label }}">{% trans "Continent" %} :</label>
+                        {{ form.partner_type }}
+                      </div>
+                    </div>
                     <p>
-                      <label for="{{ form.partner.id_for_label }}">{% trans "Partner" %} :</label>
-                      {{ form.partner }}
-                    </p>
-                    <p>
-                      <label for="{{ form.partner_entity.id_for_label }}">{% trans "Partner entity" %} :</label>
-                      {{ form.partner_entity }}
-                    </p>
-                    <p>
-                      <label for="{{ form.partner_type.id_for_label }}">{% trans "Partner entity" %} :</label>
-                      {{ form.partner_type }}
+                      <label for="{{ form.state.id_for_label }}">{% trans "Tags" %} :</label>
+                      {{ form.state }}
                     </p>
                   </fieldset>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="partnership">
                   <fieldset>
                     <legend>{% trans 'Partnership' %}</legend>
+                    <p>
+                      {% trans "State" %} {{ form.state }}
+                      {% trans "Partnerships ongoing in" %} {{ form.state }}
+                      {% trans "Partnerships going to an end in" %} {{ form.state }}
+                      {% trans "Partnerships being valid in" %} {{ form.state }}
+                      {% trans "Partnerships not being valid in" %} {{ form.state }}
+                    </p>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        {{ form.state }}
+                      </div>
+                      <div class="col-sm-6">
+                        {{ form.state }}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        {{ form.state }}
+                      </div>
+                      <div class="col-sm-6">
+                        {{ form.state }}
+                      </div>
+                    </div>
+                    <p>
+                      <label for="{{ form.state.id_for_label }}">{% trans "Tags" %} :</label>
+                      {{ form.state }}
+                    </p>
+                    <p>
+                      <label for="{{ form.state.id_for_label }}">{% trans "Comment" %} :</label>
+                      {{ form.state }}
+                    </p>
+
+                    
                   </fieldset>
                 </div>
                 
