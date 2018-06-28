@@ -132,7 +132,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     contact_in_mobile_phone = forms.CharField(
         label=_('mobile_phone'),
-        widget=forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
+        widget=forms.TextInput(attrs={'placeholder': _('mobile_phone')}),
     )
 
     contact_in_fax = forms.CharField(
@@ -180,7 +180,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     contact_out_mobile_phone = forms.CharField(
         label=_('mobile_phone'),
-        widget=forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
+        widget=forms.TextInput(attrs={'placeholder': _('mobile_phone')}),
     )
 
     contact_out_fax = forms.CharField(

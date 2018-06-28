@@ -63,11 +63,11 @@ class ValueAdmin(admin.ModelAdmin):
         return {}
 
 
-admin.site.register(PartnerType, ValueAdmin)
-admin.site.register(PartnerTag, ValueAdmin)
+admin.site.register(PartnerType)
+admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
-admin.site.register(PartnershipType, ValueAdmin)
-admin.site.register(PartnershipTag, ValueAdmin)
+admin.site.register(PartnershipType)
+admin.site.register(PartnershipTag)
 admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Media)
 admin.site.register(ContactType)
