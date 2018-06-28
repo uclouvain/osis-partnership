@@ -65,6 +65,11 @@
         </div>
       </div>
       
+      <!-- Partenariat -->
+      <h2>{% trans "Partnership between" %}</h2>
+      <p>{{ partnership.partner }} &gt; {{ partnership.partner_entity }}</p>
+      <p>{{ partnership.ucl_university }} &gt; {{ partnership.ucl_university_labo }} &gt; {{ partnership.ucl_offers }}</p>
+      
       <!-- Contacts -->
       <h2>{% trans "Contacts" %}</h2>
       {% if partnership.contacts.all %}
