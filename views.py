@@ -1,14 +1,16 @@
+from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.db.models import Count, Q, Prefetch
+from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
-from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
-
-from base.models.education_group_year import EducationGroupYear
-from partnership.forms import PartnerFilterForm, PartnerForm, MediaForm, PartnerEntityForm, AddressForm, PartnershipFilterForm, PartnershipFilterForm
-from partnership.models import Partner, Partnership, Media, PartnerEntity
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
+                                       UpdateView)
+from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
+                               PartnerFilterForm, PartnerForm,
+                               PartnershipFilterForm)
+from partnership.models import Media, Partner, PartnerEntity, Partnership
 from partnership.utils import user_is_adri
 
 
