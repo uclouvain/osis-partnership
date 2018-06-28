@@ -339,7 +339,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university', 'ucl_university_labo', 'partnership_type', 'partner')
+            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partnership_type', 'partner_entity')
             .prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
