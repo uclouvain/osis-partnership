@@ -31,16 +31,16 @@
       <div class="col-sm-12 col-md-6">
         <dl class="dl-horizontal">
           <dt>{% trans "partner_type" %}</dt>
-          <dd>{{ partner.partner_type }}</dd>
+          <dd>{{ partner.partner_type|default_if_none:"" }}</dd>
 
           <dt>{% trans "partner_code" %}</dt>
-          <dd>{{ partner.partner_code }}</dd>
+          <dd>{{ partner.partner_code|default_if_none:"" }}</dd>
 
           <dt>{% trans "pic_code" %}</dt>
-          <dd>{{ partner.pic_code }}</dd>
+          <dd>{{ partner.pic_code|default_if_none:"" }}</dd>
 
           <dt>{% trans "erasmus_code" %}</dt>
-          <dd>{{ partner.erasmus_code }}</dd>
+          <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
           {% if partner.is_ies %}<dd>{% trans "is_ies" %}</dd>{% endif %}
 
@@ -56,7 +56,7 @@
           <dd>{% if partner.is_public %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
 
           <dt>{% trans "contact_type" %}</dt>
-          <dd>{{ partner.contact_type }}</dd>
+          <dd>{{ partner.contact_type|default_if_none:"" }}</dd>
 
           <dt>{% trans "use_egracons" %}</dt>
           <dd>{% if partner.use_egracons %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
@@ -80,10 +80,10 @@
           <dd>{% if partner.email %}<a href="mailto:{{ partner.email }}">{{ partner.email }}</a>{% endif %}</dd>
 
           <dt>{% trans "phone" %}</dt>
-          <dd>{{ partner.phone }}</dd>
+          <dd>{{ partner.phone|default_if_none:"" }}</dd>
         </dl>
 
-        <p><em>{{ partner.comment }}</em></p>
+        <p><em>{{ partner.comment|linebreaksbr }}</em></p>
       </div>
     </div>
     <div class="row">
