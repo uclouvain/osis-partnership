@@ -6,10 +6,7 @@ from partnership.views import PartnerCreateView, PartnerDetailView, PartnersList
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
-    url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
-    url(r'^(?P<pk>\d+)/edit/$', PartnershipUpdateView.as_view(), name="partnership_update"),
-    url(r'^(?P<pk>\d+)/delete/$', PartnershipDeleteView.as_view(), name="partnership_delete"),
     url(r'^partners/', include([
         url(r'^$', PartnersListView.as_view(), name="list"),
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),

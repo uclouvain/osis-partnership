@@ -269,11 +269,10 @@ class Partnership(models.Model):
         null=True,
     )
 
-    university_offer = models.ForeignKey(
+    university_offers = models.ManyToManyField(
         'base.EducationGroupYear',
         verbose_name=_('UCL offer'),
-        on_delete=models.PROTECT,
-        related_name='offers',
+        related_name='partnerships',
     )
     
     # partner_entity = ?

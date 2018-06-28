@@ -316,8 +316,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
     form_class = PartnershipFilterForm
-    paginate_by = 1
-    #paginate_orphans = 5
+    paginate_by = 20
+    paginate_orphans = 5
     paginate_neighbours = 4
 
     def get_template_names(self):
