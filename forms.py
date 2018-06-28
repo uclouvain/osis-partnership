@@ -1,14 +1,16 @@
-from django import forms
-from django.forms import inlineformset_factory, BaseInlineFormSet, ModelForm, Form
-from django.utils.translation import ugettext_lazy as _
-
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
-from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, Partnership
+from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
+from base.models.entity_version import EntityVersion
+from django import forms
+from django.forms import (BaseInlineFormSet, Form, ModelForm,
+                          inlineformset_factory)
+from django.utils.translation import ugettext_lazy as _
+from partnership.models import (Address, Contact, ContactType, Media, Partner,
+                                PartnerEntity, Partnership, PartnerTag,
+                                PartnerType)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
-from base.models.entity_version import EntityVersion
 
 
 class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):

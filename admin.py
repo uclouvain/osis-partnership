@@ -1,7 +1,7 @@
 from django.contrib import admin
-
-from partnership.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag, \
-    PartnerEntity, Media, Contact, Address, ContactType
+from partnership.models import (Address, Contact, ContactType, Media, Partner,
+                                PartnerEntity, Partnership, PartnershipTag,
+                                PartnershipType, PartnerTag, PartnerType)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
