@@ -26,7 +26,7 @@
             {% if partnership.university_offers_count > 0 %}
               <li>
                 {% if partnership.university_offers_count == 1 %}
-                  {{ partnership.university_offers.first }}
+                  {{ partnership.university_offers.all.0 }}
                 {% else %}
                   {{ partnership.university_offers_count }} {% trans "offers" %}
                 {% endif %}
@@ -34,7 +34,7 @@
             {% endif %}
           </ul>
         </td>
-        <td>{{ partnership.partner_type }}</td>
+        <td>{{ partnership.partnership_type }}</td>
         <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
         <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>
         <td><i class="fa {{ partnership.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"</i></td>
