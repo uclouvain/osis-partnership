@@ -337,12 +337,6 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     
     def get_queryset(self):
         queryset = (
-            Partner.objects
-                .all()
-                .select_related('partner_type', 'contact_address__country')
-                .annotate(partnerships_count=Count('partnerships'))
-        )
-        queryset = (
             Partnership.objects
             .all()
             .select_related('ucl_university', 'ucl_university_labo', 'partnership_type', 'partner')
