@@ -103,6 +103,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         label=_('type'),
         queryset=ContactType.objects.all(),
         empty_label=_('contact_type'),
+        required=False,
     )
 
     contact_in_title = forms.ChoiceField(
@@ -114,35 +115,43 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
     contact_in_last_name = forms.CharField(
         label=_('last_name'),
         widget=forms.TextInput(attrs={'placeholder': _('last_name')}),
+        required=False,
     )
 
     contact_in_first_name = forms.CharField(
         label=_('first_name'),
         widget=forms.TextInput(attrs={'placeholder': _('first_name')}),
+        required=False,
     )
+
     contact_in_function = forms.CharField(
         label=_('function'),
         widget=forms.TextInput(attrs={'placeholder': _('function')}),
+        required=False,
     )
 
     contact_in_phone = forms.CharField(
         label=_('phone'),
         widget=forms.TextInput(attrs={'placeholder': _('phone')}),
+        required=False,
     )
 
     contact_in_mobile_phone = forms.CharField(
         label=_('mobile_phone'),
         widget=forms.TextInput(attrs={'placeholder': _('mobile_phone')}),
+        required=False,
     )
 
     contact_in_fax = forms.CharField(
         label=_('fax'),
         widget=forms.TextInput(attrs={'placeholder': _('fax')}),
+        required=False,
     )
 
     contact_in_email = forms.EmailField(
         label=_('email'),
         widget=forms.EmailInput(attrs={'placeholder': _('email')}),
+        required=False,
     )
 
     # Contact out
@@ -151,6 +160,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         label=_('type'),
         queryset=ContactType.objects.all(),
         empty_label=_('contact_type'),
+        required=False,
     )
 
     contact_out_title = forms.ChoiceField(
@@ -162,35 +172,43 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
     contact_out_last_name = forms.CharField(
         label=_('last_name'),
         widget=forms.TextInput(attrs={'placeholder': _('last_name')}),
+        required=False,
     )
 
     contact_out_first_name = forms.CharField(
         label=_('first_name'),
         widget=forms.TextInput(attrs={'placeholder': _('first_name')}),
+        required=False,
     )
+
     contact_out_function = forms.CharField(
         label=_('function'),
         widget=forms.TextInput(attrs={'placeholder': _('function')}),
+        required=False,
     )
 
     contact_out_phone = forms.CharField(
         label=_('phone'),
         widget=forms.TextInput(attrs={'placeholder': _('phone')}),
+        required=False,
     )
 
     contact_out_mobile_phone = forms.CharField(
         label=_('mobile_phone'),
         widget=forms.TextInput(attrs={'placeholder': _('mobile_phone')}),
+        required=False,
     )
 
     contact_out_fax = forms.CharField(
         label=_('fax'),
         widget=forms.TextInput(attrs={'placeholder': _('fax')}),
+        required=False,
     )
 
     contact_out_email = forms.EmailField(
         label=_('email'),
         widget=forms.EmailInput(attrs={'placeholder': _('email')}),
+        required=False,
     )
 
     class Meta:
