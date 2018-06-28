@@ -16,7 +16,24 @@
     {% for partnership in partnerships %}
       <tr>
         <td>{{ partnership.partner }}</td>
-        <td>{{ partnership.ucl_university }}</td>
+        <td>
+          {{ partnership.ucl_university }}          
+          
+          <ul>
+            {% if partnership.ucl_university_labo is not None %}
+              <li>{{ partnership.ucl_university_labo }}</li>
+            {% endif %}
+            {% if partnership.university_offers_count > 0 %}
+              <li>
+                {% if partnership.university_offers_count == 1 %}
+                  {{ partnership.university_offers.first }}
+                {% else %}
+                  {{ partnership.university_offers_count }} {% trans "offers" %}
+                {% endif %}
+              </li>
+            {% endif %}
+          </ul>
+        </td>
         <td>{{ partnership.partner_type }}</td>
         <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
         <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>

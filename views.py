@@ -316,8 +316,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
     form_class = PartnershipFilterForm
-    paginate_by = 1
-    #paginate_orphans = 2
+    paginate_by = 20
+    paginate_orphans = 2
     paginate_neighbours = 4
 
     def get_template_names(self):
@@ -335,7 +335,19 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         return self.request.GET.get('ordering', '-created')
     
     def get_queryset(self):
-        queryset = Partnership.objects.all()
+        queryset = (
+            Partner.objects
+                .all()
+                .select_related('partner_type', 'contact_address__country')
+                .annotate(partnerships_count=Count('partnerships'))
+        )
+        queryset = (
+            Partnership.objects
+            .all()
+            .select_related('ucl_university_labo')
+            .prefetch_related('university_offers')
+            .annotate(university_offers_count=Count('university_offers'))
+        )
         form = self.get_form()
         if form.is_valid():
             data = form.cleaned_data
