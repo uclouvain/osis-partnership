@@ -24,66 +24,34 @@
           <a href="{% url 'partnerships:partnership_delete' pk=partnership.pk %}">{% trans 'delete' %}</a>
         </div>
       </div>
-      <div class="row">
-        <div class="col-sm-12">
-          <dl class="dl-horizontal">
-            <!-- Partnership -->
-            <h2>{% trans "Partnership" %}</h2>
-            <dt>{% trans "partner" %}</dt>
-            <dd>{{ partnership.partner }}</dd>
-
-            <dt>{% trans "UCL" %}</dt>
-            <dd>
-              {{ partnership.ucl_university }}
-              {% if partnership.ucl_university_labo %} &gt; {{ partnership.ucl_university_labo }}{% endif %}
-            </dd>
-
-            <dt>{% trans "Academic Responsible" %}</dt>
-            <dd>Not implemented yet?</dd>
-
-            {% if partnership.start_date or partnership.end_date %}
-              <dt>{% trans "Dates" %}</dt>
-              <dd>
-                {% if partnership.start_date %}{{ partnership.start_date }}{% endif %}
-                {% if partnership.start_date and partnership.end_date %} &gt; {% endif %}
-                {% if partnership.end_date %}{{ partnership.end_date }}{% endif %}
-              </dd>
-            {% endif %}
-
-            <dt>{% trans "Studies domain" %}</dt>
-            <dd>Not implemented yet</dd>
-
-            <dt>{% trans "Studies level" %}</dt>
-            <dd>Not implemented yet</dd>
-
-            <dt>{% trans "Mobility type" %}</dt>
-            <dd>{{ partnership.mobility_type }}</dd>
-
-            <dt>{% trans "Partnership type" %}</dt>
-            <dd>{{ partnership.partnership_type }}</dd>
-          </dl>
-        </div>
-      </div>
       
       <!-- Partenariat -->
       <h2>{% trans "Partnership between" %}</h2>
-      <p>{{ partnership.partner }} &gt; {{ partnership.partner_entity }}</p>
-      <p>{{ partnership.ucl_university }} &gt; {{ partnership.ucl_university_labo }} &gt; {{ partnership.ucl_offers }}</p>
-      
+      <p>
+        <i>{% trans "Created by" %} {{ partnership.author }} {% trans "the" %} {{ partnership.created }}. {% trans "Last update the" %} {{ partnership.modified }}.</i><br/>
+        <i>{% if partnership.is_valid %}{% trans "Validated" %}{% else %}{% trans "Not validated" %}{% endif %}</i>
+      </p>
+      <p><strong>{{ partnership.partner }}</strong> &gt; <strong>{{ partnership.partner_entity }}</strong></p>
+      <p>
+        <strong>{{ partnership.ucl_university.acronym }}</strong>
+        {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
+        {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
+      </p>
+        <p><strong>{% trans "Academic responsible" %}</strong> : Not implemented yet</p>
+        <p>{{ partnership.start_date }} &gt; {{ partnership.end_date }}</p>
+        <dl class="dl-horizontal">
+          <dt>{% trans "Studies domain" %}</dt><dd>Not implemented yet</dd>
+        <dt>{% trans "Mobility type" %}</dt><dd>{{ partnership.mobility_type }}</dd>
+        <dt>{% trans "Partnership type" %}</dt><dd>{{ partnership.partnership_type }}</dd>
+      </dl>
+      <p>{{ partnership.comment }}</p>
+            
       <!-- Contacts -->
       <h2>{% trans "Contacts" %}</h2>
       {% if partnership.contacts.all %}
-        <div class="row">
+        <div>
           {% for contact in partnership.contacts.all %}
-            <div class="col-sm-12">
-              <address><b>{{ contact }}</b> {{ contact.function|default_if_none:'' }} {{ contact.society|default_if_none:'' }}<br/>
-                T: {{ contact.phone|default_if_none:"N/a" }} M: {{ contact.mobile_phone|default_if_none:"N/a" }} F: {{ concact.fax|default_if_none:"N/a" }}
-                {{ contact.email|default_if_none:'' }}
-                  <p>
-                    {{ contact.comment|default_if_none:'' }}
-                  </p>
-              </address>
-            </div>
+            {% include "partnerships/includes/contact.html" with contact=contact %}
           {% endfor %}
         </div>
       {% endif %}
@@ -97,13 +65,11 @@
       <!-- Tags -->
       <h2>{% trans "Tags" %}</h2>
       <div>
-        <ul>
-          {% for tag in partnership.tags.all %}
-            <li>{{ tag.value }}</li>
-          {% empty %}
-            {% trans "No tag yet" %}
-          {% endfor %}
-        </ul>
+        {% for tag in partnership.tags.all %}
+          <span class="badge">{{ tag.value }}</span>
+        {% empty %}
+          {% trans "No tag yet" %}
+        {% endfor %}
       </div>
       
     </div
