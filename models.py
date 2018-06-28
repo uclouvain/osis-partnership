@@ -98,10 +98,10 @@ class PartnerEntity(models.Model):
         try:
             user_is_in_author_faculty = (
                 user
-                    .person
-                    .entitymanager_set
-                    .filter(entity__entitymanager__person__user=self.author)
-                    .exists()
+                .person
+                .entitymanager_set
+                .filter(entity__entitymanager__person__user=self.author)
+                .exists()
             )
         except Person.DoesNotExist:
             user_is_in_author_faculty = False
@@ -191,9 +191,9 @@ class Partner(models.Model):
             is_adri = user_is_adri(user)
             is_gf = (
                 user
-                    .person
-                    .entitymanager_set.all()
-                    .exists()
+                .person
+                .entitymanager_set.all()
+                .exists()
             )
             return is_adri or is_gf
         except Person.DoesNotExist:
@@ -274,7 +274,7 @@ class Partnership(models.Model):
         verbose_name=_('UCL offer'),
         related_name='partnerships',
     )
-    
+
     # supervisor = ?
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)

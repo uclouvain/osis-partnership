@@ -91,14 +91,14 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return (
             Partner.objects
-                .select_related('partner_type', 'author')
-                .prefetch_related(
-                    Prefetch('entities', queryset=PartnerEntity.objects.select_related(
-                        'contact_in', 'contact_out', 'address', 'parent', 'author',
-                    )),
-                    'tags',
-                    'medias',
-                )
+            .select_related('partner_type', 'author')
+            .prefetch_related(
+                Prefetch('entities', queryset=PartnerEntity.objects.select_related(
+                    'contact_in', 'contact_out', 'address', 'parent', 'author',
+                )),
+                'tags',
+                'medias',
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -326,7 +326,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             return 'partnerships/includes/partnerships_list_results.html'
         else:
             return 'partnerships/partnerships_list.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(PartnershipsListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
@@ -334,7 +334,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
 
     def get_ordering(self):
         return self.request.GET.get('ordering', '-created')
-    
+
     def get_queryset(self):
         queryset = (
             Partnership.objects
