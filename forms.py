@@ -395,14 +395,14 @@ class PartnershipFilterForm(Form):
     
     ucl_university = forms.ModelMultipleChoiceField(
         label=_('UCL faculty'),
-        queryset=EntityVersion.objects.all(),
+        queryset=EntityVersion.objects.none(),
         widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
 
     ucl_university_labo = forms.ModelMultipleChoiceField(
         label=_('UCL laboratory'),
-        queryset=EntityVersion.objects.all(),
+        queryset=EntityVersion.objects.none(),
         widget=forms.SelectMultiple(attrs={'class': "form-control"}),
         required=False,
     )
