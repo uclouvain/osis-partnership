@@ -2,8 +2,8 @@ from datetime import date
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
@@ -275,9 +275,6 @@ class Partnership(models.Model):
         related_name='partnerships',
     )
     
-    # partner_entity = ?
-    # university => entity
-    # university_labo => entity
     # supervisor = ?
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
@@ -300,7 +297,7 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    is_signed = models.BooleanField(_('is_signed'), default=False)
+    # Accord Signées => TODO PartnershipAgreement
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
@@ -329,6 +326,10 @@ class Partnership(models.Model):
     def __str__(self):
         return _('partnership_with_{partner}').format(partner=self.partner)
 
+    @cached_property
+    def is_signed(self):
+        # TODO
+        return False
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
