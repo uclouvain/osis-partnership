@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-22 15:38+0200\n"
-"PO-Revision-Date: 2018-06-22 15:52+0200\n"
+"POT-Creation-Date: 2018-06-29 09:20+0200\n"
+"PO-Revision-Date: 2018-06-29 09:25+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -116,9 +116,6 @@ msgstr "Actif"
 msgid "tags"
 msgstr "Tags"
 
-msgid "file"
-msgstr "Fichier"
-
 msgid "description"
 msgstr "Description"
 
@@ -131,8 +128,26 @@ msgstr "Veuillez uniquement mettre un fichier ou une URL."
 msgid "file_or_url_required"
 msgstr "Un fichier ou une URL est requis."
 
+msgid "ucl_university"
+msgstr "Faculté UCL"
+
+msgid "ucl_university_labo"
+msgstr "Laboratoire UCL"
+
+msgid "university_offers"
+msgstr "Offres"
+
 msgid "partner"
 msgstr "Partenaire"
+
+msgid "partner_entity"
+msgstr "Entité partenaire"
+
+msgid "mobility_type"
+msgstr "Type de mobilité"
+
+msgid "partnership_type"
+msgstr "Type de partenariat"
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -188,15 +203,6 @@ msgstr "STT"
 msgid "mobility_type_na"
 msgstr "N/A"
 
-msgid "partner_entity"
-msgstr "Entité partenaire"
-
-msgid "mobility_type"
-msgstr "Type de mobilité"
-
-msgid "partnership_type"
-msgstr "Type de partenariat"
-
 msgid "contacts"
 msgstr "Contacts"
 
@@ -234,11 +240,14 @@ msgstr "Personnels"
 msgid "visibility_staff_student"
 msgstr "Personnels et étudiants"
 
-msgid "document"
-msgstr "Document"
+msgid "file"
+msgstr "Fichier"
 
 msgid "visibility"
 msgstr "Visibilité"
+
+msgid "media_delete_warning"
+msgstr "Voulez-vous vraiment supprimer ce média ? ATTENTION, cette action est irréversible."
 
 msgid "first"
 msgstr "Premier"
@@ -251,6 +260,9 @@ msgstr "Suivant"
 
 msgid "last"
 msgstr "Dernier"
+
+msgid "partner_entity_delete_warning"
+msgstr "Voulez-vous vraiment supprimer cette entité ? ATTENTION, cette action est irréversible."
 
 msgid "informations"
 msgstr "Informations"
@@ -270,6 +282,27 @@ msgstr "Valide"
 msgid "still_actif"
 msgstr "Toujours actif"
 
+msgid "university"
+msgstr "Faculté"
+
+msgid "partnership type"
+msgstr "Type de partenariat"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Validated"
+msgstr "Validé"
+
+msgid "Signed"
+msgstr "Signé"
+
+msgid "offers"
+msgstr "Offres"
+
 msgid "partnerships"
 msgstr "Partenariats"
 
@@ -288,8 +321,8 @@ msgstr "Vous pourrez ajouter des médias après la création du partenaire."
 msgid "associated_entities"
 msgstr "Entitées associés"
 
-msgid "entity"
-msgstr "Entité"
+msgid "add_entities_after_creation"
+msgstr "Vous pourrez ajouter des entités partenaires après la création du partenaire."
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
@@ -307,11 +340,23 @@ msgstr "Adresse"
 msgid "associated_tags"
 msgstr "Tags associés"
 
+msgid "update_partner"
+msgstr "Mettre à jour le partenaire"
+
 msgid "external_link"
 msgstr "Lien externe"
 
+msgid "update_media"
+msgstr "Mettre à jour le média"
+
+msgid "delete_media"
+msgstr "Supprimer le média"
+
 msgid "no_media_yet"
 msgstr "Il n'y a pas encore de média."
+
+msgid "new_media"
+msgstr "Nouveau média"
 
 msgid "add_media"
 msgstr "Ajouter un média"
@@ -319,29 +364,83 @@ msgstr "Ajouter un média"
 msgid "entities"
 msgstr "Entités"
 
+msgid "update_partner_entity"
+msgstr "Mettre à jour l'entité partenaire"
+
+msgid "delete_partner_entity"
+msgstr "Supprimer l'entité partenaire"
+
 msgid "contact_mobility_in"
 msgstr "Contact de type mobilité in"
 
 msgid "contact_mobility_out"
 msgstr "Contact de type mobilité out"
 
-msgid "update_partner"
-msgstr "Mettre à jour le partenaire"
+msgid "add_partner_entity"
+msgstr "Ajouter une entité partenaire"
 
 msgid "close"
 msgstr "Fermer"
 
-msgid "new_media"
-msgstr "Nouveau média"
-
-msgid "update_media"
-msgstr "Mettre à jour le média"
-
-msgid "new_entity"
-msgstr "Nouvelle entité"
+msgid "submit"
+msgstr "Envoyer"
 
 msgid "filter_partners"
 msgstr "Filtrer les partenaires"
 
 msgid "filter"
 msgstr "Filtrer"
+
+msgid "back to the list"
+msgstr "Retour à la liste"
+
+msgid "Partnership between"
+msgstr "Partenariat entre"
+
+msgid "Created by"
+msgstr "Créé par"
+
+msgid "the"
+msgstr "le"
+
+msgid "Last update the"
+msgstr "Dernière modification le"
+
+msgid "Not validated"
+msgstr "Non validé"
+
+msgid "Mobility type"
+msgstr "Type de mobilité"
+
+msgid "Partnership type"
+msgstr "Type de partenariat"
+
+msgid "Contacts"
+msgstr "Contacts"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "No tag yet"
+msgstr "Pas encore de tag"
+
+msgid "filter_partnerships"
+msgstr "Filtrer les partenariats"
+
+msgid "UCL"
+msgstr "UCL"
+
+msgid "Partner"
+msgstr "Partenaire"
+
+msgid "Partnership"
+msgstr "Partenariat"
+
+#~ msgid "document"
+#~ msgstr "Document"
+
+#~ msgid "entity"
+#~ msgstr "Entité"
+
+#~ msgid "new_entity"
+#~ msgstr "Nouvelle entité"
