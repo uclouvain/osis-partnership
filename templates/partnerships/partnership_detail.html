@@ -27,58 +27,78 @@
       
       <!-- Partenariat -->
       <h2>{% trans "Partnership between" %}</h2>
-      <p>
-        <i>{% trans "Created by" %} {{ partnership.author }} {% trans "the" %} {{ partnership.created }}. {% trans "Last update the" %} {{ partnership.modified }}.</i><br/>
-        <i>{% if partnership.is_valid %}{% trans "Validated" %}{% else %}{% trans "Not validated" %}{% endif %}</i>
-      </p>
-      <p><strong>{{ partnership.partner }}</strong> &gt; <strong>{{ partnership.partner_entity }}</strong></p>
-      <p>
-        <strong>{{ partnership.ucl_university.acronym }}</strong>
-        {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
-        {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
-      </p>
-{#        <p><strong>{% trans "Academic responsible" %}</strong> : Not implemented yet</p>#}
-        {% if partnership.start_date or partnership.end_date %}<p>{{ partnership.start_date|default_if_none:"" }} &gt; {{ partnership.end_date|default_if_none:"" }}</p>{% endif %}
-        <dl class="dl-horizontal">
-{#          <dt>{% trans "Studies domain" %}</dt><dd>Not implemented yet</dd>#}
+      <div class="row">
+        <div class="col-sm-12">
+          <p>
+            <em>
+              {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
+            </em>
+          </p>
+          <i>{% if partnership.is_valid %}{% trans "Validated" %}{% else %}{% trans "Not validated" %}{% endif %}</i>
+        </div>
+      </div>
+      {% if partnership.partner or partnership.partner_entity %}
+        <div class="row">
+          <div class="col-sm-12">
+            {% if partnership.partner %}<strong>{{ partnership.partner }}</strong>{% endif %}
+            {% if partnership.partner and partnership.partner_entity %} &gt; {% endif %}
+            {% if partnership.partner_entity %}<strong>{{ partnership.partner_entity }}</strong>{% endif %}
+          </div>
+        </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-sm-12">
+          <strong>{% if partnership.ucl_university %}{{ partnership.ucl_university.acronym }}{% else %}{% trans "no_university" %}{% endif %}</strong>
+          {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
+          {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
+        </div>
+      </div>
+      {#         <div class="row"<div class="col-sm-12"><strong>{% trans "Academic responsible" %}</strong> : Not implemented yet</div></div>#}
+      {% if partnership.start_date or partnership.end_date %}<div class="row"><div class="col-sm-12">{{ partnership.start_date|default_if_none:"" }} &gt; {{ partnership.end_date|default_if_none:"" }}</div></div>{% endif %}
+      <dl class="dl-horizontal">
+        {#          <dt>{% trans "Studies domain" %}</dt><dd>Not implemented yet</dd>#}
         <dt>{% trans "Mobility type" %}</dt><dd>{{ partnership.mobility_type }}</dd>
         <dt>{% trans "Partnership type" %}</dt><dd>{{ partnership.partnership_type }}</dd>
       </dl>
-      <p>{{ partnership.comment }}</p>
-            
-      <!-- Contacts -->
-      <h2>{% trans "Contacts" %}</h2>
-      {% if partnership.contacts.all %}
-      <div class="row">
-        <div class="col-sm-12 col-md-6">
-          {% for contact in partnership.contacts.all %}
-            {% include "partnerships/includes/contact.html" with contact=contact %}
-          {% endfor %}
+      {% if partnership.comment is not None %}
+        <div class="row">
+          <div class="col-sm-12">
+            {{ partnership.comment }}
+          </div>
         </div>
-      </div>
+      {% endif %}
+      
+      <!-- Contacts -->
+      {% if partnership.contacts.all %}
+        <h2>{% trans "Contacts" %}</h2>
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            {% for contact in partnership.contacts.all %}
+              {% include "partnerships/includes/contact.html" with contact=contact %}
+            {% endfor %}
+          </div>
+        </div>
       {% endif %}
 
-{#      <!-- Accords -->#}
-{#      <h2>{% trans "Agreements" %}#}
-{#      <div>#}
-{#        <!-- TODO -->#}
-{#      </div>#}
+      {#      <!-- Accords -->#}
+      {#      <h2>{% trans "Agreements" %}#}
+      {#      <div>#}
+      {#        <!-- TODO -->#}
+      {#      </div>#}
       
       <!-- Tags -->
       <h2>{% trans "Tags" %}</h2>
-      <div class="row">
-        <div class="col-sm-12">
-          {% if partnership.tags.all %}
+      {% if partnership.tags.all %}
+        <div class="row">
+          <div class="col-sm-12">
             <ul class="tags-list">
-            {% for tag in partnership.tags.all %}
-              <li>{{ tag }}</li>
-            {% endfor %}
+              {% for tag in partnership.tags.all %}
+                <li>{{ tag }}</li>
+              {% endfor %}
             </ul>
-          {% else %}
-              {% trans "No tag yet" %}
-          {% endif %}
+          </div>
         </div>
-      </div>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

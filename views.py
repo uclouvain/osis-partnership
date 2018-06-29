@@ -395,8 +395,8 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     def get_object(self):
         self.partnership = (
             Partnership.objects
-            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type')
-            .prefetch_related('university_offers', 'contacts', 'tags')
+            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type', 'author')
+            .prefetch_related('contacts', 'tags', Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')))
             .annotate(university_offers_count=Count('university_offers'))
             .get(pk=self.kwargs['pk'])
         )
