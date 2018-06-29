@@ -6,8 +6,6 @@ import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
     PartnerEntity, Media, Address
 
-from reference.models.country import Country
-
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
     class Meta:
@@ -33,7 +31,7 @@ class AddressFactory(factory.DjangoModelFactory):
     address = factory.Faker('street_name')
     postal_code = factory.Faker('zipcode')
     city = factory.Faker('city')
-    country = Country.objects.get_or_create(name="xyz", iso_code="XY")[0]
+    country = factory.SubFactory('reference.tests.factories.country.CountryFactory')
 
 
 class PartnerFactory(factory.DjangoModelFactory):
