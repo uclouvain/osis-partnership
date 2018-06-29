@@ -35,10 +35,10 @@
         {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
         {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
       </p>
-        <p><strong>{% trans "Academic responsible" %}</strong> : Not implemented yet</p>
-        <p>{{ partnership.start_date }} &gt; {{ partnership.end_date }}</p>
+{#        <p><strong>{% trans "Academic responsible" %}</strong> : Not implemented yet</p>#}
+        {% if partnership.start_date or partnership.end_date %}<p>{{ partnership.start_date|default_if_none:"" }} &gt; {{ partnership.end_date|default_if_none:"" }}</p>{% endif %}
         <dl class="dl-horizontal">
-          <dt>{% trans "Studies domain" %}</dt><dd>Not implemented yet</dd>
+{#          <dt>{% trans "Studies domain" %}</dt><dd>Not implemented yet</dd>#}
         <dt>{% trans "Mobility type" %}</dt><dd>{{ partnership.mobility_type }}</dd>
         <dt>{% trans "Partnership type" %}</dt><dd>{{ partnership.partnership_type }}</dd>
       </dl>
@@ -47,29 +47,36 @@
       <!-- Contacts -->
       <h2>{% trans "Contacts" %}</h2>
       {% if partnership.contacts.all %}
-        <div>
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
           {% for contact in partnership.contacts.all %}
             {% include "partnerships/includes/contact.html" with contact=contact %}
           {% endfor %}
         </div>
+      </div>
       {% endif %}
 
-      <!-- Accords -->
-      <h2>{% trans "Agreements" %}
-      <div>
-        <!-- TODO -->
-      </div>
+{#      <!-- Accords -->#}
+{#      <h2>{% trans "Agreements" %}#}
+{#      <div>#}
+{#        <!-- TODO -->#}
+{#      </div>#}
       
       <!-- Tags -->
       <h2>{% trans "Tags" %}</h2>
-      <div>
-        {% for tag in partnership.tags.all %}
-          <span class="badge">{{ tag.value }}</span>
-        {% empty %}
-          {% trans "No tag yet" %}
-        {% endfor %}
+      <div class="row">
+        <div class="col-sm-12">
+          {% if partnership.tags.all %}
+            <ul class="tags-list">
+            {% for tag in partnership.tags.all %}
+              <li>{{ tag }}</li>
+            {% endfor %}
+            </ul>
+          {% else %}
+              {% trans "No tag yet" %}
+          {% endif %}
+        </div>
       </div>
-      
-    </div
+    </div>
   </div>
 {% endblock %}

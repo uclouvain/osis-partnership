@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-22 15:38+0200\n"
+"POT-Creation-Date: 2018-06-29 09:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -116,9 +116,6 @@ msgstr ""
 msgid "tags"
 msgstr ""
 
-msgid "file"
-msgstr ""
-
 msgid "description"
 msgstr ""
 
@@ -131,7 +128,25 @@ msgstr ""
 msgid "file_or_url_required"
 msgstr ""
 
+msgid "ucl_university"
+msgstr ""
+
+msgid "ucl_university_labo"
+msgstr ""
+
+msgid "university_offers"
+msgstr ""
+
 msgid "partner"
+msgstr ""
+
+msgid "partner_entity"
+msgstr ""
+
+msgid "mobility_type"
+msgstr ""
+
+msgid "partnership_type"
 msgstr ""
 
 msgid "contact_in"
@@ -188,15 +203,6 @@ msgstr ""
 msgid "mobility_type_na"
 msgstr ""
 
-msgid "partner_entity"
-msgstr ""
-
-msgid "mobility_type"
-msgstr ""
-
-msgid "partnership_type"
-msgstr ""
-
 msgid "contacts"
 msgstr ""
 
@@ -234,10 +240,13 @@ msgstr ""
 msgid "visibility_staff_student"
 msgstr ""
 
-msgid "document"
+msgid "file"
 msgstr ""
 
 msgid "visibility"
+msgstr ""
+
+msgid "media_delete_warning"
 msgstr ""
 
 msgid "first"
@@ -250,6 +259,9 @@ msgid "next"
 msgstr ""
 
 msgid "last"
+msgstr ""
+
+msgid "partner_entity_delete_warning"
 msgstr ""
 
 msgid "informations"
@@ -270,6 +282,27 @@ msgstr ""
 msgid "still_actif"
 msgstr ""
 
+msgid "university"
+msgstr ""
+
+msgid "partnership type"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Validated"
+msgstr ""
+
+msgid "Signed"
+msgstr ""
+
+msgid "offers"
+msgstr ""
+
 msgid "partnerships"
 msgstr ""
 
@@ -288,7 +321,7 @@ msgstr ""
 msgid "associated_entities"
 msgstr ""
 
-msgid "entity"
+msgid "add_entities_after_creation"
 msgstr ""
 
 #, python-format
@@ -307,10 +340,22 @@ msgstr ""
 msgid "associated_tags"
 msgstr ""
 
+msgid "update_partner"
+msgstr ""
+
 msgid "external_link"
 msgstr ""
 
+msgid "update_media"
+msgstr ""
+
+msgid "delete_media"
+msgstr ""
+
 msgid "no_media_yet"
+msgstr ""
+
+msgid "new_media"
 msgstr ""
 
 msgid "add_media"
@@ -319,29 +364,74 @@ msgstr ""
 msgid "entities"
 msgstr ""
 
+msgid "update_partner_entity"
+msgstr ""
+
+msgid "delete_partner_entity"
+msgstr ""
+
 msgid "contact_mobility_in"
 msgstr ""
 
 msgid "contact_mobility_out"
 msgstr ""
 
-msgid "update_partner"
+msgid "add_partner_entity"
 msgstr ""
 
 msgid "close"
 msgstr ""
 
-msgid "new_media"
-msgstr ""
-
-msgid "update_media"
-msgstr ""
-
-msgid "new_entity"
+msgid "submit"
 msgstr ""
 
 msgid "filter_partners"
 msgstr ""
 
 msgid "filter"
+msgstr ""
+
+msgid "back to the list"
+msgstr ""
+
+msgid "Partnership between"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "the"
+msgstr ""
+
+msgid "Last update the"
+msgstr ""
+
+msgid "Not validated"
+msgstr ""
+
+msgid "Mobility type"
+msgstr ""
+
+msgid "Partnership type"
+msgstr ""
+
+msgid "Contacts"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "No tag yet"
+msgstr ""
+
+msgid "filter_partnerships"
+msgstr ""
+
+msgid "UCL"
+msgstr ""
+
+msgid "Partner"
+msgstr ""
+
+msgid "Partnership"
 msgstr ""
