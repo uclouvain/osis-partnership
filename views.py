@@ -9,7 +9,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
-                               PartnershipFilterForm)
+                               PartnershipFilterForm, PartnershipForm)
 from partnership.models import Media, Partner, PartnerEntity, Partnership
 from partnership.utils import user_is_adri
 
@@ -401,3 +401,11 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
             .get(pk=self.kwargs['pk'])
         )
         return self.partnership
+
+class PartnershipCreateView(LoginRequiredMixin, CreateView):
+
+    model = Partnership
+    form_class = PartnershipForm
+
+    template_name = "partnerships/partnership_create.html"
+    
