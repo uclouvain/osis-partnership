@@ -4,7 +4,7 @@ from base.models.entity_version import EntityVersion
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from base.forms.bootstrap import BootstrapForm
+from base.forms.bootstrap import BootstrapModelForm, BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
@@ -69,7 +69,7 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
             del self.fields['is_valid']
 
 
-class PartnerEntityForm(BootstrapForm, forms.ModelForm):
+class PartnerEntityForm(BootstrapModelForm):
     """
     This form include fields for related models Address and two Contact.
     """
@@ -521,3 +521,32 @@ class PartnershipFilterForm(forms.Form):
         )
         mobility_types = tuple((mobility_type, mobility_type) for mobility_type in mobility_types)
         self.fields['mobility_type'].choices = ((None, _('mobility_type')),) + mobility_types
+
+
+class PartnershipForm(BootstrapModelForm):
+
+    class Meta:
+        model = Partnership
+        #fields = '__all__'
+        fields = (
+            'is_valid',
+            'start_date',
+            'end_date',
+            'partner',
+            'partner_entity',
+            'partnership_type',
+            'mobility_type',
+            'ucl_university',
+            'ucl_university_labo',
+            'university_offers',
+            'comment',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['university_offers'].queryset = (
+            EducationGroupYear.objects.all()
+            .select_related('academic_year')
+        )
+
+

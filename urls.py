@@ -5,11 +5,13 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnerEntityUpdateView, PartnerMediaCreateView,
                                PartnerMediaDeleteView, PartnerMediaUpdateView,
                                PartnershipDetailView, PartnershipsListView,
-                               PartnersListView, PartnerUpdateView)
+                               PartnersListView, PartnerUpdateView,
+                               PartnershipCreateView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
+    url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
     url(r'^partners/', include([
         url(r'^$', PartnersListView.as_view(), name="list"),
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),
