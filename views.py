@@ -347,7 +347,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partnership_type', 'partner_entity')
+            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity')
             .prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
@@ -395,7 +395,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     def get_object(self):
         self.partnership = (
             Partnership.objects
-            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type', 'author')
+            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
             .prefetch_related('contacts', 'tags', Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')))
             .annotate(university_offers_count=Count('university_offers'))
             .get(pk=self.kwargs['pk'])

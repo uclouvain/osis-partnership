@@ -8,7 +8,7 @@ from base.forms.bootstrap import BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
-    Partnership, PartnershipTag, PartnershipType
+    Partnership, PartnershipTag, PartnershipType, PartnershipYear
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -514,7 +514,7 @@ class PartnershipFilterForm(forms.Form):
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
         mobility_types = (
-            Partnership.objects
+            PartnershipYear.objects
                 .values_list('mobility_type', flat=True)
                 .order_by('mobility_type')
                 .distinct('mobility_type')
