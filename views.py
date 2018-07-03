@@ -402,10 +402,22 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         )
         return self.partnership
 
+
 class PartnershipCreateView(LoginRequiredMixin, CreateView):
 
     model = Partnership
     form_class = PartnershipForm
-
     template_name = "partnerships/partnership_create.html"
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+    
+    def form_valid(self, form):
+        partnership = form.save(commit=False)
+        partnership.author = self.request.user
+        partnership.save()
+        form.save_m2m()
+        return redirect(partnership)
+
