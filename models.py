@@ -324,6 +324,23 @@ class Partnership(models.Model):
     def __str__(self):
         return _('partnership_with_{partner}').format(partner=self.partner)
 
+    def get_absolute_url(self):
+        return reverse('partnerships:partnership_detail', kwargs={'pk': self.pk})
+    
+    @staticmethod
+    def user_can_add(user):
+        try:
+            is_adri = user_is_adri(user)
+            is_gf = (
+                user
+                .person
+                .entitymanager_set.all()
+                .exists()
+            )
+            return is_adri or is_gf
+        except Person.DoesNotExist:
+            return False
+    
     @cached_property
     def is_signed(self):
         # TODO

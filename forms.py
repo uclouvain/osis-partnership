@@ -542,11 +542,11 @@ class PartnershipForm(BootstrapModelForm):
             'comment',
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.user = user
         self.fields['university_offers'].queryset = (
             EducationGroupYear.objects.all()
             .select_related('academic_year')
         )
-
-
+        
