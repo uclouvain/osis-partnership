@@ -28,4 +28,10 @@ urlpatterns = [
         ], namespace='entities')),
         url(r'^new/$', PartnerCreateView.as_view(), name="create"),
     ], namespace='partners')),
+    url(r'^autocomplete/$', include([
+        url('^ucl_university/$', ucl_university_autocomplete, name='ucl_university'),
+        url('^ucl_university_labo/$', ucl_university_labo_autocomplete, name='ucl_university_labo'),
+    ]), namespace='autocomplete'),
+        
+    ),
 ]
