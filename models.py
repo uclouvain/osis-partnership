@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.utils import timezone
+
 from base.models.entity import Entity
 from base.models.person import Person
 from django.conf import settings
@@ -232,14 +234,6 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
-    MOBILITY_TYPE_CHOICES = (
-        ('SMS', _('mobility_type_sms')),
-        ('SMP', _('mobility_type_smp')),
-        ('STA', _('mobility_type_sta')),
-        ('STT', _('mobility_type_stt')),
-        ('NA', _('mobility_type_na')),
-    )
-
     is_valid = models.BooleanField(_('is_valid'), default=False)
     partner = models.ForeignKey(
         Partner,
@@ -277,16 +271,6 @@ class Partnership(models.Model):
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
     end_date = models.DateField(_('end_date'), null=True, blank=True)
-
-    # domaine etudes ?
-    # niveaux etude ?
-    mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
-    partnership_type = models.ForeignKey(
-        PartnershipType,
-        verbose_name=_('partnership_type'),
-        on_delete=models.PROTECT,
-        related_name='partnerships',
-    )
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -328,6 +312,101 @@ class Partnership(models.Model):
     def is_signed(self):
         # TODO
         return False
+
+    @cached_property
+    def current_year(self):
+        now = timezone.now()
+        return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
+
+
+class PartnershipYear(models.Model):
+    MOBILITY_TYPE_CHOICES = (
+        ('SMS', _('mobility_type_sms')),
+        ('SMP', _('mobility_type_smp')),
+        ('STA', _('mobility_type_sta')),
+        ('STT', _('mobility_type_stt')),
+        ('NA', _('mobility_type_na')),
+    )
+
+    partnership = models.ForeignKey(
+        Partnership,
+        verbose_name=_('partnership'),
+        on_delete=models.PROTECT,
+        related_name='years',
+    )
+    academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+    # domaine etudes ?
+    # niveaux etude ?
+    mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
+    partnership_type = models.ForeignKey(
+        PartnershipType,
+        verbose_name=_('partnership_type'),
+        on_delete=models.PROTECT,
+        related_name='partnerships',
+    )
+
+    class Meta:
+        unique_together = ('partnership', 'academic_year')
+
+    def __str__(self):
+        return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
+
+
+class PartnershipOffer(models.Model):
+    STATE_WAITING = 'waiting'
+    STATE_VALIDATED = 'validated'
+    STATE_REFUSED = 'refused'
+    STATE_CHOICES = (
+        (STATE_WAITING, _('state_waiting')),
+        (STATE_VALIDATED, _('state_validated')),
+        (STATE_REFUSED, _('state_refused')),
+    )
+
+    partnership = models.ForeignKey(
+        Partnership,
+        verbose_name=_('partnership'),
+        on_delete=models.PROTECT,
+        related_name='offers',
+    )
+
+    start_academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('start_academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    end_academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('end_academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    media = models.ForeignKey(
+        'partnership.Media',
+        verbose_name=_('media'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    state = models.CharField(
+        _('state'),
+        max_length=10,
+        choices=STATE_CHOICES,
+        default=STATE_WAITING,
+    )
+
+    note = models.TextField(
+        _('note'),
+        blank=True,
+        default='',
+    )
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
