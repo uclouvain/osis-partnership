@@ -13,7 +13,6 @@ from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
 from partnership.models import Media, Partner, PartnerEntity, Partnership
 from partnership.utils import user_is_adri
 
-
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partners'
     form_class = PartnerFilterForm
@@ -420,4 +419,44 @@ class PartnershipCreateView(LoginRequiredMixin, CreateView):
         partnership.save()
         form.save_m2m()
         return redirect(partnership)
+
+
+def ucl_university_autocomplete(request):
+    ucl = request.GET.get('', '')
+    ucl = term.lower()
+    ucl.slugify(term)
+
+    queryset = MultiQuerySet(
+        EntityVersion.objects.filter(
+            title__iexact=ucl
+        ).only('title')[:25],
+        EntityVersion.objects.filter(
+            title__istartswith=ucl
+        ).exclude(title__exact=ucl).only('title')[:25],
+        EntityVersion.objects.filter(
+            title__icontains=ucl
+        ).exclude(title__istartswith=ucl)[:25]
+    )
+
+    return JsonResponse([u.serialize() for u in queryset[:25]], safe=False)
+
+
+def ucl_university_labo_autocomplete(request):
+    ucl = request.GET.get('', '')
+    ucl = term.lower()
+    ucl.slugify(term)
+
+    queryset = MultiQuerySet(
+        EntityVersion.objects.filter(
+            title__iexact=ucl
+        ).only('title')[:25],
+        EntityVersion.objects.filter(
+            title__istartswith=ucl
+        ).exclude(title__exact=ucl).only('title')[:25],
+        EntityVersion.objects.filter(
+            title__icontains=ucl
+        ).exclude(title__istartswith=ucl)[:25]
+    )
+
+    return JsonResponse([u.serialize() for u in queryset[:25]], safe=False)
 
