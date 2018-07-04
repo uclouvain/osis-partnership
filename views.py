@@ -10,7 +10,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm)
-from partnership.models import Media, Partner, PartnerEntity, Partnership
+from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipOffer
 from partnership.utils import user_is_adri
 
 
@@ -396,7 +396,17 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         self.partnership = (
             Partnership.objects
             .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
-            .prefetch_related('contacts', 'tags', Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')))
+            .prefetch_related(
+                'contacts',
+                'tags',
+                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
+                Prefetch('years', queryset=PartnershipYear.objects.select_related(
+                    'academic_year', 'partnership_type'
+                )),
+                Prefetch('offers', queryset=PartnershipOffer.objects.select_related(
+                    'start_academic_year', 'end_academic_year', 'media'
+                )),
+            )
             .annotate(university_offers_count=Count('university_offers'))
             .get(pk=self.kwargs['pk'])
         )
