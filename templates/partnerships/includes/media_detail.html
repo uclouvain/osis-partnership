@@ -1,0 +1,46 @@
+{% load i18n %}
+<div class="row">
+  <div class="col-sm-9">
+    <strong>{{ media.name }}</strong> <em>{{ media.get_visibility.display }}</em>
+  </div>
+  <div class="col-sm-3">
+    {% if media.url %}
+      {% trans "external_link" %}
+    {% else %}
+      {{ media.get_document_file_type }}/{{ media.get_document_file_size|filesizeformat }}
+    {% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-9">
+    <p>{{ media.description }}</p>
+  </div>
+  <div class="col-sm-3">
+    <div class="btn-group">
+      {% if media.url %}
+      <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+      {% else %}
+      <a href="{{ media.file.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+      {% endif %}
+      {% if can_update_partner %}
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "partnerships:partners:medias:update" partner.id media.id %}"
+           class="modal-link"
+           data-modal-submit="{% trans "update_media" %}"
+           data-modal-title="{{ media }}"
+           data-modal="modal-form"><i class="fa fa-pencil fa-fw"></i> {% trans "update_media" %}</a></li>
+        <li><a href="{% url "partnerships:partners:medias:delete" partner.id media.id %}"
+           class="modal-link"
+           data-modal-danger
+           data-modal-submit="{% trans "delete_media" %}"
+           data-modal-title="{{ media }}"
+           data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_media" %}</a></li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</div>

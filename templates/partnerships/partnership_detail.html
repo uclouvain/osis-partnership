@@ -94,11 +94,34 @@
         </div>
       {% endif %}
 
-      {#      <!-- Accords -->#}
-      {#      <h2>{% trans "agreements" %}#}
-      {#      <div>#}
-      {#        <!-- TODO -->#}
-      {#      </div>#}
+      <!-- Accords -->
+      <h2>{% trans "agreements" %}</h2>
+      {% for offer in partnership.offers.all %}
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <div class="row">
+            <div class="col-sm-5">
+              {{ offer.start_academic_year }} > {{ offer.end_academic_year }}
+            </div>
+            <div class="col-sm-7">
+              <strong>{{ offer.get_status_display }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <p>{{ offer.note }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          {% include "partnerships/includes/media_detail.html" with media=offer.media %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="row">
+        <div class="col-sm-12">{% trans "no_offer_yet" %}</div>
+      </div>
+      {% endfor %}
       
       <!-- Tags -->
       <h2>{% trans "tags" %}</h2>

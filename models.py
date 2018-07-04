@@ -359,13 +359,13 @@ class PartnershipYear(models.Model):
 
 
 class PartnershipOffer(models.Model):
-    STATE_WAITING = 'waiting'
-    STATE_VALIDATED = 'validated'
-    STATE_REFUSED = 'refused'
-    STATE_CHOICES = (
-        (STATE_WAITING, _('state_waiting')),
-        (STATE_VALIDATED, _('state_validated')),
-        (STATE_REFUSED, _('state_refused')),
+    STATUS_WAITING = 'waiting'
+    STATUS_VALIDATED = 'validated'
+    STATUS_REFUSED = 'refused'
+    STATUS_CHOICES = (
+        (STATUS_WAITING, _('status_waiting')),
+        (STATUS_VALIDATED, _('status_validated')),
+        (STATUS_REFUSED, _('status_refused')),
     )
 
     partnership = models.ForeignKey(
@@ -396,11 +396,11 @@ class PartnershipOffer(models.Model):
         related_name='+',
     )
 
-    state = models.CharField(
-        _('state'),
+    status = models.CharField(
+        _('status'),
         max_length=10,
-        choices=STATE_CHOICES,
-        default=STATE_WAITING,
+        choices=STATUS_CHOICES,
+        default=STATUS_WAITING,
     )
 
     note = models.TextField(
