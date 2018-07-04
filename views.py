@@ -10,7 +10,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm)
-from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipOffer
+from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
 
@@ -403,7 +403,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 Prefetch('years', queryset=PartnershipYear.objects.select_related(
                     'academic_year', 'partnership_type'
                 )),
-                Prefetch('offers', queryset=PartnershipOffer.objects.select_related(
+                Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                     'start_academic_year', 'end_academic_year', 'media'
                 )),
             )

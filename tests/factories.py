@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
-    PartnerEntity, Media, Address, PartnershipYear, PartnershipOffer
+    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -134,7 +134,7 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
 
 class PartnershipOfferFactory(factory.DjangoModelFactory):
     class Meta:
-        model = PartnershipOffer
+        model = PartnershipAgreement
 
     media = factory.SubFactory('partnership.tests.factories.MediaFactory')
 

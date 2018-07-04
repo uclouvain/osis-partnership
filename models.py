@@ -358,7 +358,7 @@ class PartnershipYear(models.Model):
         return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
 
 
-class PartnershipOffer(models.Model):
+class PartnershipAgreement(models.Model):
     STATUS_WAITING = 'waiting'
     STATUS_VALIDATED = 'validated'
     STATUS_REFUSED = 'refused'
@@ -372,7 +372,7 @@ class PartnershipOffer(models.Model):
         Partnership,
         verbose_name=_('partnership'),
         on_delete=models.PROTECT,
-        related_name='offers',
+        related_name='agreements',
     )
 
     start_academic_year = models.ForeignKey(
