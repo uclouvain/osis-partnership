@@ -111,6 +111,10 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
 
 
 class PartnerFormMixin(object):
+    initial = {
+        'is_valid': True,
+    }
+
     def get_form_kwargs(self):
         kwargs = super(PartnerFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
