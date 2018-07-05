@@ -16,19 +16,6 @@ from reference.models.continent import Continent
 from reference.models.country import Country
 
 
-class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
-
-    def __init__(self, attrs=None, empty_label=None):
-        if empty_label is None:
-            empty_label = _('Unknown')
-        choices = (
-            ('1', empty_label),
-            ('2', _('Yes')),
-            ('3', _('No')),
-        )
-        super(forms.NullBooleanSelect, self).__init__(attrs, choices)
-
-
 class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
@@ -80,7 +67,7 @@ class PartnerForm(forms.ModelForm):
         return self.cleaned_data
 
 
-class PartnerEntityForm(BootstrapForm, forms.ModelForm):
+class PartnerEntityForm(forms.ModelForm):
     """
     This form include fields for related models Address and two Contact.
     """
@@ -293,7 +280,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         return partner_entity
 
 
-class PartnerFilterForm(BootstrapForm):
+class PartnerFilterForm(forms.Form):
     name = forms.CharField(
         label=_('name'),
         widget=forms.TextInput(attrs={'placeholder': _('partner_name')}),
@@ -302,7 +289,6 @@ class PartnerFilterForm(BootstrapForm):
     partner_type = forms.ModelChoiceField(
         label=_('partner_type'),
         queryset=PartnerType.objects.all(),
-        empty_label=_('partner_type'),
         required=False,
     )
     pic_code = forms.CharField(
@@ -317,34 +303,29 @@ class PartnerFilterForm(BootstrapForm):
     )
     city = forms.ChoiceField(
         label=_('city'),
-        choices=((None, _('city')),),
+        choices=((None, '------'),),
         required=False,
     )
     country = forms.ModelChoiceField(
         label=_('country'),
         queryset=Country.objects.filter(address__partners__isnull=False).order_by('name'),
-        empty_label=_('country'),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
         queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name'),
-        empty_label=_('continent'),
         required=False,
     )
     is_ies = forms.NullBooleanField(
         label=_('is_ies'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_ies')),
         required=False,
     )
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
         required=False,
     )
     is_actif = forms.NullBooleanField(
         label=_('is_actif'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_actif')),
         required=False,
     )
     tags = forms.ModelMultipleChoiceField(
@@ -362,7 +343,7 @@ class PartnerFilterForm(BootstrapForm):
             .order_by('city')
             .distinct('city')
         )
-        self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+        self.fields['city'].choices = ((None, '------'),) + tuple((city, city) for city in cities)
 
 
 class MediaForm(BootstrapForm, forms.ModelForm):

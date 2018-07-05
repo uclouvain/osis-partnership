@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n static %}
+{% load bootstrap3 i18n static %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
@@ -44,25 +44,25 @@
       <div class="partner-form collapse{% if form.is_bound %} in{% endif %}" id="partner-filters">
           <form action="{% url "partnerships:partners:list" %}" id="filter-form" method="get">
             <div class="row">
-              <div class="col-sm-12 col-md-8">{{ form.name }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.is_ies }}</div>
+              <div class="col-sm-12 col-md-8">{% bootstrap_field form.name %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_ies %}</div>
             </div>
             <div class="row">
-              <div class="col-sm-12 col-md-4">{{ form.partner_type }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.pic_code }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.erasmus_code }}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.partner_type %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.pic_code %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.erasmus_code %}</div>
             </div>
             <div class="row">
-              <div class="col-sm-12 col-md-4">{{ form.city }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.country }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.continent }}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.city %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.country %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.continent %}</div>
             </div>
             <div class="row">
-              <div class="col-sm-12 col-md-4">{{ form.is_valid }}</div>
-              <div class="col-sm-12 col-md-4">{{ form.is_actif }}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_valid %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_actif %}</div>
             </div>
             <div class="row">
-              <div class="col-sm-12 col-md-12">{{ form.tags }}</div>
+              <div class="col-sm-12 col-md-12">{% bootstrap_field form.tags %}</div>
             </div>
             <div class="row">
               <div class="col-sm-12">
