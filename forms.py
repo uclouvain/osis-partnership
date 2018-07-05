@@ -544,7 +544,6 @@ class PartnershipForm(BootstrapModelForm):
         )
         widgets = {
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
-            #'ucl_university': forms.TextInput(),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
         }
         
