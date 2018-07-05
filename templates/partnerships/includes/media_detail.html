@@ -1,7 +1,7 @@
-{% load i18n %}
+{% load bootstrap3 i18n %}
 <div class="row">
   <div class="col-sm-9">
-    <strong>{{ media.name }}</strong> <em>{{ media.get_visibility.display }}</em>
+    <strong>{{ media.name }}</strong> <em>{{ media.get_visibility_display }}</em>
   </div>
   <div class="col-sm-3">
     {% if media.url %}
@@ -13,7 +13,7 @@
 </div>
 <div class="row">
   <div class="col-sm-9">
-    <p>{{ media.description }}</p>
+    <p class="media-description">{{ media.description|linebreaksbr }}</p>
   </div>
   <div class="col-sm-3">
     <div class="btn-group">
