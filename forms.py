@@ -118,8 +118,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     contact_in_title = forms.ChoiceField(
         label=_('title'),
-        choices=Contact.TITLE_CHOICES,
-        initial=Contact.TITLE_MISTER,
+        choices=((None, '------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
@@ -169,8 +168,7 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     contact_out_title = forms.ChoiceField(
         label=_('title'),
-        choices=Contact.TITLE_CHOICES,
-        initial=Contact.TITLE_MISTER,
+        choices=((None, '------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
