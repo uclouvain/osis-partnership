@@ -539,15 +539,18 @@ class Address(models.Model):
         return self.name
 
     def one_line_display(self):
-        address = '{name} {address}, {postal_code} {city}'.format(
-            name=self.name,
-            address=self.address,
-            postal_code=self.postal_code,
-            city=self.city,
-        )
-        if self.country is not None:
-            address += ', {0}'.format(str(self.country).upper())
-        return address
+        components = []
+        if self.name:
+            components.append(self.name)
+        if self.address:
+            components.append(self.address)
+        if self.postal_code:
+            components.append(self.postal_code)
+        if self.city:
+            components.append(self.city)
+        if self.country:
+            components.append(str(self.country).upper())
+        return ', '.join(components)
 
 
 class Media(models.Model):

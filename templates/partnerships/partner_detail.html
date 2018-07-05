@@ -42,7 +42,8 @@
           <dt>{% trans "erasmus_code" %}</dt>
           <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
-          {% if partner.is_ies %}<dd>{% trans "is_ies" %}</dd>{% endif %}
+          <dt>{% trans "is_ies" %}</dt>
+          <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           {% if partner.now_known_as %}
           <dt>{% trans "now_known_as" %}</dt>
@@ -50,25 +51,29 @@
           {% endif %}
 
           <dt>{% trans "is_nonprofit" %}</dt>
-          <dd>{% if partner.is_nonprofit %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_public" %}</dt>
-          <dd>{% if partner.is_public %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "contact_type" %}</dt>
           <dd>{{ partner.get_contact_type_display|default_if_none:"" }}</dd>
 
           <dt>{% trans "use_egracons" %}</dt>
-          <dd>{% if partner.use_egracons %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
         </dl>
       </div>
       <div class="col-sm-12 col-md-6">
         <dl class="dl-horizontal">
           <dt>{% trans "is_valid" %}</dt>
-          <dd>{% if partner.is_valid %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_actif" %}</dt>
-          <dd>{% if partner.is_actif %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd>
+            <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% if partner.start_date is None %}N/A{% else %}{{ partner.start_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+            > {% if partner.end_date is None %}N/A{% else %}{{ partner.end_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+          </dd>
 
           <dt>{% trans "contact_address" %}</dt>
           <dd>{{ partner.contact_address.one_line_display }}</dd>
