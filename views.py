@@ -253,7 +253,7 @@ class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView
     template_name = 'partnerships/partner_entity_delete.html'
 
     def test_func(self):
-        return self.get_object().user_can_change(self.request.user)
+        return self.get_object().user_can_delete(self.request.user)
 
     def get_template_names(self):
         if self.request.is_ajax():

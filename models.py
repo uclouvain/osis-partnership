@@ -108,6 +108,9 @@ class PartnerEntity(models.Model):
             user_is_in_author_faculty = False
         return user == self.author or user_is_adri(user) or user_is_in_author_faculty
 
+    def user_can_delete(self, user):
+        return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()
+
 
 class Partner(models.Model):
     CONTACT_TYPE_CHOICES =(
