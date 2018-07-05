@@ -422,10 +422,22 @@ class PartnershipCreateView(LoginRequiredMixin, CreateView):
         form.save_m2m()
         return redirect(partnership)
 
+
+class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
+
+    model = Partnership
+    form_class = PartnershipForm
+    template_name = "partnerships/partnership_update.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
         if not self.request.user.is_authenticated():
             return Country.objects.none()
 
@@ -434,3 +446,17 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(acronym__icontains=self.q)[:25]
 
         return qs
+
+
+class UniversityOfferAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return Country.objects.none()
+
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)[:25]
+
+        return qs
+    

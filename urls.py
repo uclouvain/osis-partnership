@@ -6,12 +6,14 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnerMediaDeleteView, PartnerMediaUpdateView,
                                PartnershipDetailView, PartnershipsListView,
                                PartnersListView, PartnerUpdateView,
-                               PartnershipCreateView, UclUniversityAutocompleteView)
+                               PartnershipCreateView, UclUniversityAutocompleteView,
+                               UniversityOfferAutocompleteView, PartnershipUpdateView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
     url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
+    url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="partnership_update"),
     url(r'^partners/', include([
         url(r'^$', PartnersListView.as_view(), name="list"),
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),
@@ -31,5 +33,6 @@ urlpatterns = [
     url(r'^autocomplete/', include([
         url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
         url('^ucl_university_labo/$', UclUniversityAutocompleteView.as_view(), name='ucl_university_labo'),
+        url('^university_offer/$', UniversityOfferAutocompleteView.as_view(), name='university_offer'),
     ], namespace='autocomplete')),
 ]

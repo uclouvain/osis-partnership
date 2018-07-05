@@ -545,13 +545,9 @@ class PartnershipForm(BootstrapModelForm):
         widgets = {
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+            'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offer'),
         }
         
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
-        self.fields['university_offers'].queryset = (
-            EducationGroupYear.objects.all()
-            .select_related('academic_year')
-        )
-        
