@@ -121,7 +121,7 @@ class Partner(models.Model):
     )
     partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True)
-    erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True)
+    erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
     start_date = models.DateField(_('start_date'), null=True, blank=True)
     end_date = models.DateField(_('end_date'), null=True, blank=True)
     now_known_as = models.ForeignKey(
@@ -309,14 +309,26 @@ class Partnership(models.Model):
         return _('partnership_with_{partner}').format(partner=self.partner)
 
     @cached_property
-    def is_signed(self):
-        # TODO
-        return False
-
-    @cached_property
     def current_year(self):
         now = timezone.now()
         return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
+
+    @cached_property
+    def entities_acronyms(self):
+        """ Get a string of the entities acronyms """
+        entities = []
+        parent = self.ucl_university.parent
+        if parent is not None:
+            now = timezone.now()
+            entity = parent.entityversion_set.filter(start_date__gte=now, end_date__lte=now).first()
+            if entity is not None:
+                entities.append(entity)
+        entities.append(self.ucl_university.acronym)
+        if self.ucl_university_labo is not None:
+            entities.append(self.ucl_university_labo.acronym)
+        if self.university_offers.exists():
+            entities.append(' - '.join(self.university_offers.values_list('acronym', flat=True)))
+        return ' / '.join(entities)
 
 
 class PartnershipYear(models.Model):

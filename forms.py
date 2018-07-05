@@ -396,7 +396,7 @@ class AddressForm(BootstrapForm, forms.ModelForm):
         fields = '__all__'
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
-            'address': forms.TextInput(attrs={'placeholder': _('address')}),
+            'address': forms.Textarea(attrs={'placeholder': _('address')}),
             'postal_code': forms.TextInput(attrs={'placeholder': _('postal_code')}),
             'city': forms.TextInput(attrs={'placeholder': _('city')}),
         }

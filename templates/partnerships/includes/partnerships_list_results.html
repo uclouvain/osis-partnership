@@ -17,7 +17,7 @@
         <td>{{ partnership.partner|truncatechars:30 }}</td>
         <td>{{ partnership.ucl_university.entity.country|default_if_none:"" }}</td>
         <td></td>
-        <td>{{ partnership.ucl_university.acronym }}</td>
+        <td>{{ partnership.entities_acronyms }}</td>
         <td></td>
         <td>
           {% if partnership.start_date is None %}N/A{% else %}{{ partnership.start_date|date:"Y" }}{% endif %}
