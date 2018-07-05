@@ -6,8 +6,7 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnerMediaDeleteView, PartnerMediaUpdateView,
                                PartnershipDetailView, PartnershipsListView,
                                PartnersListView, PartnerUpdateView,
-                               PartnershipCreateView, UclUniversityAutocompleteView,
-                               ucl_university_labo_autocomplete)
+                               PartnershipCreateView, UclUniversityAutocompleteView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
@@ -31,6 +30,6 @@ urlpatterns = [
     ], namespace='partners')),
     url(r'^autocomplete/', include([
         url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
-        url('^ucl_university_labo/$', ucl_university_labo_autocomplete, name='ucl_university_labo'),
+        url('^ucl_university_labo/$', UclUniversityAutocompleteView.as_view(), name='ucl_university_labo'),
     ], namespace='autocomplete')),
 ]
