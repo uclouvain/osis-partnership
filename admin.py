@@ -52,7 +52,7 @@ class PartnershipAgreementInline(admin.TabularInline):
     def get_queryset(self, request):
         return PartnershipAgreement.objects.select_related('partnership__partner')
 
-0
+
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = ('ucl_university', 'ucl_university_labo', 'university_offers')
     inlines = (PartnershipYearInline, PartnershipAgreementInline)
