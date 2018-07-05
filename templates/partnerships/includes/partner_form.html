@@ -1,33 +1,27 @@
-{% load i18n %}
+{% load bootstrap3 i18n %}
 <div class="row">
   <div class="col-sm-12 col-md-6">
-    {{ form.name.errors }}
-    {{ form.name }}
+    {% bootstrap_field form.name %}
   </div>
   {% if user_is_adri %}
   <div class="col-sm-12 col-md-6">
-    {{ form.is_valid.errors }}
-    {{ form.is_valid.label_tag }}
-    {{ form.is_valid }}
+    {% bootstrap_field form.is_valid %}
   </div>
   {% endif %}
 </div>
 
 <div class="row">
   <div class="col-sm-12 col-md-6">
-    {{ form.start_date.errors }}
-    {{ form.start_date }}
+    {% bootstrap_field form.start_date %}
   </div>
   <div class="col-sm-12 col-md-6">
-    {{ form.end_date.errors }}
-    {{ form.end_date }}
+    {% bootstrap_field form.end_date %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.now_know_as.errors }}
-    {{ form.now_know_as }}
+    {% bootstrap_field form.now_known_as %}
   </div>
 </div>
 
@@ -39,60 +33,46 @@
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.partner_type.errors }}
-    {{ form.partner_type }}
+    {% bootstrap_field form.partner_type %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12 col-md-4">
-    {{ form.partner_code.errors }}
-    {{ form.partner_code }}
+    {% bootstrap_field form.partner_code %}
   </div>
   <div class="col-sm-12 col-md-4">
-    {{ form.pic_code.errors }}
-    {{ form.pic_code }}
+    {% bootstrap_field form.pic_code %}
   </div>
   <div class="col-sm-12 col-md-4">
-    {{ form.erasmus_code.errors }}
-    {{ form.erasmus_code }}
+    {% bootstrap_field form.erasmus_code %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12 col-md-3">
-    {{ form.is_ies.errors }}
-    {{ form.is_ies }}
-    {{ form.is_ies.label_tag }}
+    {% bootstrap_field form.is_ies %}
   </div>
   <div class="col-sm-12 col-md-3">
-    {{ form.is_nonprofit.errors }}
-    {{ form.is_nonprofit }}
-    {{ form.is_nonprofit.label_tag }}
+    {% bootstrap_field form.is_nonprofit %}
   </div>
   <div class="col-sm-12 col-md-3">
-    {{ form.is_public.errors }}
-    {{ form.is_public }}
-    {{ form.is_public.label_tag }}
+    {% bootstrap_field form.is_public %}
   </div>
   <div class="col-sm-12 col-md-3">
-    {{ form.use_egracons.errors }}
-    {{ form.use_egracons }}
-    {{ form.use_egracons.label_tag }}
+    {% bootstrap_field form.use_egracons %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.type.errors }}
-    {{ form.type }}
+    {% bootstrap_field form.partner_type %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.comment.errors }}
-    {{ form.comment }}
+    {% bootstrap_field form.comment %}
   </div>
 </div>
 
@@ -104,52 +84,43 @@
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form_address.name.errors }}
-    {{ form_address.name }}
+    {% bootstrap_field form_address.name %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form_address.address.errors }}
-    {{ form_address.address }}
+    {% bootstrap_field form_address.address %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12 col-md-3">
-    {{ form_address.postal_code.errors }}
-    {{ form_address.postal_code }}
+    {% bootstrap_field form_address.postal_code %}
   </div>
   <div class="col-sm-12 col-md-4">
-    {{ form_address.city.errors }}
-    {{ form_address.city }}
+    {% bootstrap_field form_address.city %}
   </div>
   <div class="col-sm-12 col-md-5">
-    {{ form_address.country.errors }}
-    {{ form_address.country }}
+    {% bootstrap_field form_address.country %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12 col-md-3">
-    {{ form.phone.errors }}
-    {{ form.phone }}
+    {% bootstrap_field form.phone %}
   </div>
   <div class="col-sm-12 col-md-4">
-    {{ form.website.errors }}
-    {{ form.website }}
+    {% bootstrap_field form.website %}
   </div>
   <div class="col-sm-12 col-md-5">
-    {{ form.email.errors }}
-    {{ form.email }}
+    {% bootstrap_field form.email %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.contact_type.errors }}
-    {{ form.contact_type }}
+    {% bootstrap_field form.contact_type %}
   </div>
 </div>
 
@@ -161,7 +132,6 @@
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.tags.errors }}
-    {{ form.tags }}
+    {% bootstrap_field form.tags %}
   </div>
 </div>

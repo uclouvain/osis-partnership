@@ -27,13 +27,7 @@ class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
         super(forms.NullBooleanSelect, self).__init__(attrs, choices)
 
 
-class PartnerForm(BootstrapForm, forms.ModelForm):
-    partner_type = forms.ModelChoiceField(
-        label=_('partner_type'),
-        queryset=PartnerType.objects.all(),
-        empty_label=_('partner_type'),
-    )
-
+class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
         exclude = ['contact_address', 'medias']
@@ -55,7 +49,6 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
             'is_nonprofit': forms.CheckboxInput(),
             'is_public': forms.CheckboxInput(),
             'use_egracons': forms.CheckboxInput(),
-            'type': forms.TextInput(attrs={'placeholder': _('type')}),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
             'website': forms.URLInput(attrs={'placeholder': _('website')}),

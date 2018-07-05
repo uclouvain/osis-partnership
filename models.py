@@ -156,8 +156,8 @@ class Partner(models.Model):
     partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
-    start_date = models.DateField(_('start_date'), null=True, blank=True)
-    end_date = models.DateField(_('end_date'), null=True, blank=True)
+    start_date = models.DateField(_('partner_start_date'), null=True, blank=True)
+    end_date = models.DateField(_('partner_end_date'), null=True, blank=True)
     now_known_as = models.ForeignKey(
         'self',
         verbose_name=_('now_known_as'),
@@ -181,7 +181,7 @@ class Partner(models.Model):
     is_nonprofit = models.NullBooleanField(_('is_nonprofit'), blank=True)
     is_public = models.NullBooleanField(_('is_public'), blank=True)
     contact_type = models.CharField(
-        _('organisation_type'),
+        _('contact_type'),
         max_length=255,
         choices=CONTACT_TYPE_CHOICES,
         null=True,
