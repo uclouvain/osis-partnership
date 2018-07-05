@@ -341,7 +341,17 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         return kwargs
 
     def get_ordering(self):
-        return self.request.GET.get('ordering', '-created')
+        ordering = self.request.GET.get('ordering', '-created')
+        if ordering == 'partner':
+            return ['ucl_university__entity__country', 'ucl_university__entity__city', 'partner__name']
+        elif ordering == '-partner':
+            return ['-ucl_university__entity__country', '-ucl_university__entity__city', '-partner__name']
+        elif ordering == 'ucl':
+            return []  # TODO
+        elif ordering == '-ucl':
+            return []  # TODO
+        else:
+            return [ordering]
 
     def get_queryset(self):
         queryset = (
@@ -383,7 +393,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
-        queryset = queryset.order_by(ordering)
+        queryset = queryset.order_by(*ordering)
         return queryset
 
 
