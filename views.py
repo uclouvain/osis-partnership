@@ -129,6 +129,7 @@ class PartnerFormMixin(object):
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
+        kwargs['user_is_adri'] =  user_is_adri(self.request.user)
         return super(PartnerFormMixin, self).get_context_data(**kwargs)
 
     @transaction.atomic
