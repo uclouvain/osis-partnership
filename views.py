@@ -1,8 +1,11 @@
+from dal import autocomplete
 from base.models.education_group_year import EducationGroupYear
+from base.models.entity_version import EntityVersion
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
@@ -420,43 +423,15 @@ class PartnershipCreateView(LoginRequiredMixin, CreateView):
         form.save_m2m()
         return redirect(partnership)
 
+class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
+    
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Country.objects.none()
 
-def ucl_university_autocomplete(request):
-    ucl = request.GET.get('', '')
-    ucl = term.lower()
-    ucl.slugify(term)
+        qs = EntityVersion.objects.all()
+        if self.q:
+            qs = qs.filter(acronym__icontains=self.q)[:25]
 
-    queryset = MultiQuerySet(
-        EntityVersion.objects.filter(
-            title__iexact=ucl
-        ).only('title')[:25],
-        EntityVersion.objects.filter(
-            title__istartswith=ucl
-        ).exclude(title__exact=ucl).only('title')[:25],
-        EntityVersion.objects.filter(
-            title__icontains=ucl
-        ).exclude(title__istartswith=ucl)[:25]
-    )
-
-    return JsonResponse([u.serialize() for u in queryset[:25]], safe=False)
-
-
-def ucl_university_labo_autocomplete(request):
-    ucl = request.GET.get('', '')
-    ucl = term.lower()
-    ucl.slugify(term)
-
-    queryset = MultiQuerySet(
-        EntityVersion.objects.filter(
-            title__iexact=ucl
-        ).only('title')[:25],
-        EntityVersion.objects.filter(
-            title__istartswith=ucl
-        ).exclude(title__exact=ucl).only('title')[:25],
-        EntityVersion.objects.filter(
-            title__icontains=ucl
-        ).exclude(title__istartswith=ucl)[:25]
-    )
-
-    return JsonResponse([u.serialize() for u in queryset[:25]], safe=False)
-
+        return qs

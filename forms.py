@@ -1,3 +1,4 @@
+from dal import autocomplete
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity_version import EntityVersion
@@ -541,7 +542,12 @@ class PartnershipForm(BootstrapModelForm):
             'university_offers',
             'comment',
         )
-
+        widgets = {
+            'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+            #'ucl_university': forms.TextInput(),
+            'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+        }
+        
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
