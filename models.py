@@ -154,7 +154,7 @@ class Partner(models.Model):
         on_delete=models.PROTECT,
     )
     partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
-    pic_code = models.CharField(_('pic_code'), max_length=255, unique=True)
+    pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
     start_date = models.DateField(_('partner_start_date'), null=True, blank=True)
     end_date = models.DateField(_('partner_end_date'), null=True, blank=True)
@@ -176,13 +176,25 @@ class Partner(models.Model):
         null=True,
     )
     website = models.URLField(_('website'))
-    email = models.EmailField(_('email'), null=True, blank=True)
-    phone = models.CharField(_('phone'), max_length=255, null=True, blank=True)
+    email = models.EmailField(
+        _('email'),
+        help_text=_('mandatory_if_not_pic_ies'),
+        null=True,
+        blank=True,
+    )
+    phone = models.CharField(
+        _('phone'),
+        max_length=255,
+        help_text=_('mandatory_if_not_pic_ies'),
+        null=True,
+        blank=True,
+    )
     is_nonprofit = models.NullBooleanField(_('is_nonprofit'), blank=True)
     is_public = models.NullBooleanField(_('is_public'), blank=True)
     contact_type = models.CharField(
         _('contact_type'),
         max_length=255,
+        help_text=_('mandatory_if_not_pic_ies'),
         choices=CONTACT_TYPE_CHOICES,
         null=True,
         blank=True,

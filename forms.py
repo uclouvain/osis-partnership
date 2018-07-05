@@ -68,6 +68,15 @@ class PartnerForm(forms.ModelForm):
         if self.cleaned_data['start_date'] and self.cleaned_data['end_date']:
             if self.cleaned_data['start_date'] > self.cleaned_data['end_date']:
                 self.add_error('start_date', ValidationError(_('start_date_gt_end_date_error')))
+
+        if not self.cleaned_data['pic_code'] and not self.cleaned_data['is_ies']:
+            if not self.cleaned_data['email']:
+                self.add_error('email', ValidationError(_('mandatory_if_not_pic_ies')))
+            if not self.cleaned_data['phone']:
+                self.add_error('phone', ValidationError(_('mandatory_if_not_pic_ies')))
+            if not self.cleaned_data['contact_type']:
+                self.add_error('contact_type', ValidationError(_('mandatory_if_not_pic_ies')))
+
         return self.cleaned_data
 
 
