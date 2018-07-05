@@ -80,7 +80,6 @@ class PartnerForm(forms.ModelForm):
         return self.cleaned_data
 
 
-
 class PartnerEntityForm(BootstrapForm, forms.ModelForm):
     """
     This form include fields for related models Address and two Contact.
@@ -91,38 +90,37 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
     address_name = forms.CharField(
         label=_('name'),
         widget=forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
+        required=False,
     )
     address_address = forms.CharField(
         label=_('address'),
         widget=forms.TextInput(attrs={'placeholder': _('address')}),
+        required=False,
     )
     address_postal_code = forms.CharField(
         label=_('postal_code'),
         widget=forms.TextInput(attrs={'placeholder': _('postal_code')}),
+        required=False,
     )
     address_city = forms.CharField(
         label=_('city'),
         widget=forms.TextInput(attrs={'placeholder': _('city')}),
+        required=False,
     )
     address_country = forms.ModelChoiceField(
         label=_('country'),
         queryset=Country.objects.order_by('name'),
         empty_label=_('country'),
+        required=False,
     )
 
     # Contact in
-
-    contact_in_type = forms.ModelChoiceField(
-        label=_('type'),
-        queryset=ContactType.objects.all(),
-        empty_label=_('contact_type'),
-        required=False,
-    )
 
     contact_in_title = forms.ChoiceField(
         label=_('title'),
         choices=Contact.TITLE_CHOICES,
         initial=Contact.TITLE_MISTER,
+        required=False,
     )
 
     contact_in_last_name = forms.CharField(
@@ -169,17 +167,11 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
 
     # Contact out
 
-    contact_out_type = forms.ModelChoiceField(
-        label=_('type'),
-        queryset=ContactType.objects.all(),
-        empty_label=_('contact_type'),
-        required=False,
-    )
-
     contact_out_title = forms.ChoiceField(
         label=_('title'),
         choices=Contact.TITLE_CHOICES,
         initial=Contact.TITLE_MISTER,
+        required=False,
     )
 
     contact_out_last_name = forms.CharField(
@@ -262,7 +254,6 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         if partner_entity.contact_in is None:
             partner_entity.contact_in = Contact()
         contact_in = partner_entity.contact_in
-        contact_in.type = self.cleaned_data['contact_in_type']
         contact_in.title = self.cleaned_data['contact_in_title']
         contact_in.last_name = self.cleaned_data['contact_in_last_name']
         contact_in.first_name = self.cleaned_data['contact_in_first_name']
@@ -280,7 +271,6 @@ class PartnerEntityForm(BootstrapForm, forms.ModelForm):
         if partner_entity.contact_out is None:
             partner_entity.contact_out = Contact()
         contact_out = partner_entity.contact_out
-        contact_out.type = self.cleaned_data['contact_out_type']
         contact_out.title = self.cleaned_data['contact_out_title']
         contact_out.last_name = self.cleaned_data['contact_out_last_name']
         contact_out.first_name = self.cleaned_data['contact_out_first_name']

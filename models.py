@@ -498,6 +498,8 @@ class Contact(models.Model):
         verbose_name=_('contact_type'),
         on_delete=models.PROTECT,
         related_name='+',
+        blank=True,
+        null=True,
     )
     title = models.CharField(
         _('contact_title'),
@@ -521,8 +523,8 @@ class Contact(models.Model):
 
 
 class Address(models.Model):
-    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255)
-    address = models.TextField(_('address'))
+    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
+    address = models.TextField(_('address'), default='', blank=True)
     postal_code = models.CharField(_('postal_code'), max_length=20, blank=True, null=True)
     city = models.CharField(_('city'), max_length=255, blank=True, null=True)
     city_french = models.CharField(_('city_french'), max_length=255, blank=True, null=True)
