@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity_version import EntityVersion
@@ -60,6 +62,14 @@ class PartnerForm(forms.ModelForm):
         super(PartnerForm, self).__init__(*args, **kwargs)
         if not user_is_adri(user):
             del self.fields['is_valid']
+
+    def clean(self):
+        super(PartnerForm, self).clean()
+        if self.cleaned_data['start_date'] and self.cleaned_data['end_date']:
+            if self.cleaned_data['start_date'] > self.cleaned_data['end_date']:
+                self.add_error('start_date', ValidationError(_('start_date_gt_end_date_error')))
+        return self.cleaned_data
+
 
 
 class PartnerEntityForm(BootstrapForm, forms.ModelForm):
