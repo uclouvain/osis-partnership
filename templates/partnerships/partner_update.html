@@ -54,7 +54,7 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="pull-right">
-              <a href="{% url "partnerships:partners:detail" partner.id %}" class="btn btn-default">{% trans "cancel" %}</a>
+              <a href="{{ partner.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
               <button type="submit" class="btn btn-primary">{% trans "update_partner" %}</button>
             </div>
           </div>

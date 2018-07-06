@@ -22,6 +22,7 @@
   <script src="{% static 'js/daterangepicker.js' %}"></script>
   <script src="{% static 'js/dates-input.js' %}"></script>
   <script src="{% static "js/select2.min.js" %}"></script>
+  <script src="{% static "partnerships/partner_create.js" %}"></script>
   <script>
   $('#id_partner-tags').select2({
       language: "fr",
@@ -42,6 +43,10 @@
     <div class="panel-body partner-form">
       <form action="{% url "partnerships:partners:create" %}" method="post">
         {% csrf_token %}
+
+        <div id="similar-partners" data-url="{% url "partnerships:partners:similar" %}">
+          {% include "partnerships/includes/similar_partners_preview.html" %}
+        </div>
 
         {% include "partnerships/includes/partner_form.html" %}
 

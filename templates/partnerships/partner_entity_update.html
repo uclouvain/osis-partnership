@@ -22,7 +22,7 @@
     <form action="{% url "partnerships:partners:entities:update" partner.id partner_entity.id %}" method="post" class="partner-form">
       {% include "partnerships/includes/partner_entity_form.html" %}
       <div class="pull-right">
-        <a href="{% url "partnerships:partners:detail" partner.id %}" class="btn btn-default">{% trans "cancel" %}</a>
+        <a href="{{ partner.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
         <button type="submit" class="btn btn-primary">{% trans "update_partner_entity" %}</button>
       </div>
     </form>

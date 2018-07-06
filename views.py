@@ -8,7 +8,7 @@ from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
@@ -212,6 +212,18 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super(PartnerUpdateView, self).post(request, *args, **kwargs)
+
+
+class SimilarPartnerView(ListView):
+    template_name = 'partnerships/includes/similar_partners_preview.html'
+    context_object_name = 'similar_partners'
+
+    def get_queryset(self):
+        search = self.request.GET.get('search', '')
+        # Don't query for small searches
+        if len(search) < 3:
+            return Partner.objects.none()
+        return Partner.objects.filter(name__icontains=search)[:10]
 
 
 class PartnerEntityMixin(object):
