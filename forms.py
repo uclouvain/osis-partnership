@@ -25,11 +25,11 @@ class PartnerForm(forms.ModelForm):
             'is_valid': forms.CheckboxInput(),
             'start_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('start_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_start_date')},
             ),
             'end_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('end_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_end_date')},
             ),
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),

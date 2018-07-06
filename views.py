@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -131,7 +132,11 @@ class PartnerFormMixin(object):
             kwargs['data'] = self.request.POST
         if self.object is not None:
             kwargs['instance'] = self.object.contact_address
-        return AddressForm(**kwargs)
+        form = AddressForm(**kwargs)
+        form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['city'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['country'].help_text = _('mandatory_if_not_pic_ies')
+        return form
 
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
@@ -158,10 +163,23 @@ class PartnerFormMixin(object):
             form_address=form_address
         ))
 
+    def check_form_address(self, form, form_address):
+        """ Return True if the conditional mandatory form are ok """
+        if form.cleaned_data['pic_code'] or form.cleaned_data['is_ies']:
+            return True
+        cleaned_data = form_address.cleaned_data
+        if not cleaned_data['name']:
+            form_address.add_error('name', ValidationError(_('required')))
+        if not cleaned_data['city']:
+            form_address.add_error('city', ValidationError(_('required')))
+        if not cleaned_data['country']:
+            form_address.add_error('country', ValidationError(_('required')))
+        return form_address.is_valid()
+
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_address = self.get_address_form()
-        if form.is_valid() and form_address.is_valid():
+        if form.is_valid() and form_address.is_valid() and self.check_form_address(form, form_address):
             return self.form_valid(form, form_address)
         else:
             return self.form_invalid(form, form_address)
