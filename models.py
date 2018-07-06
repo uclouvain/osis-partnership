@@ -146,6 +146,15 @@ class Partner(models.Model):
         ('OTH', _('Other')),
     )
 
+    external_id = models.CharField(
+        _('external_id'),
+        help_text=_('to_synchronize_with_epc'),
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    changed = models.DateField(_('modified'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('name'), max_length=255)
@@ -220,7 +229,6 @@ class Partner(models.Model):
     )
 
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
-    modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name=_('author'),
