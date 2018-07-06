@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-29 09:20+0200\n"
-"PO-Revision-Date: 2018-06-29 09:25+0200\n"
+"POT-Creation-Date: 2018-07-06 11:03+0200\n"
+"PO-Revision-Date: 2018-07-06 11:20+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -16,18 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
-
-msgid "Unknown"
-msgstr "Inconnu"
-
-msgid "Yes"
-msgstr "Oui"
-
-msgid "No"
-msgstr "Non"
-
-msgid "partner_type"
-msgstr "Type du partenaire"
 
 msgid "partner_name"
 msgstr "Nom du partenaire"
@@ -47,9 +35,6 @@ msgstr "Code PIC"
 msgid "erasmus_code"
 msgstr "Code Erasmus"
 
-msgid "type"
-msgstr "Type"
-
 msgid "comment"
 msgstr "Commentaire"
 
@@ -61,6 +46,12 @@ msgstr "Site web"
 
 msgid "email"
 msgstr "Email"
+
+msgid "start_date_gt_end_date_error"
+msgstr "La date de début se situe après la date de fin"
+
+msgid "required"
+msgstr "Obligatoire"
 
 msgid "name"
 msgstr "Nom"
@@ -80,9 +71,6 @@ msgstr "Ville"
 msgid "country"
 msgstr "Pays"
 
-msgid "contact_type"
-msgstr "Type de contact"
-
 msgid "title"
 msgstr "Titre"
 
@@ -101,11 +89,14 @@ msgstr "Téléphone mobile"
 msgid "fax"
 msgstr "Fax"
 
+msgid "partner_type"
+msgstr "Type du partenaire"
+
 msgid "continent"
 msgstr "Continent"
 
 msgid "is_ies"
-msgstr "Est IES"
+msgstr "Institution d’enseignement supérieur ?"
 
 msgid "is_valid"
 msgstr "Validé"
@@ -167,26 +158,139 @@ msgstr "Modifié"
 msgid "author"
 msgstr "Auteur"
 
+msgid "Higher education institution (tertiary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – General education (pre-primary level)"
+msgstr ""
+
+msgid "School/Institute/Educational centre – General education (primary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – General education (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (tertiary level)"
+msgstr ""
+
+msgid "School/Institute/Educational centre – Adult education"
+msgstr ""
+
+msgid "National Public body"
+msgstr ""
+
+msgid "Regional Public body"
+msgstr ""
+
+msgid "Local Public body"
+msgstr ""
+
+msgid "Small and medium sized enterprise"
+msgstr ""
+
+msgid "Large enterprise"
+msgstr ""
+
+msgid "Non-governmental organisation/association/social enterprise"
+msgstr ""
+
+msgid "Foundation"
+msgstr ""
+
+msgid ""
+"Social partner or other representative of working life (chambers of "
+"commerce, trade union, trade association)"
+msgstr ""
+
+msgid "Research Institute/Centre"
+msgstr ""
+
+msgid "National Youth Council"
+msgstr ""
+
+msgid "European NGO"
+msgstr ""
+
+msgid "EU-wide network"
+msgstr ""
+
+msgid "Group of young people active in youth work"
+msgstr ""
+
+msgid "European grouping of territorial cooperation"
+msgstr ""
+
+msgid "Accreditation, _(certification or qualification body"
+msgstr ""
+
+msgid "Counsellzing body"
+msgstr ""
+
+msgid "International organisation under public law"
+msgstr ""
+
+msgid "Organisation or association representing (parts of) the sport sector"
+msgstr ""
+
+msgid "Sport federation"
+msgstr ""
+
+msgid "Sport league"
+msgstr ""
+
+msgid "Sport club"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "partner_start_date"
+msgstr "Date de début d’existence"
+
+msgid "partner_end_date"
+msgstr "Date de fin d’existence"
+
 msgid "now_known_as"
 msgstr "Est devenu / Fait partie de"
 
+msgid "mandatory_if_not_pic_ies"
+msgstr ""
+"Champ obligatoire si le partenaire n'a pas de code PIC est n'est pas un IES."
+
 msgid "is_nonprofit"
-msgstr "À but non lucratif"
+msgstr "Organisation à but non lucratif ?"
 
 msgid "is_public"
-msgstr "Public"
+msgstr "Organisme public ?"
 
-msgid "organisation_type"
-msgstr "Type d'organisation"
+msgid "contact_type"
+msgstr "Type de contact"
 
 msgid "use_egracons"
-msgstr "Utilise Egracons"
+msgstr "Utilise le système de conversion de note Égracons ?"
 
 msgid "medias"
 msgstr "Médias"
 
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
+
+msgid "contacts"
+msgstr "Contacts"
+
+msgid "can_access_partnerships"
+msgstr "Peux accéder aux partenariats"
+
+#, python-brace-format
+msgid "partnership_with_{partner}"
+msgstr "Partenariat avec {partner}"
 
 msgid "mobility_type_sms"
 msgstr "SMS"
@@ -203,15 +307,39 @@ msgstr "STT"
 msgid "mobility_type_na"
 msgstr "N/A"
 
-msgid "contacts"
-msgstr "Contacts"
+msgid "partnership"
+msgstr "Partenariat"
 
-msgid "can_access_partnerships"
-msgstr "Peux accéder aux partenariats"
+msgid "academic_year"
+msgstr "Année académique"
 
 #, python-brace-format
-msgid "partnership_with_{partner}"
-msgstr "Partenariat avec {partner}"
+msgid "partnership_year_{partnership}_{year}"
+msgstr "{partnership} pour l'année {year}"
+
+msgid "status_waiting"
+msgstr "En attente"
+
+msgid "status_validated"
+msgstr "Validé"
+
+msgid "status_refused"
+msgstr "Refusé"
+
+msgid "start_academic_year"
+msgstr "Année académique de début"
+
+msgid "end_academic_year"
+msgstr "Année académique de fin"
+
+msgid "media"
+msgstr "Média"
+
+msgid "status"
+msgstr "État"
+
+msgid "note"
+msgstr "Note"
 
 msgid "mister"
 msgstr "Monsieur"
@@ -247,7 +375,21 @@ msgid "visibility"
 msgstr "Visibilité"
 
 msgid "media_delete_warning"
-msgstr "Voulez-vous vraiment supprimer ce média ? ATTENTION, cette action est irréversible."
+msgstr ""
+"Voulez-vous vraiment supprimer ce média ? ATTENTION, cette action est "
+"irréversible."
+
+msgid "external_link"
+msgstr "Lien externe"
+
+msgid "update_media"
+msgstr "Mettre à jour le média"
+
+msgid "delete_media"
+msgstr "Supprimer le média"
+
+msgid "mandatory_fields_help_text"
+msgstr "Les champs accompagné d'un * sont obligatoires."
 
 msgid "first"
 msgstr "Premier"
@@ -262,7 +404,9 @@ msgid "last"
 msgstr "Dernier"
 
 msgid "partner_entity_delete_warning"
-msgstr "Voulez-vous vraiment supprimer cette entité ? ATTENTION, cette action est irréversible."
+msgstr ""
+"Voulez-vous vraiment supprimer cette entité ? ATTENTION, cette action est "
+"irréversible."
 
 msgid "informations"
 msgstr "Informations"
@@ -273,8 +417,8 @@ msgstr "Informations de contact"
 msgid "code"
 msgstr "Code"
 
-msgid "current_partnership"
-msgstr "Parternariats en cours"
+msgid "type"
+msgstr "Type"
 
 msgid "valid"
 msgstr "Valide"
@@ -282,26 +426,20 @@ msgstr "Valide"
 msgid "still_actif"
 msgstr "Toujours actif"
 
-msgid "university"
-msgstr "Faculté"
+msgid "current_partnership"
+msgstr "Partenariats en cours"
 
-msgid "partnership type"
-msgstr "Type de partenariat"
+msgid "supervisor"
+msgstr "Superviseur"
 
-msgid "Start date"
-msgstr "Date de début"
+msgid "ucl"
+msgstr "UCL"
 
-msgid "End date"
-msgstr "Date de fin"
+msgid "financing"
+msgstr "Financement"
 
-msgid "Validated"
-msgstr "Validé"
-
-msgid "Signed"
-msgstr "Signé"
-
-msgid "offers"
-msgstr "Offres"
+msgid "validity"
+msgstr "Validité"
 
 msgid "partnerships"
 msgstr "Partenariats"
@@ -322,17 +460,16 @@ msgid "associated_entities"
 msgstr "Entitées associés"
 
 msgid "add_entities_after_creation"
-msgstr "Vous pourrez ajouter des entités partenaires après la création du partenaire."
+msgstr ""
+"Vous pourrez ajouter des entités partenaires après la création du partenaire."
+
+msgid "cancel"
+msgstr "Annuler"
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
-msgstr "Crée le %(created)s par %(author)s, dernière mise à jour le %(modified)s"
-
-msgid "yes"
-msgstr "Oui"
-
-msgid "no"
-msgstr "Non"
+msgstr ""
+"Crée le %(created)s par %(author)s, dernière mise à jour le %(modified)s"
 
 msgid "contact_address"
 msgstr "Adresse"
@@ -342,15 +479,6 @@ msgstr "Tags associés"
 
 msgid "update_partner"
 msgstr "Mettre à jour le partenaire"
-
-msgid "external_link"
-msgstr "Lien externe"
-
-msgid "update_media"
-msgstr "Mettre à jour le média"
-
-msgid "delete_media"
-msgstr "Supprimer le média"
 
 msgid "no_media_yet"
 msgstr "Il n'y a pas encore de média."
@@ -363,9 +491,6 @@ msgstr "Ajouter un média"
 
 msgid "entities"
 msgstr "Entités"
-
-msgid "update_partner_entity"
-msgstr "Mettre à jour l'entité partenaire"
 
 msgid "delete_partner_entity"
 msgstr "Supprimer l'entité partenaire"
@@ -385,56 +510,125 @@ msgstr "Fermer"
 msgid "submit"
 msgstr "Envoyer"
 
+msgid "update_partner_entity"
+msgstr "Mettre à jour l'entité partenaire"
+
 msgid "filter_partners"
 msgstr "Filtrer les partenaires"
 
 msgid "filter"
 msgstr "Filtrer"
 
-msgid "back to the list"
+msgid "back_to_list"
 msgstr "Retour à la liste"
 
-msgid "Partnership between"
+msgid "partnership_between"
 msgstr "Partenariat entre"
 
-msgid "Created by"
-msgstr "Créé par"
+msgid "not_valid"
+msgstr "Non valide"
 
-msgid "the"
-msgstr "le"
+msgid "no_university"
+msgstr "Pas de faculté"
 
-msgid "Last update the"
-msgstr "Dernière modification le"
+msgid "offers"
+msgstr "Offres"
 
-msgid "Not validated"
-msgstr "Non validé"
+msgid "agreements"
+msgstr "Accords"
 
-msgid "Mobility type"
-msgstr "Type de mobilité"
-
-msgid "Partnership type"
-msgstr "Type de partenariat"
-
-msgid "Contacts"
-msgstr "Contacts"
-
-msgid "Tags"
-msgstr "Tags"
-
-msgid "No tag yet"
-msgstr "Pas encore de tag"
+msgid "no_agreement_yet"
+msgstr "Il n'y a pas encore d'accord."
 
 msgid "filter_partnerships"
 msgstr "Filtrer les partenariats"
 
-msgid "UCL"
-msgstr "UCL"
+msgid "partner_saved"
+msgstr "Partenaire sauvegardé avec succès."
 
-msgid "Partner"
-msgstr "Partenaire"
+msgid "partner_error"
+msgstr "Erreur lors de la sauvegarde du partenaire."
 
-msgid "Partnership"
-msgstr "Partenariat"
+msgid "partner_entity_saved"
+msgstr "Entité partenaire sauvegardé avec succès."
+
+msgid "partner_entity_error"
+msgstr "Erreur lors de la sauvegarde de l'entité partenaire."
+
+msgid "partner_media_saved"
+msgstr "Média sauvegardé avec succès."
+
+msgid "partner_media_error"
+msgstr "Erreur lors de la sauvegarde du média."
+
+#~ msgid "Unknown"
+#~ msgstr "Inconnu"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#~ msgid "No"
+#~ msgstr "Non"
+
+#~ msgid "organisation_type"
+#~ msgstr "Type d'organisation"
+
+#~ msgid "partnership type"
+#~ msgstr "Type de partenariat"
+
+#~ msgid "Start date"
+#~ msgstr "Date de début"
+
+#~ msgid "End date"
+#~ msgstr "Date de fin"
+
+#~ msgid "Validated"
+#~ msgstr "Validé"
+
+#~ msgid "Signed"
+#~ msgstr "Signé"
+
+#~ msgid "yes"
+#~ msgstr "Oui"
+
+#~ msgid "no"
+#~ msgstr "Non"
+
+#~ msgid "Created by"
+#~ msgstr "Créé par"
+
+#~ msgid "the"
+#~ msgstr "le"
+
+#~ msgid "Last update the"
+#~ msgstr "Dernière modification le"
+
+#~ msgid "Not validated"
+#~ msgstr "Non validé"
+
+#~ msgid "Mobility type"
+#~ msgstr "Type de mobilité"
+
+#~ msgid "Partnership type"
+#~ msgstr "Type de partenariat"
+
+#~ msgid "Contacts"
+#~ msgstr "Contacts"
+
+#~ msgid "Tags"
+#~ msgstr "Tags"
+
+#~ msgid "No tag yet"
+#~ msgstr "Pas encore de tag"
+
+#~ msgid "UCL"
+#~ msgstr "UCL"
+
+#~ msgid "Partner"
+#~ msgstr "Partenaire"
+
+#~ msgid "Partnership"
+#~ msgstr "Partenariat"
 
 #~ msgid "document"
 #~ msgstr "Document"
