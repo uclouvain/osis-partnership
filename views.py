@@ -221,6 +221,11 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             return 'partnerships/includes/partner_entity_form.html'
         return self.template_name
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnerEntityFormMixin, self).get_form_kwargs()
+        kwargs['partner'] = self.partner
+        return kwargs
+
     @transaction.atomic
     def form_valid(self, form):
         entity = form.save(commit=False)

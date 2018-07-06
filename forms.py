@@ -211,6 +211,11 @@ class PartnerEntityForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
         }
 
+    def __init__(self, *args, **kwargs):
+        partner = kwargs.pop('partner')
+        super(PartnerEntityForm, self).__init__(*args, **kwargs)
+        self.fields['parent'].queryset = PartnerEntity.objects.filter(partner=partner).exclude(pk=self.instance.pk)
+
     def get_initial_for_field(self, field, field_name):
         """ Set value of foreign keys fields """
         value = super(PartnerEntityForm, self).get_initial_for_field(field, field_name)
