@@ -21,7 +21,10 @@
   <div class="panel-body">
     <form action="{% url "partnerships:partners:entities:create" partner.id %}" method="post" class="partner-form">
       {% include "partnerships/includes/partner_entity_form.html" %}
-      <button type="submit" class="btn btn-primary">{% trans "add_partner_entity" %}</button>
+      <div class="pull-right">
+        <a href="{% url "partnerships:partners:detail" partner.id %}" class="btn btn-default">{% trans "cancel" %}</a>
+        <button type="submit" class="btn btn-primary">{% trans "add_partner_entity" %}</button>
+      </div>
     </form>
   </div>
 </div>
