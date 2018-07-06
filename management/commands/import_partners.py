@@ -82,8 +82,8 @@ class Command(BaseCommand):
         partner.name = line[6] if line[6] else None
         partner.start_date = self.parse_date(line[7])
         partner.end_date = self.parse_date(line[8])
-        # partner.now_known_as = Partner.objects.get(partner_code=line[9])
-        partner.is_ies = line[10] == 'U'
+        # partner.now_known_as = Partner.objects.get(partner_code=line[10])
+        partner.is_ies = line[11] == 'U'
         if partner.contact_address is None:
             partner.contact_address = Address()
         partner.contact_address.address = line[12]
