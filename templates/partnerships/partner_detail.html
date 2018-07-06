@@ -76,7 +76,7 @@
           </dd>
 
           <dt>{% trans "contact_address" %}</dt>
-          <dd>{{ partner.contact_address.one_line_display }}</dd>
+          <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
 
           <dt>{% trans "website" %}</dt>
           <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
@@ -197,7 +197,7 @@
         {% endif %}
         <div class="col-sm-12 col-md-6">
           {% if entity.address %}
-          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display }}
+          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
           {% endif %}
 
           <p><em>{{ entity.comment }}</em></p>
