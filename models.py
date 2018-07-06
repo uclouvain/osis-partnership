@@ -301,6 +301,8 @@ class Partnership(models.Model):
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
+        blank=True,
+        null=True,
     )
     ucl_university = models.ForeignKey(
         'base.EntityVersion',
