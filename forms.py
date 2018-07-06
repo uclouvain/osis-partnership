@@ -60,11 +60,11 @@ class PartnerForm(forms.ModelForm):
 
         if not self.cleaned_data['pic_code'] and not self.cleaned_data['is_ies']:
             if not self.cleaned_data['email']:
-                self.add_error('email', ValidationError(_('mandatory_if_not_pic_ies')))
+                self.add_error('email', ValidationError(_('required')))
             if not self.cleaned_data['phone']:
-                self.add_error('phone', ValidationError(_('mandatory_if_not_pic_ies')))
+                self.add_error('phone', ValidationError(_('required')))
             if not self.cleaned_data['contact_type']:
-                self.add_error('contact_type', ValidationError(_('mandatory_if_not_pic_ies')))
+                self.add_error('contact_type', ValidationError(_('required')))
 
         return self.cleaned_data
 

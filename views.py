@@ -1,9 +1,12 @@
+from django.contrib import messages
+
 from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
@@ -145,9 +148,11 @@ class PartnerFormMixin(object):
         partner.contact_address = contact_address
         partner.save()
         form.save_m2m()
+        messages.success(self.request, _('partner_saved'))
         return redirect(partner)
 
     def form_invalid(self, form, form_address):
+        messages.error(self.request, _('partner_error'))
         return self.render_to_response(self.get_context_data(
             form=form,
             form_address=form_address
@@ -231,7 +236,12 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         entity.contact_out_id = entity.contact_out.id
         entity.save()
         form.save_m2m()
+        messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partner_entity_error'))
+        return super(PartnerEntityFormMixin, self).form_invalid(form)
 
 
 class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
@@ -298,7 +308,12 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
         media.save()
         form.save_m2m()
         self.partner.medias.add(media)
+        messages.success(self.request, _('partner_media_saved'))
         return redirect(self.partner)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partner_media_error'))
+        return super(PartnerMediaFormMixin, self).form_invalid(form)
 
 
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
