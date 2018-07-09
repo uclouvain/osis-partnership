@@ -52,13 +52,29 @@
           {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
         </div>
       </div>
-      {#         <div class="row"<div class="col-sm-12"><strong>{% trans "academic_responsible" %}</strong> : Not implemented yet</div></div>#}
       {% if partnership.start_date or partnership.end_date %}<div class="row"><div class="col-sm-12">{{ partnership.start_date|default_if_none:"" }} &gt; {{ partnership.end_date|default_if_none:"" }}</div></div>{% endif %}
-      <dl class="dl-horizontal">
-        {#          <dt>{% trans "studies_domain" %}</dt><dd>Not implemented yet</dd>#}
-        <dt>{% trans "mobility_type" %}</dt><dd>{{ partnership.mobility_type }}</dd>
-        <dt>{% trans "partnership_type" %}</dt><dd>{{ partnership.partnership_type }}</dd>
-      </dl>
+
+      {% if partnership.years.all %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{% trans "mobility_type" %}</th>
+            <th>{% trans "partnership_type" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for partnership_year in partnership.years.all %}
+          <tr>
+            <th>{{ partnership_year.academic_year }}</th>
+            <td>{{ partnership_year.mobility_type }}</td>
+            <td>{{ partnership_year.partnership_type }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
       {% if partnership.comment is not None %}
         <div class="row">
           <div class="col-sm-12">
@@ -79,11 +95,34 @@
         </div>
       {% endif %}
 
-      {#      <!-- Accords -->#}
-      {#      <h2>{% trans "agreements" %}#}
-      {#      <div>#}
-      {#        <!-- TODO -->#}
-      {#      </div>#}
+      <!-- Accords -->
+      <h2>{% trans "agreements" %}</h2>
+      {% for agreement in partnership.agreements.all %}
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <div class="row">
+            <div class="col-sm-5">
+              {{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}
+            </div>
+            <div class="col-sm-7">
+              <strong>{{ agreement.get_status_display }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <p>{{ agreement.note }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          {% include "partnerships/includes/media_detail.html" with media=agreement.media %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="row">
+        <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
+      </div>
+      {% endfor %}
       
       <!-- Tags -->
       <h2>{% trans "tags" %}</h2>

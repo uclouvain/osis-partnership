@@ -42,7 +42,8 @@
           <dt>{% trans "erasmus_code" %}</dt>
           <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
-          {% if partner.is_ies %}<dd>{% trans "is_ies" %}</dd>{% endif %}
+          <dt>{% trans "is_ies" %}</dt>
+          <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           {% if partner.now_known_as %}
           <dt>{% trans "now_known_as" %}</dt>
@@ -50,28 +51,32 @@
           {% endif %}
 
           <dt>{% trans "is_nonprofit" %}</dt>
-          <dd>{% if partner.is_nonprofit %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_public" %}</dt>
-          <dd>{% if partner.is_public %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "contact_type" %}</dt>
-          <dd>{{ partner.contact_type|default_if_none:"" }}</dd>
+          <dd>{{ partner.get_contact_type_display|default_if_none:"" }}</dd>
 
           <dt>{% trans "use_egracons" %}</dt>
-          <dd>{% if partner.use_egracons %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
         </dl>
       </div>
       <div class="col-sm-12 col-md-6">
         <dl class="dl-horizontal">
           <dt>{% trans "is_valid" %}</dt>
-          <dd>{% if partner.is_valid %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_actif" %}</dt>
-          <dd>{% if partner.is_actif %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+          <dd>
+            <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% if partner.start_date is None %}N/A{% else %}{{ partner.start_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+            > {% if partner.end_date is None %}N/A{% else %}{{ partner.end_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+          </dd>
 
           <dt>{% trans "contact_address" %}</dt>
-          <dd>{{ partner.contact_address.one_line_display }}</dd>
+          <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
 
           <dt>{% trans "website" %}</dt>
           <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
@@ -118,52 +123,8 @@
     </div>
     <div class="row">
       {% for media in partner.medias.all %}
-      <div class="col-sm-12 col-md-6">
-        <div class="row">
-          <div class="col-sm-9">
-            <strong>{{ media.name }}</strong> <em>{{ media.get_visibility.display }}</em>
-          </div>
-          <div class="col-sm-3">
-            {% if media.url %}
-              {% trans "external_link" %}
-            {% else %}
-              {{ media.get_document_file_type }}/{{ media.get_document_file_size|filesizeformat }}
-            {% endif %}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            <p>{{ media.description }}</p>
-          </div>
-          <div class="col-sm-3">
-            <div class="btn-group">
-              {% if media.url %}
-              <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
-              {% else %}
-              <a href="{{ media.file.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
-              {% endif %}
-              {% if can_update_partner %}
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a href="{% url "partnerships:partners:medias:update" partner.id media.id %}"
-                   class="modal-link"
-                   data-modal-submit="{% trans "update_media" %}"
-                   data-modal-title="{{ media }}"
-                   data-modal="modal-form"><i class="fa fa-pencil fa-fw"></i> {% trans "update_media" %}</a></li>
-                <li><a href="{% url "partnerships:partners:medias:delete" partner.id media.id %}"
-                   class="modal-link"
-                   data-modal-danger
-                   data-modal-submit="{% trans "delete_media" %}"
-                   data-modal-title="{{ media }}"
-                   data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_media" %}</a></li>
-              </ul>
-              {% endif %}
-            </div>
-          </div>
-        </div>
+      <div class="col-sm-12 col-md-6 media">
+        {% include "partnerships/includes/media_detail.html" with media=media %}
       </div>
       {% empty %}
       <div class="col-sm-12">{% trans "no_media_yet" %}</div>
@@ -199,12 +160,10 @@
             {% if user|can_change_partner_entity:entity %}
             <div class="btn-group">
               <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
-                 class="btn btn-default modal-link"
-                 data-modal-submit="{% trans "update_partner_entity" %}"
-                 data-modal-title="{{ entity }}"
-                 data-modal="modal-form">
+                 class="btn btn-default">
                 <i class="fa fa-pencil fa-fw"></i>
               </a>
+              {% if user|can_delete_partner_entity:entity %}
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
@@ -217,6 +176,7 @@
                    data-modal-title="{{ entity }}"
                    data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partner_entity" %}</a></li>
               </ul>
+                {% endif %}
             </div>
             {% endif %}
           </h3>
@@ -237,7 +197,7 @@
         {% endif %}
         <div class="col-sm-12 col-md-6">
           {% if entity.address %}
-          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display }}
+          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
           {% endif %}
 
           <p><em>{{ entity.comment }}</em></p>
@@ -253,10 +213,7 @@
         {% endif %}
 
         {% if entity.parent %}
-        <div class="col-sm-12 col-md-6">
-        {% trans "parent_entity" %}<br>
-        <strong>{{ entity.parent }}</strong> <a href="{{ entity.parent.get_absolute_url }}" class="btn btn-default"><i class="fa fa-fw fa-eye"></i></a>
-        </div>
+        <div class="col-sm-12 col-md-6">{% trans "parent_entity" %}</div>
         {% endif %}
       </div>
     </div>
@@ -266,10 +223,7 @@
     <div class="row">
       <div class="col-sm-12">
         <a href="{% url "partnerships:partners:entities:create" partner.id %}"
-               class="btn btn-default modal-link pull-right"
-               data-modal-submit="{% trans "add_partner_entity" %}"
-               data-modal-title="{% trans "add_partner_entity" %}"
-               data-modal="modal-form">
+               class="btn btn-default pull-right">
           <i class="fa fa-fw fa-plus"></i> {% trans "add_partner_entity" %}
         </a>
       </div>
@@ -291,7 +245,7 @@
           <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "close" %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "cancel" %}</button>
           <button type="submit" class="btn btn-primary">{% trans "submit" %}</button>
         </div>
       </form>

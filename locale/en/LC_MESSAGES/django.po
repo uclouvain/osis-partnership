@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-29 09:20+0200\n"
+"POT-Creation-Date: 2018-07-06 11:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,18 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "Unknown"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "No"
-msgstr ""
-
-msgid "partner_type"
-msgstr ""
 
 msgid "partner_name"
 msgstr ""
@@ -47,9 +35,6 @@ msgstr ""
 msgid "erasmus_code"
 msgstr ""
 
-msgid "type"
-msgstr ""
-
 msgid "comment"
 msgstr ""
 
@@ -60,6 +45,12 @@ msgid "website"
 msgstr ""
 
 msgid "email"
+msgstr ""
+
+msgid "start_date_gt_end_date_error"
+msgstr ""
+
+msgid "required"
 msgstr ""
 
 msgid "name"
@@ -80,9 +71,6 @@ msgstr ""
 msgid "country"
 msgstr ""
 
-msgid "contact_type"
-msgstr ""
-
 msgid "title"
 msgstr ""
 
@@ -99,6 +87,9 @@ msgid "mobile_phone"
 msgstr ""
 
 msgid "fax"
+msgstr ""
+
+msgid "partner_type"
 msgstr ""
 
 msgid "continent"
@@ -167,7 +158,109 @@ msgstr ""
 msgid "author"
 msgstr ""
 
+msgid "Higher education institution (tertiary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – General education (pre-primary level)"
+msgstr ""
+
+msgid "School/Institute/Educational centre – General education (primary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – General education (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (tertiary level)"
+msgstr ""
+
+msgid "School/Institute/Educational centre – Adult education"
+msgstr ""
+
+msgid "National Public body"
+msgstr ""
+
+msgid "Regional Public body"
+msgstr ""
+
+msgid "Local Public body"
+msgstr ""
+
+msgid "Small and medium sized enterprise"
+msgstr ""
+
+msgid "Large enterprise"
+msgstr ""
+
+msgid "Non-governmental organisation/association/social enterprise"
+msgstr ""
+
+msgid "Foundation"
+msgstr ""
+
+msgid ""
+"Social partner or other representative of working life (chambers of "
+"commerce, trade union, trade association)"
+msgstr ""
+
+msgid "Research Institute/Centre"
+msgstr ""
+
+msgid "National Youth Council"
+msgstr ""
+
+msgid "European NGO"
+msgstr ""
+
+msgid "EU-wide network"
+msgstr ""
+
+msgid "Group of young people active in youth work"
+msgstr ""
+
+msgid "European grouping of territorial cooperation"
+msgstr ""
+
+msgid "Accreditation, _(certification or qualification body"
+msgstr ""
+
+msgid "Counsellzing body"
+msgstr ""
+
+msgid "International organisation under public law"
+msgstr ""
+
+msgid "Organisation or association representing (parts of) the sport sector"
+msgstr ""
+
+msgid "Sport federation"
+msgstr ""
+
+msgid "Sport league"
+msgstr ""
+
+msgid "Sport club"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "partner_start_date"
+msgstr ""
+
+msgid "partner_end_date"
+msgstr ""
+
 msgid "now_known_as"
+msgstr ""
+
+msgid "mandatory_if_not_pic_ies"
 msgstr ""
 
 msgid "is_nonprofit"
@@ -176,7 +269,7 @@ msgstr ""
 msgid "is_public"
 msgstr ""
 
-msgid "organisation_type"
+msgid "contact_type"
 msgstr ""
 
 msgid "use_egracons"
@@ -186,6 +279,16 @@ msgid "medias"
 msgstr ""
 
 msgid "can_access_partners"
+msgstr ""
+
+msgid "contacts"
+msgstr ""
+
+msgid "can_access_partnerships"
+msgstr ""
+
+#, python-brace-format
+msgid "partnership_with_{partner}"
 msgstr ""
 
 msgid "mobility_type_sms"
@@ -203,14 +306,38 @@ msgstr ""
 msgid "mobility_type_na"
 msgstr ""
 
-msgid "contacts"
+msgid "partnership"
 msgstr ""
 
-msgid "can_access_partnerships"
+msgid "academic_year"
 msgstr ""
 
 #, python-brace-format
-msgid "partnership_with_{partner}"
+msgid "partnership_year_{partnership}_{year}"
+msgstr ""
+
+msgid "status_waiting"
+msgstr ""
+
+msgid "status_validated"
+msgstr ""
+
+msgid "status_refused"
+msgstr ""
+
+msgid "start_academic_year"
+msgstr ""
+
+msgid "end_academic_year"
+msgstr ""
+
+msgid "media"
+msgstr ""
+
+msgid "status"
+msgstr ""
+
+msgid "note"
 msgstr ""
 
 msgid "mister"
@@ -249,6 +376,18 @@ msgstr ""
 msgid "media_delete_warning"
 msgstr ""
 
+msgid "external_link"
+msgstr ""
+
+msgid "update_media"
+msgstr ""
+
+msgid "delete_media"
+msgstr ""
+
+msgid "mandatory_fields_help_text"
+msgstr ""
+
 msgid "first"
 msgstr ""
 
@@ -273,7 +412,7 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-msgid "current_partnership"
+msgid "type"
 msgstr ""
 
 msgid "valid"
@@ -282,25 +421,19 @@ msgstr ""
 msgid "still_actif"
 msgstr ""
 
-msgid "university"
+msgid "current_partnership"
 msgstr ""
 
-msgid "partnership type"
+msgid "supervisor"
 msgstr ""
 
-msgid "Start date"
+msgid "ucl"
 msgstr ""
 
-msgid "End date"
+msgid "financing"
 msgstr ""
 
-msgid "Validated"
-msgstr ""
-
-msgid "Signed"
-msgstr ""
-
-msgid "offers"
+msgid "validity"
 msgstr ""
 
 msgid "partnerships"
@@ -324,14 +457,11 @@ msgstr ""
 msgid "add_entities_after_creation"
 msgstr ""
 
+msgid "cancel"
+msgstr ""
+
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
-msgstr ""
-
-msgid "yes"
-msgstr ""
-
-msgid "no"
 msgstr ""
 
 msgid "contact_address"
@@ -341,15 +471,6 @@ msgid "associated_tags"
 msgstr ""
 
 msgid "update_partner"
-msgstr ""
-
-msgid "external_link"
-msgstr ""
-
-msgid "update_media"
-msgstr ""
-
-msgid "delete_media"
 msgstr ""
 
 msgid "no_media_yet"
@@ -362,9 +483,6 @@ msgid "add_media"
 msgstr ""
 
 msgid "entities"
-msgstr ""
-
-msgid "update_partner_entity"
 msgstr ""
 
 msgid "delete_partner_entity"
@@ -385,53 +503,53 @@ msgstr ""
 msgid "submit"
 msgstr ""
 
+msgid "update_partner_entity"
+msgstr ""
+
 msgid "filter_partners"
 msgstr ""
 
 msgid "filter"
 msgstr ""
 
-msgid "back to the list"
+msgid "back_to_list"
 msgstr ""
 
-msgid "Partnership between"
+msgid "partnership_between"
 msgstr ""
 
-msgid "Created by"
+msgid "not_valid"
 msgstr ""
 
-msgid "the"
+msgid "no_university"
 msgstr ""
 
-msgid "Last update the"
+msgid "offers"
 msgstr ""
 
-msgid "Not validated"
+msgid "agreements"
 msgstr ""
 
-msgid "Mobility type"
-msgstr ""
-
-msgid "Partnership type"
-msgstr ""
-
-msgid "Contacts"
-msgstr ""
-
-msgid "Tags"
-msgstr ""
-
-msgid "No tag yet"
+msgid "no_agreement_yet"
 msgstr ""
 
 msgid "filter_partnerships"
 msgstr ""
 
-msgid "UCL"
+msgid "partner_saved"
 msgstr ""
 
-msgid "Partner"
+msgid "partner_error"
 msgstr ""
 
-msgid "Partnership"
+msgid "partner_entity_saved"
+msgstr ""
+
+msgid "partner_entity_error"
+msgstr ""
+
+msgid "partner_media_saved"
+msgstr ""
+
+msgid "partner_media_error"
 msgstr ""

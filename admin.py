@@ -1,7 +1,7 @@
 from django.contrib import admin
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership, PartnershipTag,
-                                PartnershipType, PartnerTag, PartnerType)
+                                PartnershipType, PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -38,8 +38,24 @@ class PartnerAdmin(admin.ModelAdmin):
             formset.save()
 
 
+
+class PartnershipYearInline(admin.TabularInline):
+    model = PartnershipYear
+
+    def get_queryset(self, request):
+        return PartnershipYear.objects.select_related('academic_year', 'partnership__partner')
+
+
+class PartnershipAgreementInline(admin.TabularInline):
+    model = PartnershipAgreement
+
+    def get_queryset(self, request):
+        return PartnershipAgreement.objects.select_related('partnership__partner')
+
+
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = ('ucl_university', 'ucl_university_labo', 'university_offers')
+    inlines = (PartnershipYearInline, PartnershipAgreementInline)
 
     def get_queryset(self, request):
         return Partnership.objects.select_related('partner')

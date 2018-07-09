@@ -5,7 +5,7 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnerEntityUpdateView, PartnerMediaCreateView,
                                PartnerMediaDeleteView, PartnerMediaUpdateView,
                                PartnershipDetailView, PartnershipsListView,
-                               PartnersListView, PartnerUpdateView,
+                               PartnersListView, PartnerUpdateView, SimilarPartnerView,
                                PartnershipCreateView, UclUniversityAutocompleteView,
                                UniversityOfferAutocompleteView, PartnershipUpdateView)
 
@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="partnership_update"),
     url(r'^partners/', include([
         url(r'^$', PartnersListView.as_view(), name="list"),
+        url(r'^similar/$', SimilarPartnerView.as_view(), name="similar"),
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),
         url(r'^(?P<pk>\d+)/update/$', PartnerUpdateView.as_view(), name="update"),
         url(r'^(?P<partner_pk>\d+)/medias/', include([

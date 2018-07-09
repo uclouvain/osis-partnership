@@ -1,4 +1,6 @@
 from dal import autocomplete
+from django.core.exceptions import ValidationError
+
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity_version import EntityVersion
@@ -9,32 +11,13 @@ from base.forms.bootstrap import BootstrapModelForm, BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
-    Partnership, PartnershipTag, PartnershipType
+    Partnership, PartnershipTag, PartnershipType, PartnershipYear
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
 
 
-class CustomLabelNullBooleanSelect(forms.NullBooleanSelect):
-
-    def __init__(self, attrs=None, empty_label=None):
-        if empty_label is None:
-            empty_label = _('Unknown')
-        choices = (
-            ('1', empty_label),
-            ('2', _('Yes')),
-            ('3', _('No')),
-        )
-        super(forms.NullBooleanSelect, self).__init__(attrs, choices)
-
-
-class PartnerForm(BootstrapForm, forms.ModelForm):
-    partner_type = forms.ModelChoiceField(
-        label=_('partner_type'),
-        queryset=PartnerType.objects.all(),
-        empty_label=_('partner_type'),
-    )
-
+class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
         exclude = ['contact_address', 'medias']
@@ -43,11 +26,11 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
             'is_valid': forms.CheckboxInput(),
             'start_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('start_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_start_date')},
             ),
             'end_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('end_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_end_date')},
             ),
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
@@ -56,7 +39,6 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
             'is_nonprofit': forms.CheckboxInput(),
             'is_public': forms.CheckboxInput(),
             'use_egracons': forms.CheckboxInput(),
-            'type': forms.TextInput(attrs={'placeholder': _('type')}),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
             'website': forms.URLInput(attrs={'placeholder': _('website')}),
@@ -68,9 +50,28 @@ class PartnerForm(BootstrapForm, forms.ModelForm):
         super(PartnerForm, self).__init__(*args, **kwargs)
         if not user_is_adri(user):
             del self.fields['is_valid']
+        if self.instance.pk is not None:
+            self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
+
+    def clean(self):
+        super(PartnerForm, self).clean()
+        if self.cleaned_data['start_date'] and self.cleaned_data['end_date']:
+            if self.cleaned_data['start_date'] > self.cleaned_data['end_date']:
+                self.add_error('start_date', ValidationError(_('start_date_gt_end_date_error')))
+
+        if not self.cleaned_data['pic_code'] and not self.cleaned_data['is_ies']:
+            if not self.cleaned_data['email']:
+                self.add_error('email', ValidationError(_('required')))
+            if not self.cleaned_data['phone']:
+                self.add_error('phone', ValidationError(_('required')))
+            if not self.cleaned_data['contact_type']:
+                self.add_error('contact_type', ValidationError(_('required')))
+
+        return self.cleaned_data
 
 
-class PartnerEntityForm(BootstrapModelForm):
+class PartnerEntityForm(forms.ModelForm):
+
     """
     This form include fields for related models Address and two Contact.
     """
@@ -80,38 +81,36 @@ class PartnerEntityForm(BootstrapModelForm):
     address_name = forms.CharField(
         label=_('name'),
         widget=forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
+        required=False,
     )
     address_address = forms.CharField(
         label=_('address'),
         widget=forms.TextInput(attrs={'placeholder': _('address')}),
+        required=False,
     )
     address_postal_code = forms.CharField(
         label=_('postal_code'),
         widget=forms.TextInput(attrs={'placeholder': _('postal_code')}),
+        required=False,
     )
     address_city = forms.CharField(
         label=_('city'),
         widget=forms.TextInput(attrs={'placeholder': _('city')}),
+        required=False,
     )
     address_country = forms.ModelChoiceField(
         label=_('country'),
         queryset=Country.objects.order_by('name'),
         empty_label=_('country'),
+        required=False,
     )
 
     # Contact in
 
-    contact_in_type = forms.ModelChoiceField(
-        label=_('type'),
-        queryset=ContactType.objects.all(),
-        empty_label=_('contact_type'),
-        required=False,
-    )
-
     contact_in_title = forms.ChoiceField(
         label=_('title'),
-        choices=Contact.TITLE_CHOICES,
-        initial=Contact.TITLE_MISTER,
+        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        required=False,
     )
 
     contact_in_last_name = forms.CharField(
@@ -158,17 +157,10 @@ class PartnerEntityForm(BootstrapModelForm):
 
     # Contact out
 
-    contact_out_type = forms.ModelChoiceField(
-        label=_('type'),
-        queryset=ContactType.objects.all(),
-        empty_label=_('contact_type'),
-        required=False,
-    )
-
     contact_out_title = forms.ChoiceField(
         label=_('title'),
-        choices=Contact.TITLE_CHOICES,
-        initial=Contact.TITLE_MISTER,
+        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        required=False,
     )
 
     contact_out_last_name = forms.CharField(
@@ -221,6 +213,11 @@ class PartnerEntityForm(BootstrapModelForm):
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
         }
 
+    def __init__(self, *args, **kwargs):
+        partner = kwargs.pop('partner')
+        super(PartnerEntityForm, self).__init__(*args, **kwargs)
+        self.fields['parent'].queryset = PartnerEntity.objects.filter(partner=partner).exclude(pk=self.instance.pk)
+
     def get_initial_for_field(self, field, field_name):
         """ Set value of foreign keys fields """
         value = super(PartnerEntityForm, self).get_initial_for_field(field, field_name)
@@ -251,7 +248,6 @@ class PartnerEntityForm(BootstrapModelForm):
         if partner_entity.contact_in is None:
             partner_entity.contact_in = Contact()
         contact_in = partner_entity.contact_in
-        contact_in.type = self.cleaned_data['contact_in_type']
         contact_in.title = self.cleaned_data['contact_in_title']
         contact_in.last_name = self.cleaned_data['contact_in_last_name']
         contact_in.first_name = self.cleaned_data['contact_in_first_name']
@@ -269,7 +265,6 @@ class PartnerEntityForm(BootstrapModelForm):
         if partner_entity.contact_out is None:
             partner_entity.contact_out = Contact()
         contact_out = partner_entity.contact_out
-        contact_out.type = self.cleaned_data['contact_out_type']
         contact_out.title = self.cleaned_data['contact_out_title']
         contact_out.last_name = self.cleaned_data['contact_out_last_name']
         contact_out.first_name = self.cleaned_data['contact_out_first_name']
@@ -294,7 +289,7 @@ class PartnerEntityForm(BootstrapModelForm):
         return partner_entity
 
 
-class PartnerFilterForm(BootstrapForm):
+class PartnerFilterForm(forms.Form):
     name = forms.CharField(
         label=_('name'),
         widget=forms.TextInput(attrs={'placeholder': _('partner_name')}),
@@ -303,7 +298,6 @@ class PartnerFilterForm(BootstrapForm):
     partner_type = forms.ModelChoiceField(
         label=_('partner_type'),
         queryset=PartnerType.objects.all(),
-        empty_label=_('partner_type'),
         required=False,
     )
     pic_code = forms.CharField(
@@ -318,34 +312,29 @@ class PartnerFilterForm(BootstrapForm):
     )
     city = forms.ChoiceField(
         label=_('city'),
-        choices=((None, _('city')),),
+        choices=((None, '------'),),
         required=False,
     )
     country = forms.ModelChoiceField(
         label=_('country'),
         queryset=Country.objects.filter(address__partners__isnull=False).order_by('name'),
-        empty_label=_('country'),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
         queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name'),
-        empty_label=_('continent'),
         required=False,
     )
     is_ies = forms.NullBooleanField(
         label=_('is_ies'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_ies')),
         required=False,
     )
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_valid')),
         required=False,
     )
     is_actif = forms.NullBooleanField(
         label=_('is_actif'),
-        widget=CustomLabelNullBooleanSelect(empty_label=_('is_actif')),
         required=False,
     )
     tags = forms.ModelMultipleChoiceField(
@@ -363,7 +352,7 @@ class PartnerFilterForm(BootstrapForm):
             .order_by('city')
             .distinct('city')
         )
-        self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+        self.fields['city'].choices = ((None, '------'),) + tuple((city, city) for city in cities)
 
 
 class MediaForm(BootstrapForm, forms.ModelForm):
@@ -397,7 +386,7 @@ class AddressForm(BootstrapForm, forms.ModelForm):
         fields = '__all__'
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
-            'address': forms.TextInput(attrs={'placeholder': _('address')}),
+            'address': forms.Textarea(attrs={'placeholder': _('address')}),
             'postal_code': forms.TextInput(attrs={'placeholder': _('postal_code')}),
             'city': forms.TextInput(attrs={'placeholder': _('city')}),
         }
@@ -516,7 +505,7 @@ class PartnershipFilterForm(forms.Form):
 
         print(Partnership.objects.values_list('mobility_type', flat=True))
         mobility_types = (
-            Partnership.objects
+            PartnershipYear.objects
                 .values_list('mobility_type', flat=True)
                 .order_by('mobility_type')
                 .distinct('mobility_type')

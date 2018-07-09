@@ -5,35 +5,36 @@
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.name.errors }}
-    {{ form.name }}
+    {% bootstrap_field form.name %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.description.errors }}
-    {{ form.description }}
+    {% bootstrap_field form.description %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.file.errors }}
-    {{ form.file }}
+    {% bootstrap_field form.file %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.url.errors }}
-    {{ form.url }}
+    {% bootstrap_field form.url %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-12">
-    {{ form.visibility.errors }}
-    {{ form.visibility }}
+    {% bootstrap_field form.visibility %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <p>{% trans "mandatory_fields_help_text" %}</p>
   </div>
 </div>

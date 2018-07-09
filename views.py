@@ -1,4 +1,8 @@
 from dal import autocomplete
+
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -6,15 +10,16 @@ from django.db import transaction
 from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import DetailView, ListView
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm)
-from partnership.models import Media, Partner, PartnerEntity, Partnership
+from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
-
+1
 class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
     context_object_name = 'partners'
     form_class = PartnerFilterForm
@@ -112,6 +117,10 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
 
 
 class PartnerFormMixin(object):
+    initial = {
+        'is_valid': True,
+    }
+
     def get_form_kwargs(self):
         kwargs = super(PartnerFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
@@ -125,11 +134,16 @@ class PartnerFormMixin(object):
             kwargs['data'] = self.request.POST
         if self.object is not None:
             kwargs['instance'] = self.object.contact_address
-        return AddressForm(**kwargs)
+        form = AddressForm(**kwargs)
+        form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['city'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['country'].help_text = _('mandatory_if_not_pic_ies')
+        return form
 
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
+        kwargs['user_is_adri'] =  user_is_adri(self.request.user)
         return super(PartnerFormMixin, self).get_context_data(**kwargs)
 
     @transaction.atomic
@@ -141,18 +155,33 @@ class PartnerFormMixin(object):
         partner.contact_address = contact_address
         partner.save()
         form.save_m2m()
+        messages.success(self.request, _('partner_saved'))
         return redirect(partner)
 
     def form_invalid(self, form, form_address):
+        messages.error(self.request, _('partner_error'))
         return self.render_to_response(self.get_context_data(
             form=form,
             form_address=form_address
         ))
 
+    def check_form_address(self, form, form_address):
+        """ Return True if the conditional mandatory form are ok """
+        if form.cleaned_data['pic_code'] or form.cleaned_data['is_ies']:
+            return True
+        cleaned_data = form_address.cleaned_data
+        if not cleaned_data['name']:
+            form_address.add_error('name', ValidationError(_('required')))
+        if not cleaned_data['city']:
+            form_address.add_error('city', ValidationError(_('required')))
+        if not cleaned_data['country']:
+            form_address.add_error('country', ValidationError(_('required')))
+        return form_address.is_valid()
+
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_address = self.get_address_form()
-        if form.is_valid() and form_address.is_valid():
+        if form.is_valid() and form_address.is_valid() and self.check_form_address(form, form_address):
             return self.form_valid(form, form_address)
         else:
             return self.form_invalid(form, form_address)
@@ -187,6 +216,18 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
         return super(PartnerUpdateView, self).post(request, *args, **kwargs)
 
 
+class SimilarPartnerView(ListView):
+    template_name = 'partnerships/includes/similar_partners_preview.html'
+    context_object_name = 'similar_partners'
+
+    def get_queryset(self):
+        search = self.request.GET.get('search', '')
+        # Don't query for small searches
+        if len(search) < 3:
+            return Partner.objects.none()
+        return Partner.objects.filter(name__icontains=search)[:10]
+
+
 class PartnerEntityMixin(object):
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
@@ -212,6 +253,11 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             return 'partnerships/includes/partner_entity_form.html'
         return self.template_name
 
+    def get_form_kwargs(self):
+        kwargs = super(PartnerEntityFormMixin, self).get_form_kwargs()
+        kwargs['partner'] = self.partner
+        return kwargs
+
     @transaction.atomic
     def form_valid(self, form):
         entity = form.save(commit=False)
@@ -227,7 +273,12 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         entity.contact_out_id = entity.contact_out.id
         entity.save()
         form.save_m2m()
+        messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partner_entity_error'))
+        return super(PartnerEntityFormMixin, self).form_invalid(form)
 
 
 class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
@@ -249,7 +300,7 @@ class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView
     template_name = 'partnerships/partner_entity_delete.html'
 
     def test_func(self):
-        return self.get_object().user_can_change(self.request.user)
+        return self.get_object().user_can_delete(self.request.user)
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -294,7 +345,12 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
         media.save()
         form.save_m2m()
         self.partner.medias.add(media)
+        messages.success(self.request, _('partner_media_saved'))
         return redirect(self.partner)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partner_media_error'))
+        return super(PartnerMediaFormMixin, self).form_invalid(form)
 
 
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
@@ -342,13 +398,23 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         return kwargs
 
     def get_ordering(self):
-        return self.request.GET.get('ordering', '-created')
+        ordering = self.request.GET.get('ordering', '-created')
+        if ordering == 'partner':
+            return ['ucl_university__entity__country', 'ucl_university__entity__city', 'partner__name']
+        elif ordering == '-partner':
+            return ['-ucl_university__entity__country', '-ucl_university__entity__city', '-partner__name']
+        elif ordering == 'ucl':
+            return []  # TODO
+        elif ordering == '-ucl':
+            return []  # TODO
+        else:
+            return [ordering]
 
     def get_queryset(self):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partnership_type', 'partner_entity')
+            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity')
             .prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
@@ -384,7 +450,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
-        queryset = queryset.order_by(ordering)
+        queryset = queryset.order_by(*ordering)
         return queryset
 
 
@@ -396,8 +462,18 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     def get_object(self):
         self.partnership = (
             Partnership.objects
-            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'partnership_type', 'author')
-            .prefetch_related('contacts', 'tags', Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')))
+            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
+            .prefetch_related(
+                'contacts',
+                'tags',
+                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
+                Prefetch('years', queryset=PartnershipYear.objects.select_related(
+                    'academic_year', 'partnership_type'
+                )),
+                Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
+                    'start_academic_year', 'end_academic_year', 'media'
+                )),
+            )
             .annotate(university_offers_count=Count('university_offers'))
             .get(pk=self.kwargs['pk'])
         )

@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
-    PartnerEntity, Media, Address
+    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -110,9 +110,6 @@ class PartnershipFactory(factory.DjangoModelFactory):
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
     end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
-    mobility_type = factory.Faker('random_element', elements=dict(Partnership.MOBILITY_TYPE_CHOICES).keys())
-    partnership_type = factory.SubFactory(PartnershipTypeFactory)
-
     partner_entity = factory.SubFactory(PartnerEntityFactory)
     ucl_university = factory.SubFactory('base.tests.factories.entity_version.EntityVersionFactory')
 
@@ -125,6 +122,21 @@ class PartnershipFactory(factory.DjangoModelFactory):
                 obj.tags = extracted
             else:
                 obj.tags = [PartnershipTagFactory(), PartnershipTagFactory()]
+
+
+class PartnershipYearFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipYear
+
+    mobility_type = factory.Faker('random_element', elements=dict(PartnershipYear.MOBILITY_TYPE_CHOICES).keys())
+    partnership_type = factory.SubFactory(PartnershipTypeFactory)
+
+
+class PartnershipOfferFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipAgreement
+
+    media = factory.SubFactory('partnership.tests.factories.MediaFactory')
 
 
 class MediaFactory(factory.DjangoModelFactory):

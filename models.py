@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.utils import timezone
+
 from base.models.entity import Entity
 from base.models.person import Person
 from django.conf import settings
@@ -106,8 +108,45 @@ class PartnerEntity(models.Model):
             user_is_in_author_faculty = False
         return user == self.author or user_is_adri(user) or user_is_in_author_faculty
 
+    def user_can_delete(self, user):
+        return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()
+
 
 class Partner(models.Model):
+    CONTACT_TYPE_CHOICES =(
+        ('EPLUS-EDU-HEI', _('Higher education institution (tertiary level)')),
+        ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre – General education (pre-primary level)')),
+        ('EPLUS-EDU-GEN-PRI', _('School/Institute/Educational centre – General education (primary level)')),
+        ('EPLUS-EDU-GEN-SEC', _('School/Institute/Educational centre – General education (secondary level)')),
+        ('EPLUS-EDU-VOC-SEC', _('School/Institute/Educational centre – Vocational Training (secondary level)')),
+        ('EPLUS-EDU-VOC-TER', _('School/Institute/Educational centre – Vocational Training (tertiary level)')),
+        ('EPLUS-EDU-ADULT', _('School/Institute/Educational centre – Adult education')),
+        ('EPLUS-BODY-PUB-NAT', _('National Public body')),
+        ('EPLUS-BODY-PUB-REG', _('Regional Public body')),
+        ('EPLUS-BODY-PUB-LOC', _('Local Public body')),
+        ('EPLUS-ENT-SME', _('Small and medium sized enterprise')),
+        ('EPLUS-ENT-LARGE', _('Large enterprise')),
+        ('EPLUS-NGO', _('Non-governmental organisation/association/social enterprise')),
+        ('EPLUS-FOUND', _('Foundation')),
+        ('EPLUS-SOCIAL', _('Social partner or other representative of working life '
+                           '(chambers of commerce, trade union, trade association)')),
+        ('EPLUS-RES', _('Research Institute/Centre')),
+        ('EPLUS-YOUTH-COUNCIL', _('National Youth Council')),
+        ('EPLUS-ENGO', _('European NGO')),
+        ('EPLUS-NET-EU', _('EU-wide network')),
+        ('EPLUS-YOUTH-GROUP', _('Group of young people active in youth work')),
+        ('EPLUS-EURO-GROUP-COOP', _('European grouping of territorial cooperation')),
+        ('EPLUS-BODY-ACCRED', _('Accreditation, _(certification or qualification body')),
+        ('EPLUS-BODY-CONS', _('Counsellzing body')),
+        ('EPLUS-INTER', _('International organisation under public law')),
+        ('EPLUS-SPORT-PARTIAL', _('Organisation or association representing (parts of) the sport sector')),
+        ('EPLUS-SPORT-FED', _('Sport federation')),
+        ('EPLUS-SPORT-LEAGUE', _('Sport league')),
+        ('EPLUS-SPORT-CLUB', _('Sport club')),
+        ('OTH', _('Other')),
+    )
+
+
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
@@ -118,10 +157,10 @@ class Partner(models.Model):
         on_delete=models.PROTECT,
     )
     partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
-    pic_code = models.CharField(_('pic_code'), max_length=255, unique=True)
-    erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True)
-    start_date = models.DateField(_('start_date'), null=True, blank=True)
-    end_date = models.DateField(_('end_date'), null=True, blank=True)
+    pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
+    erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
+    start_date = models.DateField(_('partner_start_date'), null=True, blank=True)
+    end_date = models.DateField(_('partner_end_date'), null=True, blank=True)
     now_known_as = models.ForeignKey(
         'self',
         verbose_name=_('now_known_as'),
@@ -140,11 +179,29 @@ class Partner(models.Model):
         null=True,
     )
     website = models.URLField(_('website'))
-    email = models.EmailField(_('email'), null=True, blank=True)
-    phone = models.CharField(_('phone'), max_length=255, null=True, blank=True)
+    email = models.EmailField(
+        _('email'),
+        help_text=_('mandatory_if_not_pic_ies'),
+        null=True,
+        blank=True,
+    )
+    phone = models.CharField(
+        _('phone'),
+        max_length=255,
+        help_text=_('mandatory_if_not_pic_ies'),
+        null=True,
+        blank=True,
+    )
     is_nonprofit = models.NullBooleanField(_('is_nonprofit'), blank=True)
     is_public = models.NullBooleanField(_('is_public'), blank=True)
-    contact_type = models.CharField(_('organisation_type'), max_length=255, null=True, blank=True)
+    contact_type = models.CharField(
+        _('contact_type'),
+        max_length=255,
+        help_text=_('mandatory_if_not_pic_ies'),
+        choices=CONTACT_TYPE_CHOICES,
+        null=True,
+        blank=True,
+    )
 
     use_egracons = models.BooleanField(_('use_egracons'), default=False)
     comment = models.TextField(_('comment'), default='', blank=True)
@@ -232,14 +289,6 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
-    MOBILITY_TYPE_CHOICES = (
-        ('SMS', _('mobility_type_sms')),
-        ('SMP', _('mobility_type_smp')),
-        ('STA', _('mobility_type_sta')),
-        ('STT', _('mobility_type_stt')),
-        ('NA', _('mobility_type_na')),
-    )
-
     is_valid = models.BooleanField(_('is_valid'), default=False)
     partner = models.ForeignKey(
         Partner,
@@ -252,6 +301,8 @@ class Partnership(models.Model):
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
+        blank=True,
+        null=True,
     )
     ucl_university = models.ForeignKey(
         'base.EntityVersion',
@@ -277,16 +328,6 @@ class Partnership(models.Model):
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
     end_date = models.DateField(_('end_date'), null=True, blank=True)
-
-    # domaine etudes ?
-    # niveaux etude ?
-    mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
-    partnership_type = models.ForeignKey(
-        PartnershipType,
-        verbose_name=_('partnership_type'),
-        on_delete=models.PROTECT,
-        related_name='partnerships',
-    )
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -342,9 +383,117 @@ class Partnership(models.Model):
             return False
     
     @cached_property
-    def is_signed(self):
-        # TODO
-        return False
+    def current_year(self):
+        now = timezone.now()
+        return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
+
+    @cached_property
+    def entities_acronyms(self):
+        """ Get a string of the entities acronyms """
+        entities = []
+        parent = self.ucl_university.parent
+        if parent is not None:
+            now = timezone.now()
+            entity = parent.entityversion_set.filter(start_date__gte=now, end_date__lte=now).first()
+            if entity is not None:
+                entities.append(entity)
+        entities.append(self.ucl_university.acronym)
+        if self.ucl_university_labo is not None:
+            entities.append(self.ucl_university_labo.acronym)
+        if self.university_offers.exists():
+            entities.append(' - '.join(self.university_offers.values_list('acronym', flat=True)))
+        return ' / '.join(entities)
+
+
+class PartnershipYear(models.Model):
+    MOBILITY_TYPE_CHOICES = (
+        ('SMS', _('mobility_type_sms')),
+        ('SMP', _('mobility_type_smp')),
+        ('STA', _('mobility_type_sta')),
+        ('STT', _('mobility_type_stt')),
+        ('NA', _('mobility_type_na')),
+    )
+
+    partnership = models.ForeignKey(
+        Partnership,
+        verbose_name=_('partnership'),
+        on_delete=models.PROTECT,
+        related_name='years',
+    )
+    academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+    # domaine etudes ?
+    # niveaux etude ?
+    mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
+    partnership_type = models.ForeignKey(
+        PartnershipType,
+        verbose_name=_('partnership_type'),
+        on_delete=models.PROTECT,
+        related_name='partnerships',
+    )
+
+    class Meta:
+        unique_together = ('partnership', 'academic_year')
+        ordering = ('academic_year__year',)
+
+    def __str__(self):
+        return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
+
+
+class PartnershipAgreement(models.Model):
+    STATUS_WAITING = 'waiting'
+    STATUS_VALIDATED = 'validated'
+    STATUS_REFUSED = 'refused'
+    STATUS_CHOICES = (
+        (STATUS_WAITING, _('status_waiting')),
+        (STATUS_VALIDATED, _('status_validated')),
+        (STATUS_REFUSED, _('status_refused')),
+    )
+
+    partnership = models.ForeignKey(
+        Partnership,
+        verbose_name=_('partnership'),
+        on_delete=models.PROTECT,
+        related_name='agreements',
+    )
+
+    start_academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('start_academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    end_academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('end_academic_year'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    media = models.ForeignKey(
+        'partnership.Media',
+        verbose_name=_('media'),
+        on_delete=models.PROTECT,
+        related_name='+',
+    )
+
+    status = models.CharField(
+        _('status'),
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=STATUS_WAITING,
+    )
+
+    note = models.TextField(
+        _('note'),
+        blank=True,
+        default='',
+    )
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
@@ -371,6 +520,8 @@ class Contact(models.Model):
         verbose_name=_('contact_type'),
         on_delete=models.PROTECT,
         related_name='+',
+        blank=True,
+        null=True,
     )
     title = models.CharField(
         _('contact_title'),
@@ -394,8 +545,8 @@ class Contact(models.Model):
 
 
 class Address(models.Model):
-    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255)
-    address = models.TextField(_('address'))
+    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
+    address = models.TextField(_('address'), default='', blank=True)
     postal_code = models.CharField(_('postal_code'), max_length=20, blank=True, null=True)
     city = models.CharField(_('city'), max_length=255, blank=True, null=True)
     city_french = models.CharField(_('city_french'), max_length=255, blank=True, null=True)
@@ -412,15 +563,18 @@ class Address(models.Model):
         return self.name
 
     def one_line_display(self):
-        address = '{name} {address}, {postal_code} {city}'.format(
-            name=self.name,
-            address=self.address,
-            postal_code=self.postal_code,
-            city=self.city,
-        )
-        if self.country is not None:
-            address += ', {0}'.format(str(self.country).upper())
-        return address
+        components = []
+        if self.name:
+            components.append(self.name)
+        if self.address:
+            components.append(self.address)
+        if self.postal_code:
+            components.append(self.postal_code)
+        if self.city:
+            components.append(self.city)
+        if self.country:
+            components.append(str(self.country).upper())
+        return ', '.join(components)
 
 
 class Media(models.Model):

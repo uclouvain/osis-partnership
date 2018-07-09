@@ -2,51 +2,27 @@
 <table class="table table-stripped table-hover">
   <thead>
     <tr>
-      <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
-      <td>{% trans "university" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl_university__title" %}</td>
-      <td>{% trans "partnership_type" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnership_type__value" %}</td>
-      <td>{% trans "start_date" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="start_date" %}</td>
-      <td>{% trans "end_date" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="end_date" %}</td>
-      <td>{% trans "is_valid" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="is_valid" %}</td>
-      <td>{% trans "is_signed" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="is_signed" %}</td>
+      <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner" %}</td>
+      <td>{% trans "country" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl_university__entity__country" %}</td>
+      <td>{% trans "supervisor" %}</td>
+      <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
+      <td>{% trans "financing" %}</td>
+      <td>{% trans "validity" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="start_date" %}</td>
       <td></td>
     </tr>
   </thead>
   <tbody>
     {% for partnership in partnerships %}
       <tr>
+        <td>{{ partnership.partner|truncatechars:30 }}</td>
+        <td>{{ partnership.ucl_university.entity.country|default_if_none:"" }}</td>
+        <td></td>
+        <td>{{ partnership.entities_acronyms }}</td>
+        <td></td>
         <td>
-          {{ partnership.partner }}
-          {% if partnership.partner_entity is not None%}
-            <ul>
-              <li>{{ partnership.partner_entity.name }}</li>
-            </ul>
-          {% endif %}
-        </td>
-        <td>
-          {{ partnership.ucl_university }}
-          {% if partnership.ucl_university_labo is not None or partnership.university_offers_count > 0 %}
-          <ul>
-            {% if partnership.ucl_university_labo is not None %}
-              <li>{{ partnership.ucl_university_labo }}</li>
-            {% endif %}
-            {% if partnership.university_offers_count > 0 %}
-              <li>
-                {% if partnership.university_offers_count == 1 %}
-                  {{ partnership.university_offers.all.0 }}
-                {% else %}
-                  {{ partnership.university_offers_count }} {% trans "offers" %}
-                {% endif %}
-              </li>
-            {% endif %}
-          </ul>
-          {% endif %}
-        </td>
-        <td>{{ partnership.partnership_type }}</td>
-        <td>{{ partnership.start_date|default_if_none:"N/A" }}</td>
-        <td>{{ partnership.end_date|default_if_none:"N/A" }}</td>
-        <td><i class="fa {{ partnership.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"</i></td>
-        <td><i class="fa {{ partnership.is_signed|yesno:"fa-check text-success,fa-times text-danger" }}"</i></td>
+          {% if partnership.start_date is None %}N/A{% else %}{{ partnership.start_date|date:"Y" }}{% endif %}
+          >
+          {% if partnership.end_date is None %}N/A{% else %}{{ partnership.end_date|date:"Y" }}{% endif %}</td>
         <td>
           <a href="{% url 'partnerships:partnership_detail' pk=partnership.id %}" class="btn btn-default">
             <i class="fa fa-eye"></i>
