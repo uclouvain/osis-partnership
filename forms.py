@@ -514,6 +514,7 @@ class PartnershipFilterForm(forms.Form):
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
+        print(Partnership.objects.values_list('mobility_type', flat=True))
         mobility_types = (
             Partnership.objects
                 .values_list('mobility_type', flat=True)
