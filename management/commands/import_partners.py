@@ -6,12 +6,136 @@ from django.core.management import BaseCommand
 from django.db import transaction, IntegrityError
 
 from partnership.models import Partner, Address, Media, PartnerType
+from reference.models.country import Country
+
+COUNTRIES_OLD_TO_ISO = {
+    'ZA': 'ZA',
+    'ALB': 'AL',
+    'DZ': 'DZ',
+    'D': 'DE',
+    'AND': 'AD',
+    'AR': 'AR',
+    'AM': 'AM',
+    'AU': 'AU',
+    'A': 'AT',
+    'AZ': 'AZ',
+    'BS': 'BS',
+    'BD': 'BD',
+    'BY': 'BY',
+    'B': 'BE',
+    'BJ': 'BJ',
+    'BO': 'BO',
+    'BA': 'BA',
+    'BR': 'BR',
+    'BG': 'BG',
+    'BF': 'BF',
+    'BI': 'BI',
+    'CV': 'CV',
+    'KH': 'KH',
+    'CM': 'CM',
+    'CA': 'CA',
+    'CL': 'CL',
+    'CN': 'CN',
+    'CY': 'CY',
+    'CO': 'CO',
+    'CR': 'CR',
+    'CI': 'CI',
+    'HR': 'HR',
+    'CU': 'CU',
+    'CW': 'CW',
+    'DK': 'DK',
+    'EG': 'EG',
+    'SV': 'SV',
+    'AE': 'AE',
+    'EC': 'EC',
+    'E': 'ES',
+    'EE': 'EE',
+    'US': 'US',
+    'SF': 'FI',
+    'F': 'FR',
+    'GE': 'GE',
+    'G': 'EL',
+    'GY': 'GN',
+    'GF': 'GF',
+    'HU': 'HU',
+    'MU': 'MU',
+    'IN': 'IN',
+    'ID': 'ID',
+    'IRL': 'IE',
+    'IS': 'IS',
+    'IL': 'IL',
+    'I': 'IT',
+    'JP': 'JP',
+    'KZ': 'KZ',
+    'KE': 'KE',
+    'KG': 'KG',
+    'LA': 'LA',
+    'LV': 'LV',
+    'LB': 'LB',
+    'FL': 'LI',
+    'LT': 'LT',
+    'LUX': 'LU',
+    'MC': 'MO',
+    'MK': 'MK',
+    'MG': 'MG',
+    'MY': 'MY',
+    'ML': 'ML',
+    'MT': 'MT',
+    'MA': 'MA',
+    'MX': 'MX',
+    'MOL': 'MD',
+    'MN': 'MN',
+    'NP': 'NP',
+    'NI': 'NI',
+    'N': 'NO',
+    'NZ': 'NZ',
+    'UG': 'UG',
+    'UZ': 'UZ',
+    'PK': 'PK',
+    'PA': 'PA',
+    'PY': 'PY',
+    'NL': 'NL',
+    'PE': 'PE',
+    'PH': 'PH',
+    'PL': 'PL',
+    'P': 'PT',
+    'CD': 'CD',
+    'KR': 'KR',
+    'DO': 'DO',
+    'CZ': 'CZ',
+    'RO': 'RO',
+    'UK': 'UK',
+    'RU': 'RU',
+    'RW': 'RW',
+    'SN': 'SN',
+    'SP': 'SG',
+    'SK': 'SK',
+    'SI': 'SI',
+    'S': 'SE',
+    'CH': 'CH',
+    'SR': 'SR',
+    'TW': 'TW',
+    'TZ': 'TZ',
+    'TH': 'TH',
+    'TG': 'TG',
+    'TN': 'TN',
+    'TR': 'TR',
+    'UKR': 'UA',
+    'UY': 'UY',
+    'VE': 'VE',
+    'VN': 'VN',
+}
 
 
 class Command(BaseCommand):
 
     line = -1
     default_values = None
+
+    # Cache
+
+    countries = {}
+    partners_by_code = {}
 
     def add_arguments(self, parser):
         parser.add_argument('csv_filepath', type=str)
@@ -59,6 +183,22 @@ class Command(BaseCommand):
             }
         return self.default_values
 
+    def get_country(self, old_code):
+        if not old_code:
+            return None
+        if old_code not in self.countries:
+            iso = COUNTRIES_OLD_TO_ISO.get(old_code, None)
+            if iso is None:
+                self.write_error('Unknown old country code {code}'.format(code=old_code))
+                self.countries[old_code] = None
+            else:
+                try:
+                    self.countries[old_code] = Country.objects.get(iso_code=iso)
+                except Country.DoesNotExist:
+                    self.write_error('Unknown country for iso {iso}'.format(iso=iso))
+                    self.countries[old_code] = None
+        return self.countries[old_code]
+
     @transaction.atomic
     def import_partner(self, line):
         if not line[1]:
@@ -82,7 +222,6 @@ class Command(BaseCommand):
         partner.name = line[6] if line[6] else None
         partner.start_date = self.parse_date(line[7])
         partner.end_date = self.parse_date(line[8])
-        # partner.now_known_as = Partner.objects.get(partner_code=line[10])
         partner.is_ies = line[11] == 'U'
         if partner.contact_address is None:
             partner.contact_address = Address()
@@ -94,7 +233,7 @@ class Command(BaseCommand):
         partner.contact_type = line[17] if line[17] else None
         partner.website = line[18] if line[18] else default_values['website']
         partner.contact_address.city = line[19] if line[19] else None
-        # partner.contact_address.country = Country.objects.get(?=line[22])
+        partner.contact_address.country = self.get_country(line[22])
         partner.use_egracons = line[23] == 'YES'
 
         # Save
@@ -123,7 +262,18 @@ class Command(BaseCommand):
         add_media(partner, line[28], "Fiche d'évaluation 2013")
         add_media(partner, line[30], "Fiche d'évaluation 2017")
 
-        return partner
+        self.partners_by_code[partner.partner_code] = partner
+
+    def import_partner_now_known_as(self, line):
+        now_known_as = line[10]
+        if not now_known_as or line[2] not in self.partners_by_code:
+            return
+        if now_known_as not in self.partners_by_code:
+            self.write_error("Unknown partner {partner}".format(partner=now_known_as))
+            return
+        partner = self.partners_by_code[line[2]]
+        partner.now_known_as = self.partners_by_code[now_known_as]
+        partner.save()
 
     def handle(self, *args, **options):
         # Init
@@ -141,10 +291,18 @@ class Command(BaseCommand):
             for row in csv_reader:
                 lines.append(row)
         # Import
-        self.stdout.write("Importing")
+        self.stdout.write("Importing partners 1/2")
         total_lines_number = len(lines)
         self.print_progress_bar(0, total_lines_number)
         for (index, line) in enumerate(lines, 1):
             self.line = index + 1
             self.import_partner(line)
+            self.print_progress_bar(index, total_lines_number)
+
+        # Import now_known_as
+        self.stdout.write("Importing partners est_devenu_fait_partie_de 2/2")
+        self.print_progress_bar(0, total_lines_number)
+        for (index, line) in enumerate(lines, 1):
+            self.line = index + 1
+            self.import_partner_now_known_as(line)
             self.print_progress_bar(index, total_lines_number)
