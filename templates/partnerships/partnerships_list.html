@@ -22,23 +22,23 @@
       {% trans 'partnerships' %}
     </h1>
   </div>
-
-  <div class="row">
-    <div class="col-sm-12">
-      <a href="{% url "partnerships:partnership_create" %}">{% trans "new_partnership" %}</a>
-    </div>
-  </div>
   
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="well">
         <div class="row">
           <div class="col-sm-12">
-            <button class="btn btn-default pull-right" type="button"
-                    data-toggle="collapse" data-target="#partnership-filters"
-                    aria-expanded="false" aria-controls="partnership-filters">
-              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partnerships" %}</span>
-            </button>
+            <div class="pull-right">
+              <button class="btn btn-default pull-right" type="button"
+                      data-toggle="collapse" data-target="#partnership-filters"
+                      aria-expanded="false" aria-controls="partnership-filters">
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partnerships" %}</span>
+              </button>
+              <a class="btn btn-default pull-right" type="button"
+                 href="{% url "partnerships:partnership_create" %}">
+                <i class="fa fa-fw fa-plus"></i> <span class="hidden-xs">{% trans "create_partnership" %}</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -122,6 +122,7 @@
                 </div>
               </div>
             </form>
+            {{ form.media }}
           </div>
         </div>
       </div>

@@ -342,7 +342,7 @@ class PartnerFilterForm(forms.Form):
         queryset=PartnerTag.objects.all(),
         required=False,
     )
-
+    
     def __init__(self, *args, **kwargs):
         super(PartnerFilterForm, self).__init__(*args, **kwargs)
         cities = (
@@ -402,9 +402,10 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university = forms.ModelChoiceField(
         label=_('ucl_university'),
-        queryset=EntityVersion.objects.filter(partnerships__isnull=False),\
+        queryset=EntityVersion.objects.filter(partnerships__isnull=False),
         empty_label=_('ucl_university'),
         required=False,
+        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
     )
 
     ucl_university_labo = forms.ModelChoiceField(
@@ -412,6 +413,7 @@ class PartnershipFilterForm(forms.Form):
         queryset=EntityVersion.objects.filter(partnerships_labo__isnull=False),
         empty_label=_('ucl_university_labo'),
         required=False,
+        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
     )
 
     university_offers = forms.ModelChoiceField(
@@ -419,6 +421,7 @@ class PartnershipFilterForm(forms.Form):
         queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
         empty_label=_('university_offers'),
         required=False,
+        widget=autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offer'),
     )
 
     # Partner
