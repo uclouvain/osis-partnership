@@ -443,10 +443,10 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter(partner__contact_address__country__continent=data['continent'])
             if data['partner_tags']:
                 queryset = queryset.filter(partner__tags__in=data['partner_tags'])
-            if data['mobility_type']:
-                queryset = queryset.filter(mobility_type=data['mobility_type'])
-            if data['partnership_type']:
-                queryset = queryset.filter(partnership_type=data['partnership_type'])
+            # if data['mobility_type']:
+            #     queryset = queryset.filter(mobility_type=data['mobility_type'])
+            # if data['partnership_type']:
+            #     queryset = queryset.filter(partnership_type=data['partnership_type'])
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
