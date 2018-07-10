@@ -535,6 +535,9 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        ucl_university = self.forwarded.get('ucl_university', None)
+        if ucl_university:
+            qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
         return qs.filter(partnerships_labo__isnull=False)
 
 
@@ -555,4 +558,7 @@ class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        ucl_university = self.forwarded.get('ucl_university', None)
+        if ucl_university:
+            qs = qs.filter(partnerships__ucl_university=ucl_university)
         return qs.filter(partnerships__isnull=False)
