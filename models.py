@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.db.models import Max
 from django.utils import timezone
 
 from base.models.entity import Entity
@@ -334,7 +335,6 @@ class Partnership(models.Model):
     # supervisor = ?
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
-    end_date = models.DateField(_('end_date'), null=True, blank=True)
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -375,6 +375,13 @@ class Partnership(models.Model):
     @cached_property
     def is_valid(self):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
+
+    @cached_property
+    def end_date(self):
+        validated_agreements = self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
+        if not validated_agreements.exists():
+            return None
+        return validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
 
     @cached_property
     def current_year(self):
