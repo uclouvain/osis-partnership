@@ -524,7 +524,21 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
-class UniversityOfferAutocompleteView(autocomplete.Select2QuerySetView):
+class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(partnerships__isnull=False)
+
+    
+class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(partnerships_labo__isnull=False)
+
+
+class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
@@ -535,4 +549,10 @@ class UniversityOfferAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(title__icontains=self.q)[:25]
 
         return qs
-    
+
+
+class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(partnerships__isnull=False)

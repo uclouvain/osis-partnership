@@ -405,15 +405,15 @@ class PartnershipFilterForm(forms.Form):
         queryset=EntityVersion.objects.filter(partnerships__isnull=False),
         empty_label=_('ucl_university'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_filter'),
     )
 
     ucl_university_labo = forms.ModelChoiceField(
         label=_('ucl_university_labo'),
         queryset=EntityVersion.objects.filter(partnerships_labo__isnull=False),
-        empty_label=_('ucl_university_labo'),
+        empty_label=_('ucl_university_labo_filter'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_labo_filter'),
     )
 
     university_offers = forms.ModelChoiceField(
@@ -421,7 +421,7 @@ class PartnershipFilterForm(forms.Form):
         queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
         empty_label=_('university_offers'),
         required=False,
-        widget=autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offer'),
+        widget=autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers_filter'),
     )
 
     # Partner
