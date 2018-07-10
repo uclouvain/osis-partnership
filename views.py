@@ -398,20 +398,20 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
         if ordering == 'country':
-            return ['ucl_university__entity__country', 'ucl_university__entity__city', 'partner__name']
+            return ['ucl_university__country', 'ucl_university__city', 'partner__name']
         elif ordering == '-country':
-            return ['-ucl_university__entity__country', '-ucl_university__entity__city', '-partner__name']
+            return ['-ucl_university__country', '-ucl_university__city', '-partner__name']
         elif ordering == 'ucl':
             return [
-                'ucl_university__parent__entityversion__acronym',
-                'ucl_university__acronym',
-                'ucl_university_labo__acronym',
+                'ucl_university__entitiversion__parent__entityversion__acronym',
+                'ucl_university__entitiversion__acronym',
+                'ucl_university_labo__entitiversion__acronym',
             ]
         elif ordering == '-ucl':
             return [
-                '-ucl_university__parent__entityversion__acronym',
-                '-ucl_university__acronym',
-                '-ucl_university_labo__acronym',
+                '-ucl_university__entitiversion__parent__entityversion__acronym',
+                '-ucl_university__entitiversion__acronym',
+                '-ucl_university_labo__entitiversion__acronym',
             ]
         else:
             return [ordering]

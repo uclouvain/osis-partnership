@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 
 from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.entity_version import EntityVersion
+from base.models.entity import Entity
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -400,14 +400,14 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university = forms.ModelChoiceField(
         label=_('ucl_university'),
-        queryset=EntityVersion.objects.filter(partnerships__isnull=False),\
+        queryset=Entity.objects.filter(partnerships__isnull=False),\
         empty_label=_('ucl_university'),
         required=False,
     )
 
     ucl_university_labo = forms.ModelChoiceField(
         label=_('ucl_university_labo'),
-        queryset=EntityVersion.objects.filter(partnerships_labo__isnull=False),
+        queryset=Entity.objects.filter(partnerships_labo__isnull=False),
         empty_label=_('ucl_university_labo'),
         required=False,
     )

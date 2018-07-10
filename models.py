@@ -313,13 +313,13 @@ class Partnership(models.Model):
         null=True,
     )
     ucl_university = models.ForeignKey(
-        'base.EntityVersion',
+        'base.Entity',
         verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
     ucl_university_labo = models.ForeignKey(
-        'base.EntityVersion',
+        'base.Entity',
         verbose_name=_('ucl_university_labo'),
         on_delete=models.PROTECT,
         related_name='partnerships_labo',
@@ -382,15 +382,15 @@ class Partnership(models.Model):
     def entities_acronyms(self):
         """ Get a string of the entities acronyms """
         entities = []
-        parent = self.ucl_university.parent
+        parent = self.ucl_university.entityversion_set.latest('start_date').parent
         if parent is not None:
             now = timezone.now()
             entity = parent.entityversion_set.filter(start_date__gte=now, end_date__lte=now).first()
             if entity is not None:
                 entities.append(entity)
-        entities.append(self.ucl_university.acronym)
+        entities.append(self.ucl_university.most_recent_acronym)
         if self.ucl_university_labo is not None:
-            entities.append(self.ucl_university_labo.acronym)
+            entities.append(self.ucl_university_labo.most_recent_acronym)
         if self.university_offers.exists():
             entities.append(' - '.join(self.university_offers.values_list('acronym', flat=True)))
         return ' / '.join(entities)
