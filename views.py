@@ -396,10 +396,10 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         return kwargs
 
     def get_ordering(self):
-        ordering = self.request.GET.get('ordering', '-created')
-        if ordering == 'partner':
+        ordering = self.request.GET.get('ordering', 'country')
+        if ordering == 'country':
             return ['ucl_university__entity__country', 'ucl_university__entity__city', 'partner__name']
-        elif ordering == '-partner':
+        elif ordering == '-country':
             return ['-ucl_university__entity__country', '-ucl_university__entity__city', '-partner__name']
         elif ordering == 'ucl':
             return []  # TODO
