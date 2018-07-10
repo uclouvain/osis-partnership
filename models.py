@@ -297,7 +297,6 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
-    is_valid = models.BooleanField(_('is_valid'), default=False)
     partner = models.ForeignKey(
         Partner,
         verbose_name=_('partner'),
@@ -372,6 +371,10 @@ class Partnership(models.Model):
 
     def __str__(self):
         return _('partnership_with_{partner}').format(partner=self.partner)
+
+    @cached_property
+    def is_valid(self):
+        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
 
     @cached_property
     def current_year(self):
