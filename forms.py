@@ -475,17 +475,17 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
-    mobility_type = forms.ChoiceField(
-        label=_('mobility_type'),
-        choices=((None, _('mobility_type')),),
-        required=False,
-    )
-    partnership_type = forms.ModelChoiceField(
-        label=_('partnership_type'),
-        queryset=PartnershipType.objects.all(),
-        empty_label=_('partnership_type'),
-        required=False,
-    )
+    # mobility_type = forms.ChoiceField(
+    #     label=_('mobility_type'),
+    #     choices=((None, _('mobility_type')),),
+    #     required=False,
+    # )
+    # partnership_type = forms.ModelChoiceField(
+    #     label=_('partnership_type'),
+    #     queryset=PartnershipType.objects.all(),
+    #     empty_label=_('partnership_type'),
+    #     required=False,
+    # )
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
@@ -503,16 +503,6 @@ class PartnershipFilterForm(forms.Form):
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
-        print(Partnership.objects.values_list('mobility_type', flat=True))
-        mobility_types = (
-            PartnershipYear.objects
-                .values_list('mobility_type', flat=True)
-                .order_by('mobility_type')
-                .distinct('mobility_type')
-        )
-        mobility_types = tuple((mobility_type, mobility_type) for mobility_type in mobility_types)
-        self.fields['mobility_type'].choices = ((None, _('mobility_type')),) + mobility_types
-
 
 class PartnershipForm(BootstrapModelForm):
 
@@ -525,8 +515,8 @@ class PartnershipForm(BootstrapModelForm):
             'end_date',
             'partner',
             'partner_entity',
-            'partnership_type',
-            'mobility_type',
+            #'partnership_type',
+            #'mobility_type',
             'ucl_university',
             'ucl_university_labo',
             'university_offers',

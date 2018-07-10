@@ -31,7 +31,6 @@
   
   <div class="panel panel-default">
     <div class="panel-body">
-      {% comment %}
       <div class="well">
         <div class="row">
           <div class="col-sm-12">
@@ -75,6 +74,7 @@
                     <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.partner_entity show_label=False %}
                     </div>
+                    
                     <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.partner_type show_label=False %}
                     </div>
@@ -98,12 +98,16 @@
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
                   <div class="row">
+                    {% comment %}
                     <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.mobility_type show_label=False %}
                     </div>
+                    {% endcomment %}
+                    {% comment %}
                     <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partnership_type show_label=False %}
                     </div>
+                    {% endcomment %}
                   </div>
                   <div class="row">
                     <div class="col-sm-12">
@@ -121,7 +125,6 @@
           </div>
         </div>
       </div>
-      {% endcomment %}
       <div id="results">
         {% include "partnerships/includes/partnerships_list_results.html" %}
       </div>

@@ -10,7 +10,7 @@
   <div class="page-header">
     <h1>{% trans "new_partnership" %}</h1>
   </div>
-  {% bootstrap_form_error form %}
+  {% bootstrap_form_errors form %}
   <form action="#" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
