@@ -402,9 +402,17 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         elif ordering == '-country':
             return ['-ucl_university__entity__country', '-ucl_university__entity__city', '-partner__name']
         elif ordering == 'ucl':
-            return []  # TODO
+            return [
+                'ucl_university__parent__entityversion__acronym',
+                'ucl_university__acronym',
+                'ucl_university_labo__acronym',
+            ]
         elif ordering == '-ucl':
-            return []  # TODO
+            return [
+                '-ucl_university__parent__entityversion__acronym',
+                '-ucl_university__acronym',
+                '-ucl_university_labo__acronym',
+            ]
         else:
             return [ordering]
 
