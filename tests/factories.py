@@ -3,7 +3,7 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 import uuid
-from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, PartnershipType, \
+from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, \
     PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement
 
 
@@ -86,13 +86,6 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
     address = factory.SubFactory(AddressFactory)
 
 
-class PartnershipTypeFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PartnershipType
-
-    value = factory.Sequence(lambda n: 'PartnershipType-é-{0}-{1}'.format(n, uuid.uuid4()))
-
-
 class PartnershipTagFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipTag
@@ -128,8 +121,7 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipYear
 
-    mobility_type = factory.Faker('random_element', elements=dict(PartnershipYear.MOBILITY_TYPE_CHOICES).keys())
-    partnership_type = factory.SubFactory(PartnershipTypeFactory)
+    partnership_type = 'mobility'
 
 
 class PartnershipOfferFactory(factory.DjangoModelFactory):
