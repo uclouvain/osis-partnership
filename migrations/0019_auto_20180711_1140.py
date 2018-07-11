@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 def migrate_entities(apps, schema_editor):
     PartnershipYear = apps.get_model('partnership', 'PartnershipYear')
-    PartnershipYear.objects.update(partnership_type=PartnershipYear.TYPE_MOBILITY)
+    PartnershipYear.objects.update(partnership_type='mobility')
 
 
 class Migration(migrations.Migration):
