@@ -449,8 +449,14 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter(partner__contact_address__country__continent=data['continent'])
             if data['partner_tags']:
                 queryset = queryset.filter(partner__tags__in=data['partner_tags'])
-            if data['mobility_type']:
-                queryset = queryset.filter(mobility_type=data['mobility_type'])
+            if data['is_sms'] is not None:
+                queryset = queryset.filter(years__is_sms=data['is_sms'])
+            if data['is_smp'] is not None:
+                queryset = queryset.filter(years__is_smp=data['is_smp'])
+            if data['is_sta'] is not None:
+                queryset = queryset.filter(years__is_sta=data['is_sta'])
+            if data['is_stt'] is not None:
+                queryset = queryset.filter(years__is_stt=data['is_stt'])
             if data['partnership_type']:
                 queryset = queryset.filter(partnership_type=data['partnership_type'])
             if data['tags']:

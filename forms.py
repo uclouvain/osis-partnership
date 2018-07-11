@@ -473,9 +473,20 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
-    mobility_type = forms.ChoiceField(
-        label=_('mobility_type'),
-        choices=((None, _('mobility_type')),),
+    is_sms = forms.NullBooleanField(
+        label=_('is_sms'),
+        required=False,
+    )
+    is_smp = forms.NullBooleanField(
+        label=_('is_smp'),
+        required=False,
+    )
+    is_sta = forms.NullBooleanField(
+        label=_('is_sta'),
+        required=False,
+    )
+    is_stt = forms.NullBooleanField(
+        label=_('is_stt'),
         required=False,
     )
     partnership_type = forms.ModelChoiceField(
@@ -500,12 +511,3 @@ class PartnershipFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
-
-        mobility_types = (
-            PartnershipYear.objects
-                .values_list('mobility_type', flat=True)
-                .order_by('mobility_type')
-                .distinct('mobility_type')
-        )
-        mobility_types = tuple((mobility_type, mobility_type) for mobility_type in mobility_types)
-        self.fields['mobility_type'].choices = ((None, _('mobility_type')),) + mobility_types
