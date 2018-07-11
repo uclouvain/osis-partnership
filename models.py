@@ -373,6 +373,9 @@ class Partnership(models.Model):
     def __str__(self):
         return _('partnership_with_{partner}').format(partner=self.partner)
 
+    def get_absolute_url(self):
+        return reverse('partnerships:partnership_detail', kwargs={'pk': self.pk})
+
     @cached_property
     def is_valid(self):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
