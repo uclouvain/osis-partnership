@@ -1,5 +1,8 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse, FileResponse
+from django.views import View
+from django.views.generic.list import MultipleObjectMixin
 
 from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,6 +14,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
+
+from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm)
@@ -18,41 +23,16 @@ from partnership.models import Media, Partner, PartnerEntity, Partnership, Partn
 from partnership.utils import user_is_adri
 
 
-class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
-    context_object_name = 'partners'
+class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
     form_class = PartnerFilterForm
-    paginate_by = 20
-    paginate_orphans = 2
-    paginate_neighbours = 4
-
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partners_list_results.html'
-        else:
-            return 'partnerships/partners_list.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(PartnersListView, self).get_context_data(**kwargs)
-        context['paginate_neighbours'] = self.paginate_neighbours
-        context['can_add_partner'] = Partner.user_can_add(self.request.user)
-        return context
 
     def get_form_kwargs(self):
-        kwargs = super(PartnersListView, self).get_form_kwargs()
+        kwargs = super(PartnersListFilterMixin, self).get_form_kwargs()
         if self.request.GET:
             kwargs['data'] = self.request.GET
         return kwargs
 
-    def get_ordering(self):
-        return self.request.GET.get('ordering', '-created')
-
-    def get_queryset(self):
-        queryset = (
-            Partner.objects
-                .all()
-                .select_related('partner_type', 'contact_address__country')
-                .annotate(partnerships_count=Count('partnerships'))
-        )
+    def filter_queryset(self, queryset):
         form = self.get_form()
         if form.is_valid():
             data = form.cleaned_data
@@ -84,10 +64,79 @@ class PartnersListView(LoginRequiredMixin, FormMixin, ListView):
                     queryset = queryset.filter(Q(start_date__gt=Now()) | Q(end_date__lt=Now()))
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
+        return queryset
+
+    def get_ordering(self):
+        return self.request.GET.get('ordering', '-created')
+
+    def get_queryset(self):
+        queryset = (
+            Partner.objects
+                .all()
+                .select_related('partner_type', 'contact_address__country')
+                .annotate(partnerships_count=Count('partnerships'))
+        )
+        queryset = self.filter_queryset(queryset)
         ordering = self.get_ordering()
         if ordering:
             queryset = queryset.order_by(ordering)
         return queryset
+
+
+class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
+    context_object_name = 'partners'
+    paginate_by = 20
+    paginate_orphans = 2
+    paginate_neighbours = 4
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partners_list_results.html'
+        else:
+            return 'partnerships/partners_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnersListView, self).get_context_data(**kwargs)
+        context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_add_partner'] = Partner.user_can_add(self.request.user)
+        return context
+
+
+class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
+
+    def get_queryset(self):
+        queryset = (
+            Partner.objects
+                .all()
+                .select_related('partner_type', 'contact_address__country')
+                .annotate(partnerships_count=Count('partnerships'))
+        )
+        queryset = self.filter_queryset(queryset)
+        ordering = self.get_ordering()
+        if ordering:
+            queryset = queryset.order_by(ordering)
+        return queryset
+
+    def generate_xls(self):
+        working_sheets_data = [[1, 2, 3, 4]]
+        headers = [
+            _('name'),
+            _('partner_type'),
+            _('pic_code'),
+            _('erasmus_code'),
+        ]
+        parameters = {
+            xls_build.DESCRIPTION: _('partners'),
+            xls_build.USER: str(self.request.user),
+            xls_build.FILENAME: 'partners_filename',
+            xls_build.HEADER_TITLES: headers,
+            xls_build.WS_TITLE: _('partners')
+        }
+        xls = xls_build.generate_xls(xls_build.prepare_xls_parameters_list(working_sheets_data, parameters))
+        return xls
+
+    def get(self, request, *args, **kwargs):
+        return self.generate_xls()
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):
