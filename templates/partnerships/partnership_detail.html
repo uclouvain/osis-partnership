@@ -67,7 +67,7 @@
           <tr>
             <th>{{ partnership_year.academic_year }}</th>
             <td>{{ partnership_year.mobility_type }}</td>
-            <td>{{ partnership_year.partnership_type }}</td>
+            <td>{{ partnership_year.get_partnership_type_display }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -479,9 +479,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'contacts',
                 'tags',
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
-                Prefetch('years', queryset=PartnershipYear.objects.select_related(
-                    'academic_year', 'partnership_type'
-                )),
+                Prefetch('years', queryset=PartnershipYear.objects.select_related('academic_year')),
                 Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                     'start_academic_year', 'end_academic_year', 'media'
                 )),

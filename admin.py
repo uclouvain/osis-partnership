@@ -1,7 +1,7 @@
 from django.contrib import admin
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership, PartnershipTag,
-                                PartnershipType, PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement)
+                                PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -82,7 +82,6 @@ class ValueAdmin(admin.ModelAdmin):
 admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
-admin.site.register(PartnershipType)
 admin.site.register(PartnershipTag)
 admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Media)

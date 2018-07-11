@@ -1,16 +1,13 @@
-from django.core.exceptions import ValidationError
-
-from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
-from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.entity import Entity
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
-    Partnership, PartnershipTag, PartnershipType, PartnershipYear
+from base.models.entity import Entity
+from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
+    PartnershipYear
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -489,10 +486,9 @@ class PartnershipFilterForm(forms.Form):
         label=_('is_stt'),
         required=False,
     )
-    partnership_type = forms.ModelChoiceField(
+    partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
-        queryset=PartnershipType.objects.all(),
-        empty_label=_('partnership_type'),
+        choices=((None, '------'),) + PartnershipYear.TYPE_CHOICES,
         required=False,
     )
     tags = forms.ModelMultipleChoiceField(
