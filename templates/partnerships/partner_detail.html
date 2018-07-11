@@ -230,6 +230,28 @@
     </div>
     {% endif %}
 
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "agreements" %}</h2>
+      </div>
+    </div>
+
+    {% for agreement in partner.agreements.all %}
+      <div class="row">
+        <div class="col-sm-12 col-md-4">
+          <a href="{{ agreement.partnership.get_absolute_url }}">{{ agreement.partnership }}</a>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          {{ agreement.start_academic_date }} > {{ agreement.end_academic_date }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+          {{ agreement.get_status_display }}
+        </div>
+      </div>
+    {% endfor %}
+
   </div>
 </div>
 

@@ -276,6 +276,14 @@ class Partner(models.Model):
             return False
         return True
 
+    @property
+    def agreements(self):
+        return (
+            PartnershipAgreement.objects
+                .select_related('partnership', 'start_academic_year', 'end_academic_year')
+                .filter(partnership__partner=self)
+        )
+
 
 class PartnershipTag(models.Model):
     value = models.CharField(max_length=255, unique=True)
