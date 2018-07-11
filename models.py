@@ -321,8 +321,13 @@ class Partnership(models.Model):
         verbose_name=_('university_offers'),
         related_name='partnerships',
     )
-
-    # supervisor = ?
+    supervisor = models.ForeignKey(
+        'base.Person',
+        verbose_name=_('partnership_supervisor'),
+        related_name='+',
+        blank=True,
+        null=True,
+    )
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
 
@@ -332,8 +337,6 @@ class Partnership(models.Model):
         related_name='+',
         blank=True,
     )
-
-    # Accord Signées => TODO PartnershipAgreement
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
