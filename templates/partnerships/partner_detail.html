@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-12 col-md-6">
+      <div class="col-sm-12 col-md-6 partner-info-left">
         <dl class="dl-horizontal">
           <dt>{% trans "partner_type" %}</dt>
           <dd>{{ partner.partner_type|default_if_none:"" }}</dd>
@@ -39,16 +39,16 @@
           <dt>{% trans "pic_code" %}</dt>
           <dd>{{ partner.pic_code|default_if_none:"" }}</dd>
 
+          {% if partner.now_known_as %}
+          <dt>{% trans "now_known_as" %}</dt>
+          <dd><a href="{{ partner.now_known_as.get_absolute_url }}">{{ partner.now_known_as }}</a></dd>
+          {% endif %}
+
           <dt>{% trans "erasmus_code" %}</dt>
           <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
           <dt>{% trans "is_ies" %}</dt>
           <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
-
-          {% if partner.now_known_as %}
-          <dt>{% trans "now_known_as" %}</dt>
-          <dd>{{ partner.now_known_as }}</dd>
-          {% endif %}
 
           <dt>{% trans "is_nonprofit" %}</dt>
           <dd><i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
@@ -56,10 +56,7 @@
           <dt>{% trans "is_public" %}</dt>
           <dd><i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
-          <dt>{% trans "contact_type" %}</dt>
-          <dd>{{ partner.get_contact_type_display|default_if_none:"" }}</dd>
-
-          <dt>{% trans "use_egracons" %}</dt>
+          <dt title="{% trans "use_egracons" %}">{% trans "use_egracons" %}</dt>
           <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
         </dl>
       </div>
@@ -71,8 +68,10 @@
           <dt>{% trans "is_actif" %}</dt>
           <dd>
             <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% if partner.start_date or partner.end_date %}
             {% if partner.start_date is None %}N/A{% else %}{{ partner.start_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
             > {% if partner.end_date is None %}N/A{% else %}{{ partner.end_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+            {% endif %}
           </dd>
 
           <dt>{% trans "contact_address" %}</dt>
@@ -81,11 +80,20 @@
           <dt>{% trans "website" %}</dt>
           <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
 
+          {% if partner.email %}
           <dt>{% trans "email" %}</dt>
-          <dd>{% if partner.email %}<a href="mailto:{{ partner.email }}">{{ partner.email }}</a>{% endif %}</dd>
+          <dd><a href="mailto:{{ partner.email }}">{{ partner.email }}</a></dd>
+          {% endif %}
 
+          {% if partner.phone %}
           <dt>{% trans "phone" %}</dt>
           <dd>{{ partner.phone|default_if_none:"" }}</dd>
+          {% endif %}
+
+          {% if partner.get_contact_type_display %}
+          <dt>{% trans "contact_type" %}</dt>
+          <dd>{{ partner.get_contact_type_display|default_if_none:"" }}</dd>
+          {% endif %}
         </dl>
 
         <p><em>{{ partner.comment|linebreaksbr }}</em></p>
@@ -189,31 +197,31 @@
       </div>
 
       <div class="row">
-        {% if entity.contact_in %}
         <div class="col-sm-12 col-md-6">
-          {% trans "contact_mobility_in" %}
+          {% if entity.contact_in and not entity.contact_in.is_empty %}
+          <strong>{% trans "contact_mobility_in" %}</strong>
           {% include "partnerships/includes/contact.html" with contact=entity.contact_in %}
+          {% endif %}
         </div>
-        {% endif %}
         <div class="col-sm-12 col-md-6">
-          {% if entity.address %}
+          {% if entity.address and entity.address.one_line_display %}
           <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
           {% endif %}
 
-          <p><em>{{ entity.comment }}</em></p>
+          <p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>
         </div>
       </div>
 
       <div class="row">
-        {% if entity.contact_out %}
         <div class="col-sm-12 col-md-6">
-          {% trans "contact_mobility_out" %}
+          {% if entity.contact_out and not entity.contact_out.is_empty %}
+          <strong>{% trans "contact_mobility_out" %}</strong>
           {% include "partnerships/includes/contact.html" with contact=entity.contact_out %}
+          {% endif %}
         </div>
-        {% endif %}
 
         {% if entity.parent %}
-        <div class="col-sm-12 col-md-6">{% trans "parent_entity" %}</div>
+        <div class="col-sm-12 col-md-6"><strong>{% trans "parent_entity" %}</strong>  {{ entity.parent }}</div>
         {% endif %}
       </div>
     </div>

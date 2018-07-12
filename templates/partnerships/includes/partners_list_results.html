@@ -19,7 +19,7 @@
     <tbody>
       {% for partner in partners %}
       <tr>
-        <td>{{ partner }}</td>
+        <td><a href="{{ partner.get_absolute_url }}">{{ partner }}</a></td>
         <td>{{ partner.contact_address.country.name }}</td>
         <td>{{ partner.contact_address.city|default_if_none:"" }}</td>
         <td>{{ partner.partner_code }}</td>

@@ -13,6 +13,17 @@ from reference.models.continent import Continent
 from reference.models.country import Country
 
 
+class CustomNullBooleanSelect(forms.NullBooleanSelect):
+
+    def __init__(self, attrs=None):
+        choices = (
+            ('1', '---------'),
+            ('2', _('Yes')),
+            ('3', _('No')),
+        )
+        super(forms.NullBooleanSelect, self).__init__(attrs, choices)
+
+
 class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
@@ -48,6 +59,7 @@ class PartnerForm(forms.ModelForm):
             del self.fields['is_valid']
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
+        self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
 
     def clean(self):
         super(PartnerForm, self).clean()
@@ -323,19 +335,23 @@ class PartnerFilterForm(forms.Form):
     is_ies = forms.NullBooleanField(
         label=_('is_ies'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     is_actif = forms.NullBooleanField(
         label=_('is_actif'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnerTag.objects.all(),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
 
     def __init__(self, *args, **kwargs):

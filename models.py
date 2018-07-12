@@ -40,7 +40,7 @@ class PartnerEntity(models.Model):
         on_delete=models.CASCADE,
         related_name='entities',
     )
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     address = models.ForeignKey(
         'partnership.Address',
         verbose_name=_('address'),
@@ -114,7 +114,7 @@ class PartnerEntity(models.Model):
 
 
 class Partner(models.Model):
-    CONTACT_TYPE_CHOICES =(
+    CONTACT_TYPE_CHOICES = (
         ('EPLUS-EDU-HEI', _('Higher education institution (tertiary level)')),
         ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre – General education (pre-primary level)')),
         ('EPLUS-EDU-GEN-PRI', _('School/Institute/Educational centre – General education (primary level)')),
@@ -158,7 +158,7 @@ class Partner(models.Model):
     changed = models.DateField(_('modified'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
     partner_type = models.ForeignKey(
         PartnerType,
@@ -695,10 +695,25 @@ class Contact(models.Model):
         if self.first_name:
             return '{0} {1} {2}'.format(self.get_title_display(), self.last_name, self.first_name)
         return '{0} {1}'.format(self.get_title_display(), self.last_name)
+    
+    @property
+    def is_empty(self):
+        return not any([
+            self.type,
+            self.last_name,
+            self.first_name,
+            self.society,
+            self.function,
+            self.phone,
+            self.mobile_phone,
+            self.fax,
+            self.email,
+            self.comment,
+        ])
 
 
 class Address(models.Model):
-    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
+    name = models.CharField(_('Name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
     address = models.TextField(_('address'), default='', blank=True)
     postal_code = models.CharField(_('postal_code'), max_length=20, blank=True, null=True)
     city = models.CharField(_('city'), max_length=255, blank=True, null=True)
@@ -740,7 +755,7 @@ class Media(models.Model):
         (VISIBILITY_STAFF_STUDENT, _('visibility_staff_student')),
     )
 
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
     file = models.FileField(_('file'), upload_to='medias/', blank=True, null=True)
     url = models.URLField(_('url'), blank=True, null=True)

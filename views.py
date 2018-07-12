@@ -161,6 +161,8 @@ class PartnerFormMixin(object):
 
     def check_form_address(self, form, form_address):
         """ Return True if the conditional mandatory form are ok """
+        if not form_address.is_valid():
+            return False
         if form.cleaned_data['pic_code'] or form.cleaned_data['is_ies']:
             return True
         cleaned_data = form_address.cleaned_data
@@ -175,7 +177,9 @@ class PartnerFormMixin(object):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_address = self.get_address_form()
-        if form.is_valid() and form_address.is_valid() and self.check_form_address(form, form_address):
+        form_valid = form.is_valid()
+        form_address_valid = self.check_form_address(form, form_address)
+        if form_valid and form_address_valid:
             return self.form_valid(form, form_address)
         else:
             return self.form_invalid(form, form_address)

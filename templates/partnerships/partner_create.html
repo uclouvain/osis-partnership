@@ -22,14 +22,8 @@
   <script src="{% static 'js/daterangepicker.js' %}"></script>
   <script src="{% static 'js/dates-input.js' %}"></script>
   <script src="{% static "js/select2.min.js" %}"></script>
+  <script src="{% static "partnerships/partner_form.js" %}"></script>
   <script src="{% static "partnerships/partner_create.js" %}"></script>
-  <script>
-  $('#id_partner-tags').select2({
-      language: "fr",
-      width: "100%",
-      placeholder: "Tags"
-  });
-  </script>
 {% endblock %}
 
 {% block content %}
@@ -44,11 +38,7 @@
       <form action="{% url "partnerships:partners:create" %}" method="post">
         {% csrf_token %}
 
-        <div id="similar-partners" data-url="{% url "partnerships:partners:similar" %}">
-          {% include "partnerships/includes/similar_partners_preview.html" %}
-        </div>
-
-        {% include "partnerships/includes/partner_form.html" %}
+        {% include "partnerships/includes/partner_form.html" with show_similar=True %}
 
         <div class="row">
           <div class="col-sm-12">
@@ -76,7 +66,7 @@
 
         <div class="row">
           <div class="col-sm-12">
-            <p>{% trans "mandatory_fields_help_text" %}</p>
+            <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
           </div>
         </div>
 
