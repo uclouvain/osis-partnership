@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, FileResponse
+from django.utils.timezone import now
 from django.views import View
 from django.views.generic.list import MultipleObjectMixin
 
@@ -10,7 +11,7 @@ from django.db import transaction
 from django.db.models import Count, Prefetch, Q
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
@@ -117,23 +118,88 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             queryset = queryset.order_by(ordering)
         return queryset
 
-    def generate_xls(self):
-        working_sheets_data = [[1, 2, 3, 4]]
-        headers = [
-            _('name'),
-            _('partner_type'),
-            _('pic_code'),
-            _('erasmus_code'),
+    def get_xls_headers(self):
+        return [
+            ugettext('external_id'),
+            ugettext('author'),
+            ugettext('created'),
+            ugettext('changed'),
+            ugettext('name'),
+            ugettext('is_valid'),
+            ugettext('partner_start_date'),
+            ugettext('partner_end_date'),
+            ugettext('now_known_as'),
+            ugettext('partner_type'),
+            ugettext('partner_code'),
+            ugettext('pic_code'),
+            ugettext('erasmus_code'),
+            ugettext('is_ies'),
+            ugettext('is_nonprofit'),
+            ugettext('is_public'),
+            ugettext('use_egracons'),
+            ugettext('contact_name'),
+            ugettext('address'),
+            ugettext('postal_code'),
+            ugettext('city'),
+            ugettext('country'),
+            ugettext('phone'),
+            ugettext('website'),
+            ugettext('email'),
+            ugettext('contact_type'),
         ]
+
+    def get_xls_data(self):
+        queryset = self.get_queryset()
+        return queryset.values_list(
+            'external_id',
+            'author__username',
+            'created',
+            'changed',
+            'name',
+            'is_valid',
+            'start_date',
+            'end_date',
+            'now_known_as__pic_code',
+            'partner_type',
+            'partner_code',
+            'pic_code',
+            'erasmus_code',
+            'is_ies',
+            'is_nonprofit',
+            'is_public',
+            'use_egracons',
+            'contact_address__name',
+            'contact_address__address',
+            'contact_address__postal_code',
+            'contact_address__city',
+            'contact_address__country',
+            'phone',
+            'website',
+            'email',
+            'contact_type',
+        )
+
+    def get_xls_filters(self):
+        form = self.get_form()
+        if form.is_valid():
+            return {key: value for key, value in form.cleaned_data.items() if value}
+        return None
+
+    def generate_xls(self):
+        working_sheets_data = self.get_xls_data()
         parameters = {
             xls_build.DESCRIPTION: _('partners'),
             xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: 'partners_filename',
-            xls_build.HEADER_TITLES: headers,
+            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d'),
+            xls_build.HEADER_TITLES: self.get_xls_headers(),
             xls_build.WS_TITLE: _('partners')
         }
-        xls = xls_build.generate_xls(xls_build.prepare_xls_parameters_list(working_sheets_data, parameters))
-        return xls
+        filters = self.get_xls_filters()
+        response = xls_build.generate_xls(
+            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
+            filters,
+        )
+        return response
 
     def get(self, request, *args, **kwargs):
         return self.generate_xls()
