@@ -115,10 +115,6 @@ class PartnerDetailView(LoginRequiredMixin, DetailView):
 
 
 class PartnerFormMixin(object):
-    initial = {
-        'is_valid': True,
-    }
-
     def get_form_kwargs(self):
         kwargs = super(PartnerFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
@@ -189,6 +185,9 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     form_class = PartnerForm
     template_name = 'partnerships/partner_create.html'
     prefix = 'partner'
+    initial = {
+        'is_valid': True,
+    }
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
