@@ -118,3 +118,34 @@ class PartnersListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_tags)
+
+
+class PartnersExportViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        for i in range(21):
+            PartnerFactory(is_ies=False)
+        cls.partner_erasmus_last = PartnerFactory(erasmus_code='ZZZ', is_ies=False)
+        cls.partner_name = PartnerFactory(name='foobar', is_ies=False)
+        cls.partner_partner_type = PartnerFactory(is_ies=False)
+        cls.partner_pic_code = PartnerFactory(pic_code='foobar', is_ies=False)
+        cls.partner_erasmus_code = PartnerFactory(erasmus_code='foobar', is_ies=False)
+        cls.partner_is_ies = PartnerFactory(is_ies=True)
+        cls.partner_is_valid = PartnerFactory(is_valid=False, is_ies=False)
+        cls.partner_is_actif = PartnerFactory(
+            end_date=timezone.now() - timedelta(days=1),
+            is_ies=False
+        )
+        cls.partner_tags = PartnerFactory(is_ies=False)
+        cls.user = UserFactory()
+        cls.url = reverse('partnerships:partners:export')
+
+    def test_get_list_anonymous(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_list_authenticated(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
