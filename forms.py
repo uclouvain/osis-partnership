@@ -312,12 +312,12 @@ class PartnerFilterForm(forms.Form):
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name'),
+        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name').distinct(),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
-        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name'),
+        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name').distinct(),
         required=False,
     )
     is_ies = forms.NullBooleanField(
