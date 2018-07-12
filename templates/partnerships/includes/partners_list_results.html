@@ -20,7 +20,7 @@
     <tr>
       <td>{{ partner }}</td>
       <td>{{ partner.contact_address.country.name }}</td>
-      <td>{{ partner.contact_address.city }}</td>
+      <td>{{ partner.contact_address.city|default_if_none:"" }}</td>
       <td>{{ partner.partner_code }}</td>
       <td>{{ partner.partner_type }}</td>
       <td><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
