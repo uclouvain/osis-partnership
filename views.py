@@ -8,7 +8,7 @@ from django.views.generic.list import MultipleObjectMixin
 from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Prefetch, Q, QuerySet
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -182,7 +182,14 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
     def get_xls_filters(self):
         form = self.get_form()
         if form.is_valid():
-            return {key: value for key, value in form.cleaned_data.items() if value}
+            filters = {}
+            for key, value in form.cleaned_data.items():
+                if not value:
+                    continue
+                if isinstance(value, QuerySet):
+                    value = ', '.join(map(str, list(value)))
+                filters[key] = str(value)
+            return filters
         return None
 
     def generate_xls(self):
