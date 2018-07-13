@@ -351,7 +351,6 @@ class PartnerFilterForm(forms.Form):
         label=_('tags'),
         queryset=PartnerTag.objects.all(),
         required=False,
-        widget=CustomNullBooleanSelect(),
     )
 
     def __init__(self, *args, **kwargs):
