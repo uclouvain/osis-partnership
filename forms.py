@@ -116,7 +116,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_in_title = forms.ChoiceField(
         label=_('title'),
-        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
@@ -166,7 +166,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_out_title = forms.ChoiceField(
         label=_('title'),
-        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
@@ -319,7 +319,7 @@ class PartnerFilterForm(forms.Form):
     )
     city = forms.ChoiceField(
         label=_('city'),
-        choices=((None, '------'),),
+        choices=((None, '---------'),),
         required=False,
     )
     country = forms.ModelChoiceField(
@@ -362,7 +362,7 @@ class PartnerFilterForm(forms.Form):
             .order_by('city')
             .distinct('city')
         )
-        self.fields['city'].choices = ((None, '------'),) + tuple((city, city) for city in cities)
+        self.fields['city'].choices = ((None, '---------'),) + tuple((city, city) for city in cities)
 
 
 class MediaForm(BootstrapForm, forms.ModelForm):
@@ -503,7 +503,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
-        choices=((None, '------'),) + PartnershipYear.TYPE_CHOICES,
+        choices=((None, '---------'),) + PartnershipYear.TYPE_CHOICES,
         required=False,
     )
     tags = forms.ModelMultipleChoiceField(
