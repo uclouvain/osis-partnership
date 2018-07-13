@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-12 18:14+0200\n"
-"PO-Revision-Date: 2018-07-06 11:20+0200\n"
+"POT-Creation-Date: 2018-07-13 08:54+0200\n"
+"PO-Revision-Date: 2018-07-13 08:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -269,10 +269,8 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#, fuzzy
-#| msgid "external_link"
 msgid "external_id"
-msgstr "Lien externe"
+msgstr "ID Externe"
 
 msgid "to_synchronize_with_epc"
 msgstr ""
@@ -302,10 +300,8 @@ msgstr "Médias"
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
 
-#, fuzzy
-#| msgid "partnership_type"
 msgid "partnership_supervisor"
-msgstr "Type de partenariat"
+msgstr "Responsable Universitaire UCL"
 
 msgid "start_date"
 msgstr "Date de début"
@@ -489,10 +485,8 @@ msgstr ""
 msgid "Physical sciences, not further defined"
 msgstr ""
 
-#, fuzzy
-#| msgid "mister"
 msgid "Chemistry"
-msgstr "Monsieur"
+msgstr ""
 
 msgid "Earth sciences"
 msgstr ""
@@ -896,6 +890,9 @@ msgstr "Toujours actif"
 msgid "current_partnership"
 msgstr "Partenariats en cours"
 
+msgid "partners_export"
+msgstr "Exporter la liste des partenaires"
+
 msgid "supervisor"
 msgstr "Superviseur"
 
@@ -908,10 +905,10 @@ msgstr "Financement"
 msgid "validity"
 msgstr "Validité"
 
-#, fuzzy
-#| msgid "filter_partnerships"
 msgid "similar_partners_possible"
-msgstr "Filtrer les partenariats"
+msgstr ""
+"Ce partenaire existe déjà peut-être. Vérifier dans la liste ci-dessous avant "
+"de l'ajouter."
 
 msgid "partnerships"
 msgstr "Partenariats"
@@ -976,6 +973,12 @@ msgstr "Contact de type mobilité out"
 msgid "add_partner_entity"
 msgstr "Ajouter une entité partenaire"
 
+msgid "agreements"
+msgstr "Accords"
+
+msgid "no_agreement_yet"
+msgstr "Il n'y a pas encore d'accord."
+
 msgid "close"
 msgstr "Fermer"
 
@@ -1009,14 +1012,14 @@ msgstr "Offres"
 msgid "mobility_type"
 msgstr "Type de mobilité"
 
-msgid "agreements"
-msgstr "Accords"
-
-msgid "no_agreement_yet"
-msgstr "Il n'y a pas encore d'accord."
-
 msgid "filter_partnerships"
 msgstr "Filtrer les partenariats"
+
+msgid "changed"
+msgstr ""
+
+msgid "contact_name"
+msgstr ""
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
