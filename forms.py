@@ -299,7 +299,7 @@ class PartnerEntityForm(forms.ModelForm):
 
 class PartnerFilterForm(forms.Form):
     name = forms.CharField(
-        label=_('name'),
+        label=_('Name'),
         widget=forms.TextInput(attrs={'placeholder': _('partner_name')}),
         required=False,
     )
