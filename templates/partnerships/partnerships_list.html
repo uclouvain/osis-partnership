@@ -44,7 +44,7 @@
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'partnership' %}</a></li>
             </ul>
 
-            <form action="{% url "partnerships:partnerships_list" %}" id="filter-form" method="get">
+            <form action="{% url "partnerships:partnerships_list" %}" id="filter-form" method="get" autocomplete="off">
               {% csrf_token %}
               <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
