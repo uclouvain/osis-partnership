@@ -208,7 +208,7 @@
           <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
           {% endif %}
 
-          <p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>
+          {% if entity.comment %}<p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>{% endif %}
         </div>
       </div>
 

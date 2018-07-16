@@ -768,8 +768,8 @@ class Media(models.Model):
 
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
-    file = models.FileField(_('file'), upload_to='medias/', blank=True, null=True)
-    url = models.URLField(_('url'), blank=True, null=True)
+    file = models.FileField(_('file'), help_text=_('media_file_or_url'), upload_to='medias/', blank=True, null=True)
+    url = models.URLField(_('url'), help_text=_('media_file_or_url'), blank=True, null=True)
     visibility = models.CharField(
         _('visibility'),
         max_length=50,

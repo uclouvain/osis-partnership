@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-13 08:54+0200\n"
-"PO-Revision-Date: 2018-07-13 08:55+0200\n"
+"POT-Creation-Date: 2018-07-13 14:07+0200\n"
+"PO-Revision-Date: 2018-07-13 14:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -156,7 +156,7 @@ msgid "partnership_type"
 msgstr "Type de partenariat"
 
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -280,7 +280,7 @@ msgstr "Est devenu / Fait partie de"
 
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
-"Champ obligatoire si le partenaire n'a pas de code PIC est n'est pas un IES."
+"Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
 
 msgid "is_nonprofit"
 msgstr "Organisation à but non lucratif ?"
@@ -289,7 +289,7 @@ msgid "is_public"
 msgstr "Organisme public ?"
 
 msgid "contact_type"
-msgstr "Type de contact"
+msgstr "Type"
 
 msgid "use_egracons"
 msgstr "Utilise le système de conversion de note Égracons ?"
@@ -832,6 +832,9 @@ msgstr "Personnels et étudiants"
 msgid "file"
 msgstr "Fichier"
 
+msgid "media_file_or_url"
+msgstr "Veuillez uniquement mettre un fichier ou une URL."
+
 msgid "visibility"
 msgstr "Visibilité"
 
@@ -907,7 +910,7 @@ msgstr "Validité"
 
 msgid "similar_partners_possible"
 msgstr ""
-"Ce partenaire existe déjà peut-être. Vérifier dans la liste ci-dessous avant "
+"Ce partenaire existe peut-être déjà. Vérifier dans la liste ci-dessous avant "
 "de l'ajouter."
 
 msgid "partnerships"
