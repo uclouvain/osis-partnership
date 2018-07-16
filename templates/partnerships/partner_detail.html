@@ -24,7 +24,7 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-sm-12">
-        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
       </div>
     </div>
     <div class="row">
@@ -208,7 +208,7 @@
           <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
           {% endif %}
 
-          <p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>
+          {% if entity.comment %}<p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>{% endif %}
         </div>
       </div>
 

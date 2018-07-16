@@ -6,7 +6,7 @@
         if (xhr !== null) {
             xhr.abort();
         }
-        if (event.key.length !== 1) {
+        if (event.key.length !== 1 && event.key !== 'Backspace' && event.key !== 'Delete') {
             return ;
         }
         var val = $(this).val();

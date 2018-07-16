@@ -201,14 +201,14 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def import_partner(self, line):
-        if not line[1]:
-            self.write_error('No EPC id for {0}'.format(line[6]))
+        if not line[2]:
+            self.write_error('No id for {0}'.format(line[6]))
             return
-        external_id = int(line[1])
+        partner_code = line[2]
         try:
-            partner = Partner.objects.get(external_id=external_id)
+            partner = Partner.objects.get(partner_code=partner_code)
         except Partner.DoesNotExist:
-            partner = Partner(external_id=external_id)
+            partner = Partner(partner_code=partner_code)
 
         # Mandatory fields not in the CSV file
         default_values = self.get_default_value()
@@ -262,7 +262,8 @@ class Command(BaseCommand):
         add_media(partner, line[28], "Fiche d'évaluation 2013")
         add_media(partner, line[30], "Fiche d'évaluation 2017")
 
-        self.partners_by_code[partner.partner_code] = partner
+        if partner.partner_code:
+            self.partners_by_code[partner.partner_code] = partner
 
     def import_partner_now_known_as(self, line):
         now_known_as = line[10]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-13 08:54+0200\n"
+"POT-Creation-Date: 2018-07-16 12:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,6 +95,9 @@ msgstr ""
 msgid "fax"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "partner_type"
 msgstr ""
 
@@ -153,9 +156,6 @@ msgid "is_stt"
 msgstr ""
 
 msgid "partnership_type"
-msgstr ""
-
-msgid "Name"
 msgstr ""
 
 msgid "contact_in"
@@ -273,6 +273,9 @@ msgid "external_id"
 msgstr ""
 
 msgid "to_synchronize_with_epc"
+msgstr ""
+
+msgid "changed"
 msgstr ""
 
 msgid "now_known_as"
@@ -831,6 +834,9 @@ msgstr ""
 msgid "file"
 msgstr ""
 
+msgid "media_file_or_url"
+msgstr ""
+
 msgid "visibility"
 msgstr ""
 
@@ -979,10 +985,10 @@ msgstr ""
 msgid "update_partner_entity"
 msgstr ""
 
-msgid "filter_partners"
+msgid "search_partners"
 msgstr ""
 
-msgid "filter"
+msgid "search"
 msgstr ""
 
 msgid "back_to_list"
@@ -1003,13 +1009,10 @@ msgstr ""
 msgid "mobility_type"
 msgstr ""
 
-msgid "filter_partnerships"
+msgid "search_partnerships"
 msgstr ""
 
-msgid "changed"
-msgstr ""
-
-msgid "contact_name"
+msgid "id"
 msgstr ""
 
 msgid "partner_saved"

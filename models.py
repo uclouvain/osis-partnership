@@ -155,7 +155,7 @@ class Partner(models.Model):
         blank=True,
         null=True,
     )
-    changed = models.DateField(_('modified'), auto_now=True, editable=False)
+    changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('Name'), max_length=255)
@@ -166,7 +166,7 @@ class Partner(models.Model):
         related_name='partners',
         on_delete=models.PROTECT,
     )
-    partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
+    partner_code = models.CharField(_('partner_code'), max_length=255, unique=True, null=True, blank=True)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
     start_date = models.DateField(_('partner_start_date'), null=True, blank=True)
@@ -753,7 +753,7 @@ class Address(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.one_line_display()
 
     def one_line_display(self):
         components = []
@@ -782,8 +782,8 @@ class Media(models.Model):
 
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
-    file = models.FileField(_('file'), upload_to='medias/', blank=True, null=True)
-    url = models.URLField(_('url'), blank=True, null=True)
+    file = models.FileField(_('file'), help_text=_('media_file_or_url'), upload_to='medias/', blank=True, null=True)
+    url = models.URLField(_('url'), help_text=_('media_file_or_url'), blank=True, null=True)
     visibility = models.CharField(
         _('visibility'),
         max_length=50,

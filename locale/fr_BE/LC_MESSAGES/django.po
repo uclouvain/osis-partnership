@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-13 08:54+0200\n"
-"PO-Revision-Date: 2018-07-13 08:55+0200\n"
+"POT-Creation-Date: 2018-07-16 12:34+0200\n"
+"PO-Revision-Date: 2018-07-16 12:36+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -95,6 +95,9 @@ msgstr "Téléphone mobile"
 msgid "fax"
 msgstr "Fax"
 
+msgid "Name"
+msgstr "Nom"
+
 msgid "partner_type"
 msgstr "Type du partenaire"
 
@@ -154,9 +157,6 @@ msgstr ""
 
 msgid "partnership_type"
 msgstr "Type de partenariat"
-
-msgid "Name"
-msgstr ""
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -275,12 +275,15 @@ msgstr "ID Externe"
 msgid "to_synchronize_with_epc"
 msgstr ""
 
+msgid "changed"
+msgstr "Modifié"
+
 msgid "now_known_as"
 msgstr "Est devenu / Fait partie de"
 
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
-"Champ obligatoire si le partenaire n'a pas de code PIC est n'est pas un IES."
+"Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
 
 msgid "is_nonprofit"
 msgstr "Organisation à but non lucratif ?"
@@ -289,7 +292,7 @@ msgid "is_public"
 msgstr "Organisme public ?"
 
 msgid "contact_type"
-msgstr "Type de contact"
+msgstr "Type"
 
 msgid "use_egracons"
 msgstr "Utilise le système de conversion de note Égracons ?"
@@ -832,6 +835,9 @@ msgstr "Personnels et étudiants"
 msgid "file"
 msgstr "Fichier"
 
+msgid "media_file_or_url"
+msgstr "Veuillez uniquement mettre un fichier ou une URL."
+
 msgid "visibility"
 msgstr "Visibilité"
 
@@ -907,7 +913,7 @@ msgstr "Validité"
 
 msgid "similar_partners_possible"
 msgstr ""
-"Ce partenaire existe déjà peut-être. Vérifier dans la liste ci-dessous avant "
+"Ce partenaire existe peut-être déjà. Vérifier dans la liste ci-dessous avant "
 "de l'ajouter."
 
 msgid "partnerships"
@@ -988,11 +994,11 @@ msgstr "Envoyer"
 msgid "update_partner_entity"
 msgstr "Mettre à jour l'entité partenaire"
 
-msgid "filter_partners"
-msgstr "Filtrer les partenaires"
+msgid "search_partners"
+msgstr "Rechercher les partenaires"
 
-msgid "filter"
-msgstr "Filtrer"
+msgid "search"
+msgstr "Rechercher"
 
 msgid "back_to_list"
 msgstr "Retour à la liste"
@@ -1012,13 +1018,10 @@ msgstr "Offres"
 msgid "mobility_type"
 msgstr "Type de mobilité"
 
-msgid "filter_partnerships"
-msgstr "Filtrer les partenariats"
+msgid "search_partnerships"
+msgstr "Rechercher les partenariats"
 
-msgid "changed"
-msgstr ""
-
-msgid "contact_name"
+msgid "id"
 msgstr ""
 
 msgid "partner_saved"
@@ -1038,6 +1041,9 @@ msgstr "Média sauvegardé avec succès."
 
 msgid "partner_media_error"
 msgstr "Erreur lors de la sauvegarde du média."
+
+#~ msgid "filter"
+#~ msgstr "Filtrer"
 
 #~ msgid "end_date"
 #~ msgstr "Date de fin"

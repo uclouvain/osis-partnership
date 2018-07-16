@@ -36,11 +36,11 @@ class PartnerForm(forms.ModelForm):
             'is_valid': forms.CheckboxInput(),
             'start_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('partner_start_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_start_date'), 'autocomplete': 'off'},
             ),
             'end_date': DatePickerInput(
                 format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'placeholder': _('partner_end_date')},
+                attrs={'class': 'datepicker', 'placeholder': _('partner_end_date'), 'autocomplete': 'off'},
             ),
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
@@ -60,6 +60,7 @@ class PartnerForm(forms.ModelForm):
         super(PartnerForm, self).__init__(*args, **kwargs)
         if not user_is_adri(user):
             del self.fields['is_valid']
+            del self.fields['partner_code']
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
@@ -302,7 +303,7 @@ class PartnerEntityForm(forms.ModelForm):
 
 class PartnerFilterForm(forms.Form):
     name = forms.CharField(
-        label=_('name'),
+        label=_('Name'),
         widget=forms.TextInput(attrs={'placeholder': _('partner_name')}),
         required=False,
     )
