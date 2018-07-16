@@ -262,7 +262,8 @@ class Command(BaseCommand):
         add_media(partner, line[28], "Fiche d'évaluation 2013")
         add_media(partner, line[30], "Fiche d'évaluation 2017")
 
-        self.partners_by_code[partner.partner_code] = partner
+        if partner.partner_code:
+            self.partners_by_code[partner.partner_code] = partner
 
     def import_partner_now_known_as(self, line):
         now_known_as = line[10]

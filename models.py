@@ -166,7 +166,7 @@ class Partner(models.Model):
         related_name='partners',
         on_delete=models.PROTECT,
     )
-    partner_code = models.CharField(_('partner_code'), max_length=255, unique=True)
+    partner_code = models.CharField(_('partner_code'), max_length=255, unique=True, null=True, blank=True)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
     start_date = models.DateField(_('partner_start_date'), null=True, blank=True)

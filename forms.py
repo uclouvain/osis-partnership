@@ -57,6 +57,7 @@ class PartnerForm(forms.ModelForm):
         super(PartnerForm, self).__init__(*args, **kwargs)
         if not user_is_adri(user):
             del self.fields['is_valid']
+            del self.fields['partner_code']
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
