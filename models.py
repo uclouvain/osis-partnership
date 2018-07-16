@@ -155,7 +155,7 @@ class Partner(models.Model):
         blank=True,
         null=True,
     )
-    changed = models.DateField(_('modified'), auto_now=True, editable=False)
+    changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
     name = models.CharField(_('Name'), max_length=255)

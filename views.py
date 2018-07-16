@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, FileResponse
 from django.utils.timezone import now
@@ -9,7 +10,7 @@ from base.models.education_group_year import EducationGroupYear
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Count, Prefetch, Q, QuerySet
-from django.db.models.functions import Now
+from django.db.models.functions import Now, Concat
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.generic import DetailView, ListView, TemplateView
@@ -120,11 +121,12 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
 
     def get_xls_headers(self):
         return [
+            ugettext('id'),
             ugettext('external_id'),
             ugettext('author'),
             ugettext('created'),
             ugettext('changed'),
-            ugettext('name'),
+            ugettext('Name'),
             ugettext('is_valid'),
             ugettext('partner_start_date'),
             ugettext('partner_end_date'),
@@ -137,7 +139,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             ugettext('is_nonprofit'),
             ugettext('is_public'),
             ugettext('use_egracons'),
-            ugettext('contact_name'),
+            ugettext('Name'),
             ugettext('address'),
             ugettext('postal_code'),
             ugettext('city'),
@@ -146,38 +148,52 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             ugettext('website'),
             ugettext('email'),
             ugettext('contact_type'),
+            ugettext('comment'),
+            ugettext('tags'),
         ]
 
     def get_xls_data(self):
+        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
         queryset = self.get_queryset()
-        return queryset.values_list(
-            'external_id',
-            'author__username',
-            'created',
-            'changed',
-            'name',
-            'is_valid',
-            'start_date',
-            'end_date',
-            'now_known_as__name',
-            'partner_type',
-            'partner_code',
-            'pic_code',
-            'erasmus_code',
-            'is_ies',
-            'is_nonprofit',
-            'is_public',
-            'use_egracons',
-            'contact_address__name',
-            'contact_address__address',
-            'contact_address__postal_code',
-            'contact_address__city',
-            'contact_address__country__name',
-            'phone',
-            'website',
-            'email',
-            'contact_type',
+        queryset = (
+            queryset
+            .annotate(tags_list=StringAgg('tags__value', ', '))
+            .values_list(
+                'id',
+                'external_id',
+                'author__username',
+                'created',
+                'changed',
+                'name',
+                'is_valid',
+                'start_date',
+                'end_date',
+                'now_known_as__name',
+                'partner_type__value',
+                'partner_code',
+                'pic_code',
+                'erasmus_code',
+                'is_ies',
+                'is_nonprofit',
+                'is_public',
+                'use_egracons',
+                'contact_address__name',
+                'contact_address__address',
+                'contact_address__postal_code',
+                'contact_address__city',
+                'contact_address__country__name',
+                'phone',
+                'website',
+                'email',
+                'contact_type',
+                'comment',
+                'tags_list',
+            )
         )
+        for partner in queryset:
+            partner = list(partner)
+            partner[26] = contact_types.get(partner[26], partner[26])
+            yield partner
 
     def get_xls_filters(self):
         form = self.get_form()
@@ -197,7 +213,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
         parameters = {
             xls_build.DESCRIPTION: _('partners'),
             xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d'),
+            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%m-%S'),
             xls_build.HEADER_TITLES: self.get_xls_headers(),
             xls_build.WS_TITLE: _('partners')
         }

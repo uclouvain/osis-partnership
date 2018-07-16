@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-13 14:07+0200\n"
+"POT-Creation-Date: 2018-07-16 11:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -273,6 +273,9 @@ msgid "external_id"
 msgstr ""
 
 msgid "to_synchronize_with_epc"
+msgstr ""
+
+msgid "changed"
 msgstr ""
 
 msgid "now_known_as"
@@ -1009,10 +1012,7 @@ msgstr ""
 msgid "filter_partnerships"
 msgstr ""
 
-msgid "changed"
-msgstr ""
-
-msgid "contact_name"
+msgid "id"
 msgstr ""
 
 msgid "partner_saved"
