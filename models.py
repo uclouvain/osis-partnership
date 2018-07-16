@@ -739,7 +739,7 @@ class Address(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.one_line_display()
 
     def one_line_display(self):
         components = []
