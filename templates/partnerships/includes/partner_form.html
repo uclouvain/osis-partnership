@@ -13,6 +13,12 @@
   {% endif %}
 </div>
 
+{% if show_similar %}
+<div id="similar-partners" data-url="{% url "partnerships:partners:similar" %}">
+  {% include "partnerships/includes/similar_partners_preview.html" %}
+</div>
+{% endif %}
+
 <div class="row">
   <div class="col-sm-12 col-md-6">
     {% bootstrap_field form.start_date %}
@@ -64,12 +70,6 @@
   </div>
   <div class="col-sm-12 col-md-3">
     {% bootstrap_field form.use_egracons %}
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-sm-12">
-    {% bootstrap_field form.partner_type %}
   </div>
 </div>
 

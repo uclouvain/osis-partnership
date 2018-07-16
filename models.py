@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.db.models import Max
 from django.utils import timezone
 
 from base.models.entity import Entity
@@ -39,7 +40,7 @@ class PartnerEntity(models.Model):
         on_delete=models.CASCADE,
         related_name='entities',
     )
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     address = models.ForeignKey(
         'partnership.Address',
         verbose_name=_('address'),
@@ -113,7 +114,7 @@ class PartnerEntity(models.Model):
 
 
 class Partner(models.Model):
-    CONTACT_TYPE_CHOICES =(
+    CONTACT_TYPE_CHOICES = (
         ('EPLUS-EDU-HEI', _('Higher education institution (tertiary level)')),
         ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre – General education (pre-primary level)')),
         ('EPLUS-EDU-GEN-PRI', _('School/Institute/Educational centre – General education (primary level)')),
@@ -146,9 +147,18 @@ class Partner(models.Model):
         ('OTH', _('Other')),
     )
 
+    external_id = models.CharField(
+        _('external_id'),
+        help_text=_('to_synchronize_with_epc'),
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    changed = models.DateField(_('modified'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
     partner_type = models.ForeignKey(
         PartnerType,
@@ -220,7 +230,6 @@ class Partner(models.Model):
     )
 
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
-    modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name=_('author'),
@@ -267,15 +276,13 @@ class Partner(models.Model):
             return False
         return True
 
-
-class PartnershipType(models.Model):
-    value = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        ordering = ('value',)
-
-    def __str__(self):
-        return self.value
+    @property
+    def agreements(self):
+        return (
+            PartnershipAgreement.objects
+                .select_related('partnership', 'start_academic_year', 'end_academic_year')
+                .filter(partnership__partner=self)
+        )
 
 
 class PartnershipTag(models.Model):
@@ -289,7 +296,6 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
-    is_valid = models.BooleanField(_('is_valid'), default=False)
     partner = models.ForeignKey(
         Partner,
         verbose_name=_('partner'),
@@ -305,13 +311,13 @@ class Partnership(models.Model):
         null=True,
     )
     ucl_university = models.ForeignKey(
-        'base.EntityVersion',
+        'base.Entity',
         verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
     ucl_university_labo = models.ForeignKey(
-        'base.EntityVersion',
+        'base.Entity',
         verbose_name=_('ucl_university_labo'),
         on_delete=models.PROTECT,
         related_name='partnerships_labo',
@@ -323,11 +329,15 @@ class Partnership(models.Model):
         verbose_name=_('university_offers'),
         related_name='partnerships',
     )
-
-    # supervisor = ?
+    supervisor = models.ForeignKey(
+        'base.Person',
+        verbose_name=_('partnership_supervisor'),
+        related_name='+',
+        blank=True,
+        null=True,
+    )
 
     start_date = models.DateField(_('start_date'), null=True, blank=True)
-    end_date = models.DateField(_('end_date'), null=True, blank=True)
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -335,8 +345,6 @@ class Partnership(models.Model):
         related_name='+',
         blank=True,
     )
-
-    # Accord Signées => TODO PartnershipAgreement
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
@@ -383,6 +391,17 @@ class Partnership(models.Model):
             return False
     
     @cached_property
+    def is_valid(self):
+        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
+
+    @cached_property
+    def end_date(self):
+        validated_agreements = self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
+        if not validated_agreements.exists():
+            return None
+        return validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
+
+    @cached_property
     def current_year(self):
         now = timezone.now()
         return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
@@ -391,27 +410,174 @@ class Partnership(models.Model):
     def entities_acronyms(self):
         """ Get a string of the entities acronyms """
         entities = []
-        parent = self.ucl_university.parent
+        parent = self.ucl_university.entityversion_set.latest('start_date').parent
         if parent is not None:
             now = timezone.now()
             entity = parent.entityversion_set.filter(start_date__gte=now, end_date__lte=now).first()
             if entity is not None:
                 entities.append(entity)
-        entities.append(self.ucl_university.acronym)
+        entities.append(self.ucl_university.most_recent_acronym)
         if self.ucl_university_labo is not None:
-            entities.append(self.ucl_university_labo.acronym)
+            entities.append(self.ucl_university_labo.most_recent_acronym)
         if self.university_offers.exists():
             entities.append(' - '.join(self.university_offers.values_list('acronym', flat=True)))
         return ' / '.join(entities)
 
 
 class PartnershipYear(models.Model):
-    MOBILITY_TYPE_CHOICES = (
-        ('SMS', _('mobility_type_sms')),
-        ('SMP', _('mobility_type_smp')),
-        ('STA', _('mobility_type_sta')),
-        ('STT', _('mobility_type_stt')),
-        ('NA', _('mobility_type_na')),
+    EDUCATION_FIELD_CHOICES = (
+        ('0110', _('Education, not further defined')),
+        ('0111', _('Education science')),
+        ('0112', _('Training for pre-school teachers')),
+        ('0113', _('Teacher training without subject specialization')),
+        ('0114', _('Teacher training with subject specialization')),
+        ('0119', _('Education, not elsewhere classified')),
+        ('0188', _('Education, inter-disciplinary programmes')),
+        ('0210', _('Arts, not further defined')),
+        ('0211', _('Audio-visual techniques and media production')),
+        ('0212', _('Fashion, interior and industrial design')),
+        ('0213', _('Fine arts')),
+        ('0214', _('Handicrafts')),
+        ('0215', _('Music and performing arts')),
+        ('0219', _('Arts, not elsewhere classified')),
+        ('0220', _('Humanities (except languages), not further defined')),
+        ('0221', _('Religion and theology')),
+        ('0222', _('History and archaeology')),
+        ('0223', _('Philosophy and ethics')),
+        ('0229', _('Humanities (except languages), not elsewhere classified')),
+        ('0230', _('Languages, not further defined')),
+        ('0231', _('Language acquisition')),
+        ('0232', _('Literature and linguistics')),
+        ('0239', _('Languages, not elsewhere classified')),
+        ('0288', _('Arts and humanities, inter-disciplinary programmes')),
+        ('0310', _('Social and behavioural sciences, not further defined')),
+        ('0311', _('Economics')),
+        ('0312', _('Political sciences and civics')),
+        ('0313', _('Psychology')),
+        ('0314', _('Sociology and cultural studies')),
+        ('0319', _('Social and behavioural sciences, not elsewhere classified')),
+        ('0320', _('Journalism and information, not further defined')),
+        ('0321', _('Journalism and reporting')),
+        ('0322', _('Library, information and archival studies')),
+        ('0329', _('Journalism and information, not elsewhere classified')),
+        ('0388', _('Social sciences, journalism and information, inter-disciplinary programmes')),
+        ('0410', _('Business and administration, not further defined')),
+        ('0411', _('Accounting and taxation')),
+        ('0412', _('Finance, banking and insurance')),
+        ('0413', _('Management and administration')),
+        ('0414', _('Marketing and advertising')),
+        ('0415', _('Secretarial and office work')),
+        ('0416', _('Wholesale and retail sales')),
+        ('0417', _('Work skills')),
+        ('0419', _('Business and administration, not elsewhere classified')),
+        ('0421', _('Law')),
+        ('0429', _('Law, not elsewhere classified')),
+        ('0488', _('Business, administration and law, inter-disciplinary programmes')),
+        ('0510', _('Biological and related sciences, not further defined')),
+        ('0511', _('Biology')),
+        ('0512', _('Biochemistry')),
+        ('0519', _('Biological and related sciences, not elsewhere classifed')),
+        ('0520', _('Environment, not further defined')),
+        ('0521', _('Environmental sciences')),
+        ('0522', _('Natural environments and wildlife')),
+        ('0529', _('Environment, not elsewhere classified')),
+        ('0530', _('Physical sciences, not further defined')),
+        ('0531', _('Chemistry')),
+        ('0532', _('Earth sciences')),
+        ('0533', _('Physics')),
+        ('0539', _('Physical sciences, not elsewhere classified')),
+        ('0540', _('Mathematics and statistics, not further defined')),
+        ('0541', _('Mathematics')),
+        ('0542', _('Statistics')),
+        ('0549', _('Mathematics and statistics, not elsewhere classified')),
+        ('0588', _('Natural sciences, mathematics and statistics, inter-disciplinary programmes')),
+        ('0610', _('Information and Communication Technologies (ICTs), not further defined')),
+        ('0611', _('Computer use')),
+        ('0612', _('Database and network design and administration')),
+        ('0613', _('Software and applications development and analysis')),
+        ('0619', _('Information and Communication Technologies (ICTs), not elsewhere classified')),
+        ('0688', _('Information and Communication Technologies (ICTs), inter-disciplinary programmes')),
+        ('0710', _('Engineering and engineering trades, not further defined')),
+        ('0711', _('Chemical engineering and processes')),
+        ('0712', _('Environmental protection technology')),
+        ('0713', _('Electricity and energy')),
+        ('0714', _('Electronics and automation')),
+        ('0715', _('Mechanics and metal trades')),
+        ('0716', _('Motor vehicles, ships and aircraft')),
+        ('0719', _('Engineering and engineering trades, not elsewhere classified')),
+        ('0720', _('Manufacturing and processing, not further defined')),
+        ('0721', _('Food processing')),
+        ('0722', _('Materials (glass, paper, plastic and wood)')),
+        ('0723', _('Textiles (clothes, footwear and leather)')),
+        ('0724', _('Mining and extraction')),
+        ('0729', _('Manufacturing and processing, not elsewhere classified')),
+        ('0730', _('Architecture and construction, not further defined')),
+        ('0731', _('Architecture and town planning')),
+        ('0732', _('Building and civil engineering')),
+        ('0739', _('Architecture and construction, not elsewhere classified')),
+        ('0788', _('Engineering, manufacturing and construction, inter-disciplinary programmes')),
+        ('0810', _('Agriculture, not further defined')),
+        ('0811', _('Crop and livestock production')),
+        ('0812', _('Horticulture')),
+        ('0819', _('Agriculture, not elsewhere classified')),
+        ('0821', _('Forestry')),
+        ('0829', _('Forestry, not elsewhere classified')),
+        ('0831', _('Fisheries')),
+        ('0839', _('Fisheries, not elsewhere classified')),
+        ('0841', _('Veterinary')),
+        ('0849', _('Veterinary, not elsewhere classified')),
+        ('0888', _('Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes')),
+        ('0910', _('Health, not further defined')),
+        ('0911', _('Dental studies')),
+        ('0912', _('Medicine')),
+        ('0913', _('Nursing and midwifery')),
+        ('0914', _('Medical diagnostic and treatment technology')),
+        ('0915', _('Therapy and rehabilitation')),
+        ('0916', _('Pharmacy')),
+        ('0917', _('Traditional and complementary medicine and therapy')),
+        ('0919', _('Health, not elsewhere classified')),
+        ('0920', _('Welfare, not further defined')),
+        ('0921', _('Care of the elderly and of disabled adults')),
+        ('0922', _('Child care and youth services')),
+        ('0923', _('Social work and counselling')),
+        ('0929', _('Welfare, not elsewhere classified')),
+        ('0988', _('Health and Welfare, inter-disciplinary programmes')),
+        ('1010', _('Personal services, not further defined')),
+        ('1011', _('Domestic services')),
+        ('1012', _('Hair and beauty services')),
+        ('1013', _('Hotel, restaurants and catering')),
+        ('1014', _('Sports')),
+        ('1015', _('Travel, tourism and leisure')),
+        ('1019', _('Personal services, not elsewhere classified')),
+        ('1020', _('Hygiene and occupational health services, not further defined')),
+        ('1021', _('Community sanitation')),
+        ('1022', _('Occupational health and safety')),
+        ('1029', _('Hygiene and occupational health services, not elsewhere classified')),
+        ('1030', _('Security services, not further defined')),
+        ('1031', _('Military and defence')),
+        ('1032', _('Protection of persons and property')),
+        ('1039', _('Security services, not elsewhere classified')),
+        ('1041', _('Transport services')),
+        ('1049', _('Transport services, not elsewhere classified')),
+        ('1088', _('Services, inter-disciplinary programmes')),
+    )
+    EDUCATION_LEVEL_CHOICES = (
+        ('ISCED-5', _('Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)')),
+        ('ISCED-6', _('First cycle / Bachelor’s or equivalent level (EQF-6)')),
+        ('ISCED-7', _('Second cycle / Master’s or equivalent level (EQF-7)')),
+        ('ISCED-8', _('Third cycle / Doctoral or equivalent level (EQF-8)')),
+        ('ISCED-9', _('Not elsewhere classified')),
+    )
+    TYPE_MOBILITY = 'mobility'
+    TYPE_CHOICES = (
+        ('intention', _('Déclaration d’intention')),
+        ('cadre', _('Accord-cadre')),
+        ('specifique', _('Accord spécifique')),
+        ('codiplomation', _('Accord de co-diplômation')),
+        ('cotutelle', _('Accord de co-tutelle')),
+        (TYPE_MOBILITY, _('Partenariat de mobilité')),
+        ('fond_appuie', _('Projet Fonds d’appuie à l’internationnalisation')),
+        ('autre', _('Autre')),
     )
 
     partnership = models.ForeignKey(
@@ -426,14 +592,26 @@ class PartnershipYear(models.Model):
         on_delete=models.PROTECT,
         related_name='+',
     )
-    # domaine etudes ?
-    # niveaux etude ?
-    mobility_type = models.CharField(_('mobility_type'), max_length=255, choices=MOBILITY_TYPE_CHOICES)
-    partnership_type = models.ForeignKey(
-        PartnershipType,
-        verbose_name=_('partnership_type'),
-        on_delete=models.PROTECT,
-        related_name='partnerships',
+    education_field = models.CharField(
+        _('education_fields'),
+        max_length=255,
+        choices=EDUCATION_FIELD_CHOICES,
+    )
+    education_level = models.CharField(
+        _('education_fields'),
+        max_length=255,
+        choices=EDUCATION_LEVEL_CHOICES,
+        blank=True,
+        null=True,
+    )
+    is_sms = models.BooleanField(_('is_sms'), default=False, blank=True)
+    is_smp = models.BooleanField(_('is_smp'), default=False, blank=True)
+    is_sta = models.BooleanField(_('is_sta'), default=False, blank=True)
+    is_stt = models.BooleanField(_('is_stt'), default=False, blank=True)
+    partnership_type = models.CharField(
+        _('partnership_type'),
+        max_length=255,
+        choices=TYPE_CHOICES,
     )
 
     class Meta:
@@ -542,10 +720,25 @@ class Contact(models.Model):
         if self.first_name:
             return '{0} {1} {2}'.format(self.get_title_display(), self.last_name, self.first_name)
         return '{0} {1}'.format(self.get_title_display(), self.last_name)
+    
+    @property
+    def is_empty(self):
+        return not any([
+            self.type,
+            self.last_name,
+            self.first_name,
+            self.society,
+            self.function,
+            self.phone,
+            self.mobile_phone,
+            self.fax,
+            self.email,
+            self.comment,
+        ])
 
 
 class Address(models.Model):
-    name = models.CharField(_('name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
+    name = models.CharField(_('Name'), help_text=_('address_name_help_text'), max_length=255, blank=True, null=True)
     address = models.TextField(_('address'), default='', blank=True)
     postal_code = models.CharField(_('postal_code'), max_length=20, blank=True, null=True)
     city = models.CharField(_('city'), max_length=255, blank=True, null=True)
@@ -587,7 +780,7 @@ class Media(models.Model):
         (VISIBILITY_STAFF_STUDENT, _('visibility_staff_student')),
     )
 
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
     file = models.FileField(_('file'), upload_to='medias/', blank=True, null=True)
     url = models.URLField(_('url'), blank=True, null=True)

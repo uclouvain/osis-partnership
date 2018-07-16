@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-06 11:03+0200\n"
+"POT-Creation-Date: 2018-07-13 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
 msgid "partner_name"
 msgstr ""
 
-msgid "start_date"
+msgid "partner_start_date"
 msgstr ""
 
-msgid "end_date"
+msgid "partner_end_date"
 msgstr ""
 
 msgid "partner_code"
@@ -134,10 +140,22 @@ msgstr ""
 msgid "partner_entity"
 msgstr ""
 
-msgid "mobility_type"
+msgid "is_sms"
+msgstr ""
+
+msgid "is_smp"
+msgstr ""
+
+msgid "is_sta"
+msgstr ""
+
+msgid "is_stt"
 msgstr ""
 
 msgid "partnership_type"
+msgstr ""
+
+msgid "Name"
 msgstr ""
 
 msgid "contact_in"
@@ -251,10 +269,10 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-msgid "partner_start_date"
+msgid "external_id"
 msgstr ""
 
-msgid "partner_end_date"
+msgid "to_synchronize_with_epc"
 msgstr ""
 
 msgid "now_known_as"
@@ -281,6 +299,12 @@ msgstr ""
 msgid "can_access_partners"
 msgstr ""
 
+msgid "partnership_supervisor"
+msgstr ""
+
+msgid "start_date"
+msgstr ""
+
 msgid "contacts"
 msgstr ""
 
@@ -291,25 +315,462 @@ msgstr ""
 msgid "partnership_with_{partner}"
 msgstr ""
 
-msgid "mobility_type_sms"
+msgid "Education, not further defined"
 msgstr ""
 
-msgid "mobility_type_smp"
+msgid "Education science"
 msgstr ""
 
-msgid "mobility_type_sta"
+msgid "Training for pre-school teachers"
 msgstr ""
 
-msgid "mobility_type_stt"
+msgid "Teacher training without subject specialization"
 msgstr ""
 
-msgid "mobility_type_na"
+msgid "Teacher training with subject specialization"
+msgstr ""
+
+msgid "Education, not elsewhere classified"
+msgstr ""
+
+msgid "Education, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Arts, not further defined"
+msgstr ""
+
+msgid "Audio-visual techniques and media production"
+msgstr ""
+
+msgid "Fashion, interior and industrial design"
+msgstr ""
+
+msgid "Fine arts"
+msgstr ""
+
+msgid "Handicrafts"
+msgstr ""
+
+msgid "Music and performing arts"
+msgstr ""
+
+msgid "Arts, not elsewhere classified"
+msgstr ""
+
+msgid "Humanities (except languages), not further defined"
+msgstr ""
+
+msgid "Religion and theology"
+msgstr ""
+
+msgid "History and archaeology"
+msgstr ""
+
+msgid "Philosophy and ethics"
+msgstr ""
+
+msgid "Humanities (except languages), not elsewhere classified"
+msgstr ""
+
+msgid "Languages, not further defined"
+msgstr ""
+
+msgid "Language acquisition"
+msgstr ""
+
+msgid "Literature and linguistics"
+msgstr ""
+
+msgid "Languages, not elsewhere classified"
+msgstr ""
+
+msgid "Arts and humanities, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Social and behavioural sciences, not further defined"
+msgstr ""
+
+msgid "Economics"
+msgstr ""
+
+msgid "Political sciences and civics"
+msgstr ""
+
+msgid "Psychology"
+msgstr ""
+
+msgid "Sociology and cultural studies"
+msgstr ""
+
+msgid "Social and behavioural sciences, not elsewhere classified"
+msgstr ""
+
+msgid "Journalism and information, not further defined"
+msgstr ""
+
+msgid "Journalism and reporting"
+msgstr ""
+
+msgid "Library, information and archival studies"
+msgstr ""
+
+msgid "Journalism and information, not elsewhere classified"
+msgstr ""
+
+msgid ""
+"Social sciences, journalism and information, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Business and administration, not further defined"
+msgstr ""
+
+msgid "Accounting and taxation"
+msgstr ""
+
+msgid "Finance, banking and insurance"
+msgstr ""
+
+msgid "Management and administration"
+msgstr ""
+
+msgid "Marketing and advertising"
+msgstr ""
+
+msgid "Secretarial and office work"
+msgstr ""
+
+msgid "Wholesale and retail sales"
+msgstr ""
+
+msgid "Work skills"
+msgstr ""
+
+msgid "Business and administration, not elsewhere classified"
+msgstr ""
+
+msgid "Law"
+msgstr ""
+
+msgid "Law, not elsewhere classified"
+msgstr ""
+
+msgid "Business, administration and law, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Biological and related sciences, not further defined"
+msgstr ""
+
+msgid "Biology"
+msgstr ""
+
+msgid "Biochemistry"
+msgstr ""
+
+msgid "Biological and related sciences, not elsewhere classifed"
+msgstr ""
+
+msgid "Environment, not further defined"
+msgstr ""
+
+msgid "Environmental sciences"
+msgstr ""
+
+msgid "Natural environments and wildlife"
+msgstr ""
+
+msgid "Environment, not elsewhere classified"
+msgstr ""
+
+msgid "Physical sciences, not further defined"
+msgstr ""
+
+msgid "Chemistry"
+msgstr ""
+
+msgid "Earth sciences"
+msgstr ""
+
+msgid "Physics"
+msgstr ""
+
+msgid "Physical sciences, not elsewhere classified"
+msgstr ""
+
+msgid "Mathematics and statistics, not further defined"
+msgstr ""
+
+msgid "Mathematics"
+msgstr ""
+
+msgid "Statistics"
+msgstr ""
+
+msgid "Mathematics and statistics, not elsewhere classified"
+msgstr ""
+
+msgid ""
+"Natural sciences, mathematics and statistics, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Information and Communication Technologies (ICTs), not further defined"
+msgstr ""
+
+msgid "Computer use"
+msgstr ""
+
+msgid "Database and network design and administration"
+msgstr ""
+
+msgid "Software and applications development and analysis"
+msgstr ""
+
+msgid ""
+"Information and Communication Technologies (ICTs), not elsewhere classified"
+msgstr ""
+
+msgid ""
+"Information and Communication Technologies (ICTs), inter-disciplinary "
+"programmes"
+msgstr ""
+
+msgid "Engineering and engineering trades, not further defined"
+msgstr ""
+
+msgid "Chemical engineering and processes"
+msgstr ""
+
+msgid "Environmental protection technology"
+msgstr ""
+
+msgid "Electricity and energy"
+msgstr ""
+
+msgid "Electronics and automation"
+msgstr ""
+
+msgid "Mechanics and metal trades"
+msgstr ""
+
+msgid "Motor vehicles, ships and aircraft"
+msgstr ""
+
+msgid "Engineering and engineering trades, not elsewhere classified"
+msgstr ""
+
+msgid "Manufacturing and processing, not further defined"
+msgstr ""
+
+msgid "Food processing"
+msgstr ""
+
+msgid "Materials (glass, paper, plastic and wood)"
+msgstr ""
+
+msgid "Textiles (clothes, footwear and leather)"
+msgstr ""
+
+msgid "Mining and extraction"
+msgstr ""
+
+msgid "Manufacturing and processing, not elsewhere classified"
+msgstr ""
+
+msgid "Architecture and construction, not further defined"
+msgstr ""
+
+msgid "Architecture and town planning"
+msgstr ""
+
+msgid "Building and civil engineering"
+msgstr ""
+
+msgid "Architecture and construction, not elsewhere classified"
+msgstr ""
+
+msgid ""
+"Engineering, manufacturing and construction, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Agriculture, not further defined"
+msgstr ""
+
+msgid "Crop and livestock production"
+msgstr ""
+
+msgid "Horticulture"
+msgstr ""
+
+msgid "Agriculture, not elsewhere classified"
+msgstr ""
+
+msgid "Forestry"
+msgstr ""
+
+msgid "Forestry, not elsewhere classified"
+msgstr ""
+
+msgid "Fisheries"
+msgstr ""
+
+msgid "Fisheries, not elsewhere classified"
+msgstr ""
+
+msgid "Veterinary"
+msgstr ""
+
+msgid "Veterinary, not elsewhere classified"
+msgstr ""
+
+msgid ""
+"Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Health, not further defined"
+msgstr ""
+
+msgid "Dental studies"
+msgstr ""
+
+msgid "Medicine"
+msgstr ""
+
+msgid "Nursing and midwifery"
+msgstr ""
+
+msgid "Medical diagnostic and treatment technology"
+msgstr ""
+
+msgid "Therapy and rehabilitation"
+msgstr ""
+
+msgid "Pharmacy"
+msgstr ""
+
+msgid "Traditional and complementary medicine and therapy"
+msgstr ""
+
+msgid "Health, not elsewhere classified"
+msgstr ""
+
+msgid "Welfare, not further defined"
+msgstr ""
+
+msgid "Care of the elderly and of disabled adults"
+msgstr ""
+
+msgid "Child care and youth services"
+msgstr ""
+
+msgid "Social work and counselling"
+msgstr ""
+
+msgid "Welfare, not elsewhere classified"
+msgstr ""
+
+msgid "Health and Welfare, inter-disciplinary programmes"
+msgstr ""
+
+msgid "Personal services, not further defined"
+msgstr ""
+
+msgid "Domestic services"
+msgstr ""
+
+msgid "Hair and beauty services"
+msgstr ""
+
+msgid "Hotel, restaurants and catering"
+msgstr ""
+
+msgid "Sports"
+msgstr ""
+
+msgid "Travel, tourism and leisure"
+msgstr ""
+
+msgid "Personal services, not elsewhere classified"
+msgstr ""
+
+msgid "Hygiene and occupational health services, not further defined"
+msgstr ""
+
+msgid "Community sanitation"
+msgstr ""
+
+msgid "Occupational health and safety"
+msgstr ""
+
+msgid "Hygiene and occupational health services, not elsewhere classified"
+msgstr ""
+
+msgid "Security services, not further defined"
+msgstr ""
+
+msgid "Military and defence"
+msgstr ""
+
+msgid "Protection of persons and property"
+msgstr ""
+
+msgid "Security services, not elsewhere classified"
+msgstr ""
+
+msgid "Transport services"
+msgstr ""
+
+msgid "Transport services, not elsewhere classified"
+msgstr ""
+
+msgid "Services, inter-disciplinary programmes"
+msgstr ""
+
+msgid ""
+"Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)"
+msgstr ""
+
+msgid "First cycle / Bachelor’s or equivalent level (EQF-6)"
+msgstr ""
+
+msgid "Second cycle / Master’s or equivalent level (EQF-7)"
+msgstr ""
+
+msgid "Third cycle / Doctoral or equivalent level (EQF-8)"
+msgstr ""
+
+msgid "Not elsewhere classified"
+msgstr ""
+
+msgid "Déclaration d’intention"
+msgstr ""
+
+msgid "Accord-cadre"
+msgstr ""
+
+msgid "Accord spécifique"
+msgstr ""
+
+msgid "Accord de co-diplômation"
+msgstr ""
+
+msgid "Accord de co-tutelle"
+msgstr ""
+
+msgid "Partenariat de mobilité"
+msgstr ""
+
+msgid "Projet Fonds d’appuie à l’internationnalisation"
+msgstr ""
+
+msgid "Autre"
 msgstr ""
 
 msgid "partnership"
 msgstr ""
 
 msgid "academic_year"
+msgstr ""
+
+msgid "education_fields"
 msgstr ""
 
 #, python-brace-format
@@ -424,6 +885,9 @@ msgstr ""
 msgid "current_partnership"
 msgstr ""
 
+msgid "partners_export"
+msgstr ""
+
 msgid "supervisor"
 msgstr ""
 
@@ -434,6 +898,9 @@ msgid "financing"
 msgstr ""
 
 msgid "validity"
+msgstr ""
+
+msgid "similar_partners_possible"
 msgstr ""
 
 msgid "partnerships"
@@ -497,6 +964,12 @@ msgstr ""
 msgid "add_partner_entity"
 msgstr ""
 
+msgid "agreements"
+msgstr ""
+
+msgid "no_agreement_yet"
+msgstr ""
+
 msgid "close"
 msgstr ""
 
@@ -527,13 +1000,16 @@ msgstr ""
 msgid "offers"
 msgstr ""
 
-msgid "agreements"
-msgstr ""
-
-msgid "no_agreement_yet"
+msgid "mobility_type"
 msgstr ""
 
 msgid "filter_partnerships"
+msgstr ""
+
+msgid "changed"
+msgstr ""
+
+msgid "contact_name"
 msgstr ""
 
 msgid "partner_saved"

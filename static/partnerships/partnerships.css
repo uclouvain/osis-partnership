@@ -2,8 +2,22 @@
   margin-top: 15px;
 }
 
-.media {
+.partner-media {
   margin-bottom: 10px;
+}
+
+.required_field .control-label:after {
+  color: #a94442;
+}
+
+@media (min-width: 768px) {
+  .partner-info-left .dl-horizontal dt {
+    width: 320px;
+  }
+
+  .partner-info-left .dl-horizontal dd {
+    margin-left: 340px;
+  }
 }
 
 #add-media {

@@ -1,20 +1,30 @@
 from dal import autocomplete
-from django.core.exceptions import ValidationError
 
-from base.forms.bootstrap import BootstrapForm, BootstrapModelForm
-from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.entity_version import EntityVersion
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.bootstrap import BootstrapModelForm, BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, ContactType, \
-    Partnership, PartnershipTag, PartnershipType, PartnershipYear
+from base.models.entity_version import EntityVersion
+from base.models.entity import Entity
+from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
+    PartnershipYear, Partnership
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
+
+
+class CustomNullBooleanSelect(forms.NullBooleanSelect):
+
+    def __init__(self, attrs=None):
+        choices = (
+            ('1', '---------'),
+            ('2', _('Yes')),
+            ('3', _('No')),
+        )
+        super(forms.NullBooleanSelect, self).__init__(attrs, choices)
 
 
 class PartnerForm(forms.ModelForm):
@@ -52,6 +62,7 @@ class PartnerForm(forms.ModelForm):
             del self.fields['is_valid']
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
+        self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
 
     def clean(self):
         super(PartnerForm, self).clean()
@@ -109,7 +120,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_in_title = forms.ChoiceField(
         label=_('title'),
-        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
@@ -159,7 +170,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_out_title = forms.ChoiceField(
         label=_('title'),
-        choices=((None, '------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
 
@@ -312,30 +323,33 @@ class PartnerFilterForm(forms.Form):
     )
     city = forms.ChoiceField(
         label=_('city'),
-        choices=((None, '------'),),
+        choices=((None, '---------'),),
         required=False,
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name'),
+        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name').distinct(),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
-        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name'),
+        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name').distinct(),
         required=False,
     )
     is_ies = forms.NullBooleanField(
         label=_('is_ies'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     is_actif = forms.NullBooleanField(
         label=_('is_actif'),
         required=False,
+        widget=CustomNullBooleanSelect(),
     )
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
@@ -352,7 +366,7 @@ class PartnerFilterForm(forms.Form):
             .order_by('city')
             .distinct('city')
         )
-        self.fields['city'].choices = ((None, '------'),) + tuple((city, city) for city in cities)
+        self.fields['city'].choices = ((None, '---------'),) + tuple((city, city) for city in cities)
 
 
 class MediaForm(BootstrapForm, forms.ModelForm):
@@ -402,7 +416,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university = forms.ModelChoiceField(
         label=_('ucl_university'),
-        queryset=EntityVersion.objects.filter(partnerships__isnull=False),
+        queryset=Entity.objects.filter(partnerships__isnull=False),
         empty_label=_('ucl_university'),
         required=False,
         widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_filter'),
@@ -410,7 +424,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university_labo = forms.ModelChoiceField(
         label=_('ucl_university_labo'),
-        queryset=EntityVersion.objects.filter(partnerships_labo__isnull=False),
+        queryset=Entity.objects.filter(partnerships_labo__isnull=False),
         empty_label=_('ucl_university_labo_filter'),
         required=False,
         widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_labo_filter',
@@ -480,17 +494,27 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
-    # mobility_type = forms.ChoiceField(
-    #     label=_('mobility_type'),
-    #     choices=((None, _('mobility_type')),),
-    #     required=False,
-    # )
-    # partnership_type = forms.ModelChoiceField(
-    #     label=_('partnership_type'),
-    #     queryset=PartnershipType.objects.all(),
-    #     empty_label=_('partnership_type'),
-    #     required=False,
-    # )
+    is_sms = forms.NullBooleanField(
+        label=_('is_sms'),
+        required=False,
+    )
+    is_smp = forms.NullBooleanField(
+        label=_('is_smp'),
+        required=False,
+    )
+    is_sta = forms.NullBooleanField(
+        label=_('is_sta'),
+        required=False,
+    )
+    is_stt = forms.NullBooleanField(
+        label=_('is_stt'),
+        required=False,
+    )
+    partnership_type = forms.ChoiceField(
+        label=_('partnership_type'),
+        choices=((None, '---------'),) + PartnershipYear.TYPE_CHOICES,
+        required=False,
+    )
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
@@ -515,13 +539,9 @@ class PartnershipForm(BootstrapModelForm):
         model = Partnership
         #fields = '__all__'
         fields = (
-            'is_valid',
             'start_date',
-            'end_date',
             'partner',
             'partner_entity',
-            #'partnership_type',
-            #'mobility_type',
             'ucl_university',
             'ucl_university_labo',
             'university_offers',
@@ -530,7 +550,7 @@ class PartnershipForm(BootstrapModelForm):
         widgets = {
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
-            'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offer'),
+            'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
         }
         
     def __init__(self, user=None, *args, **kwargs):
