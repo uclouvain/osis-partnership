@@ -1,28 +1,22 @@
 {% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% load i18n %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
-  <li class="active">{% trans "partnership_create" %}</li>
+  <li><a href="{% url 'partnerships:partnership_detail' pk=partnership.pk %}">{% trans 'partnership' %}</a></li>
+  <li class="active">{% trans 'partnership_contact_update' %}</li>
 {% endblock %}
 
 {% block content %}
   <div class="page-header">
-    <h1>{% trans "new_partnership" %}</h1>
+    <h1>{% trans 'partnership_contact_update' %}</h1>
   </div>
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="well">
         <div class="row">
           <div class="col-sm-12">
-            {% bootstrap_form_errors form %}
-
-            <form action="#" method="POST">
-              {% csrf_token %}
-              {% bootstrap_form form %}
-              <input type="submit" value="submit" name="submit" />
-            </form>
-            {{ form.media }}
+            {% include 'partnerships/includes/partnership_contact_form.html' %}
           </div>
         </div>
       </div>

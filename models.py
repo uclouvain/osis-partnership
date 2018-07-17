@@ -389,7 +389,10 @@ class Partnership(models.Model):
             return is_adri or is_gf
         except Person.DoesNotExist:
             return False
-    
+
+    def user_can_change(self, user):
+        return user_is_adri(user)
+
     @cached_property
     def is_valid(self):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()

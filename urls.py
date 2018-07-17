@@ -11,6 +11,8 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                UniversityOffersAutocompleteFilterView,
                                UclUniversityAutocompleteFilterView,
                                UclUniversityLaboAutocompleteFilterView, PartnersExportView,
+                               PartnershipContactCreateView, PartnershipContactUpdateView,
+                               PartnershipContactDeleteView
 )
 
 
@@ -19,6 +21,11 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
     url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
     url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="partnership_update"),
+    url(r'^(?P<partnership_pk>\d+)/contacts/', include([
+        url('^new/$', PartnershipContactCreateView.as_view(), name="create"),
+        url('^(?P<pk>\d+)/update/$', PartnershipContactUpdateView.as_view(), name="update"),
+        url('^(?P<pk>\d+)/delete/$', PartnershipContactDeleteView.as_view(), name="delete"),
+    ], namespace='contacts')),
     url(r'^partners/', include([
         url(r'^$', PartnersListView.as_view(), name="list"),
         url(r'^export/$', PartnersExportView.as_view(), name="export"),

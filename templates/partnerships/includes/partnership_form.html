@@ -1,0 +1,40 @@
+{% load bootstrap3 i18n %}
+
+{% bootstrap_form_errors form %}
+<form action="#" method="POST">
+  {% csrf_token %}
+  <h2>{% trans 'Partner' %}</h2>
+  <div class="row">
+    <div class="col-sm-6">
+      {% bootstrap_field form.partner %}
+    </div>
+    <div class="col-sm-6">
+      {% bootstrap_field form.partner_entity %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      {% bootstrap_field form.start_date %}
+    </div>
+  </div>
+  <h2>{% trans 'UCL' %}</h2>
+  <div class="row">
+    <div class="col-sm-4">
+      {% bootstrap_field form.ucl_university %}
+    </div>
+    <div class="col-sm-4">
+      {% bootstrap_field form.ucl_university_labo %}
+    </div>
+    <div class="col-sm-4">
+      {% bootstrap_field form.university_offers %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      {% bootstrap_field form.comment %}
+    </div>
+  </div>
+  <input type="submit" name="submit" value="submit"
+         class="btn btn-primary btn-block"/>
+</form>
+{{ form.media }}

@@ -23,7 +23,8 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
-                               PartnershipFilterForm, PartnershipForm)
+                               PartnershipFilterForm, PartnershipForm,
+                               ContactForm)
 from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
@@ -513,6 +514,64 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         return self.template_name
 
 
+class PartnershipContactMixin(UserPassesTestMixin):
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
+        return super(PartnershipContactMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.partnership.contacts.all()
+
+    def get_success_url(self):
+        return self.partnership.get_absolute_url()
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+        
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipContactMixin, self).get_context_data(**kwargs)
+        context['partnership'] = self.partnership
+        return context
+
+    
+class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
+
+    form_class = ContactForm
+    
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partnership_contact_form.html'
+        return self.template_name
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partner_error'))
+        return self.render_to_response(self.get_context_data(
+            form=form,
+        ))
+
+
+class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
+
+    template_name = 'partnerships/partnership_contact_create.html'
+    
+    def form_valid(self, form):
+        contact = form.save()
+        self.partnership.contacts.add(contact)
+        messages.success(self.request, _("contact_creation_success"))
+        return redirect(self.partnership)
+
+    
+class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
+
+    template_name = 'partnerships/partnership_contact_update.html'
+
+
+class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
+
+    template_name = 'partnerships/contact_confirm_delete.html'
+        
+    
 class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
@@ -664,6 +723,13 @@ class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'contact_form': ContactForm
+        })
+        return context
+    
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     

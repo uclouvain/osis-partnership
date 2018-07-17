@@ -90,10 +90,37 @@
           <div class="col-sm-12 col-md-6">
             {% for contact in partnership.contacts.all %}
               {% include "partnerships/includes/contact.html" with contact=contact %}
+              <div class="btn-group">
+                <a class="btn btn-default" href="#">
+                  <i class="fa fa-eye fa-fw"></i>
+                </a>
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'update_contact' %}</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'delete_contact' %}</a>
+                  </li>
+                </ul>
+              </div>
             {% endfor %}
           </div>
         </div>
       {% endif %}
+      
+      <div class="row">
+        <div class="col-sm-12">
+          <a href="{% url "partnerships:contacts:create" partnership.id %}"
+             class="btn btn-default modal-link pull-right"
+             data-modal-submit="{% trans "new_contact" %}"
+             data-modal-title="{% trans "new_contact" %}"
+             data-modal="modal-form"><i class="fa fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
+        </div>
+      </div>
 
       <!-- Accords -->
       <h2>{% trans "agreements" %}</h2>
