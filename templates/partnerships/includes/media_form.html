@@ -33,8 +33,10 @@
   </div>
 </div>
 
+{% if not hide_mandatory_help_text %}
 <div class="row">
   <div class="col-sm-12">
-    <p>{% trans "mandatory_fields_help_text" %}</p>
+    <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
   </div>
 </div>
+{% endif %}

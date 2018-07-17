@@ -670,6 +670,12 @@ class PartnershipAgreement(models.Model):
         default=STATUS_WAITING,
     )
 
+    eligible = models.BooleanField(
+        _('eligible'),
+        default=False,
+        blank=True,
+    )
+
     note = models.TextField(
         _('note'),
         blank=True,

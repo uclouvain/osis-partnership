@@ -10,7 +10,7 @@ from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
 from base.models.entity import Entity
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
-    PartnershipYear, Partnership
+    PartnershipYear, Partnership, PartnershipAgreement
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -388,7 +388,7 @@ class PartnerFilterForm(forms.Form):
         self.fields['city'].choices = ((None, '---------'),) + tuple((city, city) for city in cities)
 
 
-class MediaForm(BootstrapForm, forms.ModelForm):
+class MediaForm(forms.ModelForm):
     # FIXME Move with Media model to a more generic app
 
     class Meta:
@@ -411,7 +411,7 @@ class MediaForm(BootstrapForm, forms.ModelForm):
         return self.cleaned_data
 
 
-class AddressForm(BootstrapForm, forms.ModelForm):
+class AddressForm(forms.ModelForm):
     # FIXME Move with Address model to a more generic app
 
     class Meta:
@@ -575,3 +575,30 @@ class PartnershipForm(BootstrapModelForm):
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+
+
+class PartnershipAgreementForm(forms.ModelForm):
+
+    class Meta:
+        model = PartnershipAgreement
+        fields = [
+            'start_academic_year',
+            'end_academic_year',
+            'status',
+            'eligible',
+            'note',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(PartnershipAgreementForm, self).__init__(*args, **kwargs)
+        if not user_is_adri(user):
+            del self.fields['status']
+            del self.fields['eligible']
+
+    def clean(self):
+        super(PartnershipAgreementForm, self).clean()
+        if self.cleaned_data['start_academic_year'].year > self.cleaned_data['end_academic_year'].year:
+            self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
+            self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
+        return self.cleaned_data
