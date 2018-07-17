@@ -23,7 +23,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
-                               PartnershipFilterForm, PartnershipForm)
+                               PartnershipFilterForm, PartnershipForm, PartnershipAgreementForm)
 from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
@@ -615,6 +615,11 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'partnership'
     template_name = 'partnerships/partnership_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipDetailView, self).get_context_data(**kwargs)
+        context['can_change'] = context['object'].user_can_change(self.request.user)
+        return context
+
     def get_object(self):
         self.partnership = (
             Partnership.objects
@@ -664,6 +669,120 @@ class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
+
+class PartnershipAgreementsMixin(object):
+    context_object_name = 'agreement'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
+        return super(PartnershipAgreementsMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.partnership.agreements.all()
+
+    def get_success_url(self):
+        return self.partnership.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipAgreementsMixin, self).get_context_data(**kwargs)
+        context['partnership'] = self.partnership
+        return context
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+
+
+class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
+    form_class = PartnershipAgreementForm
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partnership_agreement_form.html'
+        return self.template_name
+
+    def get_form_kwargs(self):
+        kwargs = super(PartnershipAgreementsFormMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_form_media(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'media'
+        if self.object is not None:
+            kwargs['instance'] = self.object.media
+        del kwargs['user']
+        return MediaForm(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        if 'form_media' not in kwargs:
+            kwargs['form_media'] = self.get_form_media()
+        return super(PartnershipAgreementsFormMixin, self).get_context_data(**kwargs)
+
+    def form_invalid(self, form, form_media):
+        messages.error(self.request, _('partnership_agreement_error'))
+        return self.render_to_response(self.get_context_data(form=form, form_media=form_media))
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        form_media = self.get_form_media()
+        # Do the valid before to ensure the errors are calculated
+        form_media_valid = form_media.is_valid()
+        if form.is_valid() and form_media_valid:
+            return self.form_valid(form, form_media)
+        else:
+            return self.form_invalid(form, form_media)
+
+
+class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
+    template_name = 'partnerships/agreements/create.html'
+
+    @transaction.atomic
+    def form_valid(self, form, form_media):
+        media = form_media.save(commit=False)
+        media.author = self.request.user
+        media.save()
+        form_media.save_m2m()
+        agreement = form.save(commit=False)
+        agreement.partnership = self.partnership
+        agreement.media = media
+        agreement.save()
+        form.save_m2m()
+        messages.success(self.request, _('partnership_agreement_success'))
+        return redirect(self.partnership)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super(PartneshipAgreementCreateView, self).post(request, *args, **kwargs)
+
+
+class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
+    template_name = 'partnerships/agreements/update.html'
+
+    @transaction.atomic
+    def form_valid(self, form, form_media):
+        form_media.save()
+        form.save()
+        messages.success(self.request, _('partnership_agreement_success'))
+        return redirect(self.partnership)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PartneshipAgreementUpdateView, self).post(request, *args, **kwargs)
+
+
+class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMixin, DeleteView):
+    template_name = 'partnerships/agreements/delete.html'
+
+    def test_func(self):
+        return self.get_object().user_can_delete(self.request.user)
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/agreements/includes/delete.html'
+        return self.template_name
+
+
+### Autocompletes
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     

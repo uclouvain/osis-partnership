@@ -389,6 +389,9 @@ class Partnership(models.Model):
             return is_adri or is_gf
         except Person.DoesNotExist:
             return False
+
+    def user_can_change(self, user):
+        return user_is_adri(user)
     
     @cached_property
     def is_valid(self):
@@ -665,6 +668,12 @@ class PartnershipAgreement(models.Model):
         max_length=10,
         choices=STATUS_CHOICES,
         default=STATUS_WAITING,
+    )
+
+    eligible = models.BooleanField(
+        _('eligible'),
+        default=False,
+        blank=True,
     )
 
     note = models.TextField(

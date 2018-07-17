@@ -1,0 +1,47 @@
+{% load bootstrap3 i18n %}
+{% csrf_token %}
+{% bootstrap_form_errors form %}
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.start_academic_year %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.end_academic_year %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.status %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.eligible %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.note %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{% trans "media" %}</h4>
+  </div>
+</div>
+
+{% include "partnerships/includes/media_form.html" with form=form_media hide_mandatory_help_text=True %}
+
+<div class="row">
+  <div class="col-sm-12">
+    <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+  </div>
+</div>

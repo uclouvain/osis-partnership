@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% load i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:partnership_detail' partnership.pk %}" id="lnk_partners">{{ partnership }}</a></li>
+  <li class="active">{{ agreement }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ agreement }}</h1>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="{% url "partnerships:agreements:delete" partnership.id agreement.id %}" method="post">
+      {% include "partnerships/agreements/includes/delete.html" %}
+      <button type="submit" class="btn btn-primary">{% trans "delete_partnership_agreement" %}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
