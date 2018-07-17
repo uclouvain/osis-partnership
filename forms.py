@@ -4,7 +4,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from base.forms.bootstrap import BootstrapModelForm, BootstrapForm
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
@@ -552,7 +551,7 @@ class PartnershipFilterForm(forms.Form):
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
 
-class PartnershipForm(BootstrapModelForm):
+class PartnershipForm(forms.ModelForm):
 
     class Meta:
         model = Partnership
