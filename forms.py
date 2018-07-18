@@ -53,6 +53,8 @@ class PartnerForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
             'website': forms.URLInput(attrs={'placeholder': _('website')}),
             'email': forms.EmailInput(attrs={'placeholder': _('email')}),
+            'tags': autocomplete.ModelSelect2Multiple(),
+            'now_known_as': autocomplete.ModelSelect2(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -318,6 +320,7 @@ class ContactForm(forms.ModelForm):
             'email',
             'comment',
         ]
+
         
 class PartnerFilterForm(forms.Form):
     name = forms.CharField(
@@ -343,11 +346,13 @@ class PartnerFilterForm(forms.Form):
     city = forms.ChoiceField(
         label=_('city'),
         choices=((None, '---------'),),
+        widget=autocomplete.Select2(attrs={'data-width': '100%'}),
         required=False,
     )
     country = forms.ModelChoiceField(
         label=_('country'),
         queryset=Country.objects.filter(address__partners__isnull=False).order_by('name').distinct(),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     continent = forms.ModelChoiceField(
@@ -373,6 +378,7 @@ class PartnerFilterForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnerTag.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
     
@@ -422,6 +428,7 @@ class AddressForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'placeholder': _('address')}),
             'postal_code': forms.TextInput(attrs={'placeholder': _('postal_code')}),
             'city': forms.TextInput(attrs={'placeholder': _('city')}),
+            'country': autocomplete.ModelSelect2(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -482,6 +489,7 @@ class PartnershipFilterForm(forms.Form):
     city = forms.ChoiceField(
         label=_('city'),
         choices=((None, _('city')),),
+        widget=autocomplete.Select2(attrs={'data-width': '100%'}),
         required=False,
     )
     country = forms.ModelChoiceField(
@@ -493,6 +501,7 @@ class PartnershipFilterForm(forms.Form):
                 .order_by('name')
         ),
         empty_label=_('country'),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     continent = forms.ModelChoiceField(
@@ -508,6 +517,7 @@ class PartnershipFilterForm(forms.Form):
     partner_tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False),
+        widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
 
@@ -558,12 +568,14 @@ class PartnershipForm(forms.ModelForm):
         model = Partnership
         fields = (
             'start_date',
+            'supervisor',
             'partner',
             'partner_entity',
             'ucl_university',
             'ucl_university_labo',
             'university_offers',
             'comment',
+            'tags',
         )
         widgets = {
             'start_date': DatePickerInput(
@@ -573,6 +585,7 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
+            'tags': autocomplete.Select2Multiple(),
         }
 
 

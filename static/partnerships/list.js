@@ -39,30 +39,4 @@
             hideLoader();
         });
     });
-
-    $('#filter-form #id_city').select2({
-        language: "fr",
-        width: "100%",
-        placeholder: "---------",
-        allowClear: true
-    });
-    $('#filter-form #id_country').select2({
-        language: "fr",
-        width: "100%",
-        placeholder: "---------",
-        allowClear: true
-    });
-
-    $('#filter-form #id_tags').select2({
-        language: "fr",
-        width: "100%",
-        placeholder: "Tags",
-        allowClear: true
-    });
-    $('#filter-form #id_partner_tags').select2({
-        language: "fr",
-        width: "100%",
-        placeholder: "Tags",
-        allowClear: true
-    });
 })(jQuery);
