@@ -33,19 +33,19 @@ class PartnerMediaCreateViewTest(TestCase):
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_media_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_create.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_media_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_create.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_media_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/medias/partner_media_create.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -56,7 +56,7 @@ class PartnerMediaCreateViewTest(TestCase):
             'visibility': Media.VISIBILITY_PUBLIC,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
 
 
 class PartnerMediaUpdateViewTest(TestCase):
@@ -85,19 +85,19 @@ class PartnerMediaUpdateViewTest(TestCase):
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_media_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_media_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_media_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/medias/partner_media_update.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -108,4 +108,4 @@ class PartnerMediaUpdateViewTest(TestCase):
             'visibility': Media.VISIBILITY_PUBLIC,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')

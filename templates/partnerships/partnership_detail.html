@@ -93,7 +93,7 @@
         <div class="row">
           <div class="col-sm-12 col-md-6">
             {% for contact in partnership.contacts.all %}
-              {% include "partnerships/includes/contact.html" with contact=contact %}
+              {% include "partnerships/includes/contacts/includes/contact.html" with contact=contact %}
               <div class="btn-group">
                 <a class="btn btn-default" href="#">
                   <i class="fa fa-eye fa-fw"></i>
@@ -214,8 +214,14 @@
           <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "cancel" %}</button>
-          <button type="submit" class="btn btn-primary">{% trans "submit" %}</button>
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
         </div>
       </form>
     </div>

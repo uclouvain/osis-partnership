@@ -29,15 +29,15 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="pull-right">
-              <button class="btn btn-default pull-right" type="button"
+              <a class="btn btn-default" type="button"
+                 href="{% url "partnerships:partnership_create" %}">
+                <i class="fa fa-fw fa-plus"></i> <span class="hidden-xs">{% trans "add_partnership" %}</span>
+              </a>
+              <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
-                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_partnerships" %}</span>
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "search_partnership" %}</span>
               </button>
-              <a class="btn btn-default pull-right" type="button"
-                 href="{% url "partnerships:partnership_create" %}">
-                <i class="fa fa-fw fa-plus"></i> <span class="hidden-xs">{% trans "search_partnership" %}</span>
-              </a>
             </div>
           </div>
         </div>

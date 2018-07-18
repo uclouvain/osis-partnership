@@ -4,7 +4,7 @@
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
-  <li class="active">{% trans 'new_partner' %}</li>
+  <li class="active">{{ partner }}</li>
 {% endblock %}
 
 {% block style %}
@@ -23,46 +23,21 @@
   <script src="{% static 'js/dates-input.js' %}"></script>
   <script src="{% static "js/select2.min.js" %}"></script>
   <script src="{% static "partnerships/partner_form.js" %}"></script>
-  <script src="{% static "partnerships/partner_create.js" %}"></script>
 {% endblock %}
 
 {% block content %}
   <div class="page-header">
-    <h1>{% trans 'add_partner' %}</h1>
+    <h1>{{ partner }}</h1>
   </div>
 
   {% bootstrap_form_errors form %}
 
   <div class="panel panel-default">
     <div class="panel-body partner-form">
-      <form action="{% url "partnerships:partners:create" %}" method="post">
+      <form action="{% url "partnerships:partners:update" partner.id %}" method="post">
         {% csrf_token %}
 
-        {% include "partnerships/includes/partner_form.html" with show_similar=True %}
-
-        <div class="row">
-          <div class="col-sm-12">
-            <h2>{% trans "medias" %}</h2>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-sm-12">
-            <p>{% trans "add_media_after_creation" %}</p>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-sm-12">
-            <h2>{% trans "associated_entities" %}</h2>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-sm-12">
-            <p>{% trans "add_entities_after_creation" %}</p>
-          </div>
-        </div>
+        {% include "partnerships/partners/includes/partner_form.html" %}
 
         <div class="row">
           <div class="col-sm-12">
@@ -73,8 +48,8 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="pull-right">
-              <a href="{% url "partnerships:partners:list" %}" class="btn btn-default">{% trans "cancel" %}</a>
-              <button type="submit" class="btn btn-primary">{% trans "add_partner" %}</button>
+              <a href="{{ partner.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
+              <button type="submit" class="btn btn-primary">{% trans "update_partner" %}</button>
             </div>
           </div>
         </div>

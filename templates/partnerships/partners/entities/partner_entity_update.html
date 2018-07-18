@@ -9,7 +9,13 @@
 {% endblock %}
 
 {% block style %}
+  <link rel="stylesheet" href="{% static "css/select2.min.css" %}">
   <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "js/select2.min.js" %}"></script>
+  <script src="{% static "partnerships/partner_entity_form.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,9 +25,12 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <form action="{% url "partnerships:partners:entities:delete" partner.id partner_entity.id %}" method="post">
-      {% include "partnerships/includes/partner_entity_delete.html" %}
-      <button type="submit" class="btn btn-primary">{% trans "delete_partner_entity" %}</button>
+    <form action="{% url "partnerships:partners:entities:update" partner.id partner_entity.id %}" method="post" class="partner-form">
+      {% include "partnerships/partners/entities/includes/partner_entity_form.html" %}
+      <div class="pull-right">
+        <a href="{{ partner.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
+        <button type="submit" class="btn btn-primary">{% trans "update_partner_entity" %}</button>
+      </div>
     </form>
   </div>
 </div>

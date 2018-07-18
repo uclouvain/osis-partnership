@@ -97,9 +97,9 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
 
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'partnerships/includes/partners_list_results.html'
+            return 'partnerships/partners/includes/partners_list_results.html'
         else:
-            return 'partnerships/partners_list.html'
+            return 'partnerships/partners/partners_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(PartnersListView, self).get_context_data(**kwargs)
@@ -233,7 +233,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):
-    template_name = 'partnerships/partner_detail.html'
+    template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
 
     def get_queryset(self):
@@ -329,7 +329,7 @@ class PartnerFormMixin(object):
 
 class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, CreateView):
     form_class = PartnerForm
-    template_name = 'partnerships/partner_create.html'
+    template_name = 'partnerships/partners/partner_create.html'
     prefix = 'partner'
     initial = {
         'is_valid': True,
@@ -345,7 +345,7 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 
 class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, UpdateView):
     form_class = PartnerForm
-    template_name = 'partnerships/partner_update.html'
+    template_name = 'partnerships/partners/partner_update.html'
     prefix = 'partner'
     queryset = Partner.objects.select_related('contact_address')
     context_object_name = 'partner'
@@ -360,7 +360,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 
 
 class SimilarPartnerView(ListView):
-    template_name = 'partnerships/includes/similar_partners_preview.html'
+    template_name = 'partnerships/partners/includes/similar_partners_preview.html'
     context_object_name = 'similar_partners'
 
     def get_queryset(self):
@@ -425,14 +425,14 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
 
 class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
-    template_name = 'partnerships/partner_entity_create.html'
+    template_name = 'partnerships/partners/entities/partner_entity_create.html'
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
 
 
 class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, UpdateView):
-    template_name = 'partnerships/partner_entity_update.html'
+    template_name = 'partnerships/partners/entities/partner_entity_update.html'
     context_object_name = 'partner_entity'
 
     def test_func(self):
@@ -440,7 +440,7 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
 
 
 class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView):
-    template_name = 'partnerships/partner_entity_delete.html'
+    template_name = 'partnerships/partners/entities/partner_entity_delete.html'
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
@@ -497,16 +497,16 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
 
 
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
-    template_name = 'partnerships/partner_media_create.html'
+    template_name = 'partnerships/partners/medias/partner_media_create.html'
 
 
 class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
-    template_name = 'partnerships/partner_media_update.html'
+    template_name = 'partnerships/partners/medias/partner_media_update.html'
     context_object_name = 'media'
 
 
 class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
-    template_name = 'partnerships/partner_media_delete.html'
+    template_name = 'partnerships/partners/medias/partner_media_delete.html'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -541,7 +541,7 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
     
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'partnerships/includes/partnership_contact_form.html'
+            return 'partnerships/contacts/includes/partnership_contact_form.html'
         return self.template_name
 
     def form_invalid(self, form):
@@ -553,7 +553,7 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
 
 class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
 
-    template_name = 'partnerships/partnership_contact_create.html'
+    template_name = 'partnerships/contacts/partnership_contact_create.html'
     
     def form_valid(self, form):
         contact = form.save()
@@ -564,12 +564,12 @@ class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
     
 class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 
-    template_name = 'partnerships/partnership_contact_update.html'
+    template_name = 'partnerships/contacts/partnership_contact_update.html'
 
 
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
-    template_name = 'partnerships/contact_confirm_delete.html'
+    template_name = 'partnerships/contacts/contact_confirm_delete.html'
         
     
 class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
