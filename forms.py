@@ -582,6 +582,7 @@ class PartnershipForm(forms.ModelForm):
                 format=DATE_FORMAT,
                 attrs={'class': 'datepicker', 'autocomplete': 'off'},
             ),
+            'supervisor': autocomplete.ModelSelect2(url='partnerships:autocomplete:person'),
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),

@@ -20,6 +20,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 
+from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
@@ -881,15 +882,28 @@ class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMix
 
 ### Autocompletes
 
+class PersonAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Person.objects
+        if self.q:
+            qs = qs.filter(
+                Q(first_name__icontains=self.q) |
+                Q(middle_name__icontains=self.q) |
+                Q(last_name__icontains=self.q)
+            )
+        return qs
+
+
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return Country.objects.none()
+            return EntityVersion.objects.none()
 
         qs = EntityVersion.objects.all()
         if self.q:
-            qs = qs.filter(acronym__icontains=self.q)[:25]
+            qs = qs.filter(acronym__icontains=self.q)
 
         return qs
 
@@ -915,11 +929,11 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return Country.objects.none()
+            return EducationGroupYear.objects.none()
 
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         if self.q:
-            qs = qs.filter(title__icontains=self.q)[:25]
+            qs = qs.filter(title__icontains=self.q)
 
         return qs
 
