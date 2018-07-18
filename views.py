@@ -24,7 +24,7 @@ from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm,
-                               ContactForm, PartnershipAgreementForm)
+                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset)
 from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
@@ -698,25 +698,73 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         return self.partnership
 
 
-class PartnershipCreateView(LoginRequiredMixin, CreateView):
+class PartnershipFormMixin(object):
+
+    model = Partnership
+    form_class = PartnershipForm
+
+    def get_formset_years(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'years'
+        return PartnershipYearInlineFormset(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        if 'formset_years' not in kwargs:
+            kwargs['formset_years'] = self.get_formset_years()
+        return super(PartnershipFormMixin, self).get_context_data(**kwargs)
+
+    def form_invalid(self, form, formset_years):
+        messages.error(self.request, _('partnership_error'))
+        return self.render_to_response(self.get_context_data(form=form, formset_years=formset_years))
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        formset_years = self.get_formset_years()
+        # Do the valid before to ensure the errors are calculated
+        formset_years_valid = formset_years.is_valid()
+        if form.is_valid() and formset_years_valid:
+            return self.form_valid(form, formset_years)
+        else:
+            return self.form_invalid(form, formset_years)
+
+
+class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_create.html"
-    
-    def form_valid(self, form):
+
+    @transaction.atomic
+    def form_valid(self, form, formset_years):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
         partnership.save()
         form.save_m2m()
+        formset_years.save()
+        messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super(PartnershipCreateView, self).post(request, *args, **kwargs)
 
-class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
+
+class PartnershipUpdateView(LoginRequiredMixin, PartnershipFormMixin, UpdateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
+
+    @transaction.atomic
+    def form_valid(self, form, formset_years):
+        partnership = form.save()
+        formset_years.save()
+        messages.success(self.request, _('partnership_success'))
+        return redirect(partnership)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
 class PartnershipAgreementsMixin(object):

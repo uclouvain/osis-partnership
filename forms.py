@@ -2,6 +2,7 @@ from dal import autocomplete
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
@@ -573,6 +574,29 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
         }
+
+
+class PartnershipYearForm(forms.ModelForm):
+
+    class Meta:
+        model = PartnershipYear
+        fields = (
+            'academic_year',
+            'education_field',
+            'education_level',
+            'is_sms',
+            'is_smp',
+            'is_sta',
+            'is_stt',
+            'partnership_type',
+        )
+
+
+PartnershipYearInlineFormset = inlineformset_factory(
+    Partnership,
+    PartnershipYear,
+    form=PartnershipYearForm,
+)
 
 
 class PartnershipAgreementForm(forms.ModelForm):
