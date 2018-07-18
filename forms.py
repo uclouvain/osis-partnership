@@ -555,7 +555,6 @@ class PartnershipForm(forms.ModelForm):
 
     class Meta:
         model = Partnership
-        #fields = '__all__'
         fields = (
             'start_date',
             'partner',
@@ -566,14 +565,14 @@ class PartnershipForm(forms.ModelForm):
             'comment',
         )
         widgets = {
+            'start_date': DatePickerInput(
+                format=DATE_FORMAT,
+                attrs={'class': 'datepicker', 'autocomplete': 'off'},
+            ),
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
         }
-        
-    def __init__(self, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
 
 
 class PartnershipAgreementForm(forms.ModelForm):

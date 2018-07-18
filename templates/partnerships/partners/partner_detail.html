@@ -291,8 +291,14 @@
           <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "cancel" %}</button>
-          <button type="submit" class="btn btn-primary">{% trans "submit" %}</button>
+          <div class="row button-row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
         </div>
       </form>
     </div>

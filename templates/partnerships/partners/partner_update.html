@@ -45,12 +45,12 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="pull-right">
-              <a href="{{ partner.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
-              <button type="submit" class="btn btn-primary">{% trans "update_partner" %}</button>
-            </div>
+        <div class="row button-row">
+          <div class="col-sm-6">
+            <a href="{{ partner.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "update_partner" %}</button>
           </div>
         </div>
       </form>

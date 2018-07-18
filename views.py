@@ -704,11 +704,6 @@ class PartnershipCreateView(LoginRequiredMixin, CreateView):
     form_class = PartnershipForm
     template_name = "partnerships/partnership_create.html"
     
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
-    
     def form_valid(self, form):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
@@ -723,18 +718,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            'contact_form': ContactForm
-        })
-        return context
-    
 
 class PartnershipAgreementsMixin(object):
     context_object_name = 'agreement'

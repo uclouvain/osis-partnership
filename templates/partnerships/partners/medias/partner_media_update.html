@@ -21,7 +21,15 @@
   <div class="panel-body">
     <form action="{% url "partnerships:partners:medias:update" partner.id media.id %}" method="post" class="partner-form" enctype="multipart/form-data">
       {% include "partnerships/includes/media_form.html" %}
-      <button type="submit" id="add-media" class="btn btn-primary">{% trans "update_media" %}</button>
+
+      <div class="row button-row">
+        <div class="col-sm-6">
+          <a href="{% url "partnerships:partners:detail" partner.pk %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+        </div>
+        <div class="col-sm-6">
+          <button type="submit" id="add-media" class="btn btn-primary btn-block">{% trans "update_media" %}</button>
+        </div>
+      </div>
     </form>
   </div>
 </div>

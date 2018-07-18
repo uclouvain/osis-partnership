@@ -20,9 +20,14 @@
   <div class="panel-body">
     <form action="{% url "partnerships:agreements:update" partnership.id agreement.id %}" method="post" enctype="multipart/form-data">
       {% include "partnerships/agreements/includes/form.html" %}
-      <div class="pull-right">
-        <a href="{{ partnership.get_absolute_url }}" class="btn btn-default">{% trans "cancel" %}</a>
-        <button type="submit" class="btn btn-primary">{% trans "update_partnership_entity" %}</button>
+
+      <div class="row button-row">
+        <div class="col-sm-6">
+          <a href="{{ partnership.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+        </div>
+        <div class="col-sm-6">
+          <button type="submit" class="btn btn-primary btn-block">{% trans "update_partnership_entity" %}</button>
+        </div>
       </div>
     </form>
   </div>

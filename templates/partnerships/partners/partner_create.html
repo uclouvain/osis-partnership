@@ -71,11 +71,11 @@
         </div>
 
         <div class="row">
-          <div class="col-sm-12">
-            <div class="pull-right">
-              <a href="{% url "partnerships:partners:list" %}" class="btn btn-default">{% trans "cancel" %}</a>
-              <button type="submit" class="btn btn-primary">{% trans "add_partner" %}</button>
-            </div>
+          <div class="col-sm-6">
+            <a href="{% url "partnerships:partners:list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "add_partner" %}</button>
           </div>
         </div>
       </form>
