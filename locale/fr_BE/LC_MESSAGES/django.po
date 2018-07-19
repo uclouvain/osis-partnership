@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-16 12:34+0200\n"
-"PO-Revision-Date: 2018-07-16 12:36+0200\n"
+"POT-Creation-Date: 2018-07-19 10:08+0200\n"
+"PO-Revision-Date: 2018-07-19 10:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -134,6 +134,9 @@ msgstr "Faculté UCL"
 msgid "ucl_university_labo"
 msgstr "Laboratoire UCL"
 
+msgid "ucl_university_labo_filter"
+msgstr "Laboratoire UCL"
+
 msgid "university_offers"
 msgstr "Offres"
 
@@ -144,19 +147,22 @@ msgid "partner_entity"
 msgstr "Entité partenaire"
 
 msgid "is_sms"
-msgstr ""
+msgstr "Studient mobility for study (SMS)"
 
 msgid "is_smp"
-msgstr ""
+msgstr "Studient mobility for placement (SMP)"
 
 msgid "is_sta"
-msgstr ""
+msgstr "Teacher mobility assignment (STA)"
 
 msgid "is_stt"
-msgstr ""
+msgstr "Staff training mobility (STT)"
 
 msgid "partnership_type"
 msgstr "Type de partenariat"
+
+msgid "start_date_after_end_date"
+msgstr "La date de début se situe après la date de fin."
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -273,7 +279,7 @@ msgid "external_id"
 msgstr "ID Externe"
 
 msgid "to_synchronize_with_epc"
-msgstr ""
+msgstr "Pour synchroniser avec EPC"
 
 msgid "changed"
 msgstr "Modifié"
@@ -802,6 +808,9 @@ msgstr "Média"
 msgid "status"
 msgstr "État"
 
+msgid "eligible"
+msgstr "Éligible"
+
 msgid "note"
 msgstr "Note"
 
@@ -841,6 +850,58 @@ msgstr "Veuillez uniquement mettre un fichier ou une URL."
 msgid "visibility"
 msgstr "Visibilité"
 
+msgid "partnerships"
+msgstr "Partenariats"
+
+msgid "add_partner_entity"
+msgstr "Ajouter une entité partenaire"
+
+msgid "add_partnership_agreements"
+msgstr "Ajouter un accord"
+
+msgid "cancel"
+msgstr "Annuler"
+
+msgid "delete_partnership_agreement"
+msgstr "Supprimer l'accord"
+
+msgid "partnership_agreement_delete_warning"
+msgstr ""
+"Voulez-vous vraiment supprimer cet accord ? ATTENTION, cette action est "
+"irréversible."
+
+msgid "mandatory_fields_help_text"
+msgstr "Les champs accompagné d'un * sont obligatoires."
+
+msgid "update_partnership_agreement"
+msgstr "Mettre à jour l'accord"
+
+msgid "confirm_contact_delete"
+msgstr ""
+"Voulez-vous vraiment supprimer ce contact ? ATTENTION, cette action est "
+"irréversible."
+
+msgid "Are you sure you want to delete this contact?"
+msgstr ""
+
+msgid "identity"
+msgstr "Identité"
+
+msgid "role"
+msgstr "Rôle"
+
+msgid "coordinates"
+msgstr "Coordonnées"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "partnership_contact_create"
+msgstr "Créer un contact"
+
+msgid "partnership_contact_update"
+msgstr "Mettre à jour le contact"
+
 msgid "media_delete_warning"
 msgstr ""
 "Voulez-vous vraiment supprimer ce média ? ATTENTION, cette action est "
@@ -855,9 +916,6 @@ msgstr "Mettre à jour le média"
 msgid "delete_media"
 msgstr "Supprimer le média"
 
-msgid "mandatory_fields_help_text"
-msgstr "Les champs accompagné d'un * sont obligatoires."
-
 msgid "first"
 msgstr "Premier"
 
@@ -870,10 +928,40 @@ msgstr "Suivant"
 msgid "last"
 msgstr "Dernier"
 
+msgid "Partner"
+msgstr "Partenaire"
+
+msgid "UCL"
+msgstr "UCL"
+
+msgid "years"
+msgstr "Années"
+
+msgid "supervisor"
+msgstr "Superviseur"
+
+msgid "ucl"
+msgstr "UCL"
+
+msgid "financing"
+msgstr "Financement"
+
+msgid "validity"
+msgstr "Validité"
+
 msgid "partner_entity_delete_warning"
 msgstr ""
 "Voulez-vous vraiment supprimer cette entité ? ATTENTION, cette action est "
 "irréversible."
+
+msgid "partners"
+msgstr "Partenaires"
+
+msgid "delete_partner_entity"
+msgstr "Supprimer l'entité partenaire"
+
+msgid "update_partner_entity"
+msgstr "Mettre à jour l'entité partenaire"
 
 msgid "informations"
 msgstr "Informations"
@@ -899,28 +987,13 @@ msgstr "Partenariats en cours"
 msgid "partners_export"
 msgstr "Exporter la liste des partenaires"
 
-msgid "supervisor"
-msgstr "Superviseur"
-
-msgid "ucl"
-msgstr "UCL"
-
-msgid "financing"
-msgstr "Financement"
-
-msgid "validity"
-msgstr "Validité"
-
 msgid "similar_partners_possible"
 msgstr ""
 "Ce partenaire existe peut-être déjà. Vérifier dans la liste ci-dessous avant "
 "de l'ajouter."
 
-msgid "partnerships"
-msgstr "Partenariats"
-
-msgid "partners"
-msgstr "Partenaires"
+msgid "add_media"
+msgstr "Ajouter un média"
 
 msgid "new_partner"
 msgstr "Nouveau partenaire"
@@ -937,9 +1010,6 @@ msgstr "Entitées associés"
 msgid "add_entities_after_creation"
 msgstr ""
 "Vous pourrez ajouter des entités partenaires après la création du partenaire."
-
-msgid "cancel"
-msgstr "Annuler"
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
@@ -961,23 +1031,14 @@ msgstr "Il n'y a pas encore de média."
 msgid "new_media"
 msgstr "Nouveau média"
 
-msgid "add_media"
-msgstr "Ajouter un média"
-
 msgid "entities"
 msgstr "Entités"
-
-msgid "delete_partner_entity"
-msgstr "Supprimer l'entité partenaire"
 
 msgid "contact_mobility_in"
 msgstr "Contact de type mobilité in"
 
 msgid "contact_mobility_out"
 msgstr "Contact de type mobilité out"
-
-msgid "add_partner_entity"
-msgstr "Ajouter une entité partenaire"
 
 msgid "agreements"
 msgstr "Accords"
@@ -991,38 +1052,50 @@ msgstr "Fermer"
 msgid "submit"
 msgstr "Envoyer"
 
-msgid "update_partner_entity"
-msgstr "Mettre à jour l'entité partenaire"
-
 msgid "search_partners"
 msgstr "Rechercher les partenaires"
 
 msgid "search"
 msgstr "Rechercher"
 
-msgid "back_to_list"
-msgstr "Retour à la liste"
-
-msgid "partnership_between"
-msgstr "Partenariat entre"
-
-msgid "not_valid"
-msgstr "Non valide"
-
-msgid "no_university"
-msgstr "Pas de faculté"
+msgid "partnership_create"
+msgstr "Créer le partenariat"
 
 msgid "offers"
 msgstr "Offres"
 
-msgid "mobility_type"
-msgstr "Type de mobilité"
+msgid "dates"
+msgstr "Dates"
 
-msgid "search_partnerships"
+msgid "education_field"
+msgstr ""
+
+msgid "education_level"
+msgstr ""
+
+msgid "edit_partnership"
+msgstr "Mettre à jour le partenariat"
+
+msgid "update_contact"
+msgstr "Mettre à jour le contact"
+
+msgid "delete_contact"
+msgstr "Supprimer le contact"
+
+msgid "new_contact"
+msgstr "Nouveau contact"
+
+msgid "add_contact"
+msgstr "Ajouter un contact"
+
+msgid "add_partnership"
+msgstr "Ajouter un partenariat"
+
+msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
 msgid "id"
-msgstr ""
+msgstr "ID"
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
@@ -1042,11 +1115,43 @@ msgstr "Média sauvegardé avec succès."
 msgid "partner_media_error"
 msgstr "Erreur lors de la sauvegarde du média."
 
+msgid "contact_creation_success"
+msgstr "Contact créé avec succès."
+
+msgid "partnership_error"
+msgstr "Erreur lors de la sauvegarde du partenariat."
+
+msgid "partnership_success"
+msgstr "Partenariat sauvegardé avec succès."
+
+msgid "partnership_agreement_error"
+msgstr "Erreur lors de la sauvegarde de l'accord."
+
+msgid "partnership_agreement_success"
+msgstr "Accord sauvegardé avec succès."
+
+#, fuzzy
+#~| msgid "update_partner_entity"
+#~ msgid "update_partnership_entity"
+#~ msgstr "Mettre à jour l'entité partenaire"
+
+#~ msgid "delete_partnership_agreements"
+#~ msgstr "Supprimer les accords"
+
+#~ msgid "back_to_list"
+#~ msgstr "Retour à la liste"
+
+#~ msgid "not_valid"
+#~ msgstr "Non valide"
+
+#~ msgid "no_university"
+#~ msgstr "Pas de faculté"
+
+#~ msgid "mobility_type"
+#~ msgstr "Type de mobilité"
+
 #~ msgid "filter"
 #~ msgstr "Filtrer"
-
-#~ msgid "end_date"
-#~ msgstr "Date de fin"
 
 #~ msgid "mobility_type_sms"
 #~ msgstr "SMS"
@@ -1117,20 +1222,11 @@ msgstr "Erreur lors de la sauvegarde du média."
 #~ msgid "No tag yet"
 #~ msgstr "Pas encore de tag"
 
-#~ msgid "UCL"
-#~ msgstr "UCL"
-
-#~ msgid "Partner"
-#~ msgstr "Partenaire"
-
 #~ msgid "Partnership"
 #~ msgstr "Partenariat"
 
 #~ msgid "document"
 #~ msgstr "Document"
-
-#~ msgid "entity"
-#~ msgstr "Entité"
 
 #~ msgid "new_entity"
 #~ msgstr "Nouvelle entité"
