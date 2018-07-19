@@ -14,7 +14,7 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnershipContactCreateView, PartnershipContactUpdateView,
                                PartnershipContactDeleteView,
                                PartneshipAgreementDeleteView, PartneshipAgreementUpdateView,
-                               PartneshipAgreementCreateView)
+                               PartneshipAgreementCreateView, PersonAutocompleteView)
 
 
 urlpatterns = [
@@ -51,6 +51,11 @@ urlpatterns = [
         url(r'^new/$', PartnerCreateView.as_view(), name="create"),
     ], namespace='partners')),
     url(r'^autocomplete/', include([
+        url(
+            '^person/$',
+            PersonAutocompleteView.as_view(),
+            name='person'
+        ),
         url(
             '^ucl_university/$',
             UclUniversityAutocompleteView.as_view(),

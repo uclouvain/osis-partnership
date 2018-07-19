@@ -33,38 +33,38 @@ class PartnerCreateViewTest(TestCase):
 
     def test_get_partner_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_partner_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_partner_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_update.html')
 
     def test_get_other_partner_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
         response = self.client.get(url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
         response = self.client.get(url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post(self):
@@ -94,4 +94,4 @@ class PartnerCreateViewTest(TestCase):
             'contact_address-country': self.country.pk,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')

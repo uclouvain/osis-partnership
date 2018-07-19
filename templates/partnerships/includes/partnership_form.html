@@ -1,40 +1,82 @@
 {% load bootstrap3 i18n %}
 
-{% bootstrap_form_errors form %}
-<form action="#" method="POST">
-  {% csrf_token %}
-  <h2>{% trans 'Partner' %}</h2>
-  <div class="row">
-    <div class="col-sm-6">
-      {% bootstrap_field form.partner %}
-    </div>
-    <div class="col-sm-6">
-      {% bootstrap_field form.partner_entity %}
-    </div>
+<h2>{% trans 'Partner' %}</h2>
+<div class="row">
+  <div class="col-sm-6">
+    {% bootstrap_field form.partner %}
   </div>
-  <div class="row">
-    <div class="col-sm-12">
-      {% bootstrap_field form.start_date %}
-    </div>
+  <div class="col-sm-6">
+    {% bootstrap_field form.partner_entity %}
   </div>
-  <h2>{% trans 'UCL' %}</h2>
-  <div class="row">
-    <div class="col-sm-4">
-      {% bootstrap_field form.ucl_university %}
-    </div>
-    <div class="col-sm-4">
-      {% bootstrap_field form.ucl_university_labo %}
-    </div>
-    <div class="col-sm-4">
-      {% bootstrap_field form.university_offers %}
-    </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.start_date %}
   </div>
-  <div class="row">
-    <div class="col-sm-12">
-      {% bootstrap_field form.comment %}
-    </div>
+</div>
+<h2>{% trans 'UCL' %}</h2>
+<div class="row">
+  <div class="col-sm-4">
+    {% bootstrap_field form.ucl_university %}
   </div>
-  <input type="submit" name="submit" value="submit"
-         class="btn btn-primary btn-block"/>
-</form>
-{{ form.media }}
+  <div class="col-sm-4">
+    {% bootstrap_field form.ucl_university_labo %}
+  </div>
+  <div class="col-sm-4">
+    {% bootstrap_field form.university_offers %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.supervisor %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.tags %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.comment %}
+  </div>
+</div>
+
+<h2>{% trans "years" %}</h2>
+
+{{ formset_years.management_form }}
+
+{% for form_year in formset_years %}
+  {% for field in form_year.hidden_fields %}
+    {{ field }}
+  {% endfor %}
+<div class="row">
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.academic_year %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.education_field %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.education_level %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.partnership_type %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.is_sms %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.is_smp %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.is_sta %}
+  </div>
+  <div class="col-sm-3">
+    {% bootstrap_field form_year.is_stt %}
+  </div>
+</div>
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}

@@ -6,19 +6,47 @@
   <li class="active">{{ partnership }}</li>
 {% endblock %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "css/select2.min.css" %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
+  <script src="{% static "js/select2.min.js" %}"></script>
+{% endblock %}
+
 {% block content %}
   <div class="page-header">
     <h1>{{ partnership }}</h1>
   </div>
+
+  {% bootstrap_form_errors form %}
+
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="well">
+      <form action="{% url "partnerships:partnership_update" partnership.pk %}" method="post">
+        {% csrf_token %}
+
+        {% include "partnerships/includes/partnership_form.html" %}
         <div class="row">
-          <div class="col-sm-12">
-            {% include "partnerships/includes/partnership_form.html" %}
+          <div class="col-sm-6">
+            <a href="{{ partnership.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "edit_partnership" %}</button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
+
+  {{ form.media }}
 {% endblock %}

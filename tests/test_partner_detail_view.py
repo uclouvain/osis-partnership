@@ -18,10 +18,10 @@ class PartnerDetailViewTest(TestCase):
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_detail.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')

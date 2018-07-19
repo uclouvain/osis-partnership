@@ -31,32 +31,32 @@ class PartnersListViewTest(TestCase):
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partners_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
 
     def test_get_list_pagination(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?page=2')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 10)
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?ordering=-erasmus_code')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(context['partners'][0], self.partner_erasmus_last)
 
     def test_filter_name(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?name=foo')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_name)
@@ -65,7 +65,7 @@ class PartnersListViewTest(TestCase):
         self.client.force_login(self.user)
         url = self.url + '?partner_type={0}'.format(self.partner_partner_type.partner_type.id)
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_partner_type)
@@ -73,7 +73,7 @@ class PartnersListViewTest(TestCase):
     def test_filter_pic_code(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?pic_code=foo')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_pic_code)
@@ -81,7 +81,7 @@ class PartnersListViewTest(TestCase):
     def test_filter_erasmus_code(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?erasmus_code=foo')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_erasmus_code)
@@ -89,7 +89,7 @@ class PartnersListViewTest(TestCase):
     def test_filter_is_ies(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?is_ies=True')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_is_ies)
@@ -97,7 +97,7 @@ class PartnersListViewTest(TestCase):
     def test_filter_is_valid(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?is_valid=False')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_is_valid)
@@ -105,7 +105,7 @@ class PartnersListViewTest(TestCase):
     def test_filter_is_actif(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?is_actif=False')
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_is_actif)
@@ -114,7 +114,7 @@ class PartnersListViewTest(TestCase):
         self.client.force_login(self.user)
         url = self.url + '?tags={0}'.format(self.partner_tags.tags.all().first().id)
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'partnerships/partners_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_tags)

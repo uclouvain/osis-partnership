@@ -6,19 +6,47 @@
   <li class="active">{% trans "partnership_create" %}</li>
 {% endblock %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "css/select2.min.css" %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
+  <script src="{% static "js/select2.min.js" %}"></script>
+{% endblock %}
+
 {% block content %}
   <div class="page-header">
-    <h1>{% trans "new_partnership" %}</h1>
+    <h1>{% trans "partnership_create" %}</h1>
   </div>
+
+  {% bootstrap_form_errors form %}
+
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="well">
-        <div class="row">
-          <div class="col-sm-12">
-            {% include 'partnerships/includes/partnership_form.html' %}
+      <form action="{% url "partnerships:partnership_create" %}" method="post">
+        {% csrf_token %}
+
+        {% include "partnerships/includes/partnership_form.html" %}
+        <div class="row button-row">
+          <div class="col-sm-6">
+            <a href="{% url "partnerships:partnerships_list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "partnership_create" %}</button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
+
+  {{ form.media }}
 {% endblock %}

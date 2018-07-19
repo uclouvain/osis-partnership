@@ -33,24 +33,24 @@ class PartnerEntityCreateViewTest(TestCase):
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_entity_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_entity_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_entity_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
 
     def test_get_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_entity_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -83,7 +83,7 @@ class PartnerEntityCreateViewTest(TestCase):
             'parent': '',
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
 
 
 class PartnerEntityUpdateViewTest(TestCase):
@@ -111,24 +111,24 @@ class PartnerEntityUpdateViewTest(TestCase):
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
 
     def test_get_other_partner_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_own_partner_as_gf(self):
@@ -136,14 +136,14 @@ class PartnerEntityUpdateViewTest(TestCase):
         url = reverse('partnerships:partners:entities:update',
                       kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
         response = self.client.get(url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
         url = reverse('partnerships:partners:entities:update',
                       kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
         response = self.client.get(url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_entity_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -176,4 +176,4 @@ class PartnerEntityUpdateViewTest(TestCase):
             'parent': '',
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partner_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')

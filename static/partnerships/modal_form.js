@@ -26,6 +26,7 @@
 
         $.get(url, function(data) {
             $modal_body.html(data);
+            $modal_body.find('.button-row').remove();
             $modal_body.find('button[type=submit]').remove();
         }).fail(function(error) {
             console.error(error);

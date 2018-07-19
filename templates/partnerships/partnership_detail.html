@@ -21,15 +21,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-          <a href="{% url 'partnerships:partnerships_list' %}">{% trans 'back_to_list' %}</a>
-          <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}">{% trans 'edit_partnership' %}</a>
-        </div>
-      </div>
-      
       <!-- Partenariat -->
-      <h2>{% trans "partnership_between" %}</h2>
       <div class="row">
         <div class="col-sm-12">
           <p>
@@ -37,42 +29,64 @@
               {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
             </em>
           </p>
-          <i>{% if partnership.is_valid %}{% trans "valid" %}{% else %}{% trans "not_valid" %}{% endif %}</i>
         </div>
       </div>
-      {% if partnership.partner or partnership.partner_entity %}
-        <div class="row">
-          <div class="col-sm-12">
-            {% if partnership.partner %}<strong>{{ partnership.partner }}</strong>{% endif %}
-            {% if partnership.partner and partnership.partner_entity %} &gt; {% endif %}
-            {% if partnership.partner_entity %}<strong>{{ partnership.partner_entity }}</strong>{% endif %}
-          </div>
-        </div>
-      {% endif %}
+
       <div class="row">
-        <div class="col-sm-12">
-          <strong>{% if partnership.ucl_university %}{{ partnership.ucl_university.acronym }}{% else %}{% trans "no_university" %}{% endif %}</strong>
-          {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
-          {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
+        <div class="col-sm-12 col-md-12">
+          <dl class="dl-horizontal">
+            <dt>{% trans "is_valid" %}</dt>
+            <dd><i class="fa {{ partnership.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+            <dt>{% trans "partner" %}</dt>
+            <dd>
+              <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
+              {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity }}</strong>{% endif %}
+            </dd>
+
+            <dt>{% trans "ucl_university" %}</dt>
+            <dd>
+              <strong>{{ partnership.ucl_university }}</strong>
+              {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
+              {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
+            </dd>
+
+            <dt>{% trans "supervisor" %}</dt>
+            <dd>{{ partnership.supervisor|default_if_none:"" }}</dd>
+
+            <dt>{% trans "dates" %}</dt>
+            <dd>
+              {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
+            </dd>
+          </dl>
         </div>
       </div>
-      {% if partnership.start_date or partnership.end_date %}<div class="row"><div class="col-sm-12">{{ partnership.start_date|default_if_none:"" }} &gt; {{ partnership.end_date|default_if_none:"" }}</div></div>{% endif %}
 
       {% if partnership.years.all %}
-      <table class="table">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th></th>
-            <th>{% trans "mobility_type" %}</th>
             <th>{% trans "partnership_type" %}</th>
+            <th>{% trans "education_field" %}</th>
+            <th>{% trans "education_level" %}</th>
+            <th>{% trans "is_sms" %}</th>
+            <th>{% trans "is_smp" %}</th>
+            <th>{% trans "is_sta" %}</th>
+            <th>{% trans "is_stt" %}</th>
           </tr>
         </thead>
         <tbody>
           {% for partnership_year in partnership.years.all %}
           <tr>
             <th>{{ partnership_year.academic_year }}</th>
-            <td>{{ partnership_year.mobility_type }}</td>
             <td>{{ partnership_year.get_partnership_type_display }}</td>
+            <td>{{ partnership_year.get_education_field_display }}</td>
+            <td>{{ partnership_year.get_education_level_display|default_if_none:"" }}</td>
+            <td><i class="fa {{ partnership_year.is_sms|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_stt|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -82,11 +96,33 @@
       {% if partnership.comment is not None %}
         <div class="row">
           <div class="col-sm-12">
-            {{ partnership.comment }}
+            {{ partnership.comment|linebreaksbr }}
           </div>
         </div>
       {% endif %}
-      
+
+      <!-- Tags -->
+      <h2>{% trans "tags" %}</h2>
+      {% if partnership.tags.all %}
+        <div class="row">
+          <div class="col-sm-12">
+            <ul class="tags-list">
+              {% for tag in partnership.tags.all %}
+                <li>{{ tag }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if can_change %}
+      <div class="row">
+        <div class="col-sm-12">
+          <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}" class="btn btn-default pull-right">{% trans 'edit_partnership' %}</a>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Contacts -->
       {% if partnership.contacts.all %}
         <h2>{% trans "contacts" %}</h2>
@@ -184,20 +220,6 @@
         </div>
       </div>
       {% endif %}
-      
-      <!-- Tags -->
-      <h2>{% trans "tags" %}</h2>
-      {% if partnership.tags.all %}
-        <div class="row">
-          <div class="col-sm-12">
-            <ul class="tags-list">
-              {% for tag in partnership.tags.all %}
-                <li>{{ tag }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      {% endif %}
     </div>
   </div>
 
@@ -214,8 +236,14 @@
           <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "cancel" %}</button>
-          <button type="submit" class="btn btn-primary">{% trans "submit" %}</button>
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
         </div>
       </form>
     </div>

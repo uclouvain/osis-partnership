@@ -20,11 +20,12 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 
+from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm,
-                               ContactForm, PartnershipAgreementForm)
+                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset)
 from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
@@ -97,9 +98,9 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
 
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'partnerships/includes/partners_list_results.html'
+            return 'partnerships/partners/includes/partners_list_results.html'
         else:
-            return 'partnerships/partners_list.html'
+            return 'partnerships/partners/partners_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(PartnersListView, self).get_context_data(**kwargs)
@@ -233,7 +234,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):
-    template_name = 'partnerships/partner_detail.html'
+    template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
 
     def get_queryset(self):
@@ -329,7 +330,7 @@ class PartnerFormMixin(object):
 
 class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, CreateView):
     form_class = PartnerForm
-    template_name = 'partnerships/partner_create.html'
+    template_name = 'partnerships/partners/partner_create.html'
     prefix = 'partner'
     initial = {
         'is_valid': True,
@@ -345,7 +346,7 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 
 class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixin, UpdateView):
     form_class = PartnerForm
-    template_name = 'partnerships/partner_update.html'
+    template_name = 'partnerships/partners/partner_update.html'
     prefix = 'partner'
     queryset = Partner.objects.select_related('contact_address')
     context_object_name = 'partner'
@@ -360,7 +361,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 
 
 class SimilarPartnerView(ListView):
-    template_name = 'partnerships/includes/similar_partners_preview.html'
+    template_name = 'partnerships/partners/includes/similar_partners_preview.html'
     context_object_name = 'similar_partners'
 
     def get_queryset(self):
@@ -425,14 +426,14 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
 
 class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
-    template_name = 'partnerships/partner_entity_create.html'
+    template_name = 'partnerships/partners/entities/partner_entity_create.html'
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
 
 
 class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, UpdateView):
-    template_name = 'partnerships/partner_entity_update.html'
+    template_name = 'partnerships/partners/entities/partner_entity_update.html'
     context_object_name = 'partner_entity'
 
     def test_func(self):
@@ -440,7 +441,7 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
 
 
 class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView):
-    template_name = 'partnerships/partner_entity_delete.html'
+    template_name = 'partnerships/partners/entities/partner_entity_delete.html'
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
@@ -497,16 +498,16 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
 
 
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
-    template_name = 'partnerships/partner_media_create.html'
+    template_name = 'partnerships/partners/medias/partner_media_create.html'
 
 
 class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
-    template_name = 'partnerships/partner_media_update.html'
+    template_name = 'partnerships/partners/medias/partner_media_update.html'
     context_object_name = 'media'
 
 
 class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
-    template_name = 'partnerships/partner_media_delete.html'
+    template_name = 'partnerships/partners/medias/partner_media_delete.html'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -541,7 +542,7 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
     
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'partnerships/includes/partnership_contact_form.html'
+            return 'partnerships/contacts/includes/partnership_contact_form.html'
         return self.template_name
 
     def form_invalid(self, form):
@@ -553,7 +554,7 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
 
 class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
 
-    template_name = 'partnerships/partnership_contact_create.html'
+    template_name = 'partnerships/contacts/partnership_contact_create.html'
     
     def form_valid(self, form):
         contact = form.save()
@@ -564,12 +565,12 @@ class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
     
 class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 
-    template_name = 'partnerships/partnership_contact_update.html'
+    template_name = 'partnerships/contacts/partnership_contact_update.html'
 
 
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
-    template_name = 'partnerships/contact_confirm_delete.html'
+    template_name = 'partnerships/contacts/contact_confirm_delete.html'
         
     
 class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
@@ -698,43 +699,74 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         return self.partnership
 
 
-class PartnershipCreateView(LoginRequiredMixin, CreateView):
+class PartnershipFormMixin(object):
+
+    model = Partnership
+    form_class = PartnershipForm
+
+    def get_formset_years(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'years'
+        return PartnershipYearInlineFormset(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        if 'formset_years' not in kwargs:
+            kwargs['formset_years'] = self.get_formset_years()
+        return super(PartnershipFormMixin, self).get_context_data(**kwargs)
+
+    def form_invalid(self, form, formset_years):
+        messages.error(self.request, _('partnership_error'))
+        return self.render_to_response(self.get_context_data(form=form, formset_years=formset_years))
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        formset_years = self.get_formset_years()
+        # Do the valid before to ensure the errors are calculated
+        formset_years_valid = formset_years.is_valid()
+        if form.is_valid() and formset_years_valid:
+            return self.form_valid(form, formset_years)
+        else:
+            return self.form_invalid(form, formset_years)
+
+
+class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_create.html"
-    
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
-    
-    def form_valid(self, form):
+
+    @transaction.atomic
+    def form_valid(self, form, formset_years):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
         partnership.save()
         form.save_m2m()
+        formset_years.save()
+        messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super(PartnershipCreateView, self).post(request, *args, **kwargs)
 
-class PartnershipUpdateView(LoginRequiredMixin, UpdateView):
+
+class PartnershipUpdateView(LoginRequiredMixin, PartnershipFormMixin, UpdateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
+    @transaction.atomic
+    def form_valid(self, form, formset_years):
+        partnership = form.save()
+        formset_years.save()
+        messages.success(self.request, _('partnership_success'))
+        return redirect(partnership)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            'contact_form': ContactForm
-        })
-        return context
-    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
+
 
 class PartnershipAgreementsMixin(object):
     context_object_name = 'agreement'
@@ -850,15 +882,28 @@ class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMix
 
 ### Autocompletes
 
+class PersonAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Person.objects
+        if self.q:
+            qs = qs.filter(
+                Q(first_name__icontains=self.q) |
+                Q(middle_name__icontains=self.q) |
+                Q(last_name__icontains=self.q)
+            )
+        return qs
+
+
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return Country.objects.none()
+            return EntityVersion.objects.none()
 
         qs = EntityVersion.objects.all()
         if self.q:
-            qs = qs.filter(acronym__icontains=self.q)[:25]
+            qs = qs.filter(acronym__icontains=self.q)
 
         return qs
 
@@ -884,11 +929,11 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return Country.objects.none()
+            return EducationGroupYear.objects.none()
 
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         if self.q:
-            qs = qs.filter(title__icontains=self.q)[:25]
+            qs = qs.filter(title__icontains=self.q)
 
         return qs
 
