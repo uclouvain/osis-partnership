@@ -709,7 +709,13 @@ class PartnershipFormMixin(object):
     def get_formset_years(self):
         kwargs = self.get_form_kwargs()
         kwargs['prefix'] = 'years'
+        del kwargs['user']
         return PartnershipYearInlineFormset(**kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs):
         if 'formset_years' not in kwargs:
@@ -763,7 +769,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     template_name = "partnerships/partnership_update.html"
 
     def test_func(self):
-        return self.object.user_can_change(self.request.user)
+        return self.get_object().user_can_change(self.request.user)
 
     @transaction.atomic
     def form_valid(self, form, formset_years):

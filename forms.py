@@ -1,3 +1,5 @@
+from datetime import date
+
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
@@ -586,6 +588,29 @@ class PartnershipForm(forms.ModelForm):
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
             'tags': autocomplete.Select2Multiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(PartnershipForm, self).__init__(*args, **kwargs)
+
+    def clean_start_date(self):
+        start_date = self.cleaned_data['start_date']
+        if self.instance.pk is not None:
+            return start_date
+        if user_is_adri(self.user):
+            return start_date
+        # GF User can create if before year N - 1 and the day/month specified in the configuration.
+        today = date.today()
+        if start_date.year - 1 < today.year:
+            raise ValidationError(_('partnership_start_date_gf_too_late'))
+        if start_date.year - 1 > today.year:
+            return start_date
+        configuration = PartnershipConfiguration.get_configuration()
+        if (today.month > configuration.partnership_creation_max_date_month
+                or (today.month == configuration.partnership_creation_max_date_month
+                    and today.day > configuration.partnership_creation_max_date_day)):
+            raise ValidationError(_('partnership_start_date_gf_too_late'))
+        return start_date
 
 
 class PartnershipYearForm(forms.ModelForm):
