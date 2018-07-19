@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+
 from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnerEntityCreateView,
                                PartnerEntityDeleteView,
@@ -15,7 +16,6 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnershipContactDeleteView,
                                PartneshipAgreementDeleteView, PartneshipAgreementUpdateView,
                                PartneshipAgreementCreateView, PersonAutocompleteView)
-
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),

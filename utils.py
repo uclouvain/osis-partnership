@@ -1,7 +1,8 @@
 from datetime import date
 
-from base.models.person import Person
 from django.db.models import Q
+
+from base.models.person import Person
 
 
 def user_is_adri(user):

@@ -1,15 +1,15 @@
 from datetime import date
 
+from django.conf import settings
+from django.db import models
 from django.db.models import Max
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
+from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.person import Person
-from django.conf import settings
-from django.db import models
-from django.urls import reverse
-from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
 from partnership.utils import user_is_adri
 
 

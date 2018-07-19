@@ -1,32 +1,29 @@
 from dal import autocomplete
-
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse, FileResponse
+from django.db import transaction
+from django.db.models import Count, Prefetch, Q, QuerySet
+from django.db.models.functions import Now
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.timezone import now
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views import View
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
+                                       UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db import transaction
-from django.db.models import Count, Prefetch, Q, QuerySet
-from django.db.models.functions import Now, Concat
-from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext_lazy as _, ugettext
-from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
-                                       UpdateView)
-
 from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm,
                                ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset)
-from partnership.models import Media, Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
+from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
 from partnership.utils import user_is_adri
 
 
