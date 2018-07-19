@@ -96,12 +96,10 @@ class PartnershipTagFactory(factory.DjangoModelFactory):
 class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
-        django_get_or_create = ('tags', 'partner')
+        django_get_or_create = ('partner',)
 
-    is_valid = True
     partner = factory.SubFactory(PartnerFactory)
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
-    end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
     partner_entity = factory.SubFactory(PartnerEntityFactory)
     ucl_university = factory.SubFactory('base.tests.factories.entity.EntityFactory')
@@ -122,7 +120,8 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
         model = PartnershipYear
 
     partnership_type = 'mobility'
-
+    academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
+    partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
 
 class PartnershipOfferFactory(factory.DjangoModelFactory):
     class Meta:
