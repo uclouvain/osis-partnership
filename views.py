@@ -738,6 +738,7 @@ class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView
         partnership.author = self.request.user
         partnership.save()
         form.save_m2m()
+        formset_years.instance = partnership
         formset_years.save()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)

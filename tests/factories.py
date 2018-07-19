@@ -98,10 +98,8 @@ class PartnershipFactory(factory.DjangoModelFactory):
         model = Partnership
         django_get_or_create = ('tags', 'partner')
 
-    is_valid = True
     partner = factory.SubFactory(PartnerFactory)
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
-    end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
     partner_entity = factory.SubFactory(PartnerEntityFactory)
     ucl_university = factory.SubFactory('base.tests.factories.entity.EntityFactory')
