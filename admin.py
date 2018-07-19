@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership, PartnershipTag,
                                 PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement)

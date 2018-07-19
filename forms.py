@@ -1,5 +1,4 @@
 from dal import autocomplete
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
@@ -7,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity_version import EntityVersion
 from base.models.entity import Entity
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
     PartnershipYear, Partnership, PartnershipAgreement
