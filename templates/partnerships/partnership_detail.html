@@ -130,6 +130,7 @@
           <div class="col-sm-12 col-md-6">
             {% for contact in partnership.contacts.all %}
               {% include "partnerships/includes/contact.html" with contact=contact %}
+              {% if can_change %}
               <div class="btn-group">
                 <a class="btn btn-default" href="#">
                   <i class="fa fa-eye fa-fw"></i>
@@ -147,6 +148,7 @@
                   </li>
                 </ul>
               </div>
+              {% endif %}
             {% endfor %}
           </div>
         </div>

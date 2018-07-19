@@ -22,8 +22,10 @@ from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm,
-                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset)
-from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
+                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset,
+                               PartnershipConfigurationForm)
+from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement, \
+    PartnershipConfiguration
 from partnership.utils import user_is_adri
 
 
@@ -588,6 +590,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PartnershipsListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_change_configuration'] = user_is_adri(self.request.user)
+        context['can_add_partnership'] = Partnership.user_can_add(self.request.user)
         return context
 
     def get_form_kwargs(self):
@@ -879,6 +883,17 @@ class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMix
         if self.request.is_ajax():
             return 'partnerships/agreements/includes/delete.html'
         return self.template_name
+
+
+class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    form_class = PartnershipConfigurationForm
+    template_name = 'partnerships/configuration_update.html'
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def get_object(self, queryset=None):
+        return PartnershipConfiguration.get_configuration()
 
 
 ### Autocompletes
