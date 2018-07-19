@@ -15,10 +15,11 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnershipContactCreateView, PartnershipContactUpdateView,
                                PartnershipContactDeleteView,
                                PartneshipAgreementDeleteView, PartneshipAgreementUpdateView,
-                               PartneshipAgreementCreateView, PersonAutocompleteView)
+                               PartneshipAgreementCreateView, PersonAutocompleteView, PartneshipConfigurationUpdateView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
+    url(r'^configuration/$', PartneshipConfigurationUpdateView.as_view(), name='configuration_update'),
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
     url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
     url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="partnership_update"),

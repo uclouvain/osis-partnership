@@ -8,7 +8,7 @@ from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
-    PartnershipYear, Partnership, PartnershipAgreement
+    PartnershipYear, Partnership, PartnershipAgreement, PartnershipConfiguration
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -636,3 +636,15 @@ class PartnershipAgreementForm(forms.ModelForm):
             self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
             self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
         return self.cleaned_data
+
+
+class PartnershipConfigurationForm(forms.ModelForm):
+
+    class Meta:
+        model = PartnershipConfiguration
+        fields = [
+            'partnership_creation_max_date_day',
+            'partnership_creation_max_date_month',
+            'partnership_update_max_date_day',
+            'partnership_update_max_date_month',
+        ]

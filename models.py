@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.utils import user_is_adri
+from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
 
 
 class PartnerType(models.Model):
@@ -97,17 +97,7 @@ class PartnerEntity(models.Model):
         )
 
     def user_can_change(self, user):
-        try:
-            user_is_in_author_faculty = (
-                user
-                .person
-                .entitymanager_set
-                .filter(entity__entitymanager__person__user=self.author)
-                .exists()
-            )
-        except Person.DoesNotExist:
-            user_is_in_author_faculty = False
-        return user == self.author or user_is_adri(user) or user_is_in_author_faculty
+        return user_is_adri(user) or user_is_in_user_faculty(user, self.author)
 
     def user_can_delete(self, user):
         return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()
@@ -252,17 +242,7 @@ class Partner(models.Model):
 
     @staticmethod
     def user_can_add(user):
-        try:
-            is_adri = user_is_adri(user)
-            is_gf = (
-                user
-                .person
-                .entitymanager_set.all()
-                .exists()
-            )
-            return is_adri or is_gf
-        except Person.DoesNotExist:
-            return False
+        return user_is_adri(user) or user_is_gf(user)
 
     def user_can_change(self, user):
         return user_is_adri(user)
@@ -378,20 +358,18 @@ class Partnership(models.Model):
     
     @staticmethod
     def user_can_add(user):
-        try:
-            is_adri = user_is_adri(user)
-            is_gf = (
-                user
-                .person
-                .entitymanager_set.all()
-                .exists()
-            )
-            return is_adri or is_gf
-        except Person.DoesNotExist:
+        if user_is_adri(user):
+            return True
+        if not user_is_gf(user):
             return False
+        # TODO TEST DATE
 
     def user_can_change(self, user):
-        return user_is_adri(user)
+        if user_is_adri(user):
+            return True
+        if not user_is_in_user_faculty(user, self.author):
+            return False
+        # TODO TEST DATE
 
     @cached_property
     def is_valid(self):
@@ -681,6 +659,59 @@ class PartnershipAgreement(models.Model):
         blank=True,
         default='',
     )
+
+
+class PartnershipConfiguration(models.Model):
+    DAYS_CHOICES = [(day, day) for day in range(1, 32)]
+    MONTHES_CHOICES = (
+        (1, _('january')),
+        (2, _('february')),
+        (3, _('march')),
+        (4, _('april')),
+        (5, _('may')),
+        (6, _('june')),
+        (7, _('july')),
+        (8, _('august')),
+        (9, _('september')),
+        (10, _('october')),
+        (11, _('november')),
+        (12, _('december')),
+    )
+
+    partnership_creation_max_date_day = models.IntegerField(
+        _('partnership_creation_max_date_day'),
+        help_text=_('partnership_creation_max_date_day_help_text'),
+        choices=DAYS_CHOICES,
+        default=31,
+    )
+
+    partnership_creation_max_date_month = models.IntegerField(
+        _('partnership_creation_max_date_month'),
+        help_text=_('partnership_creation_max_date_month_help_text'),
+        choices=MONTHES_CHOICES,
+        default=12,
+    )
+
+    partnership_update_max_date_day = models.IntegerField(
+        _('partnership_update_max_date_day'),
+        help_text=_('partnership_update_max_date_day_help_text'),
+        choices=DAYS_CHOICES,
+        default=1,
+    )
+
+    partnership_update_max_date_month = models.IntegerField(
+        _('partnership_update_max_date_month'),
+        help_text=_('partnership_update_max_date_month_help_text'),
+        choices=MONTHES_CHOICES,
+        default=3,
+    )
+
+    @staticmethod
+    def get_configuration():
+        try:
+            return PartnershipConfiguration.objects.get()
+        except PartnershipConfiguration.DoesNotExist:
+            return PartnershipConfiguration.objects.create()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app

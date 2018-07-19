@@ -20,3 +20,30 @@ def user_is_adri(user):
         )
     except (Person.DoesNotExist, AttributeError):
         return False
+
+
+def user_is_gf(user):
+    # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
+    try:
+        return (
+            user
+            .person
+            .entitymanager_set.all()
+            .exists()
+        )
+    except Person.DoesNotExist:
+        return False
+
+
+def user_is_in_user_faculty(user, other_user):
+    # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
+    try:
+        return (
+            user
+            .person
+            .entitymanager_set
+            .filter(entity__entitymanager__person__user=self.author)
+            .exists()
+        )
+    except Person.DoesNotExist:
+        return False

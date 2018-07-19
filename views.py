@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Count, Prefetch, Q, QuerySet
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views import View
@@ -22,8 +23,10 @@ from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnerFilterForm, PartnerForm,
                                PartnershipFilterForm, PartnershipForm,
-                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset)
-from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement
+                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset,
+                               PartnershipConfigurationForm)
+from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement, \
+    PartnershipConfiguration
 from partnership.utils import user_is_adri
 
 
@@ -513,7 +516,10 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
 
 
 class PartnershipContactMixin(UserPassesTestMixin):
-    
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+
     def dispatch(self, request, *args, **kwargs):
         self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
         return super(PartnershipContactMixin, self).dispatch(request, *args, **kwargs)
@@ -524,9 +530,6 @@ class PartnershipContactMixin(UserPassesTestMixin):
     def get_success_url(self):
         return self.partnership.get_absolute_url()
 
-    def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
-        
     def get_context_data(self, **kwargs):
         context = super(PartnershipContactMixin, self).get_context_data(**kwargs)
         context['partnership'] = self.partnership
@@ -588,6 +591,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PartnershipsListView, self).get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_change_configuration'] = user_is_adri(self.request.user)
+        context['can_add_partnership'] = Partnership.user_can_add(self.request.user)
         return context
 
     def get_form_kwargs(self):
@@ -726,11 +731,14 @@ class PartnershipFormMixin(object):
             return self.form_invalid(form, formset_years)
 
 
-class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView):
+class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_create.html"
+
+    def test_func(self):
+        return Partnership.user_can_add(self.request.user)
 
     @transaction.atomic
     def form_valid(self, form, formset_years):
@@ -738,6 +746,7 @@ class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView
         partnership.author = self.request.user
         partnership.save()
         form.save_m2m()
+        formset_years.instance = partnership
         formset_years.save()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
@@ -747,11 +756,14 @@ class PartnershipCreateView(LoginRequiredMixin, PartnershipFormMixin, CreateView
         return super(PartnershipCreateView, self).post(request, *args, **kwargs)
 
 
-class PartnershipUpdateView(LoginRequiredMixin, PartnershipFormMixin, UpdateView):
+class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, UpdateView):
 
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
+
+    def test_func(self):
+        return self.object.user_can_change(self.request.user)
 
     @transaction.atomic
     def form_valid(self, form, formset_years):
@@ -765,8 +777,11 @@ class PartnershipUpdateView(LoginRequiredMixin, PartnershipFormMixin, UpdateView
         return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartnershipAgreementsMixin(object):
+class PartnershipAgreementsMixin(UserPassesTestMixin):
     context_object_name = 'agreement'
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
 
     def dispatch(self, request, *args, **kwargs):
         self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
@@ -782,9 +797,6 @@ class PartnershipAgreementsMixin(object):
         context = super(PartnershipAgreementsMixin, self).get_context_data(**kwargs)
         context['partnership'] = self.partnership
         return context
-
-    def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
 
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
@@ -868,13 +880,22 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMixin, DeleteView):
     template_name = 'partnerships/agreements/delete.html'
 
-    def test_func(self):
-        return self.get_object().user_can_delete(self.request.user)
-
     def get_template_names(self):
         if self.request.is_ajax():
             return 'partnerships/agreements/includes/delete.html'
         return self.template_name
+
+
+class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    form_class = PartnershipConfigurationForm
+    template_name = 'partnerships/configuration_update.html'
+    success_url = reverse_lazy('partnerships:partnerships_list')
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def get_object(self, queryset=None):
+        return PartnershipConfiguration.get_configuration()
 
 
 ### Autocompletes

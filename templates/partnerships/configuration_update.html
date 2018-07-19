@@ -3,7 +3,7 @@
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
-  <li class="active">{% trans "partnership_create" %}</li>
+  <li class="active">{% trans "update_configuration" %}</li>
 {% endblock %}
 
 {% block style %}
@@ -23,23 +23,39 @@
 
 {% block content %}
   <div class="page-header">
-    <h1>{% trans "partnership_create" %}</h1>
+    <h1>{% trans "update_configuration" %}</h1>
   </div>
 
   {% bootstrap_form_errors form %}
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <form action="{% url "partnerships:partnership_create" %}" method="post">
+      <form action="{% url "partnerships:configuration_update" %}" method="post">
         {% csrf_token %}
 
-        {% include "partnerships/includes/partnership_form.html" %}
-        <div class="row button-row">
+        <div class="row">
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_creation_max_date_day %}
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_creation_max_date_month %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_update_max_date_day %}
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_update_max_date_month %}
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col-sm-6">
             <a href="{% url "partnerships:partnerships_list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
           </div>
           <div class="col-sm-6">
-            <button type="submit" class="btn btn-primary btn-block">{% trans "partnership_create" %}</button>
+            <button type="submit" class="btn btn-primary btn-block">{% trans "update_configuration" %}</button>
           </div>
         </div>
       </form>
