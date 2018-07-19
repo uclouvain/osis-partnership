@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.utils import user_is_adri
+from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
 
 
 class PartnerType(models.Model):
@@ -97,17 +97,7 @@ class PartnerEntity(models.Model):
         )
 
     def user_can_change(self, user):
-        try:
-            user_is_in_author_faculty = (
-                user
-                .person
-                .entitymanager_set
-                .filter(entity__entitymanager__person__user=self.author)
-                .exists()
-            )
-        except Person.DoesNotExist:
-            user_is_in_author_faculty = False
-        return user == self.author or user_is_adri(user) or user_is_in_author_faculty
+        return user_is_adri(user) or user_is_in_user_faculty(user, self.author)
 
     def user_can_delete(self, user):
         return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()
@@ -252,17 +242,7 @@ class Partner(models.Model):
 
     @staticmethod
     def user_can_add(user):
-        try:
-            is_adri = user_is_adri(user)
-            is_gf = (
-                user
-                .person
-                .entitymanager_set.all()
-                .exists()
-            )
-            return is_adri or is_gf
-        except Person.DoesNotExist:
-            return False
+        return user_is_adri(user) or user_is_gf(user)
 
     def user_can_change(self, user):
         return user_is_adri(user)
@@ -378,20 +358,18 @@ class Partnership(models.Model):
     
     @staticmethod
     def user_can_add(user):
-        try:
-            is_adri = user_is_adri(user)
-            is_gf = (
-                user
-                .person
-                .entitymanager_set.all()
-                .exists()
-            )
-            return is_adri or is_gf
-        except Person.DoesNotExist:
+        if user_is_adri(user):
+            return True
+        if not user_is_gf(user):
             return False
+        # TODO TEST DATE
 
     def user_can_change(self, user):
-        return user_is_adri(user)
+        if user_is_adri(user):
+            return True
+        if not user_is_in_user_faculty(user, self.author):
+            return False
+        # TODO TEST DATE
 
     @cached_property
     def is_valid(self):
