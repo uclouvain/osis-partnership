@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Count, Prefetch, Q, QuerySet
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views import View
@@ -888,6 +889,7 @@ class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMix
 class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PartnershipConfigurationForm
     template_name = 'partnerships/configuration_update.html'
+    success_url = reverse_lazy('partnerships:partnerships_list')
 
     def test_func(self):
         return user_is_adri(self.request.user)
