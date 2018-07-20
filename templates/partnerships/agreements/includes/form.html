@@ -14,17 +14,21 @@
   </div>
 </div>
 
+{% if form.status %}
 <div class="row">
   <div class="col-sm-12">
     {% bootstrap_field form.status %}
   </div>
 </div>
+{% endif %}
 
+{% if form.eligible %}
 <div class="row">
   <div class="col-sm-12">
     {% bootstrap_field form.eligible %}
   </div>
 </div>
+{% endif %}
 
 <div class="row">
   <div class="col-sm-12">

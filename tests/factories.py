@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, \
-    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement
+    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement, ContactType, Contact
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -114,6 +114,14 @@ class PartnershipFactory(factory.DjangoModelFactory):
             else:
                 obj.tags = [PartnershipTagFactory(), PartnershipTagFactory()]
 
+    @factory.post_generation
+    def contacts(obj, create, extracted, **kwargs):
+        if create:
+            if extracted:
+                obj.contacts = extracted
+            else:
+                obj.contacts = [ContactFactory(), ContactFactory()]
+
 
 class PartnershipYearFactory(factory.DjangoModelFactory):
     class Meta:
@@ -123,10 +131,14 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
 
-class PartnershipOfferFactory(factory.DjangoModelFactory):
+
+class PartnershipAgreementFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipAgreement
 
+    partnership = factory.SubFactory(PartnershipFactory)
+    start_academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
+    end_academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
     media = factory.SubFactory('partnership.tests.factories.MediaFactory')
 
 
@@ -139,3 +151,18 @@ class MediaFactory(factory.DjangoModelFactory):
     url = factory.Faker('url')
     visibility = Media.VISIBILITY_PUBLIC
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
+
+
+class ContactTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ContactType
+
+    value = factory.Sequence(lambda n: 'ContactType-{0}'.format(n))
+
+
+class ContactFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Contact
+
+    type = factory.SubFactory(ContactTypeFactory)
+    title = Contact.TITLE_MISTER

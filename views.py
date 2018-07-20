@@ -515,7 +515,7 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         return self.template_name
 
 
-class PartnershipContactMixin(UserPassesTestMixin):
+class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         return self.partnership.user_can_change(self.request.user)
@@ -626,7 +626,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity')
+            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity', 'supervisor')
             .prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
@@ -664,7 +664,11 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['is_stt'] is not None:
                 queryset = queryset.filter(years__is_stt=data['is_stt'])
             if data['partnership_type']:
-                queryset = queryset.filter(partnership_type=data['partnership_type'])
+                queryset = queryset.filter(years__partnership_type=data['partnership_type'])
+            if data['education_field']:
+                queryset = queryset.filter(years__partnership_type=data['education_field'])
+            if data['education_level']:
+                queryset = queryset.filter(years__education_level=data['education_level'])
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()
@@ -709,7 +713,13 @@ class PartnershipFormMixin(object):
     def get_formset_years(self):
         kwargs = self.get_form_kwargs()
         kwargs['prefix'] = 'years'
+        del kwargs['user']
         return PartnershipYearInlineFormset(**kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs):
         if 'formset_years' not in kwargs:
@@ -766,7 +776,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return super().dispatch(*args, **kwargs)
 
     def test_func(self):
-        return self.object.user_can_change(self.request.user)
+        return self.get_object().user_can_change(self.request.user)
 
     @transaction.atomic
     def form_valid(self, form, formset_years):
@@ -779,7 +789,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartnershipAgreementsMixin(UserPassesTestMixin):
+class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
     context_object_name = 'agreement'
 
     def test_func(self):
@@ -867,6 +877,9 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     template_name = 'partnerships/agreements/update.html'
 
+    def get_queryset(self):
+        return PartnershipAgreement.objects.select_related('start_academic_year', 'end_academic_year')
+
     @transaction.atomic
     def form_valid(self, form, form_media):
         form_media.save()
@@ -879,7 +892,7 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
         return super(PartneshipAgreementUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMixin, DeleteView):
+class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
     template_name = 'partnerships/agreements/delete.html'
 
     def get_template_names(self):

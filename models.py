@@ -317,7 +317,7 @@ class Partnership(models.Model):
         null=True,
     )
 
-    start_date = models.DateField(_('start_date'), null=True, blank=True)
+    start_date = models.DateField(_('start_date'))
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -358,18 +358,22 @@ class Partnership(models.Model):
     
     @staticmethod
     def user_can_add(user):
-        if user_is_adri(user):
-            return True
-        if not user_is_gf(user):
-            return False
-        # TODO TEST DATE
+        return user_is_adri(user) or user_is_gf(user)
 
     def user_can_change(self, user):
         if user_is_adri(user):
             return True
         if not user_is_in_user_faculty(user, self.author):
             return False
-        # TODO TEST DATE
+        # GF User can update if before year N and the day/month specified in the configuration.
+        today = date.today()
+        configuration = PartnershipConfiguration.get_configuration()
+        min_date = date(
+            today.year,
+            configuration.partnership_update_max_date_month,
+            configuration.partnership_update_max_date_day
+        )
+        return self.start_date > min_date
 
     @cached_property
     def is_valid(self):
@@ -659,6 +663,9 @@ class PartnershipAgreement(models.Model):
         blank=True,
         default='',
     )
+
+    def __str__(self):
+        return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
 
 
 class PartnershipConfiguration(models.Model):

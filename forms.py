@@ -1,3 +1,5 @@
+from datetime import date
+
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
@@ -443,7 +445,10 @@ class PartnershipFilterForm(forms.Form):
         queryset=Entity.objects.filter(partnerships__isnull=False),
         empty_label=_('ucl_university'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_filter'),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university_filter',
+            attrs={'data-width': '100%'},
+        ),
     )
 
     ucl_university_labo = forms.ModelChoiceField(
@@ -451,8 +456,11 @@ class PartnershipFilterForm(forms.Form):
         queryset=Entity.objects.filter(partnerships_labo__isnull=False),
         empty_label=_('ucl_university_labo_filter'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_labo_filter',
-                                         forward=['ucl_university']),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university_labo_filter',
+            forward=['ucl_university'],
+            attrs={'data-width': '100%'},
+        ),
     )
 
     university_offers = forms.ModelChoiceField(
@@ -460,8 +468,11 @@ class PartnershipFilterForm(forms.Form):
         queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
         empty_label=_('university_offers'),
         required=False,
-        widget=autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers_filter',
-                                                 forward=['ucl_university']),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:university_offers_filter',
+            forward=['ucl_university', 'ucl_university_labo'],
+            attrs={'data-width': '100%'},
+        ),
     )
 
     # Partner
@@ -521,20 +532,35 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
+    education_field = forms.ChoiceField(
+        label=_('education_field'),
+        choices=((None, '---------'),) + PartnershipYear.EDUCATION_FIELD_CHOICES,
+        widget=autocomplete.Select2(attrs={'data-width': '100%'}),
+        required=False,
+    )
+    education_level = forms.ChoiceField(
+        label=_('education_level'),
+        choices=((None, '---------'),) + PartnershipYear.EDUCATION_LEVEL_CHOICES,
+        required=False,
+    )
     is_sms = forms.NullBooleanField(
         label=_('is_sms'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_smp = forms.NullBooleanField(
         label=_('is_smp'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_sta = forms.NullBooleanField(
         label=_('is_sta'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_stt = forms.NullBooleanField(
         label=_('is_stt'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     partnership_type = forms.ChoiceField(
@@ -545,6 +571,7 @@ class PartnershipFilterForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
 
@@ -586,6 +613,29 @@ class PartnershipForm(forms.ModelForm):
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
             'tags': autocomplete.Select2Multiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(PartnershipForm, self).__init__(*args, **kwargs)
+
+    def clean_start_date(self):
+        start_date = self.cleaned_data['start_date']
+        # This check is for creation only
+        if self.instance.pk is not None:
+            return start_date
+        if user_is_adri(self.user):
+            return start_date
+        # GF User can create if before year N - 1 and the day/month specified in the configuration.
+        today = date.today()
+        configuration = PartnershipConfiguration.get_configuration()
+        min_date = date(
+            today.year - 1,
+            configuration.partnership_creation_max_date_month,
+            configuration.partnership_creation_max_date_day
+        )
+        if start_date <= min_date:
+            raise ValidationError(_('partnership_start_date_gf_too_late'))
+        return start_date
 
 
 class PartnershipYearForm(forms.ModelForm):
