@@ -42,7 +42,7 @@ def user_is_in_user_faculty(user, other_user):
             user
             .person
             .entitymanager_set
-            .filter(entity__entitymanager__person__user=self.author)
+            .filter(entity__entitymanager__person__user=other_user)
             .exists()
         )
     except Person.DoesNotExist:

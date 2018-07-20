@@ -760,7 +760,10 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
     model = Partnership
     form_class = PartnershipForm
-    template_name = "partnerships/partnership_update.html"
+    template_name = "partnerships/partnership_update.html"     
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(*args, **kwargs)
 
     def test_func(self):
         return self.object.user_can_change(self.request.user)
@@ -773,7 +776,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
         return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
