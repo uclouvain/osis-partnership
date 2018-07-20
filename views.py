@@ -640,11 +640,11 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['ucl_university_labo']:
                 queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
             if data['university_offers']:
-                queryset = queryset.filter(university_offers=data['university_offers'])
+                queryset = queryset.filter(university_offers__in=data['university_offers'])
             if data['partner']:
                 queryset = queryset.filter(partner=data['partner'])
             if data['partner_entity']:
-                queryset = queryset.filter(partner__entities=data['partner_entity'])
+                queryset = queryset.filter(partner__entities__in=data['partner_entity'])
             if data['partner_type']:
                 queryset = queryset.filter(partner__partner_type=data['partner_type'])
             if data['city']:
@@ -666,7 +666,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['partnership_type']:
                 queryset = queryset.filter(years__partnership_type=data['partnership_type'])
             if data['education_field']:
-                queryset = queryset.filter(years__partnership_type=data['education_field'])
+                queryset = queryset.filter(years__education_field=data['education_field'])
             if data['education_level']:
                 queryset = queryset.filter(years__education_level=data['education_level'])
             if data['tags']:

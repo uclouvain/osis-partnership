@@ -99,10 +99,14 @@ class PartnershipFactory(factory.DjangoModelFactory):
         django_get_or_create = ('partner',)
 
     partner = factory.SubFactory(PartnerFactory)
+    partner_entity = factory.SubFactory(PartnerEntityFactory, partner=factory.SelfAttribute('..partner'))
+
     start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
 
-    partner_entity = factory.SubFactory(PartnerEntityFactory)
-    ucl_university = factory.SubFactory('base.tests.factories.entity.EntityFactory')
+    ucl_university = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+        country=factory.SelfAttribute('..partner.contact_address.country'),
+    )
 
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
 

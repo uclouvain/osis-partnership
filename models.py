@@ -308,6 +308,7 @@ class Partnership(models.Model):
         'base.EducationGroupYear',
         verbose_name=_('university_offers'),
         related_name='partnerships',
+        blank=True,
     )
     supervisor = models.ForeignKey(
         'base.Person',
