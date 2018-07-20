@@ -626,7 +626,7 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity')
+            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity', 'supervisor')
             .prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
@@ -664,7 +664,11 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             if data['is_stt'] is not None:
                 queryset = queryset.filter(years__is_stt=data['is_stt'])
             if data['partnership_type']:
-                queryset = queryset.filter(partnership_type=data['partnership_type'])
+                queryset = queryset.filter(years__partnership_type=data['partnership_type'])
+            if data['education_field']:
+                queryset = queryset.filter(years__partnership_type=data['education_field'])
+            if data['education_level']:
+                queryset = queryset.filter(years__education_level=data['education_level'])
             if data['tags']:
                 queryset = queryset.filter(tags__in=data['tags'])
         ordering = self.get_ordering()

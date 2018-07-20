@@ -5,7 +5,7 @@
       <tr>
         <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
         <td>{% trans "country" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="country" %}</td>
-        <td>{% trans "supervisor" %}</td>
+        <td>{% trans "supervisor" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="supervisor__last_name" %}</td>
         <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
         <td>{% trans "financing" %}</td>
         <td>{% trans "validity" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="start_date" %}</td>
@@ -17,7 +17,7 @@
         <tr>
           <td>{{ partnership.partner|truncatechars:30 }}</td>
           <td>{{ partnership.ucl_university.entity.country|default_if_none:"" }}</td>
-          <td></td>
+          <td>{{ partnership.supervisor|default_if_none:"" }}</td>
           <td>{{ partnership.entities_acronyms }}</td>
           <td></td>
           <td>

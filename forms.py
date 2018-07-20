@@ -445,7 +445,10 @@ class PartnershipFilterForm(forms.Form):
         queryset=Entity.objects.filter(partnerships__isnull=False),
         empty_label=_('ucl_university'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_filter'),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university_filter',
+            attrs={'data-width': '100%'},
+        ),
     )
 
     ucl_university_labo = forms.ModelChoiceField(
@@ -453,8 +456,11 @@ class PartnershipFilterForm(forms.Form):
         queryset=Entity.objects.filter(partnerships_labo__isnull=False),
         empty_label=_('ucl_university_labo_filter'),
         required=False,
-        widget=autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university_labo_filter',
-                                         forward=['ucl_university']),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university_labo_filter',
+            forward=['ucl_university'],
+            attrs={'data-width': '100%'},
+        ),
     )
 
     university_offers = forms.ModelChoiceField(
@@ -462,8 +468,11 @@ class PartnershipFilterForm(forms.Form):
         queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
         empty_label=_('university_offers'),
         required=False,
-        widget=autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers_filter',
-                                                 forward=['ucl_university']),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:university_offers_filter',
+            forward=['ucl_university', 'ucl_university_labo'],
+            attrs={'data-width': '100%'},
+        ),
     )
 
     # Partner
@@ -523,20 +532,35 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
+    education_field = forms.ChoiceField(
+        label=_('education_field'),
+        choices=((None, '---------'),) + PartnershipYear.EDUCATION_FIELD_CHOICES,
+        widget=autocomplete.Select2(attrs={'data-width': '100%'}),
+        required=False,
+    )
+    education_level = forms.ChoiceField(
+        label=_('education_level'),
+        choices=((None, '---------'),) + PartnershipYear.EDUCATION_LEVEL_CHOICES,
+        required=False,
+    )
     is_sms = forms.NullBooleanField(
         label=_('is_sms'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_smp = forms.NullBooleanField(
         label=_('is_smp'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_sta = forms.NullBooleanField(
         label=_('is_sta'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     is_stt = forms.NullBooleanField(
         label=_('is_stt'),
+        widget=CustomNullBooleanSelect(),
         required=False,
     )
     partnership_type = forms.ChoiceField(
@@ -547,6 +571,7 @@ class PartnershipFilterForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
 
