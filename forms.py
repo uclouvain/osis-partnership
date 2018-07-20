@@ -620,10 +620,9 @@ class PartnershipForm(forms.ModelForm):
 
     def clean_start_date(self):
         start_date = self.cleaned_data['start_date']
-        # This check is for creation only
-        if self.instance.pk is not None:
-            return start_date
         if user_is_adri(self.user):
+            return start_date
+        if self.instance.pk is not None and self.instance.start_date == start_date:
             return start_date
         # GF User can create if before year N - 1 and the day/month specified in the configuration.
         today = date.today()
