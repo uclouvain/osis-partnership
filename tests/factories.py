@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, \
-    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement, ContactType
+    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement, ContactType, Contact
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -114,6 +114,14 @@ class PartnershipFactory(factory.DjangoModelFactory):
             else:
                 obj.tags = [PartnershipTagFactory(), PartnershipTagFactory()]
 
+    @factory.post_generation
+    def contacts(obj, create, extracted, **kwargs):
+        if create:
+            if extracted:
+                obj.contacts = extracted
+            else:
+                obj.contacts = [ContactFactory(), ContactFactory()]
+
 
 class PartnershipYearFactory(factory.DjangoModelFactory):
     class Meta:
@@ -146,3 +154,11 @@ class ContactTypeFactory(factory.DjangoModelFactory):
         model = ContactType
 
     value = factory.Sequence(lambda n: 'ContactType-{0}'.format(n))
+
+
+class ContactFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Contact
+
+    type = factory.SubFactory(ContactTypeFactory)
+    title = Contact.TITLE_MISTER
