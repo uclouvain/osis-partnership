@@ -515,7 +515,7 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         return self.template_name
 
 
-class PartnershipContactMixin(UserPassesTestMixin):
+class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         return self.partnership.user_can_change(self.request.user)

@@ -628,12 +628,12 @@ class PartnershipForm(forms.ModelForm):
         # GF User can create if before year N - 1 and the day/month specified in the configuration.
         today = date.today()
         configuration = PartnershipConfiguration.get_configuration()
-        max_date = date(
+        min_date = date(
             today.year - 1,
             configuration.partnership_creation_max_date_month,
             configuration.partnership_creation_max_date_day
         )
-        if start_date > max_date:
+        if start_date <= min_date:
             raise ValidationError(_('partnership_start_date_gf_too_late'))
         return start_date
 

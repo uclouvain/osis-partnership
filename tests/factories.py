@@ -4,7 +4,7 @@ import factory
 from django.utils import timezone
 import uuid
 from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, \
-    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement
+    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement, ContactType
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -139,3 +139,10 @@ class MediaFactory(factory.DjangoModelFactory):
     url = factory.Faker('url')
     visibility = Media.VISIBILITY_PUBLIC
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
+
+
+class ContactTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ContactType
+
+    value = factory.Sequence(lambda n: 'ContactType-{0}'.format(n))
