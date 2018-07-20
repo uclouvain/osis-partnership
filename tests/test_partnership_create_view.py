@@ -23,7 +23,7 @@ class PartnershipCreateViewTest(TestCase):
         entity_version = EntityVersionFactory(acronym='ADRI')
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_gf)
+es        EntityManagerFactory(person__user=cls.user_gf)
         cls.country = CountryFactory()
         cls.url = reverse('partnerships:partnership_create')
 
