@@ -787,7 +787,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartnershipAgreementsMixin(UserPassesTestMixin):
+class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
     context_object_name = 'agreement'
 
     def test_func(self):
@@ -875,6 +875,9 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     template_name = 'partnerships/agreements/update.html'
 
+    def get_queryset(self):
+        return PartnershipAgreement.objects.select_related('start_academic_year', 'end_academic_year')
+
     @transaction.atomic
     def form_valid(self, form, form_media):
         form_media.save()
@@ -887,7 +890,7 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
         return super(PartneshipAgreementUpdateView, self).post(request, *args, **kwargs)
 
 
-class PartneshipAgreementDeleteView(LoginRequiredMixin, PartnershipAgreementsMixin, DeleteView):
+class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
     template_name = 'partnerships/agreements/delete.html'
 
     def get_template_names(self):

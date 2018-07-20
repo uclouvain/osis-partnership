@@ -131,10 +131,14 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
 
-class PartnershipOfferFactory(factory.DjangoModelFactory):
+
+class PartnershipAgreementFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipAgreement
 
+    partnership = factory.SubFactory(PartnershipFactory)
+    start_academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
+    end_academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
     media = factory.SubFactory('partnership.tests.factories.MediaFactory')
 
 

@@ -664,6 +664,9 @@ class PartnershipAgreement(models.Model):
         default='',
     )
 
+    def __str__(self):
+        return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
+
 
 class PartnershipConfiguration(models.Model):
     DAYS_CHOICES = [(day, day) for day in range(1, 32)]
