@@ -367,16 +367,13 @@ class Partnership(models.Model):
             return False
         # GF User can update if before year N and the day/month specified in the configuration.
         today = date.today()
-        if self.start_date.year < today.year:
-            return False
-        if self.start_date.year > today.year:
-            return True
         configuration = PartnershipConfiguration.get_configuration()
-        if (today.month > configuration.partnership_update_max_date_month
-                or (today.month == configuration.partnership_update_max_date_month
-                    and today.day > configuration.partnership_update_max_date_day)):
-            return False
-        return True
+        max_date = date(
+            today.year,
+            configuration.partnership_update_max_date_month,
+            configuration.partnership_update_max_date_day
+        )
+        return self.start_date <= max_date
 
     @cached_property
     def is_valid(self):

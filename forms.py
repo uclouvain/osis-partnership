@@ -595,20 +595,20 @@ class PartnershipForm(forms.ModelForm):
 
     def clean_start_date(self):
         start_date = self.cleaned_data['start_date']
+        # This check is for creation only
         if self.instance.pk is not None:
             return start_date
         if user_is_adri(self.user):
             return start_date
         # GF User can create if before year N - 1 and the day/month specified in the configuration.
         today = date.today()
-        if start_date.year - 1 < today.year:
-            raise ValidationError(_('partnership_start_date_gf_too_late'))
-        if start_date.year - 1 > today.year:
-            return start_date
         configuration = PartnershipConfiguration.get_configuration()
-        if (today.month > configuration.partnership_creation_max_date_month
-                or (today.month == configuration.partnership_creation_max_date_month
-                    and today.day > configuration.partnership_creation_max_date_day)):
+        max_date = date(
+            today.year - 1,
+            configuration.partnership_creation_max_date_month,
+            configuration.partnership_creation_max_date_day
+        )
+        if start_date > max_date:
             raise ValidationError(_('partnership_start_date_gf_too_late'))
         return start_date
 
