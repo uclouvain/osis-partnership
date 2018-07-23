@@ -34,6 +34,13 @@
         {% csrf_token %}
 
         {% include "partnerships/includes/partnership_form.html" %}
+
+        <div class="row">
+          <div class="col-sm-12">
+            <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-sm-6">
             <a href="{{ partnership.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
@@ -42,7 +49,6 @@
             <button type="submit" class="btn btn-primary btn-block">{% trans "edit_partnership" %}</button>
           </div>
         </div>
-        <p><i>* {% trans 'field_required' %}</i></p>
       </form>
     </div>
   </div>

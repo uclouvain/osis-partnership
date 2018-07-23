@@ -34,6 +34,13 @@
         {% csrf_token %}
 
         {% include "partnerships/includes/partnership_form.html" %}
+
+        <div class="row">
+          <div class="col-sm-12">
+            <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+          </div>
+        </div>
+
         <div class="row button-row">
           <div class="col-sm-6">
             <a href="{% url "partnerships:partnerships_list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
