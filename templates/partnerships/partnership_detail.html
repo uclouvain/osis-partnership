@@ -107,12 +107,15 @@
         <div class="row">
           <div class="col-sm-12">
             <ul class="tags-list">
+              <li><asd/li>
               {% for tag in partnership.tags.all %}
                 <li>{{ tag }}</li>
               {% endfor %}
             </ul>
           </div>
         </div>
+      {% else %}
+        <i>{% trans 'no_tag_yet' %}</i>
       {% endif %}
 
       {% if can_change %}
@@ -126,28 +129,31 @@
       <!-- Contacts -->
       <h2>{% trans "contacts" %}</h2>
       <div class="row">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-12">
           {% for contact in partnership.contacts.all %}
-            {% include "partnerships/includes/contact.html" with contact=contact %}
-            {% if can_change %}
-            <div class="btn-group">
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-eye fa-fw"></i>
-              </a>
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'update_contact' %}</a>
-                </li>
-                <li>
-                  <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'delete_contact' %}</a>
-                </li>
-              </ul>
+            <div class="row">
+              <div class="col-sm-9">
+                {% include "partnerships/includes/contact.html" with contact=contact %}
+              </div>
+              {% if can_change %}
+                <div class="col-sm-3">
+                  <div class="btn-group pull-right">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="caret"></span>
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'update_contact' %}</a>
+                      </li>
+                      <li>
+                        <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'delete_contact' %}</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              {% endif %}
             </div>
-            {% endif %}
           {% empty %}
             <p>{% trans "no_partnership_contact_yet" %}</p>
           {% endfor %}
