@@ -687,22 +687,21 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
         return context
 
     def get_object(self):
-        self.partnership = (
+        return get_object_or_404(
             Partnership.objects
-            .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
-            .prefetch_related(
-                'contacts',
-                'tags',
-                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
-                Prefetch('years', queryset=PartnershipYear.objects.select_related('academic_year')),
-                Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
-                    'start_academic_year', 'end_academic_year', 'media'
-                )),
-            )
-            .annotate(university_offers_count=Count('university_offers'))
-            .get(pk=self.kwargs['pk'])
+                .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
+                .prefetch_related(
+                    'contacts',
+                    'tags',
+                    Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
+                    Prefetch('years', queryset=PartnershipYear.objects.select_related('academic_year')),
+                    Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
+                        'start_academic_year', 'end_academic_year', 'media'
+                    )),
+                )
+                .annotate(university_offers_count=Count('university_offers')),
+            pk=self.kwargs['pk'],
         )
-        return self.partnership
 
 
 class PartnershipFormMixin(object):
