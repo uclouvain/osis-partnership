@@ -535,11 +535,11 @@ class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
         context['partnership'] = self.partnership
         return context
 
-    
+
 class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
 
     form_class = ContactForm
-    
+
     def get_template_names(self):
         if self.request.is_ajax():
             return 'partnerships/contacts/includes/partnership_contact_form.html'
@@ -555,14 +555,14 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
 class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
 
     template_name = 'partnerships/contacts/partnership_contact_create.html'
-    
+
     def form_valid(self, form):
         contact = form.save()
         self.partnership.contacts.add(contact)
         messages.success(self.request, _("contact_creation_success"))
         return redirect(self.partnership)
 
-    
+
 class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 
     template_name = 'partnerships/contacts/partnership_contact_update.html'
@@ -571,8 +571,8 @@ class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
     template_name = 'partnerships/contacts/contact_confirm_delete.html'
-        
-    
+
+
 class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     model = Partnership
     template_name = 'partnerships/partnerships_list.html'
@@ -769,7 +769,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
     model = Partnership
     form_class = PartnershipForm
-    template_name = "partnerships/partnership_update.html"     
+    template_name = "partnerships/partnership_update.html"
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
@@ -917,7 +917,7 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Person.objects
+        qs = Person.objects.all()
         if self.q:
             qs = qs.filter(
                 Q(first_name__icontains=self.q) |
@@ -931,6 +931,8 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = Partner.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
         return qs
 
 
@@ -938,6 +940,11 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = Partnership.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(partner__name__icontains=self.q)
+                | Q(partner_entity__name__icontains=self.q)
+            )
         return qs
 
 
@@ -945,6 +952,11 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = PartnerEntity.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(name__icontain=self.q)
+                | Q(partner__name__icontains=self.q)
+            )
         return qs
 
 
@@ -956,10 +968,10 @@ class PartnerEntityByPartnerAutocompleteView(PartnerEntityAutocompleteView):
         if partner:
             qs = qs.filter(partner=partner)
         return qs
-    
+
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
-    
+
     def get_queryset(self):
         if not self.request.user.is_authenticated():
             return EntityVersion.objects.none()
@@ -977,7 +989,7 @@ class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
         qs = super().get_queryset()
         return qs.filter(partnerships__isnull=False)
 
-    
+
 class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
