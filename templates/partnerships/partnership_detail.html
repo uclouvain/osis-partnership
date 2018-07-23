@@ -24,6 +24,9 @@
       <!-- Partenariat -->
       <div class="row">
         <div class="col-sm-12">
+          {% if can_change %}
+          <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-pencil"></i> {% trans 'edit_partnership' %}</a>
+          {% endif %}
           <p>
             <em>
               {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
@@ -118,98 +121,90 @@
         <i>{% trans 'no_tag_yet' %}</i>
       {% endif %}
 
-      {% if can_change %}
-      <div class="row">
-        <div class="col-sm-12">
-          <a href="{% url 'partnerships:partnership_update' pk=partnership.pk %}" class="btn btn-default pull-right">{% trans 'edit_partnership' %}</a>
-        </div>
-      </div>
-      {% endif %}
-
       <!-- Contacts -->
-      <h2>{% trans "contacts" %}</h2>
+      <h2>{% trans "contacts" %}
+      {% if can_change %}
+        <a href="{% url "partnerships:contacts:create" partnership.id %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
+      {% endif %}
+      </h2>
       <div class="row">
-        <div class="col-sm-12 col-md-12">
-          {% for contact in partnership.contacts.all %}
-            <div class="row">
-              <div class="col-sm-9">
-                {% include "partnerships/includes/contact.html" with contact=contact %}
-              </div>
-              {% if can_change %}
-                <div class="col-sm-3">
-                  <div class="btn-group pull-right">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li>
-                        <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'update_contact' %}</a>
-                      </li>
-                      <li>
-                        <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}">{% trans 'delete_contact' %}</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              {% endif %}
-            </div>
-          {% empty %}
-            <p>{% trans "no_partnership_contact_yet" %}</p>
-          {% endfor %}
+      {% for contact in partnership.contacts.all %}
+        <div class="col-md-6">
+          {% if can_change %}
+          <div class="btn-group pull-right">
+            <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}"
+               class="btn btn-default">
+              <i class="fa fa-pencil fa-fw"></i>
+            </a>
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}"><i class="fa fa-times fa-fw"></i> {% trans 'delete_contact' %}</a>
+              </li>
+            </ul>
+          </div>
+          {% endif %}
+          {% include "partnerships/includes/contact.html" with contact=contact %}
         </div>
-      </div>
-
-      <div class="row">
+      {% empty %}
         <div class="col-sm-12">
-          <a href="{% url "partnerships:contacts:create" partnership.id %}"
-             class="btn btn-default modal-link pull-right"
-             data-modal-submit="{% trans "new_contact" %}"
-             data-modal-title="{% trans "new_contact" %}"
-             data-modal="modal-form"><i class="fa fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
+          <p>{% trans "no_partnership_contact_yet" %}</p>
         </div>
+      {% endfor %}
       </div>
 
       <!-- Accords -->
-      <h2>{% trans "agreements" %}</h2>
+      <h2>{% trans "agreements" %}
+      {% if can_change %}
+      <a href="{% url "partnerships:agreements:create" partnership.id %}" class="btn btn-default pull-right">
+        <i class="fa fa-fw fa-plus"></i> {% trans "add_partnership_agreements" %}
+      </a>
+      {% endif %}
+      </h2>
+
       {% for agreement in partnership.agreements.all %}
       <div class="row">
         <div class="col-sm-12 col-md-6">
-          <div class="row">
-            <div class="col-sm-5">
-              {{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}
-              {% if can_change %}
-              <div class="btn-group">
-                <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
-                   class="btn btn-default">
-                  <i class="fa fa-pencil fa-fw"></i>
-                </a>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="caret"></span>
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url "partnerships:agreements:delete" partnership.id agreement.id %}"
-                     class="modal-link"
-                     data-modal-danger
-                     data-modal-submit="{% trans "delete_partnership_agreement" %}"
-                     data-modal-title="{{ agreement }}"
-                     data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partnership_agreement" %}</a></li>
-                </ul>
-              </div>
-              {% endif %}
-            </div>
-            <div class="col-sm-7">
-              <strong>{{ agreement.get_status_display }}</strong>
-            </div>
+          {% if can_change %}
+          <div class="btn-group pull-right">
+            <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
+               class="btn btn-default">
+              <i class="fa fa-pencil fa-fw"></i>
+            </a>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="{% url "partnerships:agreements:delete" partnership.id agreement.id %}"
+                 class="modal-link"
+                 data-modal-danger
+                 data-modal-submit="{% trans "delete_partnership_agreement" %}"
+                 data-modal-title="{{ agreement }}"
+                 data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partnership_agreement" %}</a></li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-sm-12">
-              <p>{{ agreement.note }}</p>
-            </div>
+          {% endif %}
+          <div>
+            <dl class="dl-horizontal">
+              <dt>{% trans "academic_years" %}</dt>
+              <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
+
+              <dt>{% trans "eligible" %}</dt>
+              <dd><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+              <dt>{% trans "status" %}</dt>
+              <dd>{{ agreement.get_status_display }}</dd>
+
+              <dt>{% trans "note" %}</dt>
+              <dd>{{ agreement.note|linebreaksbr }}</dd>
+            </dl>
           </div>
         </div>
-        <div class="col-sm-12 col-md-6 partner-media">
+        <div class="col-md-6 partner-media">
           {% include "partnerships/includes/media_detail.html" with media=agreement.media %}
         </div>
       </div>
@@ -218,16 +213,6 @@
         <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
       </div>
       {% endfor %}
-      {% if can_change %}
-      <div class="row">
-        <div class="col-sm-12">
-          <a href="{% url "partnerships:agreements:create" partnership.id %}"
-                 class="btn btn-default pull-right">
-            <i class="fa fa-fw fa-plus"></i> {% trans "add_partnership_agreements" %}
-          </a>
-        </div>
-      </div>
-      {% endif %}
     </div>
   </div>
 

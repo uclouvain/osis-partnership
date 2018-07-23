@@ -7,3 +7,4 @@
   {% if contact.fax %}<i class="fa fa-fw fa-fax" title="{% trans "fax" %}"></i> {{ contact.fax }}{% endif %}<br>
   {% if contact.email %}{{ contact.email|urlize }}{% endif %}
 </p>
+{% if contact.comment %}<p>{{ contact.comment|linebreaksbr }}</p>{% endif %}
