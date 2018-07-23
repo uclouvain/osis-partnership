@@ -481,12 +481,21 @@ class PartnershipFilterForm(forms.Form):
         label=_('partner'),
         queryset=Partner.objects.filter(partnerships__isnull=False),
         empty_label=_('partner'),
+        widget=autocomplete.ModelSelect2(
+            attrs={'data-width': '100%'},
+            url='partnerships:autocomplete:partner',
+        ),
         required=False,
     )
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
         queryset=PartnerEntity.objects.filter(partner__partnerships__isnull=False),
         empty_label=_('partner_entity'),
+        widget=autocomplete.ModelSelect2(
+            attrs={'data-width': '100%'},
+            url='partnerships:autocomplete:partner_entity_by_partner',
+            forward=['partner',],
+        ),        
         required=False,
     )
     partner_type = forms.ModelChoiceField(
@@ -613,7 +622,10 @@ class PartnershipForm(forms.ModelForm):
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
             'tags': autocomplete.Select2Multiple(),
             'partner': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner'),
-            'partner_entity': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner_entity'),
+            'partner_entity': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:partner_entity_by_partner',
+                forward=['partner',]
+            ),
         }
 
     def __init__(self, *args, **kwargs):

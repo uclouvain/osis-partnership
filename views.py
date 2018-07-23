@@ -930,23 +930,33 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Partner.objects
+        qs = Partner.objects.all()
         return qs
 
 
 class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Partnership.objects
+        qs = Partnership.objects.all()
         return qs
 
 
 class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = PartnerEntity.objects
+        qs = PartnerEntity.objects.all()
         return qs
 
+
+class PartnerEntityByPartnerAutocompleteView(PartnerEntityAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        partner = self.forwarded.get('partner', None)
+        if partner:
+            qs = qs.filter(partner=partner)
+        return qs
+    
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     

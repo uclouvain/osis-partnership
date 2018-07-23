@@ -11,7 +11,7 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                UniversityOffersAutocompleteView, PartnershipUpdateView,
                                PartnerAutocompleteView, PartnershipAutocompleteView,
                                UniversityOffersAutocompleteFilterView, PartnerEntityAutocompleteView,
-                               UclUniversityAutocompleteFilterView,
+                               UclUniversityAutocompleteFilterView, PartnerEntityByPartnerAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView, PartnersExportView,
                                PartnershipContactCreateView, PartnershipContactUpdateView,
                                PartnershipContactDeleteView,
@@ -72,6 +72,11 @@ urlpatterns = [
             '^partner-entity/$',
             PartnerEntityAutocompleteView.as_view(),
             name='partner_entity'
+        ),
+        url(
+            '^partner-entity-by-partner/$',
+            PartnerEntityByPartnerAutocompleteView.as_view(),
+            name='partner_entity_by_partner'
         ),
         url(
             '^ucl_university/$',
