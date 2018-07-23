@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-19 10:08+0200\n"
+"POT-Creation-Date: 2018-07-23 16:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,6 +146,12 @@ msgstr ""
 msgid "partner_entity"
 msgstr ""
 
+msgid "education_field"
+msgstr ""
+
+msgid "education_level"
+msgstr ""
+
 msgid "is_sms"
 msgstr ""
 
@@ -159,6 +165,9 @@ msgid "is_stt"
 msgstr ""
 
 msgid "partnership_type"
+msgstr ""
+
+msgid "partnership_start_date_gf_too_late"
 msgstr ""
 
 msgid "start_date_after_end_date"
@@ -813,6 +822,66 @@ msgstr ""
 msgid "note"
 msgstr ""
 
+msgid "january"
+msgstr ""
+
+msgid "february"
+msgstr ""
+
+msgid "march"
+msgstr ""
+
+msgid "april"
+msgstr ""
+
+msgid "may"
+msgstr ""
+
+msgid "june"
+msgstr ""
+
+msgid "july"
+msgstr ""
+
+msgid "august"
+msgstr ""
+
+msgid "september"
+msgstr ""
+
+msgid "october"
+msgstr ""
+
+msgid "november"
+msgstr ""
+
+msgid "december"
+msgstr ""
+
+msgid "partnership_creation_max_date_day"
+msgstr ""
+
+msgid "partnership_creation_max_date_day_help_text"
+msgstr ""
+
+msgid "partnership_creation_max_date_month"
+msgstr ""
+
+msgid "partnership_creation_max_date_month_help_text"
+msgstr ""
+
+msgid "partnership_update_max_date_day"
+msgstr ""
+
+msgid "partnership_update_max_date_day_help_text"
+msgstr ""
+
+msgid "partnership_update_max_date_month"
+msgstr ""
+
+msgid "partnership_update_max_date_month_help_text"
+msgstr ""
+
 msgid "mister"
 msgstr ""
 
@@ -871,6 +940,9 @@ msgid "mandatory_fields_help_text"
 msgstr ""
 
 msgid "update_partnership_agreement"
+msgstr ""
+
+msgid "update_configuration"
 msgstr ""
 
 msgid "confirm_contact_delete"
@@ -999,6 +1071,9 @@ msgstr ""
 msgid "add_entities_after_creation"
 msgstr ""
 
+msgid "update_partner"
+msgstr ""
+
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
 msgstr ""
@@ -1009,13 +1084,10 @@ msgstr ""
 msgid "associated_tags"
 msgstr ""
 
-msgid "update_partner"
+msgid "new_media"
 msgstr ""
 
 msgid "no_media_yet"
-msgstr ""
-
-msgid "new_media"
 msgstr ""
 
 msgid "entities"
@@ -1048,31 +1120,31 @@ msgstr ""
 msgid "partnership_create"
 msgstr ""
 
+msgid "edit_partnership"
+msgstr ""
+
 msgid "offers"
 msgstr ""
 
 msgid "dates"
 msgstr ""
 
-msgid "education_field"
+msgid "no_tag_yet"
 msgstr ""
 
-msgid "education_level"
-msgstr ""
-
-msgid "edit_partnership"
-msgstr ""
-
-msgid "update_contact"
+msgid "add_contact"
 msgstr ""
 
 msgid "delete_contact"
 msgstr ""
 
-msgid "new_contact"
+msgid "no_partnership_contact_yet"
 msgstr ""
 
-msgid "add_contact"
+msgid "academic_years"
+msgstr ""
+
+msgid "change_configuration"
 msgstr ""
 
 msgid "add_partnership"

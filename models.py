@@ -579,12 +579,12 @@ class PartnershipYear(models.Model):
         related_name='+',
     )
     education_field = models.CharField(
-        _('education_fields'),
+        _('education_field'),
         max_length=255,
         choices=EDUCATION_FIELD_CHOICES,
     )
     education_level = models.CharField(
-        _('education_fields'),
+        _('education_level'),
         max_length=255,
         choices=EDUCATION_LEVEL_CHOICES,
         blank=True,

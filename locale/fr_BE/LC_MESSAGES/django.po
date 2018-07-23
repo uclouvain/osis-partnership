@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-19 10:08+0200\n"
-"PO-Revision-Date: 2018-07-19 10:10+0200\n"
+"POT-Creation-Date: 2018-07-23 16:38+0200\n"
+"PO-Revision-Date: 2018-07-23 16:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -146,6 +146,12 @@ msgstr "Partenaire"
 msgid "partner_entity"
 msgstr "Entité partenaire"
 
+msgid "education_field"
+msgstr "Domaine d'étude"
+
+msgid "education_level"
+msgstr "Niveau d'étude"
+
 msgid "is_sms"
 msgstr "Studient mobility for study (SMS)"
 
@@ -160,6 +166,9 @@ msgstr "Staff training mobility (STT)"
 
 msgid "partnership_type"
 msgstr "Type de partenariat"
+
+msgid "partnership_start_date_gf_too_late"
+msgstr "La date de début se situe après la date de fin."
 
 msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
@@ -781,7 +790,7 @@ msgid "academic_year"
 msgstr "Année académique"
 
 msgid "education_fields"
-msgstr ""
+msgstr "Domaines d'étude"
 
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
@@ -813,6 +822,66 @@ msgstr "Éligible"
 
 msgid "note"
 msgstr "Note"
+
+msgid "january"
+msgstr "Janvier"
+
+msgid "february"
+msgstr "Février"
+
+msgid "march"
+msgstr "Mars"
+
+msgid "april"
+msgstr "Avril"
+
+msgid "may"
+msgstr "Mai"
+
+msgid "june"
+msgstr "Juin"
+
+msgid "july"
+msgstr "Juillet"
+
+msgid "august"
+msgstr "Août"
+
+msgid "september"
+msgstr "Septembre"
+
+msgid "october"
+msgstr "Octobre"
+
+msgid "november"
+msgstr "Novembre"
+
+msgid "december"
+msgstr "Décembre"
+
+msgid "partnership_creation_max_date_day"
+msgstr "Jour maximum pour la création"
+
+msgid "partnership_creation_max_date_day_help_text"
+msgstr "Jour du mois maximum pour la création d'un partenariat."
+
+msgid "partnership_creation_max_date_month"
+msgstr "Mois maximum pour la création"
+
+msgid "partnership_creation_max_date_month_help_text"
+msgstr "Mois maximum pour la création d'un partenariat (de l'année N - 1)."
+
+msgid "partnership_update_max_date_day"
+msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
+
+msgid "partnership_update_max_date_day_help_text"
+msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
+
+msgid "partnership_update_max_date_month"
+msgstr "Mois maximum pour la mise à jour d'un partenariat."
+
+msgid "partnership_update_max_date_month_help_text"
+msgstr "Mois maximum pour la mise à jour d'un partenariat (de l'année N)."
 
 msgid "mister"
 msgstr "Monsieur"
@@ -875,6 +944,9 @@ msgstr "Les champs accompagné d'un * sont obligatoires."
 
 msgid "update_partnership_agreement"
 msgstr "Mettre à jour l'accord"
+
+msgid "update_configuration"
+msgstr "Mettre à jour la configuration"
 
 msgid "confirm_contact_delete"
 msgstr ""
@@ -1011,6 +1083,9 @@ msgid "add_entities_after_creation"
 msgstr ""
 "Vous pourrez ajouter des entités partenaires après la création du partenaire."
 
+msgid "update_partner"
+msgstr "Mettre à jour le partenaire"
+
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
 msgstr ""
@@ -1022,14 +1097,11 @@ msgstr "Adresse"
 msgid "associated_tags"
 msgstr "Tags associés"
 
-msgid "update_partner"
-msgstr "Mettre à jour le partenaire"
+msgid "new_media"
+msgstr "Nouveau média"
 
 msgid "no_media_yet"
 msgstr "Il n'y a pas encore de média."
-
-msgid "new_media"
-msgstr "Nouveau média"
 
 msgid "entities"
 msgstr "Entités"
@@ -1061,32 +1133,32 @@ msgstr "Rechercher"
 msgid "partnership_create"
 msgstr "Créer le partenariat"
 
+msgid "edit_partnership"
+msgstr "Mettre à jour le partenariat"
+
 msgid "offers"
 msgstr "Offres"
 
 msgid "dates"
 msgstr "Dates"
 
-msgid "education_field"
-msgstr ""
+msgid "no_tag_yet"
+msgstr "Il n'y a pas encore de tag."
 
-msgid "education_level"
-msgstr ""
-
-msgid "edit_partnership"
-msgstr "Mettre à jour le partenariat"
-
-msgid "update_contact"
-msgstr "Mettre à jour le contact"
+msgid "add_contact"
+msgstr "Ajouter un contact"
 
 msgid "delete_contact"
 msgstr "Supprimer le contact"
 
-msgid "new_contact"
-msgstr "Nouveau contact"
+msgid "no_partnership_contact_yet"
+msgstr "Il n'y a pas encore de contact."
 
-msgid "add_contact"
-msgstr "Ajouter un contact"
+msgid "academic_years"
+msgstr "Années académiques"
+
+msgid "change_configuration"
+msgstr "Modifier la configuration"
 
 msgid "add_partnership"
 msgstr "Ajouter un partenariat"
@@ -1129,6 +1201,9 @@ msgstr "Erreur lors de la sauvegarde de l'accord."
 
 msgid "partnership_agreement_success"
 msgstr "Accord sauvegardé avec succès."
+
+#~ msgid "new_contact"
+#~ msgstr "Nouveau contact"
 
 #, fuzzy
 #~| msgid "update_partner_entity"
