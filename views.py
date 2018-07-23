@@ -928,6 +928,27 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
+class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Partner.objects
+        return qs
+
+
+class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Partnership.objects
+        return qs
+
+
+class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = PartnerEntity.objects
+        return qs
+
+
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
     
     def get_queryset(self):

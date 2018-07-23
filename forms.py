@@ -612,6 +612,8 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
             'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
             'tags': autocomplete.Select2Multiple(),
+            'partner': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner'),
+            'partner_entity': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner_entity'),
         }
 
     def __init__(self, *args, **kwargs):
