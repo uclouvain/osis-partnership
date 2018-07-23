@@ -27,8 +27,8 @@ class PartnershipUpdateViewTest(TestCase):
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Dates :
-        cls.date_ok = datetime.datetime.today + datetime.deltatime(365)
-        cls.date_ko = datetime.datetime.today - datetime.deltatime(365)
+        cls.date_ok = datetime.datetime.today() + datetime.timedelta(365)
+        cls.date_ko = datetime.datetime.today() - datetime.timedelta(365)
 
         cls.partner_entity = PartnerEntityFactory()
         cls.partner = PartnerFactory()
@@ -50,16 +50,16 @@ class PartnershipUpdateViewTest(TestCase):
         # Ucl
         cls.ucl_university = EntityFactory()
         cls.ucl_university_labo = EntityFactory()
-        cls.university_offers = EducationGroupYearFactory()
+        cls.university_offer = EducationGroupYearFactory()
 
         cls.data = {
             'comment': '',
-            'partner': self.partner.pk,
-            'partner_entity': self.partner_entity.pk,
+            'partner': cls.partner.pk,
+            'partner_entity': cls.partner_entity.pk,
             'supervisor': '',
-            'ucl_university': self.ucl_university.pk,
-            'ucl_university_labo': self.ucl_university_labo.pk,
-            'university_offers': [self.university_offers.pk,],
+            'ucl_university': cls.ucl_university.pk,
+            'ucl_university_labo': cls.ucl_university_labo.pk,
+            'university_offers': [cls.university_offer.pk,],
             'years-0-academic_year': '',
             'years-0-education_field': '',
             'years-0-education_level': '',
@@ -87,7 +87,7 @@ class PartnershipUpdateViewTest(TestCase):
             'years-0-partnership': partnership.pk,
             'years-1-partnership': partnership.pk,
             'years-2-partnership': partnership.pk,
-            **cls.data,
+            **self.data,
         }
 
         
@@ -99,7 +99,7 @@ class PartnershipUpdateViewTest(TestCase):
     def test_get_partnership_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_update.html')
 
     def test_get_own_partnership_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -125,75 +125,16 @@ class PartnershipUpdateViewTest(TestCase):
 
     def test_get_out_of_date_as_adri(self):
         self.client.force_login(self.user_adri)
-        data = {
-            'comment': '',
-            'partner': self.partner.pk,
-            'partner_entity': self.partner_entity.pk,
-            'start_date': cls.partnership_ko.start_date.strftime('%d/%m/%y'),
-            'supervisor': '',
-            'ucl_university': self.ucl_university.pk,
-            'ucl_university_labo': self.ucl_university_labo.pk,
-            'university_offers': [self.university_offers.pk,],
-            'years-0-academic_year': '',
-            'years-0-education_field': '',
-            'years-0-education_level': '',
-            'years-0-id': '',
-            'years-0-partnership': self.partnership.pk,
-            'years-0-partnership_type': '',
-            'years-1-academic_year': '',
-            'years-1-education_field': '',
-            'years-1-education_level': '',
-            'years-1-id': '',
-            'years-1-partnership': self.partnership.pk,
-            'years-1-partnership_type': '',
-            'years-2-academic_year': '',
-            'years-2-education_field': '',
-            'years-2-education_level': '',
-            'years-2-id': '',
-            'years-2-partnership': self.partnership.pk,
-            'years-2-partnership_type': '',
-            'years-INITIAL_FORMS': '0',
-            'years-MAX_NUM_FORMS': '1000',
-            'years-MIN_NUM_FORMS': '0',
-            'years-TOTAL_FORMS': '3',
-        }
+        data = self.make_data(self.date_ko.strftime('%d/%m/%y'), self.partnership)
         response = self.client.post(self.url_ko, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
         
     def test_post(self):
         self.client.force_login(self.user_adri)
-        data = {
-            'comment': '',
-            'partner': self.partner.pk,
-            'partner_entity': self.partner_entity.pk,
-            'start_date': (datetime.datetime.today() + datetime.timedelta(1)).strftime('%d/%m/%y'),
-            'supervisor': '',
-            'ucl_university': self.ucl_university.pk,
-            'ucl_university_labo': self.ucl_university_labo.pk,
-            'university_offers': [self.university_offers.pk,],
-            'years-0-academic_year': '',
-            'years-0-education_field': '',
-            'years-0-education_level': '',
-            'years-0-id': '',
-            'years-0-partnership': self.partnership.pk,
-            'years-0-partnership_type': '',
-            'years-1-academic_year': '',
-            'years-1-education_field': '',
-            'years-1-education_level': '',
-            'years-1-id': '',
-            'years-1-partnership': self.partnership.pk,
-            'years-1-partnership_type': '',
-            'years-2-academic_year': '',
-            'years-2-education_field': '',
-            'years-2-education_level': '',
-            'years-2-id': '',
-            'years-2-partnership': self.partnership.pk,
-            'years-2-partnership_type': '',
-            'years-INITIAL_FORMS': '0',
-            'years-MAX_NUM_FORMS': '1000',
-            'years-MIN_NUM_FORMS': '0',
-            'years-TOTAL_FORMS': '3',
-        }
+        data = self.make_data(
+            (datetime.datetime.today() + datetime.timedelta(1)).strftime('%d/%m/%y'),
+            self.partnership,
+        )
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
