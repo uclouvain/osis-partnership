@@ -17,7 +17,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from django.views.generic.list import MultipleObjectMixin
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity_version import EntityVersion
+from base.models.entity import Entity
 from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
@@ -974,11 +974,11 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return EntityVersion.objects.none()
+            return Entity.objects.none()
 
-        qs = EntityVersion.objects.all()
+        qs = Entity.objects.all()
         if self.q:
-            qs = qs.filter(acronym__icontains=self.q)
+            qs = qs.filter(parent_of__acronym__icontains=self.q)
 
         return qs
 
