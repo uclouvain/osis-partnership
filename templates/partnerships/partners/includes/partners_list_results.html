@@ -26,7 +26,7 @@
         <td>{{ partner.partner_type }}</td>
         <td><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
         <td><i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-        <td><a href="{% url "partnerships:partnerships_list" %}?partner={{ partner.id }}">{{ partner.partnerships_count }}</a></td>
+        <td><a href="{% url "partnerships:list" %}?partner={{ partner.id }}">{{ partner.partnerships_count }}</a></td>
         <td><a href="{{ partner.get_absolute_url }}" class="btn btn-default"><i class="fa fa-eye"></i></a></td>
       </tr>
       {% endfor %}

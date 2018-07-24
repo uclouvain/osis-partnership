@@ -19,11 +19,11 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartneshipAgreementCreateView, PersonAutocompleteView, PartneshipConfigurationUpdateView)
 
 urlpatterns = [
-    url(r'^$', PartnershipsListView.as_view(), name="partnerships_list"),
+    url(r'^$', PartnershipsListView.as_view(), name="list"),
     url(r'^configuration/$', PartneshipConfigurationUpdateView.as_view(), name='configuration_update'),
-    url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="partnership_detail"),
-    url(r'^create/$', PartnershipCreateView.as_view(), name="partnership_create"),
-    url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="partnership_update"),
+    url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="detail"),
+    url(r'^create/$', PartnershipCreateView.as_view(), name="create"),
+    url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="update"),
     url(r'^(?P<partnership_pk>\d+)/contacts/', include([
         url('^new/$', PartnershipContactCreateView.as_view(), name="create"),
         url('^(?P<pk>\d+)/update/$', PartnershipContactUpdateView.as_view(), name="update"),

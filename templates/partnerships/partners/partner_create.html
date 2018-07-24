@@ -2,7 +2,7 @@
 {% load bootstrap3 i18n static %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:partnerships_list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
   <li class="active">{% trans 'new_partner' %}</li>
 {% endblock %}

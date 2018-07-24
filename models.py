@@ -355,8 +355,8 @@ class Partnership(models.Model):
         return _('partnership_with_{partner}').format(partner=self.partner)
 
     def get_absolute_url(self):
-        return reverse('partnerships:partnership_detail', kwargs={'pk': self.pk})
-    
+        return reverse('partnerships:detail', kwargs={'pk': self.pk})
+
     @staticmethod
     def user_can_add(user):
         return user_is_adri(user) or user_is_gf(user)
@@ -768,7 +768,7 @@ class Contact(models.Model):
         if self.first_name:
             return '{0} {1} {2}'.format(self.get_title_display(), self.last_name, self.first_name)
         return '{0} {1}'.format(self.get_title_display(), self.last_name)
-    
+
     @property
     def is_empty(self):
         return not any([

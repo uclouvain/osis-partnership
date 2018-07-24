@@ -72,8 +72,8 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_tag = PartnershipFactory(tags=[cls.tag])
 
         cls.user = UserFactory()
-        cls.url = reverse('partnerships:partnerships_list')
-        
+        cls.url = reverse('partnerships:list')
+
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')

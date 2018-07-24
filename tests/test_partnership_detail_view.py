@@ -11,7 +11,7 @@ class PartnershipDetailViewTest(TestCase):
     def setUpTestData(cls):
         cls.partnership = PartnershipFactory()
         cls.user = UserFactory()
-        cls.url = reverse('partnerships:partnership_detail', kwargs={'pk': cls.partnership.pk})
+        cls.url = reverse('partnerships:detail', kwargs={'pk': cls.partnership.pk})
 
     def test_get_anonymous(self):
         response = self.client.get(self.url, follow=True)

@@ -38,11 +38,11 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partnership_ko = PartnershipFactory(partner=cls.partner,
                                             partner_entity=cls.partner_entity,
                                             start_date=cls.date_ko)
-        cls.url = reverse('partnerships:partnership_update',
+        cls.url = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership.pk})
-        cls.url_ko = reverse('partnerships:partnership_update',
+        cls.url_ko = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership_ko.pk})
-        
+
         # Years
         cls.year_0 = PartnershipYearFactory(is_sms=True, is_smp=True, is_sta=True, is_stt=True)
         cls.year_1 = PartnershipYearFactory(is_sms=True, is_sta=True)
@@ -90,12 +90,12 @@ class PartnershipUpdateViewTest(TestCase):
             **self.data,
         }
 
-        
+
     def test_get_partnership_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
-        
+
     def test_get_partnership_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)

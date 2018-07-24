@@ -903,7 +903,7 @@ class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
 class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PartnershipConfigurationForm
     template_name = 'partnerships/configuration_update.html'
-    success_url = reverse_lazy('partnerships:partnerships_list')
+    success_url = reverse_lazy('partnerships:list')
 
     def test_func(self):
         return user_is_adri(self.request.user)

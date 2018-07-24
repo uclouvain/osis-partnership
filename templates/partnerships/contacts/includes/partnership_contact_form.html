@@ -33,7 +33,7 @@
   {% bootstrap_field form.comment %}
   <div class="row button-row">
     <div class="col-sm-6">
-      <a class="btn btn-default btn-block" href="{% url 'partnerships:partnership_detail' pk=partnership.pk %}">{% trans 'Cancel' %}</a>
+      <a class="btn btn-default btn-block" href="{% url 'partnerships:detail' pk=partnership.pk %}">{% trans 'Cancel' %}</a>
     </div>
     <div class="col-sm-6">
       <input type="submit" value="submit" name="submit"
