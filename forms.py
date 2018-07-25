@@ -711,3 +711,30 @@ class PartnershipConfigurationForm(forms.ModelForm):
             'partnership_update_max_date_day',
             'partnership_update_max_date_month',
         ]
+
+    def clean(self):
+        super(PartnershipConfigurationForm, self).clean()
+        try:
+            date(
+                2001,
+                self.cleaned_data['partnership_creation_max_date_month'],
+                self.cleaned_data['partnership_creation_max_date_day'],
+            )
+        except ValueError:
+            self.add_error(
+                'partnership_creation_max_date_day',
+                ValidationError(_('invalid_partnership_creation_max_date'))
+            )
+
+        try:
+            date(
+                2001,
+                self.cleaned_data['partnership_update_max_date_month'],
+                self.cleaned_data['partnership_update_max_date_day'],
+            )
+        except ValueError:
+            self.add_error(
+                'partnership_update_max_date_day',
+                ValidationError(_('invalid_partnership_update_max_date'))
+            )
+        return self.cleaned_data

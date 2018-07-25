@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-23 16:38+0200\n"
-"PO-Revision-Date: 2018-07-23 16:51+0200\n"
+"POT-Creation-Date: 2018-07-25 15:20+0200\n"
+"PO-Revision-Date: 2018-07-25 15:22+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -172,6 +172,12 @@ msgstr "La date de début se situe après la date de fin."
 
 msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
+
+msgid "invalid_partnership_creation_max_date"
+msgstr "Date invalide (le 29 février n'est pas autorisé)."
+
+msgid "invalid_partnership_update_max_date"
+msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -789,9 +795,6 @@ msgstr "Partenariat"
 msgid "academic_year"
 msgstr "Année académique"
 
-msgid "education_fields"
-msgstr "Domaines d'étude"
-
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
 msgstr "{partnership} pour l'année {year}"
@@ -862,26 +865,14 @@ msgstr "Décembre"
 msgid "partnership_creation_max_date_day"
 msgstr "Jour maximum pour la création"
 
-msgid "partnership_creation_max_date_day_help_text"
-msgstr "Jour du mois maximum pour la création d'un partenariat."
-
 msgid "partnership_creation_max_date_month"
 msgstr "Mois maximum pour la création"
-
-msgid "partnership_creation_max_date_month_help_text"
-msgstr "Mois maximum pour la création d'un partenariat (de l'année N - 1)."
 
 msgid "partnership_update_max_date_day"
 msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
 
-msgid "partnership_update_max_date_day_help_text"
-msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
-
 msgid "partnership_update_max_date_month"
 msgstr "Mois maximum pour la mise à jour d'un partenariat."
-
-msgid "partnership_update_max_date_month_help_text"
-msgstr "Mois maximum pour la mise à jour d'un partenariat (de l'année N)."
 
 msgid "mister"
 msgstr "Monsieur"
@@ -947,6 +938,18 @@ msgstr "Mettre à jour l'accord"
 
 msgid "update_configuration"
 msgstr "Mettre à jour la configuration"
+
+#, python-format
+msgid "partnership_configuration_creation_max_date_%(min_year)s_%(max_year)s"
+msgstr ""
+"Date maximum pour la création d'un partenariat de l'année %(min_year)s-"
+"%(max_year)s."
+
+#, python-format
+msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
+msgstr ""
+"Date maximum pour la mise à jour d'un partenariat de l'année %(min_year)s-"
+"%(max_year)s."
 
 msgid "confirm_contact_delete"
 msgstr ""
@@ -1052,9 +1055,6 @@ msgstr "Valide"
 
 msgid "still_actif"
 msgstr "Toujours actif"
-
-msgid "current_partnership"
-msgstr "Partenariats en cours"
 
 msgid "partners_export"
 msgstr "Exporter la liste des partenaires"
@@ -1201,6 +1201,21 @@ msgstr "Erreur lors de la sauvegarde de l'accord."
 
 msgid "partnership_agreement_success"
 msgstr "Accord sauvegardé avec succès."
+
+#~ msgid "education_fields"
+#~ msgstr "Domaines d'étude"
+
+#~ msgid "partnership_creation_max_date_day_help_text"
+#~ msgstr "Jour du mois maximum pour la création d'un partenariat."
+
+#~ msgid "partnership_update_max_date_day_help_text"
+#~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
+
+#~ msgid "partnership_update_max_date_month_help_text"
+#~ msgstr "Mois maximum pour la mise à jour d'un partenariat (de l'année N)."
+
+#~ msgid "current_partnership"
+#~ msgstr "Partenariats en cours"
 
 #~ msgid "new_contact"
 #~ msgstr "Nouveau contact"

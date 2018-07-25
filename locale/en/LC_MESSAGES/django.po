@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-23 16:38+0200\n"
+"POT-Creation-Date: 2018-07-25 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,6 +171,12 @@ msgid "partnership_start_date_gf_too_late"
 msgstr ""
 
 msgid "start_date_after_end_date"
+msgstr ""
+
+msgid "invalid_partnership_creation_max_date"
+msgstr ""
+
+msgid "invalid_partnership_update_max_date"
 msgstr ""
 
 msgid "contact_in"
@@ -788,9 +794,6 @@ msgstr ""
 msgid "academic_year"
 msgstr ""
 
-msgid "education_fields"
-msgstr ""
-
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
 msgstr ""
@@ -861,25 +864,13 @@ msgstr ""
 msgid "partnership_creation_max_date_day"
 msgstr ""
 
-msgid "partnership_creation_max_date_day_help_text"
-msgstr ""
-
 msgid "partnership_creation_max_date_month"
-msgstr ""
-
-msgid "partnership_creation_max_date_month_help_text"
 msgstr ""
 
 msgid "partnership_update_max_date_day"
 msgstr ""
 
-msgid "partnership_update_max_date_day_help_text"
-msgstr ""
-
 msgid "partnership_update_max_date_month"
-msgstr ""
-
-msgid "partnership_update_max_date_month_help_text"
 msgstr ""
 
 msgid "mister"
@@ -943,6 +934,14 @@ msgid "update_partnership_agreement"
 msgstr ""
 
 msgid "update_configuration"
+msgstr ""
+
+#, python-format
+msgid "partnership_configuration_creation_max_date_%(min_year)s_%(max_year)s"
+msgstr ""
+
+#, python-format
+msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
 msgstr ""
 
 msgid "confirm_contact_delete"
@@ -1042,9 +1041,6 @@ msgid "valid"
 msgstr ""
 
 msgid "still_actif"
-msgstr ""
-
-msgid "current_partnership"
 msgstr ""
 
 msgid "partners_export"

@@ -688,28 +688,24 @@ class PartnershipConfiguration(models.Model):
 
     partnership_creation_max_date_day = models.IntegerField(
         _('partnership_creation_max_date_day'),
-        help_text=_('partnership_creation_max_date_day_help_text'),
         choices=DAYS_CHOICES,
         default=31,
     )
 
     partnership_creation_max_date_month = models.IntegerField(
         _('partnership_creation_max_date_month'),
-        help_text=_('partnership_creation_max_date_month_help_text'),
         choices=MONTHES_CHOICES,
         default=12,
     )
 
     partnership_update_max_date_day = models.IntegerField(
         _('partnership_update_max_date_day'),
-        help_text=_('partnership_update_max_date_day_help_text'),
         choices=DAYS_CHOICES,
         default=1,
     )
 
     partnership_update_max_date_month = models.IntegerField(
         _('partnership_update_max_date_month'),
-        help_text=_('partnership_update_max_date_month_help_text'),
         choices=MONTHES_CHOICES,
         default=3,
     )
