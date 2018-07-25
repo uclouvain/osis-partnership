@@ -27,7 +27,7 @@ from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
                                PartnershipConfigurationForm)
 from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement, \
     PartnershipConfiguration
-from partnership.utils import user_is_adri
+from partnership.utils import user_is_adri, user_is_gf
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -583,6 +583,12 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     paginate_orphans = 2
     paginate_neighbours = 4
 
+    def get_initial(self):
+        initial = {}
+        if user_is_gf(self.request.user):
+            initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
+        return initial
+
     def get_template_names(self):
         if self.request.is_ajax():
             return 'partnerships/includes/partnerships_list_results.html'
@@ -610,18 +616,57 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             return ['-partner__contact_address__country', '-partner__contact_address__city', '-partner__name']
         elif ordering == 'ucl':
             return [
-                'ucl_university__entitiversion__parent__entityversion__acronym',
-                'ucl_university__entitiversion__acronym',
-                'ucl_university_labo__entitiversion__acronym',
+                'ucl_university__entityversion__parent__entityversion__acronym',
+                'ucl_university__entityversion__acronym',
+                'ucl_university_labo__entityversion__acronym',
             ]
         elif ordering == '-ucl':
             return [
-                '-ucl_university__entitiversion__parent__entityversion__acronym',
-                '-ucl_university__entitiversion__acronym',
-                '-ucl_university_labo__entitiversion__acronym',
+                '-ucl_university__entityversion__parent__entityversion__acronym',
+                '-ucl_university__entityversion__acronym',
+                '-ucl_university_labo__entityversion__acronym',
             ]
         else:
             return [ordering]
+
+    def filter_queryset(self, queryset, data):
+        if data.get('ucl_university', None):
+            queryset = queryset.filter(ucl_university=data['ucl_university'])
+        if data.get('ucl_university_labo', None):
+            queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
+        if data.get('university_offers', None):
+            queryset = queryset.filter(university_offers__in=data['university_offers'])
+        if data.get('partner', None):
+            queryset = queryset.filter(partner=data['partner'])
+        if data.get('partner_entity', None):
+            queryset = queryset.filter(partner__entities__in=data['partner_entity'])
+        if data.get('partner_type', None):
+            queryset = queryset.filter(partner__partner_type=data['partner_type'])
+        if data.get('city', None):
+            queryset = queryset.filter(partner__contact_address__city__icontains=data['city'])
+        if data.get('country', None):
+            queryset = queryset.filter(partner__contact_address__country=data['country'])
+        if data.get('continent', None):
+            queryset = queryset.filter(partner__contact_address__country__continent=data['continent'])
+        if data.get('partner_tags', None):
+            queryset = queryset.filter(partner__tags__in=data['partner_tags'])
+        if data.get('is_sms', None) is not None:
+            queryset = queryset.filter(years__is_sms=data['is_sms'])
+        if data.get('is_smp', None) is not None:
+            queryset = queryset.filter(years__is_smp=data['is_smp'])
+        if data.get('is_sta', None) is not None:
+            queryset = queryset.filter(years__is_sta=data['is_sta'])
+        if data.get('is_stt', None) is not None:
+            queryset = queryset.filter(years__is_stt=data['is_stt'])
+        if data.get('partnership_type', None):
+            queryset = queryset.filter(years__partnership_type=data['partnership_type'])
+        if data.get('education_field', None):
+            queryset = queryset.filter(years__education_field=data['education_field'])
+        if data.get('education_level', None):
+            queryset = queryset.filter(years__education_level=data['education_level'])
+        if data.get('tags', None):
+            queryset = queryset.filter(tags__in=data['tags'])
+        return queryset
 
     def get_queryset(self):
         queryset = (
@@ -637,44 +682,10 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             .annotate(university_offers_count=Count('university_offers'))
         )
         form = self.get_form()
-        if form.is_valid():
-            data = form.cleaned_data
-            if data['ucl_university']:
-                queryset = queryset.filter(ucl_university=data['ucl_university'])
-            if data['ucl_university_labo']:
-                queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
-            if data['university_offers']:
-                queryset = queryset.filter(university_offers__in=data['university_offers'])
-            if data['partner']:
-                queryset = queryset.filter(partner=data['partner'])
-            if data['partner_entity']:
-                queryset = queryset.filter(partner__entities__in=data['partner_entity'])
-            if data['partner_type']:
-                queryset = queryset.filter(partner__partner_type=data['partner_type'])
-            if data['city']:
-                queryset = queryset.filter(partner__contact_address__city__icontains=data['city'])
-            if data['country']:
-                queryset = queryset.filter(partner__contact_address__country=data['country'])
-            if data['continent']:
-                queryset = queryset.filter(partner__contact_address__country__continent=data['continent'])
-            if data['partner_tags']:
-                queryset = queryset.filter(partner__tags__in=data['partner_tags'])
-            if data['is_sms'] is not None:
-                queryset = queryset.filter(years__is_sms=data['is_sms'])
-            if data['is_smp'] is not None:
-                queryset = queryset.filter(years__is_smp=data['is_smp'])
-            if data['is_sta'] is not None:
-                queryset = queryset.filter(years__is_sta=data['is_sta'])
-            if data['is_stt'] is not None:
-                queryset = queryset.filter(years__is_stt=data['is_stt'])
-            if data['partnership_type']:
-                queryset = queryset.filter(years__partnership_type=data['partnership_type'])
-            if data['education_field']:
-                queryset = queryset.filter(years__education_field=data['education_field'])
-            if data['education_level']:
-                queryset = queryset.filter(years__education_level=data['education_level'])
-            if data['tags']:
-                queryset = queryset.filter(tags__in=data['tags'])
+        if not form.is_bound:
+            queryset = self.filter_queryset(queryset, self.get_initial())
+        elif form.is_valid():
+            queryset = self.filter_queryset(queryset, form.cleaned_data)
         ordering = self.get_ordering()
         queryset = queryset.order_by(*ordering)
         return queryset
