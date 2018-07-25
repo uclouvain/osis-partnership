@@ -449,7 +449,7 @@ class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, UserPasses
 
     def get_template_names(self):
         if self.request.is_ajax():
-            return 'partnerships/includes/partner_entity_delete.html'
+            return 'partnerships/partners/entities/includes/partner_entity_delete.html'
         return self.template_name
 
 
