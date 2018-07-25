@@ -440,8 +440,9 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
         return self.get_object().user_can_change(self.request.user)
 
 
-class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, DeleteView):
+class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, UserPassesTestMixin, DeleteView):
     template_name = 'partnerships/partners/entities/partner_entity_delete.html'
+    context_object_name = 'partner_entity'
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
