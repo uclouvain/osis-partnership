@@ -54,7 +54,7 @@
               {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
             </dd>
 
-            <dt>{% trans "supervisor" %}</dt>
+            <dt>{% trans "partnership_supervisor" %}</dt>
             <dd>{{ partnership.supervisor|default_if_none:"" }}</dd>
 
             <dt>{% trans "dates" %}</dt>
