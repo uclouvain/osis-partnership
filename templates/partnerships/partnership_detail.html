@@ -165,9 +165,29 @@
 
       {% for agreement in partnership.agreements.all %}
       <div class="row">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-5">
+          <div>
+            <dl class="dl-horizontal">
+              <dt>{% trans "academic_years" %}</dt>
+              <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
+
+              <dt>{% trans "eligible" %}</dt>
+              <dd><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+              <dt>{% trans "status" %}</dt>
+              <dd>{{ agreement.get_status_display }}</dd>
+
+              <dt>{% trans "comment" %}</dt>
+              <dd>{{ agreement.comment|linebreaksbr }}</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="col-md-5 partner-media">
+          {% include "partnerships/includes/media_detail.html" with media=agreement.media %}
+        </div>
+        <div class="col-md-2">
           {% if can_change %}
-          <div class="btn-group pull-right">
+          <div class="btn-group">
             <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
                class="btn btn-default">
               <i class="fa fa-pencil fa-fw"></i>
@@ -186,26 +206,9 @@
             </ul>
           </div>
           {% endif %}
-          <div>
-            <dl class="dl-horizontal">
-              <dt>{% trans "academic_years" %}</dt>
-              <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
-
-              <dt>{% trans "eligible" %}</dt>
-              <dd><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
-
-              <dt>{% trans "status" %}</dt>
-              <dd>{{ agreement.get_status_display }}</dd>
-
-              <dt>{% trans "comment" %}</dt>
-              <dd>{{ agreement.comment|linebreaksbr }}</dd>
-            </dl>
-          </div>
-        </div>
-        <div class="col-md-6 partner-media">
-          {% include "partnerships/includes/media_detail.html" with media=agreement.media %}
         </div>
       </div>
+      {% if not forloop.last %}<hr>{% endif %}
       {% empty %}
       <div class="row">
         <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
