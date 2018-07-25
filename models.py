@@ -659,8 +659,8 @@ class PartnershipAgreement(models.Model):
         blank=True,
     )
 
-    note = models.TextField(
-        _('note'),
+    comment = models.TextField(
+        _('comment'),
         blank=True,
         default='',
     )

@@ -686,7 +686,7 @@ class PartnershipAgreementForm(forms.ModelForm):
             'end_academic_year',
             'status',
             'eligible',
-            'note',
+            'comment',
         ]
 
     def __init__(self, *args, **kwargs):
