@@ -49,9 +49,7 @@
 
             <dt>{% trans "ucl_university" %}</dt>
             <dd>
-              <strong>{{ partnership.ucl_university }}</strong>
-              {% if partnership.ucl_university_labo %}&gt; <strong>{{ partnership.ucl_university_labo }} lab</strong>{% endif %}
-              {% if partnership.university_offers_count > 0 %} &gt; <strong>{% if partnership.university_offers_count == 1 %}{{ partnership.university_offers.all.0 }}{% else %}{{ partnership.university_offers_count }} {% trans "offers" %}{% endif %}</strong>{% endif %}
+              {{ partnership.entities_acronyms }}
             </dd>
 
             <dt>{% trans "partnership_supervisor" %}</dt>
