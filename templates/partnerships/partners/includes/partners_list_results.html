@@ -12,7 +12,7 @@
         <td>{% trans "type" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner_type" %}</td>
         <td>{% trans "valid" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="is_valid" %}</td>
         <td>{% trans "still_actif" %}</td>
-        <td>{% trans "current_partnership" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnerships_count" %}</td>
+        <td>{% trans "partnerships" %} {% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partnerships_count" %}</td>
         <td></td>
       </tr>
     </thead>
@@ -22,7 +22,7 @@
         <td><a href="{{ partner.get_absolute_url }}">{{ partner }}</a></td>
         <td>{{ partner.contact_address.country.name }}</td>
         <td>{{ partner.contact_address.city|default_if_none:"" }}</td>
-        <td>{{ partner.partner_code }}</td>
+        <td>{{ partner.partner_code|default_if_none:"" }}</td>
         <td>{{ partner.partner_type }}</td>
         <td><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
         <td><i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
