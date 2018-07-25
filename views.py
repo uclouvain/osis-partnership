@@ -605,9 +605,9 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
         if ordering == 'country':
-            return ['ucl_university__country', 'ucl_university__city', 'partner__name']
+            return ['partner__contact_address__country', 'partner__contact_address__city', 'partner__name']
         elif ordering == '-country':
-            return ['-ucl_university__country', '-ucl_university__city', '-partner__name']
+            return ['-partner__contact_address__country', '-partner__contact_address__city', '-partner__name']
         elif ordering == 'ucl':
             return [
                 'ucl_university__entitiversion__parent__entityversion__acronym',
@@ -627,8 +627,11 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partnership.objects
             .all()
-            .select_related('ucl_university_labo', 'ucl_university', 'partner', 'partner_entity', 'supervisor')
-            .prefetch_related(
+            .select_related(
+                'ucl_university_labo', 'ucl_university',
+                'partner__contact_address__country', 'partner_entity',
+                'supervisor',
+            ).prefetch_related(
                 Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
             .annotate(university_offers_count=Count('university_offers'))
@@ -979,7 +982,7 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
         qs = Entity.objects.all()
         if self.q:
-            qs = qs.filter(parent_of__acronym__icontains=self.q)
+            qs = qs.filter(entityversion__acronym__icontains=self.q)
 
         return qs
 
