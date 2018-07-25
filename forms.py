@@ -665,6 +665,9 @@ class PartnershipYearForm(forms.ModelForm):
             'is_stt',
             'partnership_type',
         )
+        widgets = {
+            'education_field': autocomplete.Select2(),
+        }
 
 
 PartnershipYearInlineFormset = inlineformset_factory(
