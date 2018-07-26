@@ -38,8 +38,8 @@
       <div class="row">
         <div class="col-sm-12 col-md-12">
           <dl class="dl-horizontal">
-            <dt>{% trans "is_valid" %}</dt>
-            <dd><i class="fa {{ partnership.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+            <dt>{% trans "validity_end" %}</dt>
+            <dd>{{ partnership.validity_end|default_if_none:"" }}</dd>
 
             <dt>{% trans "partner" %}</dt>
             <dd>

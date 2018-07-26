@@ -380,12 +380,27 @@ class Partnership(models.Model):
     def is_valid(self):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
 
+    @property
+    def validated_agreements(self):
+        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
+
     @cached_property
     def end_date(self):
-        validated_agreements = self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
-        if not validated_agreements.exists():
+        if not self.validated_agreements.exists():
             return None
-        return validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
+        return self.validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
+
+    @cached_property
+    def validity_end(self):
+        agreement = (
+            self.validated_agreements
+                .select_related('end_academic_year')
+                .order_by('-end_academic_year__end_date')
+                .first()
+        )
+        if agreement is None:
+            return None
+        return agreement.end_academic_year
 
     @cached_property
     def current_year(self):

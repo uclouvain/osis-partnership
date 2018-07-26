@@ -22,8 +22,7 @@
           <td>{{ partnership.supervisor|default_if_none:"" }}</td>
           <td>{{ partnership.entities_acronyms }}</td>
           <td></td>
-          <td>
-            {% if partnership.end_date is None %}N/A{% else %}{{ partnership.end_date|date:"Y" }}{% endif %}</td>
+          <td>{{ partnership.validity_end|default_if_none:"" }}</td>
           <td>
             <a href="{% url 'partnerships:detail' pk=partnership.id %}" class="btn btn-default">
               <i class="fa fa-eye"></i>
