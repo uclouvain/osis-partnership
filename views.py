@@ -639,7 +639,10 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         if data.get('ucl_university_labo', None):
             queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
         if data.get('university_offers', None):
-            queryset = queryset.filter(university_offers__in=data['university_offers'])
+            university_offers = data['university_offers']
+            if not isinstance(university_offers, list):
+                university_offers = [university_offers]
+            queryset = queryset.filter(university_offers__in=university_offers)
         if data.get('partner', None):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
@@ -1006,23 +1009,6 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
-class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(partnerships__isnull=False)
-
-
-class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university:
-            qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
-        return qs.filter(partnerships_labo__isnull=False)
-
-
 class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
@@ -1036,11 +1022,32 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
-class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
+class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(partnerships__isnull=False).distinct()
+
+
+class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
         qs = super().get_queryset()
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
-            qs = qs.filter(partnerships__ucl_university=ucl_university)
-        return qs.filter(partnerships__isnull=False)
+            qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
+        else:
+            return Entity.objects.none()
+        return qs.filter(partnerships_labo__isnull=False).distinct()
+
+
+class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
+        if ucl_university_labo:
+            qs = qs.filter(partnerships__ucl_university_labo=ucl_university_labo)
+        else:
+            return EducationGroupYear.objects.none()
+        return qs.filter(partnerships__isnull=False).distinct()
