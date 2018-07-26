@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-25 15:20+0200\n"
-"PO-Revision-Date: 2018-07-25 17:09+0200\n"
+"POT-Creation-Date: 2018-07-26 11:41+0200\n"
+"PO-Revision-Date: 2018-07-26 11:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -340,413 +340,420 @@ msgstr "Peux accéder aux partenariats"
 msgid "partnership_with_{partner}"
 msgstr "Partenariat avec {partner}"
 
-msgid "Education, not further defined"
+msgid "0110 - Education, not further defined"
 msgstr ""
 
-msgid "Education science"
+msgid "0111 - Education science"
 msgstr ""
 
-msgid "Training for pre-school teachers"
+msgid "0112 - Training for pre-school teachers"
 msgstr ""
 
-msgid "Teacher training without subject specialization"
+msgid "0113 - Teacher training without subject specialization"
 msgstr ""
 
-msgid "Teacher training with subject specialization"
+msgid "0114 - Teacher training with subject specialization"
 msgstr ""
 
-msgid "Education, not elsewhere classified"
+msgid "0119 - Education, not elsewhere classified"
 msgstr ""
 
-msgid "Education, inter-disciplinary programmes"
+msgid "0188 - Education, inter-disciplinary programmes"
 msgstr ""
 
-msgid "Arts, not further defined"
+msgid "0210 - Arts, not further defined"
 msgstr ""
 
-msgid "Audio-visual techniques and media production"
+msgid "0211 - Audio-visual techniques and media production"
 msgstr ""
 
-msgid "Fashion, interior and industrial design"
+msgid "0212 - Fashion, interior and industrial design"
 msgstr ""
 
-msgid "Fine arts"
+msgid "0213 - Fine arts"
 msgstr ""
 
-msgid "Handicrafts"
+msgid "0214 - Handicrafts"
 msgstr ""
 
-msgid "Music and performing arts"
+msgid "0215 - Music and performing arts"
 msgstr ""
 
-msgid "Arts, not elsewhere classified"
+msgid "0219 - Arts, not elsewhere classified"
 msgstr ""
 
-msgid "Humanities (except languages), not further defined"
+msgid "0220 - Humanities (except languages), not further defined"
 msgstr ""
 
-msgid "Religion and theology"
+msgid "0221 - Religion and theology"
 msgstr ""
 
-msgid "History and archaeology"
+msgid "0222 - History and archaeology"
 msgstr ""
 
-msgid "Philosophy and ethics"
+msgid "0223 - Philosophy and ethics"
 msgstr ""
 
-msgid "Humanities (except languages), not elsewhere classified"
+msgid "0229 - Humanities (except languages), not elsewhere classified"
 msgstr ""
 
-msgid "Languages, not further defined"
+msgid "0230 - Languages, not further defined"
 msgstr ""
 
-msgid "Language acquisition"
+msgid "0231 - Language acquisition"
 msgstr ""
 
-msgid "Literature and linguistics"
+msgid "0232 - Literature and linguistics"
 msgstr ""
 
-msgid "Languages, not elsewhere classified"
+msgid "0239 - Languages, not elsewhere classified"
 msgstr ""
 
-msgid "Arts and humanities, inter-disciplinary programmes"
+msgid "0288 - Arts and humanities, inter-disciplinary programmes"
 msgstr ""
 
-msgid "Social and behavioural sciences, not further defined"
+msgid "0310 - Social and behavioural sciences, not further defined"
 msgstr ""
 
-msgid "Economics"
+msgid "0311 - Economics"
 msgstr ""
 
-msgid "Political sciences and civics"
+msgid "0312 - Political sciences and civics"
 msgstr ""
 
-msgid "Psychology"
+msgid "0313 - Psychology"
 msgstr ""
 
-msgid "Sociology and cultural studies"
+msgid "0314 - Sociology and cultural studies"
 msgstr ""
 
-msgid "Social and behavioural sciences, not elsewhere classified"
+msgid "0319 - Social and behavioural sciences, not elsewhere classified"
 msgstr ""
 
-msgid "Journalism and information, not further defined"
+msgid "0320 - Journalism and information, not further defined"
 msgstr ""
 
-msgid "Journalism and reporting"
+msgid "0321 - Journalism and reporting"
 msgstr ""
 
-msgid "Library, information and archival studies"
+msgid "0322 - Library, information and archival studies"
 msgstr ""
 
-msgid "Journalism and information, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"Social sciences, journalism and information, inter-disciplinary programmes"
-msgstr ""
-
-msgid "Business and administration, not further defined"
-msgstr ""
-
-msgid "Accounting and taxation"
-msgstr ""
-
-msgid "Finance, banking and insurance"
-msgstr ""
-
-msgid "Management and administration"
-msgstr ""
-
-msgid "Marketing and advertising"
-msgstr ""
-
-msgid "Secretarial and office work"
-msgstr ""
-
-msgid "Wholesale and retail sales"
-msgstr ""
-
-msgid "Work skills"
-msgstr ""
-
-msgid "Business and administration, not elsewhere classified"
-msgstr ""
-
-msgid "Law"
-msgstr ""
-
-msgid "Law, not elsewhere classified"
-msgstr ""
-
-msgid "Business, administration and law, inter-disciplinary programmes"
-msgstr ""
-
-msgid "Biological and related sciences, not further defined"
-msgstr ""
-
-msgid "Biology"
-msgstr ""
-
-msgid "Biochemistry"
-msgstr ""
-
-msgid "Biological and related sciences, not elsewhere classifed"
-msgstr ""
-
-msgid "Environment, not further defined"
-msgstr ""
-
-msgid "Environmental sciences"
-msgstr ""
-
-msgid "Natural environments and wildlife"
-msgstr ""
-
-msgid "Environment, not elsewhere classified"
-msgstr ""
-
-msgid "Physical sciences, not further defined"
-msgstr ""
-
-msgid "Chemistry"
-msgstr ""
-
-msgid "Earth sciences"
-msgstr ""
-
-msgid "Physics"
-msgstr ""
-
-msgid "Physical sciences, not elsewhere classified"
-msgstr ""
-
-msgid "Mathematics and statistics, not further defined"
-msgstr ""
-
-msgid "Mathematics"
-msgstr ""
-
-msgid "Statistics"
-msgstr ""
-
-msgid "Mathematics and statistics, not elsewhere classified"
+msgid "0329 - Journalism and information, not elsewhere classified"
 msgstr ""
 
 msgid ""
-"Natural sciences, mathematics and statistics, inter-disciplinary programmes"
-msgstr ""
-
-msgid "Information and Communication Technologies (ICTs), not further defined"
-msgstr ""
-
-msgid "Computer use"
-msgstr ""
-
-msgid "Database and network design and administration"
-msgstr ""
-
-msgid "Software and applications development and analysis"
-msgstr ""
-
-msgid ""
-"Information and Communication Technologies (ICTs), not elsewhere classified"
-msgstr ""
-
-msgid ""
-"Information and Communication Technologies (ICTs), inter-disciplinary "
+"0388 - Social sciences, journalism and information, inter-disciplinary "
 "programmes"
 msgstr ""
 
-msgid "Engineering and engineering trades, not further defined"
+msgid "0410 - Business and administration, not further defined"
 msgstr ""
 
-msgid "Chemical engineering and processes"
+msgid "0411 - Accounting and taxation"
 msgstr ""
 
-msgid "Environmental protection technology"
+msgid "0412 - Finance, banking and insurance"
 msgstr ""
 
-msgid "Electricity and energy"
+msgid "0413 - Management and administration"
 msgstr ""
 
-msgid "Electronics and automation"
+msgid "0414 - Marketing and advertising"
 msgstr ""
 
-msgid "Mechanics and metal trades"
+msgid "0415 - Secretarial and office work"
 msgstr ""
 
-msgid "Motor vehicles, ships and aircraft"
+msgid "0416 - Wholesale and retail sales"
 msgstr ""
 
-msgid "Engineering and engineering trades, not elsewhere classified"
+msgid "0417 - Work skills"
 msgstr ""
 
-msgid "Manufacturing and processing, not further defined"
+msgid "0419 - Business and administration, not elsewhere classified"
 msgstr ""
 
-msgid "Food processing"
+msgid "0421 - Law"
 msgstr ""
 
-msgid "Materials (glass, paper, plastic and wood)"
+msgid "0429 - Law, not elsewhere classified"
 msgstr ""
 
-msgid "Textiles (clothes, footwear and leather)"
+msgid "0488 - Business, administration and law, inter-disciplinary programmes"
 msgstr ""
 
-msgid "Mining and extraction"
+msgid "0510 - Biological and related sciences, not further defined"
 msgstr ""
 
-msgid "Manufacturing and processing, not elsewhere classified"
+msgid "0511 - Biology"
 msgstr ""
 
-msgid "Architecture and construction, not further defined"
+msgid "0512 - Biochemistry"
 msgstr ""
 
-msgid "Architecture and town planning"
+msgid "0519 - Biological and related sciences, not elsewhere classifed"
 msgstr ""
 
-msgid "Building and civil engineering"
+msgid "0520 - Environment, not further defined"
 msgstr ""
 
-msgid "Architecture and construction, not elsewhere classified"
+msgid "0521 - Environmental sciences"
+msgstr ""
+
+msgid "0522 - Natural environments and wildlife"
+msgstr ""
+
+msgid "0529 - Environment, not elsewhere classified"
+msgstr ""
+
+msgid "0530 - Physical sciences, not further defined"
+msgstr ""
+
+msgid "0531 - Chemistry"
+msgstr ""
+
+msgid "0532 - Earth sciences"
+msgstr ""
+
+msgid "0533 - Physics"
+msgstr ""
+
+msgid "0539 - Physical sciences, not elsewhere classified"
+msgstr ""
+
+msgid "0540 - Mathematics and statistics, not further defined"
+msgstr ""
+
+msgid "0541 - Mathematics"
+msgstr ""
+
+msgid "0542 - Statistics"
+msgstr ""
+
+msgid "0549 - Mathematics and statistics, not elsewhere classified"
 msgstr ""
 
 msgid ""
-"Engineering, manufacturing and construction, inter-disciplinary programmes"
-msgstr ""
-
-msgid "Agriculture, not further defined"
-msgstr ""
-
-msgid "Crop and livestock production"
-msgstr ""
-
-msgid "Horticulture"
-msgstr ""
-
-msgid "Agriculture, not elsewhere classified"
-msgstr ""
-
-msgid "Forestry"
-msgstr ""
-
-msgid "Forestry, not elsewhere classified"
-msgstr ""
-
-msgid "Fisheries"
-msgstr ""
-
-msgid "Fisheries, not elsewhere classified"
-msgstr ""
-
-msgid "Veterinary"
-msgstr ""
-
-msgid "Veterinary, not elsewhere classified"
+"0588 - Natural sciences, mathematics and statistics, inter-disciplinary "
+"programmes"
 msgstr ""
 
 msgid ""
-"Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes"
+"0610 - Information and Communication Technologies (ICTs), not further defined"
 msgstr ""
 
-msgid "Health, not further defined"
+msgid "0611 - Computer use"
 msgstr ""
 
-msgid "Dental studies"
+msgid "0612 - Database and network design and administration"
 msgstr ""
 
-msgid "Medicine"
+msgid "0613 - Software and applications development and analysis"
 msgstr ""
 
-msgid "Nursing and midwifery"
+msgid ""
+"0619 - Information and Communication Technologies (ICTs), not elsewhere "
+"classified"
 msgstr ""
 
-msgid "Medical diagnostic and treatment technology"
+msgid ""
+"0688 - Information and Communication Technologies (ICTs), inter-disciplinary "
+"programmes"
 msgstr ""
 
-msgid "Therapy and rehabilitation"
+msgid "0710 - Engineering and engineering trades, not further defined"
 msgstr ""
 
-msgid "Pharmacy"
+msgid "0711 - Chemical engineering and processes"
 msgstr ""
 
-msgid "Traditional and complementary medicine and therapy"
+msgid "0712 - Environmental protection technology"
 msgstr ""
 
-msgid "Health, not elsewhere classified"
+msgid "0713 - Electricity and energy"
 msgstr ""
 
-msgid "Welfare, not further defined"
+msgid "0714 - Electronics and automation"
 msgstr ""
 
-msgid "Care of the elderly and of disabled adults"
+msgid "0715 - Mechanics and metal trades"
 msgstr ""
 
-msgid "Child care and youth services"
+msgid "0716 - Motor vehicles, ships and aircraft"
 msgstr ""
 
-msgid "Social work and counselling"
+msgid "0719 - Engineering and engineering trades, not elsewhere classified"
 msgstr ""
 
-msgid "Welfare, not elsewhere classified"
+msgid "0720 - Manufacturing and processing, not further defined"
 msgstr ""
 
-msgid "Health and Welfare, inter-disciplinary programmes"
+msgid "0721 - Food processing"
 msgstr ""
 
-msgid "Personal services, not further defined"
+msgid "0722 - Materials (glass, paper, plastic and wood)"
 msgstr ""
 
-msgid "Domestic services"
+msgid "0723 - Textiles (clothes, footwear and leather)"
 msgstr ""
 
-msgid "Hair and beauty services"
+msgid "0724 - Mining and extraction"
 msgstr ""
 
-msgid "Hotel, restaurants and catering"
+msgid "0729 - Manufacturing and processing, not elsewhere classified"
 msgstr ""
 
-msgid "Sports"
+msgid "0730 - Architecture and construction, not further defined"
 msgstr ""
 
-msgid "Travel, tourism and leisure"
+msgid "0731 - Architecture and town planning"
 msgstr ""
 
-msgid "Personal services, not elsewhere classified"
+msgid "0732 - Building and civil engineering"
 msgstr ""
 
-msgid "Hygiene and occupational health services, not further defined"
+msgid "0739 - Architecture and construction, not elsewhere classified"
 msgstr ""
 
-msgid "Community sanitation"
+msgid ""
+"0788 - Engineering, manufacturing and construction, inter-disciplinary "
+"programmes"
 msgstr ""
 
-msgid "Occupational health and safety"
+msgid "0810 - Agriculture, not further defined"
 msgstr ""
 
-msgid "Hygiene and occupational health services, not elsewhere classified"
+msgid "0811 - Crop and livestock production"
 msgstr ""
 
-msgid "Security services, not further defined"
+msgid "0812 - Horticulture"
 msgstr ""
 
-msgid "Military and defence"
+msgid "0819 - Agriculture, not elsewhere classified"
 msgstr ""
 
-msgid "Protection of persons and property"
+msgid "0821 - Forestry"
 msgstr ""
 
-msgid "Security services, not elsewhere classified"
+msgid "0829 - Forestry, not elsewhere classified"
 msgstr ""
 
-msgid "Transport services"
+msgid "0831 - Fisheries"
 msgstr ""
 
-msgid "Transport services, not elsewhere classified"
+msgid "0839 - Fisheries, not elsewhere classified"
 msgstr ""
 
-msgid "Services, inter-disciplinary programmes"
+msgid "0841 - Veterinary"
+msgstr ""
+
+msgid "0849 - Veterinary, not elsewhere classified"
+msgstr ""
+
+msgid ""
+"0888 - Agriculture, forestry, fisheries, veterinary, inter-disciplinary "
+"programmes"
+msgstr ""
+
+msgid "0910 - Health, not further defined"
+msgstr ""
+
+msgid "0911 - Dental studies"
+msgstr ""
+
+msgid "0912 - Medicine"
+msgstr ""
+
+msgid "0913 - Nursing and midwifery"
+msgstr ""
+
+msgid "0914 - Medical diagnostic and treatment technology"
+msgstr ""
+
+msgid "0915 - Therapy and rehabilitation"
+msgstr ""
+
+msgid "0916 - Pharmacy"
+msgstr ""
+
+msgid "0917 - Traditional and complementary medicine and therapy"
+msgstr ""
+
+msgid "0919 - Health, not elsewhere classified"
+msgstr ""
+
+msgid "0920 - Welfare, not further defined"
+msgstr ""
+
+msgid "0921 - Care of the elderly and of disabled adults"
+msgstr ""
+
+msgid "0922 - Child care and youth services"
+msgstr ""
+
+msgid "0923 - Social work and counselling"
+msgstr ""
+
+msgid "0929 - Welfare, not elsewhere classified"
+msgstr ""
+
+msgid "0988 - Health and Welfare, inter-disciplinary programmes"
+msgstr ""
+
+msgid "1010 - Personal services, not further defined"
+msgstr ""
+
+msgid "1011 - Domestic services"
+msgstr ""
+
+msgid "1012 - Hair and beauty services"
+msgstr ""
+
+msgid "1013 - Hotel, restaurants and catering"
+msgstr ""
+
+msgid "1014 - Sports"
+msgstr ""
+
+msgid "1015 - Travel, tourism and leisure"
+msgstr ""
+
+msgid "1019 - Personal services, not elsewhere classified"
+msgstr ""
+
+msgid "1020 - Hygiene and occupational health services, not further defined"
+msgstr ""
+
+msgid "1021 - Community sanitation"
+msgstr ""
+
+msgid "1022 - Occupational health and safety"
+msgstr ""
+
+msgid ""
+"1029 - Hygiene and occupational health services, not elsewhere classified"
+msgstr ""
+
+msgid "1030 - Security services, not further defined"
+msgstr ""
+
+msgid "1031 - Military and defence"
+msgstr ""
+
+msgid "1032 - Protection of persons and property"
+msgstr ""
+
+msgid "1039 - Security services, not elsewhere classified"
+msgstr ""
+
+msgid "1041 - Transport services"
+msgstr ""
+
+msgid "1049 - Transport services, not elsewhere classified"
+msgstr ""
+
+msgid "1088 - Services, inter-disciplinary programmes"
 msgstr ""
 
 msgid ""
@@ -822,9 +829,6 @@ msgstr "État"
 
 msgid "eligible"
 msgstr "Éligible"
-
-msgid "note"
-msgstr "Note"
 
 msgid "january"
 msgstr "Janvier"
@@ -1012,17 +1016,14 @@ msgstr "UCL"
 msgid "years"
 msgstr "Années"
 
-msgid "supervisor"
-msgstr "Superviseur"
-
 msgid "ucl"
 msgstr "UCL"
 
 msgid "financing"
 msgstr "Financement"
 
-msgid "validity"
-msgstr "Validité"
+msgid "validity_end"
+msgstr "Fin de validité"
 
 msgid "partner_entity_delete_warning"
 msgstr ""
@@ -1136,8 +1137,8 @@ msgstr "Créer le partenariat"
 msgid "edit_partnership"
 msgstr "Mettre à jour le partenariat"
 
-msgid "offers"
-msgstr "Offres"
+msgid "partnership_missing_valid_years"
+msgstr "Il manque des accords validés pour ce partenariat."
 
 msgid "dates"
 msgstr "Dates"
@@ -1201,6 +1202,15 @@ msgstr "Erreur lors de la sauvegarde de l'accord."
 
 msgid "partnership_agreement_success"
 msgstr "Accord sauvegardé avec succès."
+
+#~ msgid "note"
+#~ msgstr "Note"
+
+#~ msgid "supervisor"
+#~ msgstr "Superviseur"
+
+#~ msgid "offers"
+#~ msgstr "Offres"
 
 #~ msgid "education_fields"
 #~ msgstr "Domaines d'étude"
