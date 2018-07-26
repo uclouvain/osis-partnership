@@ -749,6 +749,8 @@ class Contact(models.Model):
         _('contact_title'),
         max_length=50,
         choices=TITLE_CHOICES,
+        null=True,
+        blank=True,
     )
     last_name = models.CharField(_('last_name'), max_length=255, blank=True, null=True)
     first_name = models.CharField(_('first_name'), max_length=255, blank=True, null=True)

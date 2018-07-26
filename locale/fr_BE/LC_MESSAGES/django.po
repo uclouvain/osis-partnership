@@ -313,7 +313,7 @@ msgid "is_public"
 msgstr "Organisme public ?"
 
 msgid "contact_type"
-msgstr "Type"
+msgstr "type de contact"
 
 msgid "use_egracons"
 msgstr "Utilise le système de conversion de note Égracons ?"
@@ -881,7 +881,13 @@ msgid "madame"
 msgstr "Madame"
 
 msgid "contact_title"
-msgstr "Titre du contact"
+msgstr "Civilité"
+
+msgid "update_contact"
+msgstr "Mettre le contact à jour"
+
+msgid "create_contact"
+msgstr "Créer le contact
 
 msgid "society"
 msgstr "Société"

@@ -3,15 +3,14 @@
 {% bootstrap_form_errors form %}
 <form action="#" method="POST">
   {% csrf_token %}
+  <h2>{% trans 'identity' %}</h2>
   <div class="row">
     <div class="col-sm-6">
-      <h2>{% trans 'identity' %}</h2>
       {% bootstrap_field form.title %}
       {% bootstrap_field form.last_name %}
       {% bootstrap_field form.first_name %}
     </div>
     <div class="col-sm-6">
-      <h2>{% trans 'role' %}</h2>
       {% bootstrap_field form.type %}
       {% bootstrap_field form.society %}
       {% bootstrap_field form.function %}
@@ -36,8 +35,8 @@
       <a class="btn btn-default btn-block" href="{% url 'partnerships:detail' pk=partnership.pk %}">{% trans 'Cancel' %}</a>
     </div>
     <div class="col-sm-6">
-      <input type="submit" value="submit" name="submit"
-             class="btn btn-primary btn-block"/>
+      <input type="submit" value="{% block button_text %}submit{% endblock %}"
+             name="submit" class="btn btn-primary btn-block"/>
     </div>
   </div>
 </form>

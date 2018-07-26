@@ -312,7 +312,7 @@ msgid "is_public"
 msgstr ""
 
 msgid "contact_type"
-msgstr ""
+msgstr "contact type"
 
 msgid "use_egracons"
 msgstr ""
@@ -880,7 +880,13 @@ msgid "madame"
 msgstr ""
 
 msgid "contact_title"
-msgstr ""
+msgstr "title"
+
+msgid "create_contact"
+msgstr "create contact"
+
+msgid "update_contact"
+msgstr "update contact"
 
 msgid "society"
 msgstr ""
