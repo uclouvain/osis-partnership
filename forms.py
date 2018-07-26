@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.person import Person
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
     PartnershipYear, Partnership, PartnershipAgreement, PartnershipConfiguration
 from partnership.utils import user_is_adri
@@ -580,6 +581,12 @@ class PartnershipFilterForm(forms.Form):
     partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
         choices=((None, '---------'),) + PartnershipYear.TYPE_CHOICES,
+        required=False,
+    )
+    supervisor = forms.ModelChoiceField(
+        label=_('partnership_supervisor'),
+        queryset=Person.objects.filter(partnerships_supervisor__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     tags = forms.ModelMultipleChoiceField(

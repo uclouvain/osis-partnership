@@ -313,7 +313,7 @@ class Partnership(models.Model):
     supervisor = models.ForeignKey(
         'base.Person',
         verbose_name=_('partnership_supervisor'),
-        related_name='+',
+        related_name='partnerships_supervisor',
         blank=True,
         null=True,
     )

@@ -666,6 +666,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             queryset = queryset.filter(years__is_stt=data['is_stt'])
         if data.get('partnership_type', None):
             queryset = queryset.filter(years__partnership_type=data['partnership_type'])
+        if data.get('supervisor', None):
+            queryset = queryset.filter(supervisor=data['supervisor'])
         if data.get('education_field', None):
             queryset = queryset.filter(years__education_field=data['education_field'])
         if data.get('education_level', None):
