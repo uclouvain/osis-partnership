@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
+from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty, merge_date_ranges
 
 
 class PartnerType(models.Model):
@@ -403,6 +403,18 @@ class Partnership(models.Model):
         return agreement.end_academic_year
 
     @cached_property
+    def agreements_dates_ranges(self):
+        ranges = self.validated_agreements.values('start_academic_year__start_date', 'end_academic_year__end_date')
+        ranges = [{
+            'start': range['start_academic_year__start_date'], 'end': range['end_academic_year__end_date']
+        } for range in ranges]
+        return merge_date_ranges(ranges)
+
+    @cached_property
+    def has_missing_valid_years(self):
+        return len(self.agreements_dates_ranges) > 1
+
+    @cached_property
     def current_year(self):
         now = timezone.now()
         return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
@@ -622,6 +634,14 @@ class PartnershipYear(models.Model):
     def __str__(self):
         return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
 
+    @cached_property
+    def is_valid(self):
+        ranges = self.partnership.agreements_dates_ranges
+        for range in ranges:
+            if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
+                return True
+        return False
+
 
 class PartnershipAgreement(models.Model):
     STATUS_WAITING = 'waiting'
@@ -679,6 +699,9 @@ class PartnershipAgreement(models.Model):
         blank=True,
         default='',
     )
+
+    class Meta:
+        ordering = ['start_academic_year__start_date',]
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)

@@ -39,7 +39,7 @@
         <div class="col-sm-12 col-md-12">
           <dl class="dl-horizontal">
             <dt>{% trans "validity_end" %}</dt>
-            <dd>{{ partnership.validity_end|default_if_none:"" }}</dd>
+            <dd>{% if partnership.has_missing_valid_years %}<span class="text-danger">{{ partnership.validity_end|default_if_none:"N/A" }} - {% trans "partnership_missing_valid_years" %}</span>{% else %}{{ partnership.validity_end|default_if_none:"N/A" }}{% endif %}</dd>
 
             <dt>{% trans "partner" %}</dt>
             <dd>
@@ -75,6 +75,7 @@
             <th>{% trans "is_smp" %}</th>
             <th>{% trans "is_sta" %}</th>
             <th>{% trans "is_stt" %}</th>
+            <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -88,6 +89,7 @@
             <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
             <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
             <td><i class="fa {{ partnership_year.is_stt|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
           {% endfor %}
         </tbody>
