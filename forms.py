@@ -588,7 +588,7 @@ class PartnershipFilterForm(forms.Form):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
         cities = (
             Address.objects
-            .filter(partners__isnull=False, city__isnull=False)
+            .filter(partners__partnerships__isnull=False, city__isnull=False)
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')

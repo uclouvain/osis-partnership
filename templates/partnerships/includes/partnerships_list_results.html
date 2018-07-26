@@ -18,7 +18,7 @@
         <tr>
           <td>{{ partnership.partner|truncatechars:30 }}</td>
           <td>{{ partnership.partner.contact_address.country|default_if_none:"" }}</td>
-          <td>{{ partnership.partner.contact_address.city }}</td>
+          <td>{{ partnership.partner.contact_address.city|default_if_none:"" }}</td>
           <td>{{ partnership.supervisor|default_if_none:"" }}</td>
           <td>{{ partnership.entities_acronyms }}</td>
           <td></td>
