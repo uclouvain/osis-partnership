@@ -18,6 +18,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
@@ -953,15 +954,6 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
-class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
-
-    def get_queryset(self):
-        qs = Partner.objects.all()
-        if self.q:
-            qs = qs.filter(name__icontains=self.q)
-        return qs
-
-
 class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
@@ -974,51 +966,63 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
+class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Partner.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
+
+
 class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = PartnerEntity.objects.all()
-        if self.q:
-            qs = qs.filter(
-                Q(name__icontain=self.q)
-                | Q(partner__name__icontains=self.q)
-            )
-        return qs
-
-
-class PartnerEntityByPartnerAutocompleteView(PartnerEntityAutocompleteView):
-
-    def get_queryset(self):
-        qs = super().get_queryset()
         partner = self.forwarded.get('partner', None)
         if partner:
             qs = qs.filter(partner=partner)
+        else:
+            return PartnerEntity.objects.none()
+        if self.q:
+            qs = qs.filter(name__icontain=self.q)
         return qs
 
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
-            return Entity.objects.none()
-
-        qs = Entity.objects.all()
+        qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
+        return qs
 
+
+class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.all()
+        ucl_university = self.forwarded.get('ucl_university', None)
+        if ucl_university:
+            qs = qs.filter(entityversion__parent=ucl_university)
+        else:
+            return Entity.objects.none()
+        if self.q:
+            qs = qs.filter(entityversion__acronym__icontains=self.q)
         return qs
 
 
 class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
-            return EducationGroupYear.objects.none()
-
         qs = EducationGroupYear.objects.all().select_related('academic_year')
+        ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
+        if ucl_university_labo:
+            qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo))
+        else:
+            return EducationGroupYear.objects.none()
         if self.q:
             qs = qs.filter(title__icontains=self.q)
-
         return qs
 
 
