@@ -500,8 +500,13 @@ class PartnershipFilterForm(forms.Form):
     )
     partner_type = forms.ModelChoiceField(
         label=_('partner_type'),
-        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False),
+        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False).distinct(),
         empty_label=_('partner_type'),
+        required=False,
+    )
+    erasmus_code = forms.CharField(
+        label=_('erasmus_code'),
+        widget=forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
         required=False,
     )
     city = forms.ChoiceField(

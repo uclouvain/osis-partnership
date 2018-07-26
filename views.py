@@ -605,7 +605,11 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_form_kwargs(self):
         kwargs = super(PartnershipsListView, self).get_form_kwargs()
         if self.request.GET:
-            kwargs['data'] = self.request.GET
+            kwargs['data'] = {
+                key: value
+                for key, value in self.request.GET.items()
+                if value != ''
+            }
         return kwargs
 
     def get_ordering(self):
@@ -642,6 +646,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             queryset = queryset.filter(partner__entities__in=data['partner_entity'])
         if data.get('partner_type', None):
             queryset = queryset.filter(partner__partner_type=data['partner_type'])
+        if data.get('erasmus_code', None):
+            queryset = queryset.filter(partner__erasmus_code__icontains=data['erasmus_code'])
         if data.get('city', None):
             queryset = queryset.filter(partner__contact_address__city__icontains=data['city'])
         if data.get('country', None):

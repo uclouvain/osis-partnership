@@ -54,6 +54,8 @@ def merge_date_ranges(ranges):
     Returns an union of date ranges.
     Expects a list of ranges as [{'start': start_date, 'end': end_date},]
     """
+    if not ranges:
+        return []
     sorted_ranges = sorted(ranges, key=lambda x: x['start'])
     merged_ranges = [sorted_ranges.pop(0)]
     current_range = {'start': None, 'end': None}
