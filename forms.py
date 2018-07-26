@@ -471,7 +471,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:university_offers_filter',
-            forward=['ucl_university', 'ucl_university_labo'],
+            forward=['ucl_university_labo'],
             attrs={'data-width': '100%'},
         ),
     )
@@ -484,7 +484,7 @@ class PartnershipFilterForm(forms.Form):
         empty_label=_('partner'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
-            url='partnerships:autocomplete:partner',
+            url='partnerships:autocomplete:partner_partnerships_filter',
         ),
         required=False,
     )
@@ -494,8 +494,8 @@ class PartnershipFilterForm(forms.Form):
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
-            url='partnerships:autocomplete:partner_entity_by_partner',
-            forward=['partner',],
+            url='partnerships:autocomplete:partner_entity_partnerships_filter',
+            forward=['partner'],
         ),        
         required=False,
     )
@@ -630,13 +630,19 @@ class PartnershipForm(forms.ModelForm):
             ),
             'supervisor': autocomplete.ModelSelect2(url='partnerships:autocomplete:person'),
             'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
-            'ucl_university_labo': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
-            'university_offers': autocomplete.ModelSelect2Multiple(url='partnerships:autocomplete:university_offers'),
+            'ucl_university_labo': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:ucl_university_labo',
+                forward=['ucl_university'],
+            ),
+            'university_offers': autocomplete.ModelSelect2Multiple(
+                url='partnerships:autocomplete:university_offers',
+                forward=['ucl_university_labo'],
+            ),
             'tags': autocomplete.Select2Multiple(),
             'partner': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner'),
             'partner_entity': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:partner_entity_by_partner',
-                forward=['partner',]
+                url='partnerships:autocomplete:partner_entity',
+                forward=['partner'],
             ),
         }
 

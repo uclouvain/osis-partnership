@@ -132,10 +132,10 @@ msgid "ucl_university"
 msgstr "Faculté"
 
 msgid "ucl_university_labo"
-msgstr "Laboratoire"
+msgstr "École / laboratoire"
 
 msgid "ucl_university_labo_filter"
-msgstr "Laboratoire"
+msgstr "École / laboratoire"
 
 msgid "university_offers"
 msgstr "Offres"
