@@ -484,7 +484,7 @@ class PartnershipFilterForm(forms.Form):
         empty_label=_('partner'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
-            url='partnerships:autocomplete:partner',
+            url='partnerships:autocomplete:partner_partnerships_filter',
         ),
         required=False,
     )
@@ -494,8 +494,8 @@ class PartnershipFilterForm(forms.Form):
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
-            url='partnerships:autocomplete:partner_entity_by_partner',
-            forward=['partner',],
+            url='partnerships:autocomplete:partner_entity_partnerships_filter',
+            forward=['partner'],
         ),        
         required=False,
     )

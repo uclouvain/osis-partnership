@@ -16,7 +16,9 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartnershipContactCreateView, PartnershipContactUpdateView,
                                PartnershipContactDeleteView,
                                PartneshipAgreementDeleteView, PartneshipAgreementUpdateView,
-                               PartneshipAgreementCreateView, PersonAutocompleteView, PartneshipConfigurationUpdateView)
+                               PartneshipAgreementCreateView, PersonAutocompleteView, PartneshipConfigurationUpdateView,
+                               PartnerAutocompletePartnershipsFilterView,
+                               PartnerEntityAutocompletePartnershipsFilterView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -84,6 +86,22 @@ urlpatterns = [
             name='ucl_university'
         ),
         url(
+            '^university_offers/$',
+            UniversityOffersAutocompleteView.as_view(),
+            name='university_offers'
+        ),
+        # Partnerships filter
+        url(
+            '^partner-partnerships-filter/$',
+            PartnerAutocompletePartnershipsFilterView.as_view(),
+            name='partner_partnerships_filter',
+        ),
+        url(
+            '^partner-entity-partnerships-filter/$',
+            PartnerEntityAutocompletePartnershipsFilterView.as_view(),
+            name='partner_entity_partnerships_filter',
+        ),
+        url(
             '^ucl_university_filter/$',
             UclUniversityAutocompleteFilterView.as_view(),
             name='ucl_university_filter'
@@ -92,11 +110,6 @@ urlpatterns = [
             '^ucl_university_labo_filter/$',
             UclUniversityLaboAutocompleteFilterView.as_view(),
             name='ucl_university_labo_filter'
-        ),
-        url(
-            '^university_offers/$',
-            UniversityOffersAutocompleteView.as_view(),
-            name='university_offers'
         ),
         url(
             '^university_offers_filter/$',

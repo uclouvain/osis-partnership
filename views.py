@@ -1022,6 +1022,31 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
         return qs
 
 
+# Partnership filters autocompletes
+
+class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Partner.objects.filter(partnerships__isnull=False)
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs.distinct()
+
+
+class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = PartnerEntity.objects.filter(partnerships__isnull=False)
+        partner = self.forwarded.get('partner', None)
+        if partner:
+            qs = qs.filter(partner=partner)
+        else:
+            return PartnerEntity.objects.none()
+        if self.q:
+            qs = qs.filter(name__icontain=self.q)
+        return qs
+
+
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
