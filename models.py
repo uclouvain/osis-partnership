@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
+from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty, merge_date_ranges
 
 
 class PartnerType(models.Model):
@@ -313,7 +313,7 @@ class Partnership(models.Model):
     supervisor = models.ForeignKey(
         'base.Person',
         verbose_name=_('partnership_supervisor'),
-        related_name='+',
+        related_name='partnerships_supervisor',
         blank=True,
         null=True,
     )
@@ -380,12 +380,39 @@ class Partnership(models.Model):
     def is_valid(self):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
 
+    @property
+    def validated_agreements(self):
+        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
+
     @cached_property
     def end_date(self):
-        validated_agreements = self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
-        if not validated_agreements.exists():
+        if not self.validated_agreements.exists():
             return None
-        return validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
+        return self.validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
+
+    @cached_property
+    def validity_end(self):
+        agreement = (
+            self.validated_agreements
+                .select_related('end_academic_year')
+                .order_by('-end_academic_year__end_date')
+                .first()
+        )
+        if agreement is None:
+            return None
+        return agreement.end_academic_year
+
+    @cached_property
+    def agreements_dates_ranges(self):
+        ranges = self.validated_agreements.values('start_academic_year__start_date', 'end_academic_year__end_date')
+        ranges = [{
+            'start': range['start_academic_year__start_date'], 'end': range['end_academic_year__end_date']
+        } for range in ranges]
+        return merge_date_ranges(ranges)
+
+    @cached_property
+    def has_missing_valid_years(self):
+        return len(self.agreements_dates_ranges) > 1
 
     @cached_property
     def current_year(self):
@@ -607,6 +634,14 @@ class PartnershipYear(models.Model):
     def __str__(self):
         return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
 
+    @cached_property
+    def is_valid(self):
+        ranges = self.partnership.agreements_dates_ranges
+        for range in ranges:
+            if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
+                return True
+        return False
+
 
 class PartnershipAgreement(models.Model):
     STATUS_WAITING = 'waiting'
@@ -664,6 +699,9 @@ class PartnershipAgreement(models.Model):
         blank=True,
         default='',
     )
+
+    class Meta:
+        ordering = ['start_academic_year__start_date',]
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)

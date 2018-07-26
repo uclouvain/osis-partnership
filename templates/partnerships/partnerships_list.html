@@ -74,15 +74,19 @@
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partner">
                   <div class="row">
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partner %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partner_entity %}
                     </div>
-
-                    <div class="col-sm-12 col-md-4">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partner_type %}
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                      {% bootstrap_field form.erasmus_code %}
                     </div>
                   </div>
                   <div class="row">
@@ -104,14 +108,19 @@
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
                   <div class="row">
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.education_field %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.education_level %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partnership_type %}
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                      {% bootstrap_field form.supervisor %}
                     </div>
                   </div>
                   <div class="row">
@@ -127,11 +136,6 @@
                     <div class="col-sm-12 col-md-3">
                       {% bootstrap_field form.is_stt %}
                     </div>
-                    {% comment %}
-                    <div class="col-sm-12 col-md-6">
-                      {% bootstrap_field form.partnership_type %}
-                    </div>
-                    {% endcomment %}
                   </div>
                   <div class="row">
                     <div class="col-sm-12">

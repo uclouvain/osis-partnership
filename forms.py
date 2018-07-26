@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.person import Person
 from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
     PartnershipYear, Partnership, PartnershipAgreement, PartnershipConfiguration
 from partnership.utils import user_is_adri
@@ -500,8 +501,13 @@ class PartnershipFilterForm(forms.Form):
     )
     partner_type = forms.ModelChoiceField(
         label=_('partner_type'),
-        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False),
+        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False).distinct(),
         empty_label=_('partner_type'),
+        required=False,
+    )
+    erasmus_code = forms.CharField(
+        label=_('erasmus_code'),
+        widget=forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
         required=False,
     )
     city = forms.ChoiceField(
@@ -577,6 +583,12 @@ class PartnershipFilterForm(forms.Form):
         choices=((None, '---------'),) + PartnershipYear.TYPE_CHOICES,
         required=False,
     )
+    supervisor = forms.ModelChoiceField(
+        label=_('partnership_supervisor'),
+        queryset=Person.objects.filter(partnerships_supervisor__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
+        required=False,
+    )
     tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
@@ -588,7 +600,7 @@ class PartnershipFilterForm(forms.Form):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
         cities = (
             Address.objects
-            .filter(partners__isnull=False, city__isnull=False)
+            .filter(partners__partnerships__isnull=False, city__isnull=False)
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')
