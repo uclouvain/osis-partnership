@@ -35,7 +35,7 @@
       <a class="btn btn-default btn-block" href="{% url 'partnerships:detail' pk=partnership.pk %}">{% trans 'Cancel' %}</a>
     </div>
     <div class="col-sm-6">
-      <input type="submit" value="{% block button_text %}submit{% endblock %}"
+      <input type="submit" value="{{ button_text }}"
              name="submit" class="btn btn-primary btn-block"/>
     </div>
   </div>

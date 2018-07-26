@@ -573,6 +573,11 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
     template_name = 'partnerships/contacts/contact_confirm_delete.html'
 
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/contacts/includes/contact_delete_form.html'
+        return self.template_name
+
 
 class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     model = Partnership

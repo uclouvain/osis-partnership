@@ -127,7 +127,7 @@
       </h2>
       <div class="row">
       {% for contact in partnership.contacts.all %}
-        <div class="col-md-6">
+        <div class="col-sm-12">
           {% if can_change %}
           <div class="btn-group pull-right">
             <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}"
@@ -140,12 +140,20 @@
             </button>
             <ul class="dropdown-menu">
               <li>
-                <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}"><i class="fa fa-times fa-fw"></i> {% trans 'delete_contact' %}</a>
+                <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}"
+                   class="modal-link"
+                   data-modal-danger
+                   data-modal-submit="{% trans "delete_contact" %}"
+                   data-modal-title="{{ contact }}"
+                   data-modal="modal-form">
+                  <i class="fa fa-times fa-fw"></i> {% trans 'delete_contact' %}
+                </a>
               </li>
             </ul>
           </div>
           {% endif %}
           {% include "partnerships/includes/contact.html" with contact=contact %}
+          {% if not forloop.last %}<hr/>{% endif %}
         </div>
       {% empty %}
         <div class="col-sm-12">

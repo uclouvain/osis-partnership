@@ -764,7 +764,7 @@ class Contact(models.Model):
 
     def __str__(self):
         if self.first_name:
-            return '{0} {1} {2}'.format(self.get_title_display(), self.last_name, self.first_name)
+            return '{0} {1} {2}'.format(self.get_title_display(), self.last_name or "None", self.first_name)
         return '{0} {1}'.format(self.get_title_display(), self.last_name)
 
     @property

@@ -15,7 +15,8 @@
     <div class="panel-body">
       <div class="row">
         <div class="col-sm-12">
-          {% include 'partnerships/contacts/includes/partnership_contact_form.html' %}
+          {% trans 'update_contact' as update_contact %}
+          {% include 'partnerships/contacts/includes/partnership_contact_form.html' with button_text=update_contact %}
         </div>
       </div>
     </div>
