@@ -264,9 +264,6 @@ class Partner(models.Model):
                 .filter(partnership__partner=self)
         )
 
-    @property
-    def sorted_agreements(self):
-        return self.agreements.order_by("-start_academic_year", "-end_academic_year")
 
 class PartnershipTag(models.Model):
     value = models.CharField(max_length=255, unique=True)
@@ -648,6 +645,7 @@ class PartnershipYear(models.Model):
 
 
 class PartnershipAgreement(models.Model):
+
     STATUS_WAITING = 'waiting'
     STATUS_VALIDATED = 'validated'
     STATUS_REFUSED = 'refused'
@@ -705,7 +703,7 @@ class PartnershipAgreement(models.Model):
     )
 
     class Meta:
-        ordering = ['start_academic_year__start_date',]
+        ordering = ['-start_academic_year__start_date',]
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
