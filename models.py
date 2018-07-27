@@ -295,7 +295,7 @@ class Partnership(models.Model):
         verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to={'parent_of__entity_type': "FACULTY"},
+        limit_choices_to={'entityversion__entity_type': "FACULTY"},
     )
     ucl_university_labo = models.ForeignKey(
         'base.Entity',
