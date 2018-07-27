@@ -592,7 +592,9 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_initial(self):
         initial = {}
         if user_is_gf(self.request.user):
-            initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
+            university = self.request.user.person.entitymanager_set.first().entity
+            if Partnership.objects.filter(ucl_university=university).exists():
+                initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
         return initial
 
     def get_template_names(self):
