@@ -83,7 +83,7 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
     partner = factory.SubFactory(PartnerFactory)
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
     author = factory.SubFactory('base.tests.factories.user.UserFactory')
-    address = factory.SubFactory(AddressFactory)
+    address = factory.SubFactory(AddressFactory, country=factory.SelfAttribute('..partner.contact_address.country'))
 
 
 class PartnershipTagFactory(factory.DjangoModelFactory):
