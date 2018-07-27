@@ -464,10 +464,9 @@ class PartnershipFilterForm(forms.Form):
         ),
     )
 
-    university_offers = forms.ModelChoiceField(
+    university_offers = forms.ModelMultipleChoiceField(
         label=_('university_offers'),
-        queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False),
-        empty_label=_('university_offers'),
+        queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False).distinct(),
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:university_offers_filter',
@@ -480,7 +479,7 @@ class PartnershipFilterForm(forms.Form):
 
     partner = forms.ModelChoiceField(
         label=_('partner'),
-        queryset=Partner.objects.filter(partnerships__isnull=False),
+        queryset=Partner.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('partner'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
@@ -490,7 +489,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
-        queryset=PartnerEntity.objects.filter(partner__partnerships__isnull=False),
+        queryset=PartnerEntity.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
@@ -523,6 +522,7 @@ class PartnershipFilterForm(forms.Form):
             Country.objects
                 .filter(address__partners__partnerships__isnull=False)
                 .order_by('name')
+                .distinct()
         ),
         empty_label=_('country'),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
@@ -534,13 +534,14 @@ class PartnershipFilterForm(forms.Form):
             Continent.objects
                 .filter(country__address__partners__partnerships__isnull=False)
                 .order_by('name')
+                .distinct()
         ),
         empty_label=_('continent'),
         required=False,
     )
     partner_tags = forms.ModelMultipleChoiceField(
         label=_('tags'),
-        queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False),
+        queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )

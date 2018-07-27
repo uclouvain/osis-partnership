@@ -1,3 +1,5 @@
+from copy import copy
+
 from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -613,11 +615,12 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_form_kwargs(self):
         kwargs = super(PartnershipsListView, self).get_form_kwargs()
         if self.request.GET:
-            kwargs['data'] = {
-                key: value
-                for key, value in self.request.GET.items()
-                if value != ''
-            }
+            # Remove empty value from GET
+            data = copy(self.request.GET)
+            for key, value in list(data.items()):
+                if value == '':
+                    del data[key]
+            kwargs['data'] = data
         return kwargs
 
     def get_ordering(self):
@@ -647,16 +650,15 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         if data.get('ucl_university_labo', None):
             queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
         if data.get('university_offers', None):
-            university_offers = data['university_offers']
-            if not isinstance(university_offers, list):
-                university_offers = [university_offers]
-            queryset = queryset.filter(university_offers__in=university_offers)
+            queryset = queryset.filter(university_offers__in=data['university_offers'])
         if data.get('partner', None):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
-            queryset = queryset.filter(partner__entities__in=data['partner_entity'])
+            queryset = queryset.filter(partner_entity=data['partner_entity'])
         if data.get('partner_type', None):
             queryset = queryset.filter(partner__partner_type=data['partner_type'])
+        if data.get('partner_tags', None):
+            queryset = queryset.filter(partner__tags__in=data['partner_tags'])
         if data.get('erasmus_code', None):
             queryset = queryset.filter(partner__erasmus_code__icontains=data['erasmus_code'])
         if data.get('city', None):

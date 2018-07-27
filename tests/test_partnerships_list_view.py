@@ -6,6 +6,7 @@ from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import PartnershipFactory, PartnerFactory, PartnerEntityFactory, PartnerTypeFactory, \
     PartnerTagFactory, PartnershipYearFactory, PartnershipTagFactory
+from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
 
@@ -42,6 +43,11 @@ class PartnershipsListViewTest(TestCase):
         cls.country = CountryFactory()
         partner_country = PartnerFactory(contact_address__country=cls.country)
         cls.partnership_country = PartnershipFactory(partner=partner_country)
+        # continent
+        cls.continent = Continent.objects.create(code='fo', name='foo')
+        country_continent = CountryFactory(continent=cls.continent)
+        partner_continent = PartnerFactory(contact_address__country=country_continent)
+        cls.partnership_continent = PartnershipFactory(partner=partner_continent)
         # partner_tags
         cls.partner_tag = PartnerTagFactory()
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
@@ -125,7 +131,7 @@ class PartnershipsListViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner)
+        self.assertEqual(context['partnerships'][0], self.partnership_university_offer)
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -141,7 +147,7 @@ class PartnershipsListViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner)
+        self.assertEqual(context['partnerships'][0], self.partnership_partner_entity)
 
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
@@ -168,13 +174,12 @@ class PartnershipsListViewTest(TestCase):
         self.assertEqual(context['partnerships'][0], self.partnership_country)
 
     def test_filter_continent(self):
-        # TODO
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?continent=' + str(self.partner.pk))
+        response = self.client.get(self.url + '?continent=' + str(self.continent.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner)
+        self.assertEqual(context['partnerships'][0], self.partnership_continent)
 
     def test_filter_partner_tags(self):
         self.client.force_login(self.user)

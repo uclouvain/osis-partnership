@@ -44,8 +44,8 @@ class PartnershipUpdateViewTest(TestCase):
                           kwargs={'pk': cls.partnership_ko.pk})
 
         # Years
-        cls.year_0 = PartnershipYearFactory(is_sms=True, is_smp=True, is_sta=True, is_stt=True)
-        cls.year_1 = PartnershipYearFactory(is_sms=True, is_sta=True)
+        cls.year_0 = PartnershipYearFactory(partnership=cls.partnership, is_sms=True, is_smp=True, is_sta=True, is_stt=True)
+        cls.year_1 = PartnershipYearFactory(partnership=cls.partnership, is_sms=True, is_sta=True)
 
         # Ucl
         cls.ucl_university = EntityFactory()
@@ -118,13 +118,6 @@ class PartnershipUpdateViewTest(TestCase):
 
     def test_get_out_of_date_as_adri(self):
         self.client.force_login(self.user_adri)
-        data = self.make_data(cls.partnership_ko.start_date.strftime('%d/%m/%y'),
-                              cls.partnership_ko)
-        response = self.client.post(self.url_ko, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
-
-    def test_get_out_of_date_as_adri(self):
-        self.client.force_login(self.user_adri)
         data = self.make_data(self.date_ko.strftime('%d/%m/%y'), self.partnership)
         response = self.client.post(self.url_ko, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
@@ -145,24 +138,25 @@ class PartnershipUpdateViewTest(TestCase):
             self.partnership,
         )
         years_data = {
-            'years-0-academic_year': self.year_0.pk,
+            'years-0-academic_year': self.year_0.academic_year.pk,
             'years-0-education_field': self.year_0.education_field,
             'years-0-education_level': self.year_0.education_level,
-            'years-0-id': '',
+            'years-0-id': self.year_0.pk,
             'years-0-partnership_type': self.year_0.partnership_type,
             'years-0-is_sms': 'on' if self.year_0.is_sms else 'off',
             'years-0-is_smp': 'on' if self.year_0.is_smp else 'off',
             'years-0-is_sta': 'on' if self.year_0.is_sta else 'off',
             'years-0-is_stt': 'on' if self.year_0.is_stt else 'off',
-            'years-1-academic_year': self.year_1.pk,
+            'years-1-academic_year': self.year_1.academic_year.pk,
             'years-1-education_field': self.year_1.education_field,
             'years-1-education_level': self.year_1.education_level,
-            'years-1-id': '',
+            'years-1-id': self.year_1.pk,
             'years-1-partnership_type': self.year_1.partnership_type,
             'years-1-is_sms': 'on' if self.year_1.is_sms else 'off',
             'years-1-is_smp': 'on' if self.year_1.is_smp else 'off',
             'years-1-is_sta': 'on' if self.year_1.is_sta else 'off',
             'years-1-is_stt': 'on' if self.year_1.is_stt else 'off',
+            'years-INITIAL_FORMS': '2',
         }
         data.update(years_data)
         response = self.client.post(self.url, data=data, follow=True)

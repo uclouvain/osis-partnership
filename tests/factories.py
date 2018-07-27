@@ -134,6 +134,8 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     partnership_type = 'mobility'
     academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
+    education_field = '0812'
+    education_level = 'ISCED-5'
 
 
 class PartnershipAgreementFactory(factory.DjangoModelFactory):
