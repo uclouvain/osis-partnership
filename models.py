@@ -264,6 +264,9 @@ class Partner(models.Model):
                 .filter(partnership__partner=self)
         )
 
+    @property
+    def sorted_agreements(self):
+        return self.agreements.order_by("-start_academic_year", "-end_academic_year")
 
 class PartnershipTag(models.Model):
     value = models.CharField(max_length=255, unique=True)

@@ -733,7 +733,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                     Prefetch('years', queryset=PartnershipYear.objects.select_related('academic_year')),
                     Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                         'start_academic_year', 'end_academic_year', 'media'
-                    )),
+                    ).order_by("-start_academic_year", "-end_academic_year")),
                 )
                 .annotate(university_offers_count=Count('university_offers')),
             pk=self.kwargs['pk'],
