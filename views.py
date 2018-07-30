@@ -1077,11 +1077,11 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
         return qs
 
 
-# class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
+class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
-#     def get_queryset(self):
-#         qs = super().get_queryset()
-#         return qs.filter(partnerships__isnull=False).distinct()
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(partnerships__isnull=False).distinct()
 
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
