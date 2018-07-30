@@ -74,3 +74,8 @@ ul.tags-list li {
 #filter-form .tab-pane {
   margin-top: 20px;
 }
+
+.select2-container {
+    width: 100% !important;
+    min-width: auto !important;
+}
