@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
-from django.db import transaction
-from django.db.models import Count, Prefetch, Q, QuerySet
+from django.db import transaction, models
+from django.db.models import Count, Prefetch, Q, QuerySet, Max, When, Case, Value
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -687,6 +687,56 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             queryset = queryset.filter(years__education_level=data['education_level'])
         if data.get('tags', None):
             queryset = queryset.filter(tags__in=data['tags'])
+        if data.get('partnership_in', None):
+            partnership_in = data['partnership_in']
+            queryset = queryset.filter(
+                agreements__start_academic_year__start_date__lte=partnership_in.start_date,
+                agreements__end_academic_year__end_date__gte=partnership_in.end_date,
+            )
+        if data.get('partnership_ending_in', None):
+            partnership_ending_in = data['partnership_ending_in']
+            queryset = (
+                queryset
+                    .annotate(ending_date=Max('agreements__end_academic_year__end_date'))
+                    .filter(ending_date=partnership_ending_in.end_date)
+            )
+        if data.get('partnership_valid_in', None):
+            partnership_valid_in = data['partnership_valid_in']
+            queryset = (
+                queryset
+                    .annotate(agreement_valid=Case(
+                        When(
+                            agreements__status=PartnershipAgreement.STATUS_VALIDATED,
+                            agreements__start_academic_year__start_date__lte=partnership_valid_in.start_date,
+                            agreements__end_academic_year__end_date__gte=partnership_valid_in.end_date,
+                            then=Value(True),
+                        ),
+                        default=Value(False),
+                        output_field=models.BooleanField(),
+                    ))
+                    .filter(agreement_valid=True)
+            )
+        if data.get('partnership_not_valid_in', None):
+            partnership_not_valid_in = data['partnership_not_valid_in']
+            # FIXME not working
+            queryset = (
+                queryset
+                    .annotate(agreement_not_valid=Case(
+                        When(
+                            agreements__status=PartnershipAgreement.STATUS_VALIDATED,
+                            agreements__start_academic_year__start_date__lte=partnership_not_valid_in.start_date,
+                            agreements__end_academic_year__end_date__gte=partnership_not_valid_in.end_date,
+                            then=Value(False),
+                        ),
+                        default=Value(True),
+                        output_field=models.BooleanField(),
+                    ))
+                    .filter(
+                        agreements__start_academic_year__start_date__lte=partnership_not_valid_in.start_date,
+                        agreements__end_academic_year__end_date__gte=partnership_not_valid_in.end_date,
+                        agreement_not_valid=True,
+                    )
+            )
         return queryset
 
     def get_queryset(self):

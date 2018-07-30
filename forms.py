@@ -7,6 +7,7 @@ from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
+from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.person import Person
@@ -594,6 +595,27 @@ class PartnershipFilterForm(forms.Form):
         label=_('tags'),
         queryset=PartnershipTag.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
+        required=False,
+    )
+
+    partnership_in = forms.ModelChoiceField(
+        label=_('partnership_in'),
+        queryset=AcademicYear.objects.all(),
+        required=False,
+    )
+    partnership_ending_in = forms.ModelChoiceField(
+        label=_('partnership_ending_in'),
+        queryset=AcademicYear.objects.all(),
+        required=False,
+    )
+    partnership_valid_in = forms.ModelChoiceField(
+        label=_('partnership_valid_in'),
+        queryset=AcademicYear.objects.all(),
+        required=False,
+    )
+    partnership_not_valid_in = forms.ModelChoiceField(
+        label=_('partnership_not_valid_in'),
+        queryset=AcademicYear.objects.all(),
         required=False,
     )
 
