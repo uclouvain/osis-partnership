@@ -960,6 +960,10 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     def get_object(self, queryset=None):
         return PartnershipConfiguration.get_configuration()
 
+    def form_valid(self, form):
+        messages.success(self.request, _('configuration_saved'))
+        return super().form_valid(form)
+
 
 ### Autocompletes
 

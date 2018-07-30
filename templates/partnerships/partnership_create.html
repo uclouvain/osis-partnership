@@ -30,7 +30,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <form action="{% url "partnerships:create" %}" method="post">
+      <form action="{% url "partnerships:create" %}" method="post" class="container col-xs-12">
         {% csrf_token %}
 
         {% include "partnerships/includes/partnership_form.html" %}

@@ -1,43 +1,47 @@
-{% load bootstrap3 i18n %}
+{% load bootstrap3 i18n static %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/select2_style.css' %}">
+{% endblock %}
 
 <h2>{% trans 'Partner' %}</h2>
-<div class="row">
-  <div class="col-sm-6">
+<div class="row row-fluid">
+  <div class="col-xs-12 col-sm-6">
     {% bootstrap_field form.partner %}
   </div>
-  <div class="col-sm-6">
+  <div class="col-xs-12 col-sm-6">
     {% bootstrap_field form.partner_entity %}
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form.start_date %}
   </div>
 </div>
 <h2>{% trans 'UCL' %}</h2>
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-xs-12 col-sm-4">
     {% bootstrap_field form.ucl_university %}
   </div>
-  <div class="col-sm-4">
+  <div class="col-xs-12 col-sm-4">
     {% bootstrap_field form.ucl_university_labo %}
   </div>
-  <div class="col-sm-4">
+  <div class="col-xs-12 col-sm-4">
     {% bootstrap_field form.university_offers %}
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form.supervisor %}
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form.tags %}
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form.comment %}
   </div>
 </div>
@@ -51,30 +55,30 @@
     {{ field }}
   {% endfor %}
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.academic_year %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.education_field %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.education_level %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.partnership_type %}
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.is_sms %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.is_smp %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.is_sta %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.is_stt %}
   </div>
 </div>
