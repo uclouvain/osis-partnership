@@ -1021,7 +1021,7 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
-        return qs
+        return qs.distinct()
 
 
 class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1077,11 +1077,11 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
         return qs
 
 
-class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
+# class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(partnerships__isnull=False).distinct()
+#     def get_queryset(self):
+#         qs = super().get_queryset()
+#         return qs.filter(partnerships__isnull=False).distinct()
 
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
