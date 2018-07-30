@@ -1068,10 +1068,14 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
+        qs = Entity.objects.filter(entityversion__entity_type=FACULTY)#.prefetch_related('entityversion')
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
         return qs.distinct()
+
+    def get_result_label(self, result):
+        title = result.entityversion_set.latest("start_date").title
+        return '{0.most_recent_acronym} - {1}'.format(result, title)
 
 
 class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1086,6 +1090,10 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
         return qs
+
+    def get_result_label(self, result):
+        title = result.entityversion_set.latest("start_date").title
+        return '{0.most_recent_acronym} - {1}'.format(result, title)
 
 
 class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
