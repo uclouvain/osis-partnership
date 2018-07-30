@@ -235,30 +235,9 @@
     </div>
 
     {% for agreement in partner.agreements.all %}
-      <div class="row">
-        <div class="col-sm-12 col-md-2">
-          <a href="{{ agreement.partnership.get_absolute_url }}">{{ agreement.partnership }}</a>
-        </div>
-        <div class="col-sm-12 col-md-5">
-          <div class="row">
-            <div class="col-sm-5">
-              {{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}
-            </div>
-            <div class="col-sm-7">
-              <strong>{{ agreement.get_status_display }}</strong>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-12">
-              <p>{{ agreement.comment|linebreaksbr }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-12 col-md-5">
-          {% include "partnerships/includes/media_detail.html" with media=agreement.media hide_actions=True %}
-        </div>
-      </div>
-      {% empty %}
+      {% include "partnerships/includes/agreement_detail.html" with agreement=agreement can_change=False show_partnership=True %}
+      {% if not forloop.last %}<hr>{% endif %}
+    {% empty %}
       <div class="row">
         <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
       </div>

@@ -173,55 +173,12 @@
       </h2>
 
       {% for agreement in partnership.agreements.all %}
-      <div class="row">
-        <div class="col-sm-12 col-md-5">
-          <div>
-            <dl class="dl-horizontal">
-              <dt>{% trans "academic_years" %}</dt>
-              <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
-
-              <dt>{% trans "eligible" %}</dt>
-              <dd><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
-
-              <dt>{% trans "status" %}</dt>
-              <dd>{{ agreement.get_status_display }}</dd>
-
-              <dt>{% trans "comment" %}</dt>
-              <dd>{{ agreement.comment|linebreaksbr }}</dd>
-            </dl>
-          </div>
-        </div>
-        <div class="col-md-5 partner-media">
-          {% include "partnerships/includes/media_detail.html" with media=agreement.media %}
-        </div>
-        <div class="col-md-2">
-          {% if can_change %}
-          <div class="btn-group">
-            <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
-               class="btn btn-default">
-              <i class="fa fa-pencil fa-fw"></i>
-            </a>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="caret"></span>
-              <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu">
-              <li><a href="{% url "partnerships:agreements:delete" partnership.id agreement.id %}"
-                 class="modal-link"
-                 data-modal-danger
-                 data-modal-submit="{% trans "delete_partnership_agreement" %}"
-                 data-modal-title="{{ agreement }}"
-                 data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partnership_agreement" %}</a></li>
-            </ul>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-      {% if not forloop.last %}<hr>{% endif %}
+        {% include "partnerships/includes/agreement_detail.html" with agreement=agreement can_change=can_change %}
+        {% if not forloop.last %}<hr>{% endif %}
       {% empty %}
-      <div class="row">
-        <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
-      </div>
+        <div class="row">
+          <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
+        </div>
       {% endfor %}
     </div>
   </div>
