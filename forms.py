@@ -322,7 +322,7 @@ class ContactForm(forms.ModelForm):
             'comment',
         ]
 
-        
+
 class PartnerFilterForm(forms.Form):
     name = forms.CharField(
         label=_('Name'),
@@ -382,7 +382,7 @@ class PartnerFilterForm(forms.Form):
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
-    
+
     def __init__(self, *args, **kwargs):
         super(PartnerFilterForm, self).__init__(*args, **kwargs)
         cities = (
@@ -495,7 +495,7 @@ class PartnershipFilterForm(forms.Form):
             attrs={'data-width': '100%'},
             url='partnerships:autocomplete:partner_entity_partnerships_filter',
             forward=['partner'],
-        ),        
+        ),
         required=False,
     )
     partner_type = forms.ModelChoiceField(
@@ -629,18 +629,37 @@ class PartnershipForm(forms.ModelForm):
                 format=DATE_FORMAT,
                 attrs={'class': 'datepicker', 'autocomplete': 'off'},
             ),
-            'supervisor': autocomplete.ModelSelect2(url='partnerships:autocomplete:person'),
-            'ucl_university': autocomplete.ModelSelect2(url='partnerships:autocomplete:ucl_university'),
+            'supervisor': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'ucl_university': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:ucl_university',
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_ucl_university_labo, #id_university_offers',
+                },
+            ),
             'ucl_university_labo': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
                 forward=['ucl_university'],
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_university_offers',
+                },
             ),
             'university_offers': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:university_offers',
                 forward=['ucl_university_labo'],
             ),
             'tags': autocomplete.Select2Multiple(),
-            'partner': autocomplete.ModelSelect2(url='partnerships:autocomplete:partner'),
+            'partner': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:partner',
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_partner_entity',
+                },
+
+            ),
             'partner_entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:partner_entity',
                 forward=['partner'],
