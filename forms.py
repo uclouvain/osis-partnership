@@ -94,7 +94,7 @@ class PartnerEntityForm(forms.ModelForm):
     # Address
 
     address_name = forms.CharField(
-        label=_('name'),
+        label=_('Name'),
         widget=forms.TextInput(attrs={'placeholder': _('address_name_help_text')}),
         required=False,
     )
@@ -123,7 +123,7 @@ class PartnerEntityForm(forms.ModelForm):
     # Contact in
 
     contact_in_title = forms.ChoiceField(
-        label=_('title'),
+        label=_('contact_title'),
         choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
@@ -173,7 +173,7 @@ class PartnerEntityForm(forms.ModelForm):
     # Contact out
 
     contact_out_title = forms.ChoiceField(
-        label=_('title'),
+        label=_('contact_title'),
         choices=((None, '---------'),) + Contact.TITLE_CHOICES,
         required=False,
     )
