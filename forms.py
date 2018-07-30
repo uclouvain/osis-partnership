@@ -683,11 +683,11 @@ class PartnershipForm(forms.ModelForm):
         today = date.today()
         configuration = PartnershipConfiguration.get_configuration()
         min_date = date(
-            today.year - 1,
+            today.year,
             configuration.partnership_creation_max_date_month,
             configuration.partnership_creation_max_date_day
         )
-        if start_date <= min_date:
+        if start_date.year == today.year or start_date <= min_date:
             raise ValidationError(_('partnership_start_date_gf_too_late'))
         return start_date
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-30 13:13+0200\n"
-"PO-Revision-Date: 2018-07-30 13:17+0200\n"
+"POT-Creation-Date: 2018-07-30 16:27+0200\n"
+"PO-Revision-Date: 2018-07-30 16:27+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -174,7 +174,7 @@ msgid "partnership_start_date_after_agreement_error"
 msgstr "La date de début se situe après le début d'un accord."
 
 msgid "partnership_start_date_gf_too_late"
-msgstr "La date de début se situe après la date de fin."
+msgstr "La date limite pour créer ce partenariat est passée."
 
 msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
@@ -1134,6 +1134,9 @@ msgstr "Envoyer"
 msgid "search_partners"
 msgstr "Rechercher les partenaires"
 
+msgid "reset_search_fields"
+msgstr "Supprimer tous les filtres"
+
 msgid "search"
 msgstr "Rechercher"
 
@@ -1209,6 +1212,9 @@ msgstr "Erreur lors de la sauvegarde de l'accord."
 
 msgid "partnership_agreement_success"
 msgstr "Accord sauvegardé avec succès."
+
+msgid "configuration_saved"
+msgstr "La configuration à bien été mise à jour."
 
 #~ msgid "title"
 #~ msgstr "Titre"

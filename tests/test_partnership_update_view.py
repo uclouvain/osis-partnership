@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 import datetime
 
+from base.models.enums.entity_type import FACULTY
 from base.tests.factories.user import UserFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -49,7 +50,9 @@ class PartnershipUpdateViewTest(TestCase):
 
         # Ucl
         cls.ucl_university = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university_labo)
         cls.university_offer = EducationGroupYearFactory()
 
         cls.data = {
@@ -116,7 +119,7 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
-    def test_get_out_of_date_as_adri(self):
+    def test_post_out_of_date_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.make_data(self.date_ko.strftime('%d/%m/%y'), self.partnership)
         response = self.client.post(self.url_ko, data=data, follow=True)
@@ -125,7 +128,7 @@ class PartnershipUpdateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = self.make_data(
-            (datetime.datetime.today() + datetime.timedelta(1)).strftime('%d/%m/%y'),
+            self.date_ok.strftime('%d/%m/%y'),
             self.partnership,
         )
         response = self.client.post(self.url, data=data, follow=True)
@@ -134,7 +137,7 @@ class PartnershipUpdateViewTest(TestCase):
     def test_post_with_years(self):
         self.client.force_login(self.user_adri)
         data = self.make_data(
-            (datetime.datetime.today() + datetime.timedelta(1)).strftime('%d/%m/%y'),
+            self.date_ok.strftime('%d/%m/%y'),
             self.partnership,
         )
         years_data = {

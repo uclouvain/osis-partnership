@@ -101,7 +101,7 @@ class PartnershipFactory(factory.DjangoModelFactory):
     partner = factory.SubFactory(PartnerFactory)
     partner_entity = factory.SubFactory(PartnerEntityFactory, partner=factory.SelfAttribute('..partner'))
 
-    start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
+    start_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=365))
 
     ucl_university = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',

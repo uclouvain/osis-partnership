@@ -39,4 +39,11 @@
             hideLoader();
         });
     });
+
+    // Needed for select 2
+    $('select').parents('form').on('reset', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        $(this).find('input,select').val('').change();
+    });
 })(jQuery);
