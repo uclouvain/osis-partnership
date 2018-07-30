@@ -26,10 +26,10 @@ class PartnershipAgreementCreateViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
+        cls.date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
+        cls.partnership = PartnershipFactory(start_date=cls.date_ok)
+        cls.partnership_gf = PartnershipFactory(start_date=cls.date_ok, author=cls.user_gf)
         cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
         # Misc
         cls.url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': cls.partnership.pk})
@@ -84,8 +84,8 @@ class PartnershipAgreementCreateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
-            'start_academic_year': AcademicYearFactory(year=2018).pk,
-            'end_academic_year': AcademicYearFactory(year=2019).pk,
+            'start_academic_year': AcademicYearFactory(year=self.date_ok.year).pk,
+            'end_academic_year': AcademicYearFactory(year=self.date_ok.year + 1).pk,
             'status': PartnershipAgreement.STATUS_WAITING,
             'comment': 'test',
             'media-name': 'test',
@@ -111,11 +111,11 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
+        cls.date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
+        cls.partnership = PartnershipFactory(start_date=cls.date_ok)
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
+        cls.partnership_gf = PartnershipFactory(start_date=cls.date_ok, author=cls.user_gf)
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
         cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
         PartnershipAgreementFactory(partnership=cls.partnership_out_of_date)
@@ -182,8 +182,8 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
-            'start_academic_year': AcademicYearFactory(year=2018).pk,
-            'end_academic_year': AcademicYearFactory(year=2019).pk,
+            'start_academic_year': AcademicYearFactory(year=self.date_ok.year).pk,
+            'end_academic_year': AcademicYearFactory(year=self.date_ok.year + 1).pk,
             'status': PartnershipAgreement.STATUS_WAITING,
             'comment': 'test',
             'media-name': 'test',
@@ -208,11 +208,11 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
+        cls.date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
+        cls.partnership = PartnershipFactory(start_date=cls.date_ok)
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
+        cls.partnership_gf = PartnershipFactory(start_date=cls.date_ok, author=cls.user_gf)
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
         cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
         PartnershipAgreementFactory(partnership=cls.partnership_out_of_date)

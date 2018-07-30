@@ -1,6 +1,9 @@
+from datetime import date, timedelta
+
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.enums.entity_type import FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
@@ -52,17 +55,20 @@ class PartnershipCreateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         partner = PartnerFactory()
         university = EntityFactory()
+        EntityVersionFactory(entity=university, entity_type=FACULTY)
         university_labo = EntityFactory()
+        EntityVersionFactory(entity=university_labo)
         offer = EducationGroupYearFactory()
         supervisor = PersonFactory()
         tag1 = PartnershipTagFactory()
         tag2 = PartnershipTagFactory()
         academic_year1 = AcademicYearFactory()
         academic_year2 = AcademicYearFactory()
+        date_ok = date.today() + timedelta(days=365)
         data = {
             'partner': partner.pk,
             'partner_entity': partner.entities.first().pk,
-            'start_date': '19/07/2018',
+            'start_date': date_ok,
             'ucl_university': university.pk,
             'ucl_university_labo': university_labo.pk,
             'university_offers': [offer.pk],
