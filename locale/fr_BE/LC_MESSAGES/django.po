@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-26 18:37+0200\n"
-"PO-Revision-Date: 2018-07-26 18:12+0200\n"
+"POT-Creation-Date: 2018-07-30 13:13+0200\n"
+"PO-Revision-Date: 2018-07-30 13:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.6\n"
 
 msgid "Yes"
 msgstr "Oui"
@@ -59,7 +59,7 @@ msgstr "La date de début se situe après la date de fin"
 msgid "required"
 msgstr "Obligatoire"
 
-msgid "name"
+msgid "Name"
 msgstr "Nom"
 
 msgid "address_name_help_text"
@@ -77,8 +77,8 @@ msgstr "Ville"
 msgid "country"
 msgstr "Pays"
 
-msgid "title"
-msgstr "Titre"
+msgid "contact_title"
+msgstr "Civilité"
 
 msgid "last_name"
 msgstr "Nom"
@@ -95,7 +95,7 @@ msgstr "Téléphone mobile"
 msgid "fax"
 msgstr "Fax"
 
-msgid "Name"
+msgid "name"
 msgstr "Nom"
 
 msgid "partner_type"
@@ -169,6 +169,9 @@ msgstr "Type de partenariat"
 
 msgid "partnership_supervisor"
 msgstr "Responsable Académique"
+
+msgid "partnership_start_date_after_agreement_error"
+msgstr "La date de début se situe après le début d'un accord."
 
 msgid "partnership_start_date_gf_too_late"
 msgstr "La date de début se situe après la date de fin."
@@ -884,9 +887,6 @@ msgstr "Monsieur"
 msgid "madame"
 msgstr "Madame"
 
-msgid "contact_title"
-msgstr "Civilité"
-
 msgid "society"
 msgstr "Société"
 
@@ -983,6 +983,9 @@ msgstr "Mettre à jour le contact"
 
 msgid "update_contact"
 msgstr "Mettre le contact à jour"
+
+msgid "academic_years"
+msgstr "Années académiques"
 
 msgid "media_delete_warning"
 msgstr ""
@@ -1158,9 +1161,6 @@ msgstr "Supprimer le contact"
 msgid "no_partnership_contact_yet"
 msgstr "Il n'y a pas encore de contact."
 
-msgid "academic_years"
-msgstr "Années académiques"
-
 msgid "change_configuration"
 msgstr "Modifier la configuration"
 
@@ -1200,11 +1200,18 @@ msgstr "Erreur lors de la sauvegarde du partenariat."
 msgid "partnership_success"
 msgstr "Partenariat sauvegardé avec succès."
 
+msgid "partnership_agreement_start_date_before_partnership_error"
+msgstr ""
+"L'année académique de début se situe avant la date de début du partenariat."
+
 msgid "partnership_agreement_error"
 msgstr "Erreur lors de la sauvegarde de l'accord."
 
 msgid "partnership_agreement_success"
 msgstr "Accord sauvegardé avec succès."
+
+#~ msgid "title"
+#~ msgstr "Titre"
 
 #~ msgid "validity"
 #~ msgstr "Validity"

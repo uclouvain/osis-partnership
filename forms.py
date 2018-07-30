@@ -653,6 +653,9 @@ class PartnershipForm(forms.ModelForm):
 
     def clean_start_date(self):
         start_date = self.cleaned_data['start_date']
+        # Check for agreements
+        if self.instance.agreements.filter(start_academic_year__year__lt=start_date.year).exists():
+            raise ValidationError(_('partnership_start_date_after_agreement_error'))
         if user_is_adri(self.user):
             return start_date
         if self.instance.pk is not None and self.instance.start_date == start_date:
