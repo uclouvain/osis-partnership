@@ -618,6 +618,10 @@ class PartnershipFilterForm(forms.Form):
         queryset=AcademicYear.objects.all(),
         required=False,
     )
+    comment = forms.CharField(
+        label=_('comment'),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)

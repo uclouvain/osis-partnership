@@ -728,6 +728,8 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
                         end_academic_year__end_date__gte=partnership_not_valid_in.end_date),
                 )
             ).filter(not_valid_in_has_agreements=True, not_valid_in_has_valid_agreements=False)
+        if data.get('comment', None):
+            queryset = queryset.filter(comment__icontains=data['comment'])
         return queryset
 
     def get_queryset(self):
