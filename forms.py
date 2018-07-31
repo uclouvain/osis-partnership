@@ -676,7 +676,7 @@ class PartnershipForm(forms.ModelForm):
             ),
             'university_offers': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:university_offers',
-                forward=['ucl_university_labo'],
+                forward=['ucl_university_labo', 'ucl_university'],
             ),
             'tags': autocomplete.Select2Multiple(),
             'partner': autocomplete.ModelSelect2(

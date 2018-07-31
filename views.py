@@ -1105,13 +1105,26 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
-        if ucl_university_labo:
+        ucl_university = self.forwarded.get('ucl_university', None)
+        print("%r" % ucl_university_labo)
+        if ucl_university_labo and ucl_university:
+            print('foo1')
+            qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo) | Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
+        elif ucl_university_labo:
+            print('foo2')
             qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo))
+        elif ucl_university:
+            print('foo3')
+            qs = qs.filter(Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
         else:
+            print('foo4')
             return EducationGroupYear.objects.none()
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs
+
+    def get_result_label(self, result):
+        return '{0.acronym} - {0.title}'.format(result)
 
 
 # Partnership filters autocompletes
