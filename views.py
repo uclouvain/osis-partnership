@@ -689,10 +689,15 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
             queryset = queryset.filter(tags__in=data['tags'])
         if data.get('partnership_in', None):
             partnership_in = data['partnership_in']
-            queryset = queryset.filter(
-                agreements__start_academic_year__start_date__lte=partnership_in.start_date,
-                agreements__end_academic_year__end_date__gte=partnership_in.end_date,
-            )
+            queryset = queryset.annotate(
+                has_in=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                        start_academic_year__start_date__lte=partnership_in.start_date,
+                        end_academic_year__end_date__gte=partnership_in.end_date,
+                    )
+                )
+            ).filter(has_in=True)
         if data.get('partnership_ending_in', None):
             partnership_ending_in = data['partnership_ending_in']
             queryset = (

@@ -1,11 +1,14 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.academic_year import AcademicYear
+from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import PartnershipAgreement
 from partnership.tests.factories import PartnershipFactory, PartnerFactory, PartnerEntityFactory, PartnerTypeFactory, \
-    PartnerTagFactory, PartnershipYearFactory, PartnershipTagFactory
+    PartnerTagFactory, PartnershipYearFactory, PartnershipTagFactory, PartnershipAgreementFactory
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
@@ -76,6 +79,70 @@ class PartnershipsListViewTest(TestCase):
         # tags
         cls.tag = PartnershipTagFactory()
         cls.partnership_tag = PartnershipFactory(tags=[cls.tag])
+        # comment
+        cls.partnership_comment = PartnershipFactory(comment='foobar')
+        # partnership_in
+        cls.partnership_partnership_in = PartnershipFactory()
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_partnership_in,
+            start_academic_year__year=2115,
+            end_academic_year__year=2116,
+        )
+        # partnership_ending_in
+        cls.partnership_partnership_ending_in = PartnershipFactory()
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_partnership_ending_in,
+            start_academic_year__year=2108,
+            end_academic_year__year=2109,
+        )
+        # partnership_valid_in
+        cls.partnership_partnership_valid_in = PartnershipFactory()
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_partnership_valid_in,
+            status=PartnershipAgreement.STATUS_VALIDATED,
+            start_academic_year__year=2117,
+            end_academic_year__year=2118,
+        )
+        # partnership_ending_in
+        cls.partnership_partnership_not_valid_in = PartnershipFactory()
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_partnership_not_valid_in,
+            start_academic_year__year=2119,
+            end_academic_year__year=2120,
+        )
+        # All filters
+        country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
+        cls.partnership_all_filters = PartnershipFactory(
+            ucl_university_labo=EntityFactory(),
+            partner__contact_address__city='all_filters',
+            partner__contact_address__country=country,
+            comment='all_filters',
+        )
+        cls.partnership_all_filters.partner.tags.add(PartnerTagFactory())
+        cls.partnership_all_filters.university_offers.add(EducationGroupYearFactory())
+        PartnershipYearFactory(
+            partnership=cls.partnership_all_filters,
+            education_field='1015',
+            education_level='ISCED-8',
+            is_sms=False,
+            is_smp=False,
+            is_sta=False,
+            is_stt=False,
+            partnership_type='autre',
+        )
+        cls.partnership_all_filters.tags.add(PartnershipTagFactory())
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_all_filters,
+            start_academic_year__year=2125,
+            end_academic_year__year=2127,
+        )
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_all_filters,
+            status=PartnershipAgreement.STATUS_VALIDATED,
+            start_academic_year__year=2127,
+            end_academic_year__year=2129,
+        )
+        AcademicYearFactory(year=2126)
 
         cls.user = UserFactory()
         cls.url = reverse('partnerships:list')
@@ -252,3 +319,79 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_tag)
+
+    def test_filter_comment(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url + '?comment=foo')
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_comment)
+
+    def test_filter_partnership_in(self):
+        self.client.force_login(self.user)
+        academic_year = self.partnership_partnership_in.agreements.first().start_academic_year
+        response = self.client.get(self.url + '?partnership_in=' + str(academic_year.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_partnership_in)
+
+    def test_filter_partnership_ending_in(self):
+        self.client.force_login(self.user)
+        academic_year = self.partnership_partnership_ending_in.agreements.first().end_academic_year
+        response = self.client.get(self.url + '?partnership_ending_in=' + str(academic_year.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_partnership_ending_in)
+
+    def test_filter_partnership_valid_in(self):
+        self.client.force_login(self.user)
+        academic_year = self.partnership_partnership_valid_in.agreements.first().start_academic_year
+        response = self.client.get(self.url + '?partnership_valid_in=' + str(academic_year.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_partnership_valid_in)
+
+    def test_filter_partnership_not_valid_in(self):
+        self.client.force_login(self.user)
+        academic_year = self.partnership_partnership_not_valid_in.agreements.first().start_academic_year
+        response = self.client.get(self.url + '?partnership_not_valid_in=' + str(academic_year.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_partnership_not_valid_in)
+
+    def test_all_filters(self):
+        self.client.force_login(self.user)
+        query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
+            'ucl_university': str(self.partnership_all_filters.ucl_university.pk),
+            'ucl_university_labo': str(self.partnership_all_filters.ucl_university_labo.pk),
+            'university_offers': str(self.partnership_all_filters.university_offers.first().pk),
+            'partner': str(self.partnership_all_filters.partner.pk),
+            'partner_entity': str(self.partnership_all_filters.partner_entity.pk),
+            'city': 'all_filters',
+            'country': str(self.partnership_all_filters.partner.contact_address.country.pk),
+            'continent': str(self.partnership_all_filters.partner.contact_address.country.continent.pk),
+            'partner_tags': str(self.partnership_all_filters.partner.tags.first().pk),
+            'education_field': '1015',
+            'education_level': 'ISCED-8',
+            'is_sms': 'False',
+            'is_smp': 'False',
+            'is_sta': 'False',
+            'is_stt': 'False',
+            'partnership_type': 'autre',
+            'tags': str(self.partnership_all_filters.tags.first().pk),
+            'comment': 'all_filters',
+            'partnership_in': str(AcademicYear.objects.get(year=2125).pk),
+            'partnership_ending_in': str(AcademicYear.objects.get(year=2129).pk),
+            'partnership_valid_in': str(AcademicYear.objects.get(year=2127).pk),
+            'partnership_not_valid_in': str(AcademicYear.objects.get(year=2126).pk),
+        }.items()])
+        response = self.client.get(self.url + '?' + query)
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_all_filters)
