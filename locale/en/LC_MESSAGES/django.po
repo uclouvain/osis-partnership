@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-30 16:27+0200\n"
+"POT-Creation-Date: 2018-07-31 12:18+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -168,6 +168,21 @@ msgid "partnership_type"
 msgstr ""
 
 msgid "partnership_supervisor"
+msgstr ""
+
+msgid "partnership_in"
+msgstr ""
+
+msgid "parnership_in_help_text"
+msgstr ""
+
+msgid "partnership_ending_in"
+msgstr ""
+
+msgid "partnership_valid_in"
+msgstr ""
+
+msgid "partnership_not_valid_in"
 msgstr ""
 
 msgid "partnership_start_date_after_agreement_error"

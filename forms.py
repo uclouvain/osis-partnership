@@ -600,6 +600,7 @@ class PartnershipFilterForm(forms.Form):
 
     partnership_in = forms.ModelChoiceField(
         label=_('partnership_in'),
+        help_text=_('parnership_in_help_text'),
         queryset=AcademicYear.objects.all(),
         required=False,
     )

@@ -46,4 +46,6 @@
         event.preventDefault();
         $(this).find('input,select').val('').change();
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 })(jQuery);
