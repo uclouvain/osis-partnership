@@ -803,14 +803,20 @@ class Contact(models.Model):
     comment = models.TextField(_('comment'), default='', blank=True)
 
     def __str__(self):
+        chunks = []
+        if self.title is not None:
+            chunks.append(self.get_title_display())
+        if self.last_name:
+            chunks.append(self.last_name)
         if self.first_name:
-            return '{0} {1} {2}'.format(self.get_title_display(), self.last_name or "None", self.first_name)
-        return '{0} {1}'.format(self.get_title_display(), self.last_name)
+            chunks.append(self.first_name)
+        return ' '.join(chunks)
 
     @property
     def is_empty(self):
         return not any([
             self.type,
+            self.title,
             self.last_name,
             self.first_name,
             self.society,

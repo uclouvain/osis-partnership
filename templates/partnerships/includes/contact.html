@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-sm-4">
     <p>
-      {% if contact.first_name or contact.last_name %}<strong>{{ contact }}</strong> {% endif %}<br>
+      {% if contact.title or contact.first_name or contact.last_name %}<strong>{{ contact }}</strong> {% endif %}<br>
       {% if contact.type %}{% trans 'contact_type' %} : {{ contact.type }}{% endif %}<br/>
       {% if contact.function or contact.society %}{{ contact.function|default_if_none:"" }}{% if contact.function and contact.society %}, {% endif %}{{ contact.society|default_if_none:"" }}<br>{% endif %}
       {% if contact.phone %}<i class="fa fa-fw fa-phone" title="{% trans "phone" %}"></i> {{ contact.phone }}{% endif %}
