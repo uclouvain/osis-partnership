@@ -6,9 +6,12 @@ from django.db.models import Max
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty, merge_date_ranges
 
@@ -422,20 +425,32 @@ class Partnership(models.Model):
 
     @cached_property
     def entities_acronyms(self):
-        """ Get a string of the entities acronyms """
+        """ Get a string of the entities acronyms with tooltips with the title """
         entities = []
-        parent = self.ucl_university.entityversion_set.latest('start_date').parent
-        if parent is not None:
-            now = timezone.now()
-            entity = parent.entityversion_set.filter(start_date__gte=now, end_date__lte=now).first()
-            if entity is not None:
-                entities.append(entity)
-        entities.append(self.ucl_university.most_recent_acronym)
+        university = self.ucl_university.entityversion_set.latest('start_date')
+        if university.parent is not None:
+            parent = university.parent.entityversion_set.latest('start_date')
+            if parent is not None:
+                entities.append(parent)
+        entities.append(university)
         if self.ucl_university_labo is not None:
-            entities.append(self.ucl_university_labo.most_recent_acronym)
+            labo = self.ucl_university_labo.entityversion_set.latest('start_date')
+            entities.append(labo)
         if self.university_offers.exists():
-            entities.append(' - '.join(self.university_offers.values_list('acronym', flat=True)))
-        return ' / '.join(entities)
+            entities += list(self.university_offers.select_related('academic_year'))
+
+        def add_tooltip(entity):
+            if isinstance(entity, EntityVersion):
+                entity_string = entity.acronym
+            else:
+                entity_string = str(entity)
+            return format_html(
+                '<span data-toggle="tooltip" data-placement="top" title="{0}">{1}</span>',
+                entity.title,
+                entity_string,
+            )
+
+        return mark_safe(' / '.join(map(add_tooltip, entities)))
 
 
 class PartnershipYear(models.Model):
