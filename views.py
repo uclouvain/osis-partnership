@@ -1025,7 +1025,7 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
                 Q(middle_name__icontains=self.q) |
                 Q(last_name__icontains=self.q)
             )
-        return qs
+        return qs.distinct()
 
 
 class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1037,7 +1037,7 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
                 Q(partner__name__icontains=self.q)
                 | Q(partner_entity__name__icontains=self.q)
             )
-        return qs
+        return qs.distinct()
 
 
 class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1046,7 +1046,7 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
         qs = Partner.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        return qs
+        return qs.distinct()
 
 
 class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1060,7 +1060,7 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
             return PartnerEntity.objects.none()
         if self.q:
             qs = qs.filter(name__icontain=self.q)
-        return qs
+        return qs.distinct()
 
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1123,7 +1123,7 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
             return EducationGroupYear.objects.none()
         if self.q:
             qs = qs.filter(title__icontains=self.q)
-        return qs
+        return qs.distinct()
 
     def get_result_label(self, result):
         return '{0.acronym} - {0.title}'.format(result)
@@ -1151,7 +1151,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
             return PartnerEntity.objects.none()
         if self.q:
             qs = qs.filter(name__icontain=self.q)
-        return qs
+        return qs.distinct()
 
 
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
