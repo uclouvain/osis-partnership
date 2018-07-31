@@ -1065,12 +1065,14 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
 class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
-    def get_queryset(self):
+    def get_ucl_universities(self):
         qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
-        qs = sorted(qs.distinct(), key=lambda x: x.most_recent_acronym)
-        return qs
+        return qs.distinct()
+
+    def get_queryset(self):
+        return sorted(self.get_ucl_universities(), key=lambda x: x.most_recent_acronym)
 
     def get_result_label(self, result):
         title = result.entityversion_set.latest("start_date").title
@@ -1083,7 +1085,7 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
 class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
 
-    def get_queryset(self):
+    def get_ucl_university_labos(self):
         qs = Entity.objects.all()
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
@@ -1092,8 +1094,13 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
             return Entity.objects.none()
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
-        qs = sorted(qs.distinct(), key=lambda x: x.most_recent_acronym)
-        return qs
+        return qs.distinct()
+
+    def get_queryset(self):
+        return sorted(
+            self.get_ucl_university_labos(),
+            key=lambda x: x.most_recent_acronym,
+        )
 
     def get_result_label(self, result):
         title = result.entityversion_set.latest("start_date").title
@@ -1106,18 +1113,13 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
         ucl_university = self.forwarded.get('ucl_university', None)
-        print("%r" % ucl_university_labo)
         if ucl_university_labo and ucl_university:
-            print('foo1')
             qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo) | Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
         elif ucl_university_labo:
-            print('foo2')
             qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo))
         elif ucl_university:
-            print('foo3')
             qs = qs.filter(Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
         else:
-            print('foo4')
             return EducationGroupYear.objects.none()
         if self.q:
             qs = qs.filter(title__icontains=self.q)
@@ -1155,20 +1157,21 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(partnerships__isnull=False).distinct()
+        qs = super().get_ucl_universities()
+        return sorted(qs.filter(partnerships__isnull=False), key=lambda x: x.most_recent_acronym)
 
 
-class UclUniversityLaboAutocompleteFilterView(UclUniversityAutocompleteView):
+class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_ucl_university_labos()
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
             qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
         else:
             return Entity.objects.none()
-        return qs.filter(partnerships_labo__isnull=False).distinct()
+        return qs.distinct()
+        #return qs.filter(partnerships_labo__isnull=False).distinct()
 
 
 class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):

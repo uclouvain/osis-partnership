@@ -449,7 +449,11 @@ class PartnershipFilterForm(forms.Form):
         required=False,
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university_filter',
-            attrs={'data-width': '100%'},
+            attrs={
+                'data-width': '100%',
+                'class': 'resetting',
+                'data-reset': '#id_ucl_university_labo, #id_university_offers',
+            },
         ),
     )
 
@@ -461,7 +465,11 @@ class PartnershipFilterForm(forms.Form):
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university_labo_filter',
             forward=['ucl_university'],
-            attrs={'data-width': '100%'},
+            attrs={
+                'data-width': '100%',
+                'class': 'resetting',
+                'data-reset': '#id_university_offers',
+            },
         ),
     )
 
@@ -483,7 +491,11 @@ class PartnershipFilterForm(forms.Form):
         queryset=Partner.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('partner'),
         widget=autocomplete.ModelSelect2(
-            attrs={'data-width': '100%'},
+            attrs={
+                'data-width': '100%',
+                'class': 'resetting',
+                'data-reset': '#id_partner_entity',
+            },
             url='partnerships:autocomplete:partner_partnerships_filter',
         ),
         required=False,
