@@ -28,7 +28,7 @@
   <div class="col-md-2">
     {% if show_partnership %}<a href="{{ agreement.partnership.get_absolute_url }}">{% trans "partnership" %}</a>{% endif %}
     {% if can_change %}
-    <div class="btn-group">
+    <div class="btn-group pull-right">
       <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
          class="btn btn-default">
         <i class="fa fa-pencil fa-fw"></i>
