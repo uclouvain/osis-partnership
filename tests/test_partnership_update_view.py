@@ -45,8 +45,20 @@ class PartnershipUpdateViewTest(TestCase):
                           kwargs={'pk': cls.partnership_ko.pk})
 
         # Years
-        cls.year_0 = PartnershipYearFactory(partnership=cls.partnership, is_sms=True, is_smp=True, is_sta=True, is_stt=True)
-        cls.year_1 = PartnershipYearFactory(partnership=cls.partnership, is_sms=True, is_sta=True)
+        cls.year_0 = PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year__year=2180,
+            is_sms=True,
+            is_smp=True,
+            is_sta=True,
+            is_stt=True,
+        )
+        cls.year_1 = PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year__year=2181,
+            is_sms=True,
+            is_sta=True,
+        )
 
         # Ucl
         cls.ucl_university = EntityFactory()

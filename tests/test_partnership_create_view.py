@@ -62,8 +62,8 @@ class PartnershipCreateViewTest(TestCase):
         supervisor = PersonFactory()
         tag1 = PartnershipTagFactory()
         tag2 = PartnershipTagFactory()
-        academic_year1 = AcademicYearFactory()
-        academic_year2 = AcademicYearFactory()
+        academic_year1 = AcademicYearFactory(year=2150)
+        academic_year2 = AcademicYearFactory(year=2151)
         date_ok = date.today() + timedelta(days=365)
         data = {
             'partner': partner.pk,
