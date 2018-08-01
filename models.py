@@ -445,7 +445,7 @@ class Partnership(models.Model):
             else:
                 entity_string = str(entity)
             return format_html(
-                '<span data-toggle="tooltip" data-placement="top" title="{0}">{1}</span>',
+                '<abbr title="{0}">{1}</abbr>',
                 entity.title,
                 entity_string,
             )
