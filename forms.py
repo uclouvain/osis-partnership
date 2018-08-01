@@ -3,7 +3,7 @@ from datetime import date
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
@@ -750,10 +750,26 @@ class PartnershipYearForm(forms.ModelForm):
         }
 
 
+class BasePartnershipYearInlineFormset(BaseInlineFormSet):
+    def clean(self):
+        super(BasePartnershipYearInlineFormset, self).clean()
+        for form in self.forms:
+            try:
+                if form.cleaned_data.get('DELETE', False) or form.cleaned_data.get('academic_year', None) is None:
+                    continue
+                if self.instance.start_date is None:
+                    continue
+                if form.cleaned_data['academic_year'].year < self.instance.start_date.year:
+                    form.add_error('academic_year', ValidationError(_('partnership_year_academic_year_error')))
+            except AttributeError:
+                pass
+
+
 PartnershipYearInlineFormset = inlineformset_factory(
     Partnership,
     PartnershipYear,
     form=PartnershipYearForm,
+    formset=BasePartnershipYearInlineFormset,
 )
 
 

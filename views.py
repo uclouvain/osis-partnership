@@ -837,6 +837,14 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     def form_valid(self, form, formset_years):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
+
+        # Test for academic_years / start_date
+        formset_years.instance = partnership
+        formset_years.clean()
+        if not formset_years.is_valid():
+            return self.form_invalid(form, formset_years)
+
+        # Resume saving
         partnership.save()
         form.save_m2m()
         formset_years.instance = partnership
@@ -864,6 +872,14 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     @transaction.atomic
     def form_valid(self, form, formset_years):
         partnership = form.save()
+
+        # Test for academic_years / start_date
+        formset_years.instance = partnership
+        formset_years.clean()
+        if not formset_years.is_valid():
+            return self.form_invalid(form, formset_years)
+
+        # Resume saving
         formset_years.save()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
