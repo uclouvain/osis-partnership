@@ -5,7 +5,11 @@
 <h2>{% trans 'Partner' %}</h2>
 <div class="row row-fluid">
   <div class="col-xs-12 col-sm-6">
-    {% bootstrap_field form.partner %}
+    <div class="form-group required_field">
+      <label class="control-label" for="{{ form.partner.id_for_label }}">{{ form.partner.label }}</label>
+      {{ form.partner }}
+      <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>
+    </div>
   </div>
   <div class="col-xs-12 col-sm-6">
     {% bootstrap_field form.partner_entity %}
