@@ -88,6 +88,13 @@
     {% bootstrap_field form_year.is_stt %}
   </div>
 </div>
+{% if formset_years.can_delete %}
+<div class="row">
+  <div class="col-xs-12 col-sm-2">
+    {% bootstrap_field form_year.DELETE %}
+  </div>
+</div>
+{% endif %}
 {% if not forloop.last %}<hr>{% endif %}
 {% endfor %}
 
