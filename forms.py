@@ -3,6 +3,7 @@ from datetime import date
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
@@ -708,6 +709,14 @@ class PartnershipForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(PartnershipForm, self).__init__(*args, **kwargs)
+
+    def clean_partner(self):
+        partner = self.cleaned_data['partner']
+        if partner == self.instance.partner:
+            return partner
+        if not partner.is_actif:
+            raise ValidationError(_('partnership_inactif_partner_error'))
+        return partner
 
     def clean_start_date(self):
         start_date = self.cleaned_data['start_date']

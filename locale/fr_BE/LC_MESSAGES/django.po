@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-01 15:37+0200\n"
+"POT-Creation-Date: 2018-08-01 16:12+0200\n"
 "PO-Revision-Date: 2018-08-01 15:38+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -186,6 +186,11 @@ msgstr "Partenariats ayant un accord validé en"
 
 msgid "partnership_not_valid_in"
 msgstr "Partenariats n’ayant pas d’accord validé en"
+
+#, fuzzy
+#| msgid "partnership_with_{partner}"
+msgid "partnership_inactif_partner_error"
+msgstr "Partenariat avec {partner}"
 
 msgid "partnership_start_date_after_agreement_error"
 msgstr "La date de début se situe après le début d'un accord."
