@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-01 12:18+0200\n"
-"PO-Revision-Date: 2018-08-01 12:20+0200\n"
+"POT-Creation-Date: 2018-08-01 15:37+0200\n"
+"PO-Revision-Date: 2018-08-01 15:38+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -825,6 +825,9 @@ msgstr "Partenariat"
 msgid "academic_year"
 msgstr "Année académique"
 
+msgid "partnership_year"
+msgstr "Année de partenariat"
+
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
 msgstr "{partnership} pour l'année {year}"
@@ -1041,6 +1044,9 @@ msgstr "UCL"
 
 msgid "years"
 msgstr "Années"
+
+msgid "partnership_year_unique_error"
+msgstr "Une année avec cette année académique existe déjà."
 
 msgid "ucl"
 msgstr "UCL"

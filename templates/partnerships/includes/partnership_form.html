@@ -1,5 +1,7 @@
 {% load bootstrap3 i18n static %}
 
+{% bootstrap_form_errors form %}
+
 <h2>{% trans 'Partner' %}</h2>
 <div class="row row-fluid">
   <div class="col-xs-12 col-sm-6">
@@ -45,11 +47,19 @@
 <h2>{% trans "years" %}</h2>
 
 {{ formset_years.management_form }}
+{% bootstrap_formset_errors formset_years %}
 
 {% for form_year in formset_years %}
   {% for field in form_year.hidden_fields %}
     {{ field }}
   {% endfor %}
+
+  {% if form_year.non_field_errors %}
+    <div class="alert alert-danger alert-dismissable alert-link">
+      <button class="close" type="button" data-dismiss="alert" aria-hidden="true">×</button>
+      {% trans "partnership_year_unique_error" %}
+    </div>
+  {% endif %}
 <div class="row">
   <div class="col-xs-12 col-sm-3">
     {% bootstrap_field form_year.academic_year %}

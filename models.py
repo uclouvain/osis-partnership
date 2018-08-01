@@ -646,6 +646,7 @@ class PartnershipYear(models.Model):
     class Meta:
         unique_together = ('partnership', 'academic_year')
         ordering = ('academic_year__year',)
+        verbose_name = _('partnership_year')
 
     def __str__(self):
         return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
