@@ -1,6 +1,6 @@
 from datetime import date
 
-from dal import autocomplete
+from dal import autocomplete, forward
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -676,7 +676,7 @@ class PartnershipForm(forms.ModelForm):
                 url='partnerships:autocomplete:ucl_university',
                 attrs={
                     'class': 'resetting',
-                    'data-reset': '#id_ucl_university_labo, #id_university_offers',
+                    'data-reset': '#id_ucl_university_labo',
                 },
             ),
             'ucl_university_labo': autocomplete.ModelSelect2(
@@ -689,7 +689,7 @@ class PartnershipForm(forms.ModelForm):
             ),
             'university_offers': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:university_offers',
-                forward=['ucl_university_labo', 'ucl_university'],
+                forward=['ucl_university_labo'],
             ),
             'tags': autocomplete.Select2Multiple(),
             'partner': autocomplete.ModelSelect2(
@@ -698,7 +698,6 @@ class PartnershipForm(forms.ModelForm):
                     'class': 'resetting',
                     'data-reset': '#id_partner_entity',
                 },
-
             ),
             'partner_entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:partner_entity',
@@ -708,7 +707,10 @@ class PartnershipForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        pk = kwargs.pop('partnership_pk', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
+        if pk is not None:
+            self.fields['partner'].widget.forward.append(forward.Const(pk, 'partnership_pk'))
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']

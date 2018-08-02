@@ -868,14 +868,17 @@ class PartnershipFormMixin(object):
     form_class = PartnershipForm
 
     def get_formset_years(self):
-        kwargs = self.get_form_kwargs()
+        kwargs = self.get_formset_kwargs()
         kwargs['prefix'] = 'years'
-        del kwargs['user']
         return PartnershipYearInlineFormset(**kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_formset_kwargs(self):
+        kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -936,9 +939,18 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
+
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if hasattr(self.object, 'partner'):
+            kwargs['partnership_pk'] = self.object.partner.pk
+        else:
+            kwargs['partnership_pk'] = None
+        return kwargs
 
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
@@ -1134,9 +1146,15 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = Partner.objects.all()
+        pk = self.forwarded.get('partnership_pk', None)
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        return qs.distinct()
+        qs = qs.distinct()
+        if pk is not None:
+            print(pk)
+            current = Partner.objects.get(pk=pk)
+            return [current] + list(filter(lambda x: x.is_actif, qs))
+        return list(filter(lambda x: x.is_actif, qs))
 
 
 class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1202,13 +1220,8 @@ class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university_labo and ucl_university:
-            qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo) | Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
-        elif ucl_university_labo:
+        if ucl_university_labo:
             qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo))
-        elif ucl_university:
-            qs = qs.filter(Q(management_entity=ucl_university) | Q(administration_entity=ucl_university))
         else:
             return EducationGroupYear.objects.none()
         if self.q:
