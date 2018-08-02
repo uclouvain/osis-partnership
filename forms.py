@@ -554,7 +554,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
     )
     partner_tags = forms.ModelMultipleChoiceField(
-        label=_('tags'),
+        label=_('partner_tags'),
         queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
@@ -564,7 +564,10 @@ class PartnershipFilterForm(forms.Form):
 
     education_field = forms.ChoiceField(
         label=_('education_field'),
-        choices=((None, '---------'),) + PartnershipYear.EDUCATION_FIELD_CHOICES,
+        choices=((None, '---------'),) + tuple(filter(
+            lambda x: Partnership.objects.filter(years__education_field=x).exists(),
+            PartnershipYear.EDUCATION_FIELD_CHOICES,
+        )),
         widget=autocomplete.Select2(attrs={'data-width': '100%'}),
         required=False,
     )
