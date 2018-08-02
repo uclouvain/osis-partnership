@@ -20,6 +20,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from osis_common.document import xls_build
@@ -113,19 +114,6 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
 
 
 class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
-
-    def get_queryset(self):
-        queryset = (
-            Partner.objects
-                .all()
-                .select_related('partner_type', 'contact_address__country')
-                .annotate(partnerships_count=Count('partnerships'))
-        )
-        queryset = self.filter_queryset(queryset)
-        ordering = self.get_ordering()
-        if ordering:
-            queryset = queryset.order_by(ordering)
-        return queryset
 
     def get_xls_headers(self):
         return [
@@ -582,14 +570,8 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
         return self.template_name
 
 
-class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
-    model = Partnership
-    template_name = 'partnerships/partnerships_list.html'
-    context_object_name = 'partnerships'
+class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     form_class = PartnershipFilterForm
-    paginate_by = 20
-    paginate_orphans = 2
-    paginate_neighbours = 4
 
     def get_initial(self):
         initial = {}
@@ -599,21 +581,9 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
                 initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
         return initial
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partnerships_list_results.html'
-        else:
-            return 'partnerships/partnerships_list.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(PartnershipsListView, self).get_context_data(**kwargs)
-        context['paginate_neighbours'] = self.paginate_neighbours
-        context['can_change_configuration'] = user_is_adri(self.request.user)
-        context['can_add_partnership'] = Partnership.user_can_add(self.request.user)
-        return context
 
     def get_form_kwargs(self):
-        kwargs = super(PartnershipsListView, self).get_form_kwargs()
+        kwargs = super(PartnershipListFilterMixin, self).get_form_kwargs()
         if self.request.GET:
             # Remove empty value from GET
             data = copy(self.request.GET)
@@ -758,6 +728,110 @@ class PartnershipsListView(LoginRequiredMixin, FormMixin, ListView):
         ordering = self.get_ordering()
         queryset = queryset.order_by(*ordering)
         return queryset.distinct()
+
+
+class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListView):
+    template_name = 'partnerships/partnerships_list.html'
+    context_object_name = 'partnerships'
+    paginate_by = 20
+    paginate_orphans = 2
+    paginate_neighbours = 4
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/partnerships_list_results.html'
+        else:
+            return 'partnerships/partnerships_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipsListView, self).get_context_data(**kwargs)
+        context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_change_configuration'] = user_is_adri(self.request.user)
+        context['can_add_partnership'] = Partnership.user_can_add(self.request.user)
+        return context
+
+
+class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+
+    def get_xls_headers(self):
+        return [
+            ugettext('id'),
+            ugettext('partner'),
+            ugettext('partner_entity'),
+            ugettext('ucl_university'),
+            ugettext('ucl_university_labo'),
+            ugettext('university_offers'),
+            ugettext('supervisor'),
+            ugettext('start_date'),
+            ugettext('comment'),
+            ugettext('tags'),
+            ugettext('created'),
+            ugettext('modified'),
+            ugettext('author'),
+        ]
+
+    def get_xls_data(self):
+        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
+        queryset = self.get_queryset()
+        queryset = (
+            queryset
+            .annotate(
+                tags_list=StringAgg('tags__value', ', '),
+            )
+            .select_related('author')
+            .prefetch_related(
+                Prefetch('ucl_university__entityversion_set', queryset=EntityVersion.objects.order_by('-start_date')),
+                Prefetch('ucl_university_labo__entityversion_set', queryset=EntityVersion.objects.order_by('-start_date')),
+            )
+        )
+        for partnership in queryset:
+            yield [
+                partnership.pk,
+                str(partnership.partner),
+                str(partnership.partner_entity) if partnership.partner_entity else None,
+                str(partnership.ucl_university.entityversion_set.all()[0]),
+                str(partnership.ucl_university_labo.entityversion_set.all()[0]) if partnership.ucl_university_labo else '',
+                ', '.join(map(str, partnership.university_offers.all())),
+                str(partnership.supervisor) if partnership.supervisor is not None else '',
+                partnership.start_date.strftime('%Y-%m-%d'),
+                partnership.comment,
+                partnership.tags_list,
+                partnership.created.strftime('%Y-%m-%d'),
+                partnership.modified.strftime('%Y-%m-%d'),
+                str(partnership.author),
+            ]
+
+    def get_xls_filters(self):
+        form = self.get_form()
+        if form.is_valid():
+            filters = {}
+            for key, value in form.cleaned_data.items():
+                if not value:
+                    continue
+                if isinstance(value, QuerySet):
+                    value = ', '.join(map(str, list(value)))
+                filters[key] = str(value)
+            return filters
+        return None
+
+    def generate_xls(self):
+        working_sheets_data = self.get_xls_data()
+        parameters = {
+            xls_build.DESCRIPTION: _('partners'),
+            xls_build.USER: str(self.request.user),
+            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%m-%S'),
+            xls_build.HEADER_TITLES: self.get_xls_headers(),
+            xls_build.WS_TITLE: _('partners')
+        }
+        filters = self.get_xls_filters()
+        response = xls_build.generate_xls(
+            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
+            filters,
+        )
+        return response
+
+    def get(self, request, *args, **kwargs):
+        return self.generate_xls()
 
 
 class PartnershipDetailView(LoginRequiredMixin, DetailView):

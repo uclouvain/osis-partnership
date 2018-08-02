@@ -34,4 +34,12 @@
   </table>
 </div>
 
-{% include "partnerships/includes/pagination.html" %}
+<div class="row">
+  <div class="col-sm-12 col-md-8">
+    {% include "partnerships/includes/pagination.html" %}
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <a href="{% url "partnerships:export" %}?{{ request.GET.urlencode }}" class="btn btn-default btn-export pull-right">{% trans "partnerships_export" %}</a>
+  </div>
+</div>

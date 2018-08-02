@@ -18,10 +18,12 @@ from partnership.views import (PartnerCreateView, PartnerDetailView,
                                PartneshipAgreementDeleteView, PartneshipAgreementUpdateView,
                                PartneshipAgreementCreateView, PersonAutocompleteView, PartneshipConfigurationUpdateView,
                                PartnerAutocompletePartnershipsFilterView,
-                               PartnerEntityAutocompletePartnershipsFilterView, UclUniversityLaboAutocompleteView)
+                               PartnerEntityAutocompletePartnershipsFilterView, UclUniversityLaboAutocompleteView,
+                               PartnershipExportView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
+    url(r'^export/$', PartnershipExportView.as_view(), name="export"),
     url(r'^configuration/$', PartneshipConfigurationUpdateView.as_view(), name='configuration_update'),
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="detail"),
     url(r'^create/$', PartnershipCreateView.as_view(), name="create"),
