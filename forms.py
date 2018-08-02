@@ -714,7 +714,7 @@ class PartnershipForm(forms.ModelForm):
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']
-        if partner == self.instance.partner:
+        if self.instance.pk and partner == self.instance.partner:
             return partner
         if not partner.is_actif:
             raise ValidationError(_('partnership_inactif_partner_error'))
