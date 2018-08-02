@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from django.conf import settings
 from django.db import models
@@ -416,7 +416,12 @@ class Partnership(models.Model):
 
     @cached_property
     def has_missing_valid_years(self):
-        return len(self.agreements_dates_ranges) > 1
+        now = date.today()
+        ranges = self.agreements_dates_ranges
+        for range in ranges:
+            if now < range['end'] and now >= range['start']:
+                return False
+        return True
 
     @cached_property
     def current_year(self):
