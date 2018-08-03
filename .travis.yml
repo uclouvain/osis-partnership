@@ -1,0 +1,34 @@
+language: python
+python: "3.4.5"
+services:
+  - postgresql
+addons:
+    postgresql: "9.4"
+
+install:
+  - export PROJECT_DIR=`pwd`
+  - cd /tmp
+  - git clone https://github.com/uclouvain/osis.git
+  - cd osis
+  - git submodule init
+  - git submodule update
+  - pip install -r travis-requirements.txt
+  - rm -Rf partnership
+  - ln -s $PROJECT_DIR partnership
+
+before_script:
+  - cp .env.example .env
+  - echo 'INSTALLED_APPS += ("partnership",)' >> backoffice/settings/local.py
+  - echo 'APPS_TO_TEST += ("partnership",)' >> backoffice/settings/local.py
+  - echo >> .env
+  - echo "POSTGRES_USER = 'postgres'" >> .env
+  - echo "POSTGRES_PASSWORD = ''" >> .env
+  - python3 manage.py compilemessages
+  - psql -c 'create database osis_local;' -U postgres
+
+script:
+  - coverage run manage.py test --exclude-tag=selenium partnership
+
+after_success:
+ - pip install coveralls
+ - coveralls
