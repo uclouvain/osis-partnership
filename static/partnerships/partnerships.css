@@ -22,3 +22,25 @@
   color: #ccc;
   z-index: 20001;
 }
+
+ul.tags-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+ul.tags-list li {
+  background-color: #337ab7;
+  color: #fff;
+  border-radius: 4px;
+  padding: 10px 15px;
+  float: left;
+  margin-right: 15px;
+}
+
+.partner-entity {
+  margin-bottom: 15px;
+}
+
+.partner-entity h3 {
+  margin-top: 0;
+}

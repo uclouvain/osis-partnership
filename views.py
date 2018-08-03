@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Prefetch
 from django.db.models.functions import Now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
 from partnership.forms import PartnerFilterForm
-from partnership.models import Partner, Partnership
+from partnership.models import Partner, Partnership, Media, PartnerEntity
 
 
 class PartnersList(LoginRequiredMixin, FormMixin, ListView):
@@ -39,7 +39,7 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
         queryset = (
             Partner.objects
                 .all()
-                .select_related('partner_type')
+                .select_related('partner_type', 'contact_address__country')
                 .annotate(partnerships_count=Count('partnerships'))
         )
         form = self.get_form()
@@ -53,6 +53,12 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
                 queryset = queryset.filter(pic_code__icontains=data['pic_code'])
             if data['erasmus_code']:
                 queryset = queryset.filter(erasmus_code__icontains=data['erasmus_code'])
+            if data['city']:
+                queryset = queryset.filter(contact_address__city__icontains=data['city'])
+            if data['country']:
+                queryset = queryset.filter(contact_address__country=data['country'])
+            if data['continent']:
+                queryset = queryset.filter(contact_address__country__continent=data['continent'])
             if data['is_ies'] is not None:
                 queryset = queryset.filter(is_ies=data['is_ies'])
             if data['is_valid'] is not None:
@@ -74,9 +80,21 @@ class PartnersList(LoginRequiredMixin, FormMixin, ListView):
 
 
 class PartnerDetail(LoginRequiredMixin, DetailView):
-    model = Partner
     template_name = 'partnerships/partner_detail.html'
     context_object_name = 'partner'
+
+    def get_queryset(self):
+        return (
+            Partner.objects
+                .select_related('partner_type', 'author')
+                .prefetch_related(
+                    Prefetch('entities', queryset=PartnerEntity.objects.select_related(
+                        'contact_in', 'contact_out', 'address', 'parent', 'author',
+                    )),
+                    'tags',
+                    Prefetch('medias', queryset=Media.objects.select_related('document_file')),
+                )
+        )
 
 
 class PartnershipsList(LoginRequiredMixin, ListView):

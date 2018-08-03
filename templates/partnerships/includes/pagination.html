@@ -14,6 +14,7 @@
       </a>
     </li>
     {% else %}
+      <li class="disabled"><span aria-hidden="true"><i class="fa fa-step-backward"></i></span></li>
       <li class="disabled"><span aria-hidden="true"><i class="fa fa-arrow-left"></i></span></li>
     {% endif %}
     {% for page_number in paginator.page_range %}
@@ -39,6 +40,7 @@
     </li>
     {% else %}
       <li class="disabled"><span aria-hidden="true"><i class="fa fa-arrow-right"></i></span></li>
+      <li class="disabled"><span aria-hidden="true"><i class="fa fa-step-forward"></i></span></li>
     {% endif %}
   </ul>
 </nav>

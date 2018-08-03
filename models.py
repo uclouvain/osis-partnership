@@ -83,6 +83,12 @@ class PartnerEntity(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return '{0}#partner-entity-{1}'.format(
+            reverse('partnerships:partners:detail', kwargs={'pk': self.partner_id}),
+            self.id,
+        )
+
 
 class Partner(models.Model):
     is_valid = models.BooleanField(_('is_valid'), default=False)
@@ -112,7 +118,7 @@ class Partner(models.Model):
         'partnership.Address',
         verbose_name=_('address'),
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name='partners',
         blank=True,
         null=True,
     )
@@ -337,13 +343,21 @@ class Address(models.Model):
         'reference.Country',
         verbose_name=_('country'),
         on_delete=models.PROTECT,
-        related_name='+',
         blank=True,
         null=True,
     )
 
     def __str__(self):
         return self.name
+
+    def one_line_display(self):
+        return '{name} {address}, {postal_code} {city}, {country}'.format(
+            name=self.name,
+            address=self.address,
+            postal_code=self.postal_code,
+            city=self.city,
+            country=str(self.country).upper(),
+        )
 
 
 class Media(models.Model):
@@ -372,3 +386,12 @@ class Media(models.Model):
         max_length=50,
         choices=VISIBILITY_CHOICES,
     )
+
+    def __str__(self):
+        return self.name
+
+    def get_document_file_type(self):
+        return self.document_file.content_type.split('/')[-1]
+
+    def get_document_file_size(self):
+        return self.document_file.file.size

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-08 11:10+0200\n"
+"POT-Creation-Date: 2018-06-15 09:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,18 @@ msgid "partner_type"
 msgstr ""
 
 msgid "pic_code"
+msgstr ""
+
+msgid "erasmus_code"
+msgstr ""
+
+msgid "city"
+msgstr ""
+
+msgid "country"
+msgstr ""
+
+msgid "continent"
 msgstr ""
 
 msgid "is_ies"
@@ -78,9 +90,6 @@ msgid "author"
 msgstr ""
 
 msgid "partner_code"
-msgstr ""
-
-msgid "erasmus_code"
 msgstr ""
 
 msgid "start_date"
@@ -189,16 +198,10 @@ msgstr ""
 msgid "postal_code"
 msgstr ""
 
-msgid "city"
-msgstr ""
-
 msgid "city_french"
 msgstr ""
 
 msgid "city_english"
-msgstr ""
-
-msgid "country"
 msgstr ""
 
 msgid "visibility_public"
@@ -253,6 +256,34 @@ msgid "partnerships"
 msgstr ""
 
 msgid "partners"
+msgstr ""
+
+#, python-format
+msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "contact_address"
+msgstr ""
+
+msgid "associated_tags"
+msgstr ""
+
+msgid "external_link"
+msgstr ""
+
+msgid "entities"
+msgstr ""
+
+msgid "contact_mobility_in"
+msgstr ""
+
+msgid "contact_mobility_out"
 msgstr ""
 
 msgid "filter_partners"

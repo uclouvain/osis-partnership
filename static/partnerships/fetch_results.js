@@ -1,6 +1,6 @@
 (function ($) {
     var showLoader = function() {
-        $('#results .loader').show(500);
+        $('#results .loader').delay(200).show(500);
     };
 
     var hideLoader = function() {
@@ -42,5 +42,7 @@
 
     $('#filter-form #id_tags').select2({
         language: "fr",
+        width: "100%",
+        placeholder: "Tags"
     });
 })(jQuery);
