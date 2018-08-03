@@ -893,11 +893,11 @@ class PartnershipFormMixin(object):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         formset_years = self.get_formset_years()
-        # Do the valid before to ensure the errors are calculated
-        formset_years_valid = formset_years.is_valid()
-        if form.is_valid() and formset_years_valid:
+        if form.is_valid():
             return self.form_valid(form, formset_years)
         else:
+            # Do the valid to ensure the errors are calculated
+            formset_years.is_valid()
             return self.form_invalid(form, formset_years)
 
 
@@ -917,7 +917,6 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         # Test for academic_years / start_date
         formset_years.instance = partnership
-        formset_years.clean()
         if not formset_years.is_valid():
             return self.form_invalid(form, formset_years)
 
@@ -961,7 +960,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         # Test for academic_years / start_date
         formset_years.instance = partnership
-        formset_years.clean()
         if not formset_years.is_valid():
             return self.form_invalid(form, formset_years)
 

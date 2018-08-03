@@ -730,6 +730,10 @@ class PartnershipAgreement(models.Model):
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
 
+    @property
+    def is_valid(self):
+        return self.status == self.STATUS_VALIDATED
+
     def get_financings(self):
         if not self.eligible:
             return Financing.objects.none()

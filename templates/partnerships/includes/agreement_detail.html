@@ -13,7 +13,7 @@
         <dd>
           <i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
 
-          {% if agreement.eligible %}
+          {% if agreement.is_valid and agreement.eligible %}
             <ul class="list-unstyled">
             {% for financing in agreement.get_financings %}
               <li>{{ financing }}</li>
