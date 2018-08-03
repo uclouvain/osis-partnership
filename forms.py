@@ -564,10 +564,7 @@ class PartnershipFilterForm(forms.Form):
 
     education_field = forms.ChoiceField(
         label=_('education_field'),
-        choices=((None, '---------'),) + tuple(filter(
-            lambda x: Partnership.objects.filter(years__education_field=x).exists(),
-            PartnershipYear.EDUCATION_FIELD_CHOICES,
-        )),
+        choices=((None, '---------'),) + PartnershipYear.EDUCATION_FIELD_CHOICES,
         widget=autocomplete.Select2(attrs={'data-width': '100%'}),
         required=False,
     )
