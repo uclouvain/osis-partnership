@@ -6,11 +6,21 @@
         <dt>{% trans "academic_years" %}</dt>
         <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
 
-        <dt>{% trans "eligible" %}</dt>
-        <dd><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
-
         <dt>{% trans "status" %}</dt>
         <dd>{{ agreement.get_status_display }}</dd>
+
+        <dt>{% trans "eligible" %}</dt>
+        <dd>
+          <i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+
+          {% if agreement.eligible %}
+            <ul class="list-unstyled">
+            {% for financing in agreement.get_financings %}
+              <li>{{ financing }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        </dd>
 
         <dt>{% trans "comment" %}</dt>
         <dd>{{ agreement.comment|linebreaksbr }}</dd>
@@ -22,10 +32,10 @@
       </dl>
     </div>
   </div>
-  <div class="col-md-5 partner-media">
+  <div class="col-sm-12 col-md-5 partner-media">
     {% include "partnerships/includes/media_detail.html" with media=agreement.media hide_actions=True %}
   </div>
-  <div class="col-md-2">
+  <div class="col-sm-12 col-md-2">
     {% if show_partnership %}<a href="{{ agreement.partnership.get_absolute_url }}">{% trans "partnership" %}</a>{% endif %}
     {% if can_change %}
     <div class="btn-group pull-right">

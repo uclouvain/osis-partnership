@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership, PartnershipTag,
-                                PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement)
+                                PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement, Financing)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -80,11 +80,18 @@ class ValueAdmin(admin.ModelAdmin):
         return {}
 
 
+class FinancingAdmin(admin.ModelAdmin):
+    fields = ('name', 'url', 'countries', 'academic_year')
+    search_fields = ('name', 'countries__name',)
+    list_filter = ('name', 'academic_year')
+
+
 admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(PartnershipTag)
 admin.site.register(Partnership, PartnershipAdmin)
+admin.site.register(Financing, FinancingAdmin)
 admin.site.register(Media)
 admin.site.register(ContactType)
 admin.site.register(Contact)

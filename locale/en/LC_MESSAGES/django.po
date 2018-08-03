@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-01 16:12+0200\n"
+"POT-Creation-Date: 2018-08-03 13:06+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -144,6 +144,9 @@ msgid "partner"
 msgstr ""
 
 msgid "partner_entity"
+msgstr ""
+
+msgid "partner_tags"
 msgstr ""
 
 msgid "education_field"
@@ -856,6 +859,9 @@ msgstr ""
 msgid "eligible"
 msgstr ""
 
+msgid "financing"
+msgstr ""
+
 msgid "january"
 msgstr ""
 
@@ -902,6 +908,9 @@ msgid "partnership_update_max_date_day"
 msgstr ""
 
 msgid "partnership_update_max_date_month"
+msgstr ""
+
+msgid "countries"
 msgstr ""
 
 msgid "mister"
@@ -1029,6 +1038,9 @@ msgstr ""
 msgid "Partner"
 msgstr ""
 
+msgid "add_partner"
+msgstr ""
+
 msgid "UCL"
 msgstr ""
 
@@ -1041,10 +1053,10 @@ msgstr ""
 msgid "ucl"
 msgstr ""
 
-msgid "financing"
+msgid "validity_end"
 msgstr ""
 
-msgid "validity_end"
+msgid "partnerships_export"
 msgstr ""
 
 msgid "partner_entity_delete_warning"
@@ -1087,9 +1099,6 @@ msgid "add_media"
 msgstr ""
 
 msgid "new_partner"
-msgstr ""
-
-msgid "add_partner"
 msgstr ""
 
 msgid "add_media_after_creation"
@@ -1159,6 +1168,12 @@ msgstr ""
 msgid "partnership_missing_valid_years"
 msgstr ""
 
+msgid "invalid_partner"
+msgstr ""
+
+msgid "inactive_partner"
+msgstr ""
+
 msgid "dates"
 msgstr ""
 
@@ -1205,6 +1220,9 @@ msgid "partner_media_error"
 msgstr ""
 
 msgid "contact_creation_success"
+msgstr ""
+
+msgid "supervisor"
 msgstr ""
 
 msgid "partnership_error"

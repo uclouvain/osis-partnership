@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-01 16:12+0200\n"
+"POT-Creation-Date: 2018-08-03 13:06+0200\n"
 "PO-Revision-Date: 2018-08-01 15:38+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -145,6 +145,11 @@ msgstr "Partenaire"
 
 msgid "partner_entity"
 msgstr "Entité partenaire"
+
+#, fuzzy
+#| msgid "partners"
+msgid "partner_tags"
+msgstr "Partenaires"
 
 msgid "education_field"
 msgstr "Domaine d'étude"
@@ -861,6 +866,9 @@ msgstr "État"
 msgid "eligible"
 msgstr "Éligible"
 
+msgid "financing"
+msgstr "Financement"
+
 msgid "january"
 msgstr "Janvier"
 
@@ -908,6 +916,11 @@ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
 
 msgid "partnership_update_max_date_month"
 msgstr "Mois maximum pour la mise à jour d'un partenariat."
+
+#, fuzzy
+#| msgid "country"
+msgid "countries"
+msgstr "Pays"
 
 msgid "mister"
 msgstr "Monsieur"
@@ -1044,6 +1057,9 @@ msgstr "Dernier"
 msgid "Partner"
 msgstr "Partenaire"
 
+msgid "add_partner"
+msgstr "Ajouter un partenaire"
+
 msgid "UCL"
 msgstr "UCL"
 
@@ -1056,11 +1072,13 @@ msgstr "Une année avec cette année académique existe déjà."
 msgid "ucl"
 msgstr "UCL"
 
-msgid "financing"
-msgstr "Financement"
-
 msgid "validity_end"
 msgstr "Fin de validité"
+
+#, fuzzy
+#| msgid "partners_export"
+msgid "partnerships_export"
+msgstr "Exporter la liste des partenaires"
 
 msgid "partner_entity_delete_warning"
 msgstr ""
@@ -1107,9 +1125,6 @@ msgstr "Ajouter un média"
 
 msgid "new_partner"
 msgstr "Nouveau partenaire"
-
-msgid "add_partner"
-msgstr "Ajouter un partenaire"
 
 msgid "add_media_after_creation"
 msgstr "Vous pourrez ajouter des médias après la création du partenaire."
@@ -1180,6 +1195,16 @@ msgstr "Mettre à jour le partenariat"
 msgid "partnership_missing_valid_years"
 msgstr "Il manque des accords validés pour ce partenariat."
 
+#, fuzzy
+#| msgid "add_partner"
+msgid "invalid_partner"
+msgstr "Ajouter un partenaire"
+
+#, fuzzy
+#| msgid "new_partner"
+msgid "inactive_partner"
+msgstr "Nouveau partenaire"
+
 msgid "dates"
 msgstr "Dates"
 
@@ -1228,6 +1253,9 @@ msgstr "Erreur lors de la sauvegarde du média."
 msgid "contact_creation_success"
 msgstr "Contact créé avec succès."
 
+msgid "supervisor"
+msgstr "Superviseur"
+
 msgid "partnership_error"
 msgstr "Erreur lors de la sauvegarde du partenariat."
 
@@ -1258,9 +1286,6 @@ msgstr "La configuration à bien été mise à jour."
 
 #~ msgid "role"
 #~ msgstr "Rôle"
-
-#~ msgid "supervisor"
-#~ msgstr "Superviseur"
 
 #~ msgid "offers"
 #~ msgstr "Offres"

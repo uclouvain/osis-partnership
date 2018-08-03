@@ -724,10 +724,27 @@ class PartnershipAgreement(models.Model):
     )
 
     class Meta:
+        verbose_name = _('financing')
         ordering = ['-start_academic_year__start_date',]
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
+
+    def get_financings(self):
+        if not self.eligible:
+            return Financing.objects.none()
+        country = self.partnership.partner.contact_address.country
+        if country is None:
+            return Financing.objects.none()
+        return (
+            Financing.objects
+                .select_related('academic_year')
+                .filter(
+                    countries=country,
+                    academic_year__year__gte=self.start_academic_year.year,
+                    academic_year__year__lte=self.end_academic_year.year,
+                ).order_by('academic_year__year')
+        )
 
 
 class PartnershipConfiguration(models.Model):
@@ -780,6 +797,20 @@ class PartnershipConfiguration(models.Model):
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
+
+
+class Financing(models.Model):
+    name = models.CharField(_('Name'), max_length=50)
+    url = models.URLField(_('url'))
+    countries = models.ManyToManyField('reference.Country', verbose_name=_('countries'))
+    academic_year = models.ForeignKey('base.AcademicYear', verbose_name=_('academic_year'))
+
+    class Meta:
+        ordering = ('academic_year__year',)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.academic_year, self.name)
+
 
 class ContactType(models.Model):
     value = models.CharField(max_length=255, unique=True)
