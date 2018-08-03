@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.db import models
@@ -382,7 +382,7 @@ class Partnership(models.Model):
 
     @cached_property
     def is_valid(self):
-        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED).exists()
+        return self.validated_agreements.exists()
 
     @property
     def validated_agreements(self):
@@ -407,7 +407,7 @@ class Partnership(models.Model):
         return agreement.end_academic_year
 
     @cached_property
-    def agreements_dates_ranges(self):
+    def valid_agreements_dates_ranges(self):
         ranges = self.validated_agreements.values('start_academic_year__start_date', 'end_academic_year__end_date')
         ranges = [{
             'start': range['start_academic_year__start_date'], 'end': range['end_academic_year__end_date']
@@ -415,13 +415,30 @@ class Partnership(models.Model):
         return merge_date_ranges(ranges)
 
     @cached_property
+    def has_missing_years(self):
+        """ Test if we have PartnershipYear for all of the partnership duration """
+        if self.end_date is None:
+            return False
+        years = self.years.values_list('academic_year__start_date', flat=True).order_by('academic_year__start_date')
+        ranges = [{'start': year, 'end': year + timedelta(days=366)} for year in years]
+        ranges = merge_date_ranges(ranges)
+        return (
+            len(ranges) != 1
+            or self.start_date.year < ranges[0]['start'].year
+            or self.end_date.year > ranges[-1]['end'].year + 1
+        )
+
+    @cached_property
     def has_missing_valid_years(self):
-        now = date.today()
-        ranges = self.agreements_dates_ranges
-        for range in ranges:
-            if now < range['end'] and now >= range['start']:
-                return False
-        return True
+        """ Test if we have valid agreements for all of the partnership duration """
+        if self.end_date is None:
+            return False
+        ranges = self.valid_agreements_dates_ranges
+        return (
+            len(ranges) > 1
+            or self.start_date.year < ranges[0]['start'].year
+            or self.end_date.year > ranges[-1]['end'].year + 1
+        )
 
     @cached_property
     def current_year(self):
@@ -658,7 +675,7 @@ class PartnershipYear(models.Model):
 
     @cached_property
     def is_valid(self):
-        ranges = self.partnership.agreements_dates_ranges
+        ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
             if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
                 return True

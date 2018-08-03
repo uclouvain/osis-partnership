@@ -65,6 +65,13 @@
         </div>
       </div>
 
+      {% if partnership.has_missing_years %}
+      <div class="row">
+        <div class="col-sm-12">
+          <p class="text-warning">{% trans "partnership_has_missing_years" %}</p>
+        </div>
+      </div>
+      {% endif %}
       {% if partnership.years.all %}
       <table class="table table-striped">
         <thead>

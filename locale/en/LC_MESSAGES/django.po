@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-03 13:06+0200\n"
+"POT-Creation-Date: 2018-08-03 17:41+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1175,6 +1175,9 @@ msgid "inactive_partner"
 msgstr ""
 
 msgid "dates"
+msgstr ""
+
+msgid "partnership_has_missing_years"
 msgstr ""
 
 msgid "no_tag_yet"

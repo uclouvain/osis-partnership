@@ -58,7 +58,6 @@ def merge_date_ranges(ranges):
         return []
     sorted_ranges = sorted(ranges, key=lambda x: x['start'])
     merged_ranges = [sorted_ranges.pop(0)]
-    current_range = {'start': None, 'end': None}
     for r in sorted_ranges:
         if merged_ranges[-1]['end'] >= r['start']:
             merged_ranges[-1]['end'] = r['end']
