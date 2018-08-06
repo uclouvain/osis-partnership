@@ -31,8 +31,9 @@ class PartnershipUpdateViewTest(TestCase):
         cls.date_ok = datetime.datetime.today() + datetime.timedelta(365)
         cls.date_ko = datetime.datetime.today() - datetime.timedelta(365)
 
-        cls.partner_entity = PartnerEntityFactory()
         cls.partner = PartnerFactory()
+        cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
+
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
         cls.partnership = PartnershipFactory(partner=cls.partner,
                                              partner_entity=cls.partner_entity)
@@ -64,8 +65,8 @@ class PartnershipUpdateViewTest(TestCase):
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo)
-        cls.university_offer = EducationGroupYearFactory()
+        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
         cls.data = {
             'comment': '',
