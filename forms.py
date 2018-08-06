@@ -748,6 +748,30 @@ class PartnershipForm(forms.ModelForm):
             raise ValidationError(_('partnership_start_date_gf_too_late'))
         return start_date
 
+    def clean(self):
+        partner = self.cleaned_data['partner']
+        partner_entity = self.cleaned_data['partner_entity']
+        ucl_university = self.cleaned_data['ucl_university']
+        ucl_university_labo = self.cleaned_data['ucl_university_labo']
+        university_offers = self.cleaned_data['university_offers']
+
+        if partner_entity and partner_entity.partner != partner:
+            self.add_error('partner_entity', _('invalid_partner_entity'))
+
+        if (ucl_university_labo
+            and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()):
+            self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
+        for offer in university_offers:
+            if (offer.management_entity != ucl_university_labo
+                and offer.administration_entity != ucl_university_labo):
+                self.add_error(
+                    'university_offers',
+                    _('invalid_offer %(offer) %(ucl_university_labo)' % {
+                        'offer': offer,
+                        'ucl_university_labo': ucl_university_labo,
+                    })
+                )
+
 
 class PartnershipYearForm(forms.ModelForm):
 
