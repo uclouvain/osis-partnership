@@ -564,7 +564,7 @@ class PartnershipFilterForm(forms.Form):
 
     education_field = forms.ChoiceField(
         label=_('education_field'),
-        choices=((None, '---------'),) + PartnershipYear.EDUCATION_FIELD_CHOICES,
+        choices=((None, '---------'),),
         widget=autocomplete.Select2(attrs={'data-width': '100%'}),
         required=False,
     )
@@ -639,12 +639,19 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
+        education_fields = filter(
+            lambda x: Partnership.objects.filter(years__education_field=x[0]).exists(),
+            PartnershipYear.EDUCATION_FIELD_CHOICES,
+        )
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')
+        )
+        self.fields['education_field'].choices = ((None, '---------'),) + tuple(
+            education_fields
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
