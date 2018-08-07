@@ -288,7 +288,7 @@ class PartnerFormMixin(object):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if user_is_in_user_faculty(self.request.user):
+        if user_is_adri(self.request.user):
             send_mail(
                 _('partner_created'),
                 _(
@@ -954,7 +954,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             form_year.save_m2m()
 
         messages.success(self.request, _('partnership_success'))
-        if user_is_in_user_faculty(self.request.user):
+        if user_is_adri(self.request.user):
             send_mail(
                 _('partnership_created'),
                 _(
