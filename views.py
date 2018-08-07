@@ -5,9 +5,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
-from django.db import transaction
-from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet)
+from django.core.mail import send_mail
+from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet, Value, When)
+from django.db import transaction, models
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -35,7 +36,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear)
-from partnership.utils import user_is_adri, user_is_gf
+from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -287,6 +288,16 @@ class PartnerFormMixin(object):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
+        if user_is_in_user_faculty(self.request.user):
+            send_mail(
+                _('partner_created'),
+                _(
+                    'partner %(partner)s created by %(user)s'
+                    % {'user': self.request.user, 'partner': partner}
+                ),
+                'bot@ucl.com',
+                [self.request.user.email],
+            )
         return redirect(partner)
 
     def form_invalid(self, form, form_address):
@@ -943,6 +954,16 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             form_year.save_m2m()
 
         messages.success(self.request, _('partnership_success'))
+        if user_is_in_user_faculty(self.request.user):
+            send_mail(
+                _('partnership_created'),
+                _(
+                    'partnership %(partnership)s created by %(user)s'
+                    % {'user': self.request.user, 'partnership': partnership}
+                ),
+                'bot@ucl.com',
+                [self.request.user.email],
+            )
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
