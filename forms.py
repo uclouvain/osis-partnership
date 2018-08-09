@@ -1,19 +1,21 @@
 from datetime import date
 
-from dal import autocomplete, forward
-from django import forms
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.forms import inlineformset_factory, BaseInlineFormSet
-from django.utils.translation import ugettext_lazy as _
-
-from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
+from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import PartnerType, PartnerTag, Address, Partner, Media, PartnerEntity, Contact, PartnershipTag, \
-    PartnershipYear, Partnership, PartnershipAgreement, PartnershipConfiguration
+from dal import autocomplete, forward
+from django import forms
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.forms import BaseInlineFormSet, inlineformset_factory
+from django.utils.translation import ugettext_lazy as _
+from partnership.models import (Address, Contact, Media, Partner,
+                                PartnerEntity, Partnership,
+                                PartnershipAgreement, PartnershipConfiguration,
+                                PartnershipTag, PartnershipYear, PartnerTag,
+                                PartnerType)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -476,7 +478,8 @@ class PartnershipFilterForm(forms.Form):
 
     university_offers = forms.ModelMultipleChoiceField(
         label=_('university_offers'),
-        queryset=EducationGroupYear.objects.select_related('academic_year').filter(partnerships__isnull=False).distinct(),
+        queryset=EducationGroupYear.objects.select_related('academic_year')
+        .filter(partnerships__isnull=False).distinct(),
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:university_offers_filter',
@@ -534,9 +537,9 @@ class PartnershipFilterForm(forms.Form):
 
         queryset=(
             Country.objects
-                .filter(address__partners__partnerships__isnull=False)
-                .order_by('name')
-                .distinct()
+            .filter(address__partners__partnerships__isnull=False)
+            .order_by('name')
+            .distinct()
         ),
         empty_label=_('country'),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
@@ -546,9 +549,9 @@ class PartnershipFilterForm(forms.Form):
         label=_('continent'),
         queryset=(
             Continent.objects
-                .filter(country__address__partners__partnerships__isnull=False)
-                .order_by('name')
-                .distinct()
+            .filter(country__address__partners__partnerships__isnull=False)
+            .order_by('name')
+            .distinct()
         ),
         empty_label=_('continent'),
         required=False,
@@ -758,12 +761,16 @@ class PartnershipForm(forms.ModelForm):
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
 
-        if (ucl_university_labo
-            and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()):
+        if (
+            ucl_university_labo
+            and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
+        ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
         for offer in university_offers:
-            if (offer.management_entity != ucl_university_labo
-                and offer.administration_entity != ucl_university_labo):
+            if (
+                offer.management_entity != ucl_university_labo
+                and offer.administration_entity != ucl_university_labo
+            ):
                 self.add_error(
                     'university_offers',
                     _('invalid_offer %(offer) %(ucl_university_labo)' % {

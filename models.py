@@ -1,5 +1,8 @@
 from datetime import date, datetime, timedelta
 
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
+from base.models.person import Person
 from django.conf import settings
 from django.db import models
 from django.db.models import Max
@@ -9,11 +12,8 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.models.person import Person
-from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty, merge_date_ranges
+from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
+                               user_is_in_user_faculty)
 
 
 class PartnerType(models.Model):
@@ -263,8 +263,8 @@ class Partner(models.Model):
     def agreements(self):
         return (
             PartnershipAgreement.objects
-                .select_related('partnership', 'start_academic_year', 'end_academic_year')
-                .filter(partnership__partner=self)
+            .select_related('partnership', 'start_academic_year', 'end_academic_year')
+            .filter(partnership__partner=self)
         )
 
 
@@ -742,7 +742,9 @@ class PartnershipAgreement(models.Model):
 
     class Meta:
         verbose_name = _('financing')
-        ordering = ['-start_academic_year__start_date',]
+        ordering = [
+            '-start_academic_year__start_date',
+        ]
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
@@ -759,12 +761,12 @@ class PartnershipAgreement(models.Model):
             return Financing.objects.none()
         return (
             Financing.objects
-                .select_related('academic_year')
-                .filter(
-                    countries=country,
-                    academic_year__year__gte=self.start_academic_year.year,
-                    academic_year__year__lte=self.end_academic_year.year,
-                ).order_by('academic_year__year')
+            .select_related('academic_year')
+            .filter(
+                countries=country,
+                academic_year__year__gte=self.start_academic_year.year,
+                academic_year__year__lte=self.end_academic_year.year,
+            ).order_by('academic_year__year')
         )
 
 

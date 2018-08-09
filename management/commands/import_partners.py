@@ -3,9 +3,8 @@ from datetime import date
 
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
-from django.db import transaction, IntegrityError
-
-from partnership.models import Partner, Address, Media, PartnerType
+from django.db import IntegrityError, transaction
+from partnership.models import Address, Media, Partner, PartnerType
 from reference.models.country import Country
 
 COUNTRIES_OLD_TO_ISO = {

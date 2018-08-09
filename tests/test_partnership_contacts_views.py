@@ -1,13 +1,12 @@
 from datetime import date, timedelta
 
-from django.test import TestCase
-from django.urls import reverse
-
 from base.tests.factories.entity_manager import EntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import PartnershipFactory, ContactTypeFactory
+from django.test import TestCase
+from django.urls import reverse
+from partnership.tests.factories import ContactTypeFactory, PartnershipFactory
 
 
 class PartnershipContactCreateViewTest(TestCase):

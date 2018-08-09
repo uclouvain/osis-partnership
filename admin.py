@@ -1,8 +1,8 @@
 from django.contrib import admin
-
-from partnership.models import (Address, Contact, ContactType, Media, Partner,
-                                PartnerEntity, Partnership, PartnershipTag,
-                                PartnerTag, PartnerType, PartnershipYear, PartnershipAgreement, Financing)
+from partnership.models import (Address, Contact, ContactType, Financing,
+                                Media, Partner, PartnerEntity, Partnership,
+                                PartnershipAgreement, PartnershipTag,
+                                PartnershipYear, PartnerTag, PartnerType)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -37,7 +37,6 @@ class PartnerAdmin(admin.ModelAdmin):
                 entity.save()
         else:
             formset.save()
-
 
 
 class PartnershipYearInline(admin.TabularInline):

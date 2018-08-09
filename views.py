@@ -1,36 +1,39 @@
 from copy import copy
 
-from dal import autocomplete
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.postgres.aggregates import StringAgg
-from django.core.exceptions import ValidationError
-from django.db import transaction, models
-from django.db.models import Count, Prefetch, Q, QuerySet, Max, When, Case, Value, Exists, OuterRef
-from django.db.models.functions import Now
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
-from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _, ugettext
-from django.views import View
-from django.views.generic import DetailView, ListView
-from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
-                                       UpdateView)
-from django.views.generic.list import MultipleObjectMixin
-
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
+from dal import autocomplete
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.postgres.aggregates import StringAgg
+from django.core.exceptions import ValidationError
+from django.db import models, transaction
+from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet, Value, When)
+from django.db.models.functions import Now
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.utils.timezone import now
+from django.utils.translation import ugettext
+from django.utils.translation import ugettext_lazy as _
+from django.views import View
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
+                                       UpdateView)
+from django.views.generic.list import MultipleObjectMixin
 from osis_common.document import xls_build
-from partnership.forms import (AddressForm, MediaForm, PartnerEntityForm,
-                               PartnerFilterForm, PartnerForm,
+from partnership.forms import (AddressForm, ContactForm, MediaForm,
+                               PartnerEntityForm, PartnerFilterForm,
+                               PartnerForm, PartnershipAgreementForm,
+                               PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               ContactForm, PartnershipAgreementForm, PartnershipYearInlineFormset,
-                               PartnershipConfigurationForm)
-from partnership.models import Partner, PartnerEntity, Partnership, PartnershipYear, PartnershipAgreement, \
-    PartnershipConfiguration
+                               PartnershipYearInlineFormset)
+from partnership.models import (Partner, PartnerEntity, Partnership,
+                                PartnershipAgreement, PartnershipConfiguration,
+                                PartnershipYear)
 from partnership.utils import user_is_adri, user_is_gf
 
 
@@ -82,10 +85,9 @@ class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
 
     def get_queryset(self):
         queryset = (
-            Partner.objects
-                .all()
-                .select_related('partner_type', 'contact_address__country')
-                .annotate(partnerships_count=Count('partnerships'))
+            Partner.objects.all()
+            .select_related('partner_type', 'contact_address__country')
+            .annotate(partnerships_count=Count('partnerships'))
         )
         queryset = self.filter_queryset(queryset)
         ordering = self.get_ordering()
@@ -271,7 +273,7 @@ class PartnerFormMixin(object):
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
-        kwargs['user_is_adri'] =  user_is_adri(self.request.user)
+        kwargs['user_is_adri'] = user_is_adri(self.request.user)
         return super(PartnerFormMixin, self).get_context_data(**kwargs)
 
     @transaction.atomic
@@ -581,7 +583,6 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
         return initial
 
-
     def get_form_kwargs(self):
         kwargs = super(PartnershipListFilterMixin, self).get_form_kwargs()
         if self.request.GET:
@@ -671,9 +672,9 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('partnership_ending_in', None):
             partnership_ending_in = data['partnership_ending_in']
             queryset = (
-                queryset
-                    .annotate(ending_date=Max('agreements__end_academic_year__end_date'))
-                    .filter(ending_date=partnership_ending_in.end_date)
+                queryset.annotate(
+                    ending_date=Max('agreements__end_academic_year__end_date')
+                ).filter(ending_date=partnership_ending_in.end_date)
             )
         if data.get('partnership_valid_in', None):
             partnership_valid_in = data['partnership_valid_in']
@@ -780,8 +781,14 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
             )
             .select_related('author')
             .prefetch_related(
-                Prefetch('ucl_university__entityversion_set', queryset=EntityVersion.objects.order_by('-start_date')),
-                Prefetch('ucl_university_labo__entityversion_set', queryset=EntityVersion.objects.order_by('-start_date')),
+                Prefetch(
+                    'ucl_university__entityversion_set',
+                    queryset=EntityVersion.objects.order_by('-start_date')
+                ),
+                Prefetch(
+                    'ucl_university_labo__entityversion_set',
+                    queryset=EntityVersion.objects.order_by('-start_date')
+                ),
             )
         )
         for partnership in queryset:
@@ -847,17 +854,26 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     def get_object(self):
         return get_object_or_404(
             Partnership.objects
-                .select_related('partner', 'partner_entity', 'ucl_university', 'ucl_university_labo', 'author')
-                .prefetch_related(
-                    'contacts',
-                    'tags',
-                    Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
-                    Prefetch('years', queryset=PartnershipYear.objects.select_related('academic_year')),
-                    Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
-                        'start_academic_year', 'end_academic_year', 'media'
-                    ).order_by("-start_academic_year", "-end_academic_year")),
-                )
-                .annotate(university_offers_count=Count('university_offers')),
+            .select_related(
+                'partner', 'partner_entity', 'ucl_university',
+                'ucl_university_labo', 'author'
+            )
+            .prefetch_related(
+                'contacts',
+                'tags',
+                Prefetch(
+                    'university_offers',
+                    queryset=EducationGroupYear.objects.select_related('academic_year')
+                ),
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects.select_related('academic_year')
+                ),
+                Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
+                    'start_academic_year', 'end_academic_year', 'media'
+                ).order_by("-start_academic_year", "-end_academic_year")),
+            )
+            .annotate(university_offers_count=Count('university_offers')),
             pk=self.kwargs['pk'],
         )
 
@@ -1113,7 +1129,7 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         return super().form_valid(form)
 
 
-### Autocompletes
+# Autocompletes
 
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 
@@ -1272,7 +1288,6 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
         else:
             return Entity.objects.none()
         return qs.distinct()
-        #return qs.filter(partnerships_labo__isnull=False).distinct()
 
 
 class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):

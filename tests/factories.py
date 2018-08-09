@@ -1,10 +1,12 @@
+import uuid
 from datetime import timedelta
 
 import factory
 from django.utils import timezone
-import uuid
-from partnership.models import PartnerType, PartnerTag, Partner, Partnership, PartnershipTag, \
-    PartnerEntity, Media, Address, PartnershipYear, PartnershipAgreement, ContactType, Contact
+from partnership.models import (Address, Contact, ContactType, Media, Partner,
+                                PartnerEntity, Partnership,
+                                PartnershipAgreement, PartnershipTag,
+                                PartnershipYear, PartnerTag, PartnerType)
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -18,7 +20,7 @@ class PartnerTypeFactory(factory.DjangoModelFactory):
 class PartnerTagFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnerTag
-        django_get_or_create=('value',)
+        django_get_or_create = ('value',)
 
     value = factory.Sequence(lambda n: 'PartnerTag-é-{0}-{1}'.format(n, uuid.uuid4()))
 

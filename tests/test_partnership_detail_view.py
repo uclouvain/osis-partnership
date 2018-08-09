@@ -1,8 +1,7 @@
+from base.tests.factories.user import UserFactory
 from django.test import TestCase
 from django.urls import reverse
-
 from partnership.tests.factories import PartnershipFactory
-from base.tests.factories.user import UserFactory
 
 
 class PartnershipDetailViewTest(TestCase):
