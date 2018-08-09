@@ -1,0 +1,221 @@
+{% extends "layout.html" %}
+{% load i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li class="active">{{ partnership }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "partnerships/modal_form.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ partnership }}</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <!-- Partenariat -->
+      <div class="row">
+        <div class="col-sm-12">
+          {% if can_change %}
+          <a href="{% url 'partnerships:update' pk=partnership.pk %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-pencil"></i> {% trans 'edit_partnership' %}</a>
+          {% endif %}
+          <p>
+            <em>
+              {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
+            </em>
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <dl class="dl-horizontal">
+            <dt>{% trans "validity_end" %}</dt>
+            <dd>{% if partnership.has_missing_valid_years %}<span class="text-danger">{{ partnership.validity_end|default_if_none:"N/A" }} - {% trans "partnership_missing_valid_years" %}</span>{% else %}{{ partnership.validity_end|default_if_none:"N/A" }}{% endif %}
+            </dd>
+            <dt>{% trans "partner" %}</dt>
+            <dd>
+              <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
+              {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity }}</strong>{% endif %}
+              {% if not partnership.partner.is_valid %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "invalid_partner" %}</span>{% endif %}
+              {% if not partnership.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
+            </dd>
+
+            <dt>{% trans "ucl_university" %}</dt>
+            <dd>
+              {{ partnership.entities_acronyms }}
+            </dd>
+
+            <dt>{% trans "partnership_supervisor" %}</dt>
+            <dd>{{ partnership.supervisor|default_if_none:"" }}</dd>
+
+            <dt>{% trans "dates" %}</dt>
+            <dd>
+              {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      {% if partnership.has_missing_years %}
+      <div class="row">
+        <div class="col-sm-12">
+          <p class="text-warning">{% trans "partnership_has_missing_years" %}</p>
+        </div>
+      </div>
+      {% endif %}
+      {% if partnership.years.all %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{% trans "partnership_type" %}</th>
+            <th>{% trans "education_field" %}</th>
+            <th>{% trans "education_level" %}</th>
+            <th>{% trans "is_sms" %}</th>
+            <th>{% trans "is_smp" %}</th>
+            <th>{% trans "is_sta" %}</th>
+            <th>{% trans "is_stt" %}</th>
+            <th>{% trans "is_valid" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for partnership_year in partnership.years.all %}
+          <tr>
+            <th>{{ partnership_year.academic_year }}</th>
+            <td>{{ partnership_year.get_partnership_type_display }}</td>
+            <td>{{ partnership_year.get_education_field_display }}</td>
+            <td>{{ partnership_year.get_education_level_display|default_if_none:"" }}</td>
+            <td><i class="fa {{ partnership_year.is_sms|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_stt|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+      {% if partnership.comment is not None %}
+        <div class="row">
+          <div class="col-sm-12">
+            {{ partnership.comment|linebreaksbr }}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Tags -->
+      <h2>{% trans "tags" %}</h2>
+      {% if partnership.tags.all %}
+        <div class="row">
+          <div class="col-sm-12">
+            <ul class="tags-list">
+              {% for tag in partnership.tags.all %}
+                <li>{{ tag }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% else %}
+        <i>{% trans 'no_tag_yet' %}</i>
+      {% endif %}
+
+      <!-- Contacts -->
+      <h2>{% trans "contacts" %}
+      {% if can_change %}
+        <a href="{% url "partnerships:contacts:create" partnership.id %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
+      {% endif %}
+      </h2>
+      <div class="row">
+      {% for contact in partnership.contacts.all %}
+        <div class="col-sm-12">
+          {% if can_change %}
+          <div class="btn-group pull-right">
+            <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}"
+               class="btn btn-default">
+              <i class="fa fa-pencil fa-fw"></i>
+            </a>
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'partnerships:contacts:delete' pk=contact.pk partnership_pk=partnership.pk %}"
+                   class="modal-link"
+                   data-modal-danger
+                   data-modal-submit="{% trans "delete_contact" %}"
+                   data-modal-title="{{ contact }}"
+                   data-modal="modal-form">
+                  <i class="fa fa-times fa-fw"></i> {% trans 'delete_contact' %}
+                </a>
+              </li>
+            </ul>
+          </div>
+          {% endif %}
+          {% include "partnerships/includes/contact.html" with contact=contact %}
+          {% if not forloop.last %}<hr/>{% endif %}
+        </div>
+      {% empty %}
+        <div class="col-sm-12">
+          <p>{% trans "no_partnership_contact_yet" %}</p>
+        </div>
+      {% endfor %}
+      </div>
+
+      <!-- Accords -->
+      <h2>{% trans "agreements" %}
+      {% if can_change %}
+      <a href="{% url "partnerships:agreements:create" partnership.id %}" class="btn btn-default pull-right">
+        <i class="fa fa-fw fa-plus"></i> {% trans "add_partnership_agreements" %}
+      </a>
+      {% endif %}
+      </h2>
+
+      {% for agreement in partnership.agreements.all %}
+        {% include "partnerships/includes/agreement_detail.html" with agreement=agreement can_change=can_change %}
+        {% if not forloop.last %}<hr>{% endif %}
+      {% empty %}
+        <div class="row">
+          <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+<div class="modal fade" id="modal-form" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="partner-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <h4 class="modal-title" id="myModalLabel">Title</h4>
+        </div>
+        <div class="modal-body">
+          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+        </div>
+        <div class="modal-footer">
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

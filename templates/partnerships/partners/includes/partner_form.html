@@ -1,0 +1,145 @@
+{% load bootstrap3 i18n %}
+{% csrf_token %}
+{% bootstrap_form_errors form %}
+
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    {% bootstrap_field form.name %}
+  </div>
+  {% if form.is_valid %}
+  <div class="col-sm-12 col-md-6">
+    {% bootstrap_field form.is_valid %}
+  </div>
+  {% endif %}
+</div>
+
+{% if show_similar %}
+<div id="similar-partners" data-url="{% url "partnerships:partners:similar" %}">
+  {% include "partnerships/partners/includes/similar_partners_preview.html" %}
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    {% bootstrap_field form.start_date %}
+  </div>
+  <div class="col-sm-12 col-md-6">
+    {% bootstrap_field form.end_date %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.now_known_as %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "informations" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.partner_type %}
+  </div>
+</div>
+
+<div class="row">
+  {% if form.partner_code %}
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.partner_code %}
+  </div>
+  {% endif %}
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.pic_code %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.erasmus_code %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.is_ies %}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.is_nonprofit %}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.is_public %}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.use_egracons %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.comment %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "contact_information" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form_address.name %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form_address.address %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form_address.postal_code %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form_address.city %}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {% bootstrap_field form_address.country %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.phone %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.website %}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {% bootstrap_field form.email %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.contact_type %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h2>{% trans "tags" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.tags %}
+  </div>
+</div>
+
+{{ form.media }}
+{{ form_address.media }}

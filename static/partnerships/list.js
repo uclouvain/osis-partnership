@@ -40,9 +40,12 @@
         });
     });
 
-    $('#filter-form #id_tags').select2({
-        language: "fr",
-        width: "100%",
-        placeholder: "Tags"
+    // Needed for select 2
+    $('select').parents('form').on('reset', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        $(this).find('input,select').val('').change();
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 })(jQuery);

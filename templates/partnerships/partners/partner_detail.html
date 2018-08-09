@@ -1,0 +1,274 @@
+{% extends "layout.html" %}
+{% load partnerships i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
+  <li class="active">{{ partner }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "partnerships/modal_form.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ partner }}</h1>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-12">
+        {% if can_update_partner %}
+        <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-pencil"></i> {% trans "update_partner" %}</a>
+        {% endif %}
+        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-6 partner-info-left">
+        <dl class="dl-horizontal">
+          <dt>{% trans "partner_type" %}</dt>
+          <dd>{{ partner.partner_type|default_if_none:"" }}</dd>
+
+          <dt>{% trans "partner_code" %}</dt>
+          <dd>{{ partner.partner_code|default_if_none:"" }}</dd>
+
+          <dt>{% trans "pic_code" %}</dt>
+          <dd>{{ partner.pic_code|default_if_none:"" }}</dd>
+
+          {% if partner.now_known_as %}
+          <dt>{% trans "now_known_as" %}</dt>
+          <dd><a href="{{ partner.now_known_as.get_absolute_url }}">{{ partner.now_known_as }}</a></dd>
+          {% endif %}
+
+          <dt>{% trans "erasmus_code" %}</dt>
+          <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
+
+          <dt>{% trans "is_ies" %}</dt>
+          <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+          <dt>{% trans "is_nonprofit" %}</dt>
+          <dd><i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+          <dt>{% trans "is_public" %}</dt>
+          <dd><i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+          <dt title="{% trans "use_egracons" %}">{% trans "use_egracons" %}</dt>
+          <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+        </dl>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <dl class="dl-horizontal">
+          <dt>{% trans "is_valid" %}</dt>
+          <dd><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+
+          <dt>{% trans "is_actif" %}</dt>
+          <dd>
+            <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% if partner.start_date or partner.end_date %}
+            {% if partner.start_date is None %}N/A{% else %}{{ partner.start_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+            > {% if partner.end_date is None %}N/A{% else %}{{ partner.end_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
+            {% endif %}
+          </dd>
+
+          <dt>{% trans "contact_address" %}</dt>
+          <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
+
+          <dt>{% trans "website" %}</dt>
+          <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
+
+          {% if partner.email %}
+          <dt>{% trans "email" %}</dt>
+          <dd><a href="mailto:{{ partner.email }}">{{ partner.email }}</a></dd>
+          {% endif %}
+
+          {% if partner.phone %}
+          <dt>{% trans "phone" %}</dt>
+          <dd>{{ partner.phone|default_if_none:"" }}</dd>
+          {% endif %}
+
+          {% if partner.get_contact_type_display %}
+          <dt>{% trans "contact_type" %}</dt>
+          <dd>{{ partner.get_contact_type_display|default_if_none:"" }}</dd>
+          {% endif %}
+        </dl>
+
+        <p><em>{{ partner.comment|linebreaksbr }}</em></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "associated_tags" %}</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <ul class="tags-list">
+        {% for tag in partner.tags.all %}
+          <li>{{ tag }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "medias" %}
+        {% if can_update_partner %}
+        <a href="{% url "partnerships:partners:medias:create" partner.id %}"
+           class="btn btn-default modal-link pull-right"
+           data-modal-submit="{% trans "new_media" %}"
+           data-modal-title="{% trans "new_media" %}"
+           data-modal="modal-form"><i class="fa fa-fw fa-plus"></i> {% trans "add_media" %}</a>
+        {% endif %}
+        </h2>
+      </div>
+    </div>
+    <div class="row">
+      {% for media in partner.medias.all %}
+      <div class="col-sm-12 col-md-6 partner-media">
+        {% include "partnerships/includes/media_detail.html" with media=media %}
+      </div>
+      {% empty %}
+      <div class="col-sm-12">{% trans "no_media_yet" %}</div>
+      {% endfor %}
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "entities" %}
+        {% if can_add_entities %}
+        <a href="{% url "partnerships:partners:entities:create" partner.id %}"
+               class="btn btn-default pull-right">
+          <i class="fa fa-fw fa-plus"></i> {% trans "add_partner_entity" %}
+        </a>
+        {% endif %}
+        </h2>
+      </div>
+    </div>
+
+    {% for entity in partner.entities.all %}
+    <div class="partner-entity">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <h3 id="partner-entity-{{ entity.id }}">
+            {{ entity }}
+
+            {% if user|can_change_partner_entity:entity %}
+            <div class="btn-group">
+              <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
+                 class="btn btn-default">
+                <i class="fa fa-pencil fa-fw"></i>
+              </a>
+              {% if user|can_delete_partner_entity:entity %}
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="{% url "partnerships:partners:entities:delete" partner.id entity.id %}"
+                   class="modal-link"
+                   data-modal-danger
+                   data-modal-submit="{% trans "delete_partner_entity" %}"
+                   data-modal-title="{{ entity }}"
+                   data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partner_entity" %}</a></li>
+              </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+          </h3>
+
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <p><em>{% blocktrans with created=entity.created|date:"SHORT_DATE_FORMAT" author=entity.author modified=entity.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          {% if entity.contact_in and not entity.contact_in.is_empty %}
+          <strong>{% trans "contact_mobility_in" %}</strong>
+          {% include "partnerships/includes/contact.html" with contact=entity.contact_in %}
+          {% endif %}
+        </div>
+        <div class="col-sm-12 col-md-6">
+          {% if entity.address and entity.address.one_line_display %}
+          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
+          {% endif %}
+
+          {% if entity.comment %}<p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>{% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          {% if entity.contact_out and not entity.contact_out.is_empty %}
+          <strong>{% trans "contact_mobility_out" %}</strong>
+          {% include "partnerships/includes/contact.html" with contact=entity.contact_out %}
+          {% endif %}
+        </div>
+
+        {% if entity.parent %}
+        <div class="col-sm-12 col-md-6"><strong>{% trans "parent_entity" %}</strong>  {{ entity.parent }}</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>{% trans "agreements" %}</h2>
+      </div>
+    </div>
+
+    {% for agreement in partner.agreements.all %}
+      {% include "partnerships/includes/agreement_detail.html" with agreement=agreement can_change=False show_partnership=True %}
+      {% if not forloop.last %}<hr>{% endif %}
+    {% empty %}
+      <div class="row">
+        <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+<div class="modal fade" id="modal-form" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="partner-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <h4 class="modal-title" id="myModalLabel">Title</h4>
+        </div>
+        <div class="modal-body">
+          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+        </div>
+        <div class="modal-footer">
+          <div class="row button-row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

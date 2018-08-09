@@ -1,7 +1,8 @@
 from django.contrib import admin
-
-from partnership.models import Partner, Partnership, PartnerType, PartnerTag, PartnershipType, PartnershipTag, \
-    PartnerEntity, Media, Contact, Address, ContactType
+from partnership.models import (Address, Contact, ContactType, Financing,
+                                Media, Partner, PartnerEntity, Partnership,
+                                PartnershipAgreement, PartnershipTag,
+                                PartnershipYear, PartnerTag, PartnerType)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -38,7 +39,23 @@ class PartnerAdmin(admin.ModelAdmin):
             formset.save()
 
 
+class PartnershipYearInline(admin.TabularInline):
+    model = PartnershipYear
+
+    def get_queryset(self, request):
+        return PartnershipYear.objects.select_related('academic_year', 'partnership__partner')
+
+
+class PartnershipAgreementInline(admin.TabularInline):
+    model = PartnershipAgreement
+
+    def get_queryset(self, request):
+        return PartnershipAgreement.objects.select_related('partnership__partner')
+
+
 class PartnershipAdmin(admin.ModelAdmin):
+    raw_id_fields = ('ucl_university', 'ucl_university_labo', 'university_offers', 'supervisor')
+    inlines = (PartnershipYearInline, PartnershipAgreementInline)
 
     def get_queryset(self, request):
         return Partnership.objects.select_related('partner')
@@ -62,12 +79,18 @@ class ValueAdmin(admin.ModelAdmin):
         return {}
 
 
-admin.site.register(PartnerType, ValueAdmin)
-admin.site.register(PartnerTag, ValueAdmin)
+class FinancingAdmin(admin.ModelAdmin):
+    fields = ('name', 'url', 'countries', 'academic_year')
+    search_fields = ('name', 'countries__name',)
+    list_filter = ('name', 'academic_year')
+
+
+admin.site.register(PartnerType)
+admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
-admin.site.register(PartnershipType, ValueAdmin)
-admin.site.register(PartnershipTag, ValueAdmin)
+admin.site.register(PartnershipTag)
 admin.site.register(Partnership, PartnershipAdmin)
+admin.site.register(Financing, FinancingAdmin)
 admin.site.register(Media)
 admin.site.register(ContactType)
 admin.site.register(Contact)

@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
+  <li class="active">{{ partner }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ partner }}</h1>
+  </div>
+
+  {% bootstrap_form_errors form %}
+
+  <div class="panel panel-default">
+    <div class="panel-body partner-form">
+      <form action="{% url "partnerships:partners:update" partner.id %}" method="post">
+        {% csrf_token %}
+
+        {% include "partnerships/partners/includes/partner_form.html" %}
+
+        <div class="row">
+          <div class="col-sm-12">
+            <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+          </div>
+        </div>
+
+        <div class="row button-row">
+          <div class="col-sm-6">
+            <a href="{{ partner.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "update_partner" %}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

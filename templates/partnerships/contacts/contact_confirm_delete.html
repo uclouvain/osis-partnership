@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% load i18n bootstrap3 %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li class="active">{{ partnership }}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{% trans 'confirm_contact_delete' %}</h1>
+  </li>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <form method="POST" action="#">
+            {% include 'partnerships/contacts/includes/contact_delete_form.html' %}
+            <input class="btn btn-def type="submit" value="Confirm" name="submit"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

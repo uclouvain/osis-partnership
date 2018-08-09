@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li class="active">{% trans "update_configuration" %}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{% trans "update_configuration" %}</h1>
+  </div>
+
+  {% bootstrap_form_errors form %}
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form action="{% url "partnerships:configuration_update" %}" method="post">
+        {% csrf_token %}
+
+        {% now "Y" as current_year %}
+
+        <div class="row">
+          <div class="col-sm-12">
+            <label class="control-label">{% blocktrans with min_year=current_year|add:1 max_year=current_year|add:2 %}partnership_configuration_creation_max_date_{{ min_year }}_{{ max_year }}{% endblocktrans %}</label>
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_creation_max_date_day show_label=False %}
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_creation_max_date_month show_label=False %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <label class="control-label">{% blocktrans with min_year=current_year max_year=current_year|add:1 %}partnership_configuration_update_max_date_{{ min_year }}_{{ max_year }}{% endblocktrans %}</label>
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_update_max_date_day show_label=False %}
+          </div>
+          <div class="col-sm-6">
+            {% bootstrap_field form.partnership_update_max_date_month show_label=False %}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <a href="{% url "partnerships:list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "update_configuration" %}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {{ form.media }}
+{% endblock %}

@@ -1,0 +1,145 @@
+{% load bootstrap3 i18n %}
+{% csrf_token %}
+{% bootstrap_form_errors form %}
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.name %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.comment %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{% trans "address" %}</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.address_name %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.address_address %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.address_postal_code %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.address_city %}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {% bootstrap_field form.address_country %}
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{% trans "contact_in" %}</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.contact_in_title %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_in_last_name %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_in_first_name %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_in_function %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-2">
+    {% bootstrap_field form.contact_in_phone %}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.contact_in_mobile_phone %}
+  </div>
+  <div class="col-sm-12 col-md-2">
+    {% bootstrap_field form.contact_in_fax %}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {% bootstrap_field form.contact_in_email %}
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{% trans "contact_out" %}</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.contact_out_title %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_out_last_name %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_out_first_name %}
+  </div>
+  <div class="col-sm-12 col-md-4">
+    {% bootstrap_field form.contact_out_function %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-2">
+    {% bootstrap_field form.contact_out_phone %}
+  </div>
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form.contact_out_mobile_phone %}
+  </div>
+  <div class="col-sm-12 col-md-2">
+    {% bootstrap_field form.contact_out_fax %}
+  </div>
+  <div class="col-sm-12 col-md-5">
+    {% bootstrap_field form.contact_out_email %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{% trans "parent_entity" %}</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.parent %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+  </div>
+</div>
+
+{{ form.media }}

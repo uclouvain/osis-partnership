@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% load i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
+  <li><a href="{% url 'partnerships:partners:detail' partner.pk %}" id="lnk_partners">{{ partner }}</a></li>
+  <li class="active">{{ partner_entity }}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ partner_entity }}</h1>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="{% url "partnerships:partners:entities:update" partner.id partner_entity.id %}" method="post" class="partner-form">
+      {% include "partnerships/partners/entities/includes/partner_entity_form.html" %}
+
+      <div class="row button-row">
+        <div class="col-sm-6">
+          <a href="{{ partner.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+        </div>
+        <div class="col-sm-6">
+          <button type="submit" class="btn btn-primary btn-block">{% trans "update_partner_entity" %}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

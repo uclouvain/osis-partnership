@@ -1,0 +1,45 @@
+{% load i18n %}
+<div class="table-responsive">
+  <table class="table table-stripped table-hover">
+    <thead>
+      <tr>
+        <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
+        <td>{% trans "country" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="country" default=True %}</td>
+        <td>{% trans "city" %}</td>
+        <td>{% trans "partnership_supervisor" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="supervisor__last_name" %}</td>
+        <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
+        <td>{% trans "financing" %}</td>
+        <td>{% trans "validity_end" %}</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for partnership in partnerships %}
+        <tr>
+          <td>{{ partnership.partner|truncatechars:30 }}</td>
+          <td>{{ partnership.partner.contact_address.country|default_if_none:"" }}</td>
+          <td>{{ partnership.partner.contact_address.city|default_if_none:"" }}</td>
+          <td>{{ partnership.supervisor|default_if_none:"" }}</td>
+          <td>{{ partnership.entities_acronyms }}</td>
+          <td></td>
+          <td>{{ partnership.validity_end|default_if_none:"" }}</td>
+          <td>
+            <a href="{% url 'partnerships:detail' pk=partnership.id %}" class="btn btn-default">
+              <i class="fa fa-eye"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-8">
+    {% include "partnerships/includes/pagination.html" %}
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <a href="{% url "partnerships:export" %}?{{ request.GET.urlencode }}" class="btn btn-default btn-export pull-right">{% trans "partnerships_export" %}</a>
+  </div>
+</div>

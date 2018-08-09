@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li class="active">{% trans 'partners' %}</li>
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "partnerships/list.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{% trans 'partners' %}</h1>
+</div>
+
+{% url 'organization_edit' organization_id=organization.id as url_identification_edit %}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+    <div class="well">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="pull-right">
+            {% if can_add_partner %}
+            <a href="{% url "partnerships:partners:create" %}" class="btn btn-default"><i class="fa fa-fw fa-plus"></i> {% trans "add_partner" %}</a>
+            {% endif %}
+            <button class="btn btn-default" type="button"
+                    data-toggle="collapse" data-target="#partner-filters"
+                    aria-expanded="false" aria-controls="partner-filters">
+              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "search_partners" %}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="partner-form collapse{% if form.is_bound %} in{% endif %}" id="partner-filters">
+          <form action="{% url "partnerships:partners:list" %}" id="filter-form" method="get" autocomplete="off">
+            <div class="row">
+              <div class="col-sm-12 col-md-8">{% bootstrap_field form.name %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_ies %}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.partner_type %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.pic_code %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.erasmus_code %}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.city %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.country %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.continent %}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_valid %}</div>
+              <div class="col-sm-12 col-md-4">{% bootstrap_field form.is_actif %}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-12">{% bootstrap_field form.tags %}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="pull-right">
+                    <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "search" %}</button>
+                  </div>
+              </div>
+            </div>
+          </form>
+
+          {{ form.media }}
+      </div>
+    </div>
+
+    <div id="results">
+      {% include "partnerships/partners/includes/partners_list_results.html" %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

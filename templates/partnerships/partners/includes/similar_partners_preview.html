@@ -1,0 +1,11 @@
+{% load i18n %}
+{% if similar_partners.exists %}
+<div class="well">
+  <p>{% trans "similar_partners_possible" %}</p>
+  <ul>
+  {% for partner in similar_partners.all %}
+    <li><a href="{{ partner.get_absolute_url }}">{{ partner }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}

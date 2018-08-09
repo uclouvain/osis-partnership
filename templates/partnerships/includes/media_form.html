@@ -1,0 +1,42 @@
+{% load bootstrap3 i18n %}
+{% csrf_token %}
+
+{% bootstrap_form_errors form %}
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.name %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.description %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.file %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.url %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    {% bootstrap_field form.visibility %}
+  </div>
+</div>
+
+{% if not hide_mandatory_help_text %}
+<div class="row">
+  <div class="col-sm-12">
+    <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+  </div>
+</div>
+{% endif %}
