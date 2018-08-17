@@ -36,13 +36,13 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
                                PartnershipYearForm,
-                               PartnershipYearInlineFormset)
+                               PartnershipYearInlineFormset, PartnershipYearForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear)
 from partnership.utils import (
     user_is_adri, user_is_gf, user_is_in_user_faculty,
-    get_adri_emails,
+    get_user_faculties, get_adri_emails,
 )
 
 
