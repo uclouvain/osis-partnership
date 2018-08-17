@@ -31,11 +31,15 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
+
                                PartnershipYearInlineFormset)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear)
-from partnership.utils import user_is_adri, user_is_gf, user_is_in_user_faculty
+from partnership.utils import (
+    user_is_adri, user_is_gf, user_is_in_user_faculty,
+    get_user_faculties, get_adri_emails,
+)
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -287,7 +291,7 @@ class PartnerFormMixin(object):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if user_is_adri(self.request.user):
+        if get_user_faculties(self.request.user).exists():
             send_mail(
                 _('partner_created'),
                 _(
@@ -295,7 +299,7 @@ class PartnerFormMixin(object):
                     % {'user': self.request.user, 'partner': partner}
                 ),
                 'bot@ucl.com',
-                [self.request.user.email],
+                get_adri_emails(),
             )
         return redirect(partner)
 
@@ -953,7 +957,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         formset_years.instance = partnership
         formset_years.save()
         messages.success(self.request, _('partnership_success'))
-        if user_is_adri(self.request.user):
+        if get_user_faculties(self.request.user).exists():
             send_mail(
                 _('partnership_created'),
                 _(
@@ -961,7 +965,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                     % {'user': self.request.user, 'partnership': partnership}
                 ),
                 'bot@ucl.com',
-                [self.request.user.email],
+                get_adri_emails(),
             )
         return redirect(partnership)
 
