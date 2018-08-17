@@ -2,7 +2,10 @@ from datetime import date
 
 from base.models.person import Person
 from django.db.models import Q
+from django.contrib.auth import get_user_model
+from base.models.entity_version import EntityVersion
 
+User = get_user_model()
 
 def user_is_adri(user):
     # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
@@ -19,6 +22,23 @@ def user_is_adri(user):
         )
     except (Person.DoesNotExist, AttributeError):
         return False
+
+
+def get_adri_users():
+    return User.objects.filter(
+        person__personentity__entity__entityversion__acronym='ADRI'
+    )
+
+
+def get_user_faculties(user):
+    return EntityVersion.objects.filter(
+        entity_type="FACULTY", entity__entitymanager__person__user=user
+    )
+
+
+def get_adri_emails():
+    adri = get_adri_users()
+    return [user.email for user in adri]
 
 
 def user_is_gf(user):
