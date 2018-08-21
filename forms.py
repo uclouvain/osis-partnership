@@ -719,6 +719,7 @@ class PartnershipForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         pk = kwargs.pop('partnership_pk', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
+        self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         if pk is not None:
             self.fields['partner'].widget.forward.append(forward.Const(pk, 'partnership_pk'))
 
