@@ -11,6 +11,7 @@ from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Value, When)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import ugettext
@@ -296,9 +297,13 @@ class PartnerFormMixin(object):
         if get_user_faculties(self.request.user).exists():
             send_mail(
                 _('partner_created'),
-                _(
-                    'partner %(partner)s created by %(user)s'
-                    % {'user': self.request.user, 'partner': partner}
+                render_to_string(
+                    'partnerships/mails/partner_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partner': partner,
+                    },
+                    request=self.request,
                 ),
                 'bot@ucl.com',
                 get_adri_emails(),
@@ -962,9 +967,13 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         if get_user_faculties(self.request.user).exists():
             send_mail(
                 _('partnership_created'),
-                _(
-                    'partnership %(partnership)s created by %(user)s'
-                    % {'user': self.request.user, 'partnership': partnership}
+                render_to_string(
+                    'partnerships/mails/partnership_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
                 ),
                 'bot@ucl.com',
                 get_adri_emails(),
