@@ -297,7 +297,7 @@ class PartnerFormMixin(object):
             send_mail(
                 _('partner_created'),
                 render_to_string(
-                    'partnerships/mails/partner_creation.html',
+                    'partnerships/mails/plain_partner_creation.html',
                     context={
                         'user': self.request.user,
                         'partner': partner,
@@ -306,6 +306,14 @@ class PartnerFormMixin(object):
                 ),
                 'bot@ucl.com',
                 get_adri_emails(),
+                html_message=render_to_string(
+                    'partnerships/mails/partner_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partner': partner,
+                    },
+                    request=self.request,
+                ),
             )
         return redirect(partner)
 
@@ -967,7 +975,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             send_mail(
                 _('partnership_created'),
                 render_to_string(
-                    'partnerships/mails/partnership_creation.html',
+                    'partnerships/mails/plain_partnership_creation.html',
                     context={
                         'user': self.request.user,
                         'partnership': partnership,
@@ -976,6 +984,14 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                 ),
                 'bot@ucl.com',
                 get_adri_emails(),
+                html_message=render_to_string(
+                    'partnerships/mails/partnership_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
+                ),
             )
         return redirect(partnership)
 
