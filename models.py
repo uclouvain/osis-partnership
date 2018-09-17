@@ -246,6 +246,11 @@ class Partner(models.Model):
     def get_absolute_url(self):
         return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
 
+    def get_full_absolute_url(self, request):
+        short_url = self.get_absolute_url()
+        full_url = request.build_absolute_uri(short_url)
+        return full_url
+
     @staticmethod
     def user_can_add(user):
         return user_is_adri(user) or user_is_gf(user)
@@ -364,6 +369,11 @@ class Partnership(models.Model):
 
     def get_absolute_url(self):
         return reverse('partnerships:detail', kwargs={'pk': self.pk})
+
+    def get_full_absolute_url(self, request):
+        short_url = self.get_absolute_url()
+        full_url = request.build_absolute_uri(short_url)
+        return full_url
 
     @staticmethod
     def user_can_add(user):
