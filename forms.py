@@ -653,6 +653,8 @@ class PartnershipFilterForm(forms.Form):
             .order_by('city')
             .distinct('city')
         )
+        self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
+        self.fields['ucl_university_labo'].queryset = self.fields['ucl_university_labo'].queryset.distinct()
         self.fields['education_field'].choices = ((None, '---------'),) + tuple(
             education_fields
         )
@@ -720,6 +722,7 @@ class PartnershipForm(forms.ModelForm):
         pk = kwargs.pop('partnership_pk', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
         self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
+        self.fields['ucl_university_labo'].queryset = self.fields['ucl_university_labo'].queryset.distinct()
         if pk is not None:
             self.fields['partner'].widget.forward.append(forward.Const(pk, 'partnership_pk'))
 
