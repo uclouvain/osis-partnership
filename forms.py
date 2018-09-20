@@ -642,10 +642,10 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
-        education_fields = filter(
-            lambda x: Partnership.objects.filter(years__education_field=x[0]).exists(),
-            PartnershipYear.EDUCATION_FIELD_CHOICES,
-        )
+        education_field_ids = Partnership.objects.filter(years__isnull=False).order_by("years__education_field").distinct("years__education_field").values_list("years__education_field", flat=True)
+        education_fields_dict = dict(PartnershipYear.EDUCATION_FIELD_CHOICES)
+        education_fields = ((field_id, education_fields_dict[field_id]) for field_id in education_field_ids)
+
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
@@ -753,6 +753,7 @@ class PartnershipForm(forms.ModelForm):
         return start_date
 
     def clean(self):
+        super().clean()
         partner = self.cleaned_data['partner']
         partner_entity = self.cleaned_data['partner_entity']
         ucl_university = self.cleaned_data['ucl_university']
@@ -779,6 +780,7 @@ class PartnershipForm(forms.ModelForm):
                         'ucl_university_labo': ucl_university_labo,
                     })
                 )
+        return self.cleaned_data
 
 
 class PartnershipYearForm(forms.ModelForm):
