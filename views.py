@@ -42,7 +42,7 @@ from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipYear)
 from partnership.utils import (
     user_is_adri, user_is_gf, user_is_in_user_faculty,
-    get_user_faculties, get_adri_emails,
+    get_adri_emails,
 )
 
 
