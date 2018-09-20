@@ -1,15 +1,10 @@
 {% extends "partnerships/mails/base.html" %}
 {% load i18n url_utils %}
 
-{% block content %}
-  {% full_uri url=partnership.get_absolute_url as full_url %}
-  {% blocktrans with url=full_url username=user.username %}
-    Hello,
+{% block content %}{% full_uri url=partnership.get_absolute_url as full_url %}{% blocktrans with url=full_url username=user.username %}Hello,
 
-    Partnership <a href="{{ url }}">{{ partnership }}</a> has been successfully created by {{ username }}.
+Partnership <a href="{{ url }}">{{ partnership }}</a> has been successfully created by {{ username }}.
 
-    Regards,
+Regards,
 
-    Osis team
-  {% endblocktrans %}
-{% endblock %}
+Osis team{% endblocktrans %}{% endblock %}

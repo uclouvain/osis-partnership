@@ -6,6 +6,7 @@ from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from dal import autocomplete
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
@@ -39,7 +40,7 @@ from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipYear)
 from partnership.utils import (
     user_is_adri, user_is_gf, user_is_in_user_faculty,
-    get_user_faculties, get_adri_emails,
+    get_adri_emails,
 )
 
 
@@ -292,7 +293,7 @@ class PartnerFormMixin(object):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if get_user_faculties(self.request.user).exists():
+        if not user_is_adri(self.request.user):
             send_mail(
                 _('partner_created'),
                 render_to_string(
@@ -303,7 +304,7 @@ class PartnerFormMixin(object):
                     },
                     request=self.request,
                 ),
-                'bot@ucl.com',
+                settings.DEFAULT_FROM_EMAIL,
                 get_adri_emails(),
                 html_message=render_to_string(
                     'partnerships/mails/partner_creation.html',
@@ -970,7 +971,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         formset_years.instance = partnership
         formset_years.save()
         messages.success(self.request, _('partnership_success'))
-        if get_user_faculties(self.request.user).exists():
+        if not user_is_adri(self.request.user):
             send_mail(
                 _('partnership_created'),
                 render_to_string(
@@ -981,7 +982,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                     },
                     request=self.request,
                 ),
-                'bot@ucl.com',
+                settings.DEFAULT_FROM_EMAIL,
                 get_adri_emails(),
                 html_message=render_to_string(
                     'partnerships/mails/partnership_creation.html',
