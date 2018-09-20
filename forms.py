@@ -734,7 +734,7 @@ class PartnershipForm(forms.ModelForm):
         partner_entity = self.cleaned_data.get('partner_entity', None)
         ucl_university = self.cleaned_data.get('ucl_university', None)
         ucl_university_labo = self.cleaned_data.get('ucl_university_labo', None)
-
+        university_offers = self.cleaned_data.get('university_offers', None)
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
 
@@ -743,7 +743,19 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-
+        if university_offers is not None:
+            for offer in university_offers:
+                if (
+                        offer.management_entity != ucl_university_labo
+                        and offer.administration_entity != ucl_university_labo
+                ):
+                    self.add_error(
+                        'university_offers',
+                        _('invalid_offer %(offer) %(ucl_university_labo)' % {
+                            'offer': offer,
+                            'ucl_university_labo': ucl_university_labo,
+                        })
+                    )
         return self.cleaned_data
 
 
