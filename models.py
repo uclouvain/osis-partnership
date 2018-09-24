@@ -157,7 +157,7 @@ class Partner(models.Model):
     name = models.CharField(_('Name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
     partner_type = models.ForeignKey(
-        PartnerType,
+        'partnership.PartnerType',
         verbose_name=_('partner_type'),
         related_name='partners',
         on_delete=models.PROTECT,
@@ -292,13 +292,13 @@ class Partnership(models.Model):
     )
 
     partner = models.ForeignKey(
-        Partner,
+        'partnership.Partner',
         verbose_name=_('partner'),
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
     partner_entity = models.ForeignKey(
-        PartnerEntity,
+        'partnership.PartnerEntity',
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
@@ -337,7 +337,7 @@ class Partnership(models.Model):
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
-        PartnershipTag,
+        'partnership.PartnershipTag',
         verbose_name=_('tags'),
         related_name='partnerships',
         blank=True,
@@ -759,12 +759,12 @@ class PartnershipConfiguration(models.Model):
 
 
 class UCLManagementEntity():
-    faculty = models.ForeignKey(EntityVersion)
-    entity = models.ForeignKey(Entity)
-    academic_respondent = models.ForeignKey(Person)
-    administrative_responsible = models.ForeignKey(Person)
-    contact_in = models.ForeignKey(Contact)
-    contact_out = models.ForeignKey(Contact)
+    faculty = models.ForeignKey('base.EntityVersion')
+    entity = models.ForeignKey('base.Entity')
+    academic_respondent = models.ForeignKey('base.Person')
+    administrative_responsible = models.ForeignKey('base.Person')
+    contact_in = models.ForeignKey('partnership.Contact')
+    contact_out = models.ForeignKey('partnership.Contact')
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
