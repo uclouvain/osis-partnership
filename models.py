@@ -819,6 +819,15 @@ class PartnershipConfiguration(models.Model):
             return PartnershipConfiguration.objects.create()
 
 
+class UCLManagementEntity():
+    faculty = models.ForeignKey(EntityVersion)
+    entity = models.ForeignKey(Entity)
+    academic_respondent = models.ForeignKey(Person)
+    administrative_responsible = models.ForeignKey(Person)
+    contact_in = models.ForeignKey(Contact)
+    contact_out = models.ForeignKey(Contact)
+
+
 ##### FIXME Generic Model which should be moved to a more generic app
 
 
