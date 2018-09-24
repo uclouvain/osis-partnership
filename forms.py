@@ -743,7 +743,15 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-
+        for offer in university_offers:
+            if (
+                offer.management_entity != ucl_university_labo
+                and offer.administration_entity != ucl_university_labo
+            ):
+                self.add_error(
+                    'university_offers',
+                    _('invalid_offer {} {}'.format(offer, ucl_university_labo))
+                )
         return self.cleaned_data
 
 
