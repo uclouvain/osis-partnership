@@ -758,6 +758,15 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
 
 
+class UCLManagementEntity():
+    faculty = models.ForeignKey(EntityVersion)
+    entity = models.ForeignKey(Entity)
+    academic_respondent = models.ForeignKey(Person)
+    administrative_responsible = models.ForeignKey(Person)
+    contact_in = models.ForeignKey(Contact)
+    contact_out = models.ForeignKey(Contact)
+
+
 ##### FIXME Generic Model which should be moved to a more generic app
 
 
