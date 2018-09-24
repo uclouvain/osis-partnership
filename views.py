@@ -33,7 +33,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnershipYearInlineFormset)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear)
+                                PartnershipYear, UCLManagementEntity)
 from partnership.utils import user_is_adri, user_is_gf
 
 
@@ -1127,6 +1127,30 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     def form_valid(self, form):
         messages.success(self.request, _('configuration_saved'))
         return super().form_valid(form)
+
+# UCLManagementEntities views :
+
+
+class UCLManagementEntityListView(ListView):
+    model = UCLManagementEntity
+
+
+class UCLManagementEntityCreateView(CreateView):
+    model = UCLManagementEntity
+    fields = '__all__'
+
+
+class UCLManagementEntityUpdateView(UpdateView):
+    model = UCLManagementEntity
+    fields = '__all__'
+
+
+class UCLManagementEntityDeleteView(DeleteView):
+    model = UCLManagementEntity
+
+
+class UCLManagementEntityDetailView(DetailView):
+    model = UCLManagementEntity
 
 
 # Autocompletes
