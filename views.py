@@ -29,8 +29,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
-                               PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearInlineFormset)
+                               PartnershipFilterForm, PartnershipForm, PartnershipYearForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear)
@@ -716,10 +715,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'ucl_university_labo', 'ucl_university',
                 'partner__contact_address__country', 'partner_entity',
                 'supervisor',
-            ).prefetch_related(
-                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
-            .annotate(university_offers_count=Count('university_offers'))
         )
         form = self.get_form()
         if not form.is_bound:
@@ -862,18 +858,13 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'contacts',
                 'tags',
                 Prefetch(
-                    'university_offers',
-                    queryset=EducationGroupYear.objects.select_related('academic_year')
-                ),
-                Prefetch(
                     'years',
                     queryset=PartnershipYear.objects.select_related('academic_year')
                 ),
                 Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                     'start_academic_year', 'end_academic_year', 'media'
                 ).order_by("-start_academic_year", "-end_academic_year")),
-            )
-            .annotate(university_offers_count=Count('university_offers')),
+            ),
             pk=self.kwargs['pk'],
         )
 
@@ -883,23 +874,19 @@ class PartnershipFormMixin(object):
     model = Partnership
     form_class = PartnershipForm
 
-    def get_formset_years(self):
-        kwargs = self.get_formset_kwargs()
-        kwargs['prefix'] = 'years'
-        return PartnershipYearInlineFormset(**kwargs)
+    def get_form_year(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'year'
+        return PartnershipYearForm(**kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
-    def get_formset_kwargs(self):
-        kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
-        return kwargs
-
     def get_context_data(self, **kwargs):
-        if 'formset_years' not in kwargs:
-            kwargs['formset_years'] = self.get_formset_years()
+        if 'form_year' not in kwargs:
+            kwargs['form_year'] = self.get_form_year()
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
     def form_invalid(self, form, formset_years):
@@ -908,13 +895,13 @@ class PartnershipFormMixin(object):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        formset_years = self.get_formset_years()
+        form_year = self.get_form_year()
         if form.is_valid():
-            return self.form_valid(form, formset_years)
+            return self.form_valid(form, form_year)
         else:
             # Do the valid to ensure the errors are calculated
-            formset_years.is_valid()
-            return self.form_invalid(form, formset_years)
+            form_year.is_valid()
+            return self.form_invalid(form, form_year)
 
 
 class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
@@ -927,20 +914,15 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return Partnership.user_can_add(self.request.user)
 
     @transaction.atomic
-    def form_valid(self, form, formset_years):
+    def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
-
-        # Test for academic_years / start_date
-        formset_years.instance = partnership
-        if not formset_years.is_valid():
-            return self.form_invalid(form, formset_years)
 
         # Resume saving
         partnership.save()
         form.save_m2m()
-        formset_years.instance = partnership
-        formset_years.save()
+        form_year.save()
+        form_year.save_m2m()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
@@ -971,16 +953,10 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return self.get_object().user_can_change(self.request.user)
 
     @transaction.atomic
-    def form_valid(self, form, formset_years):
+    def form_valid(self, form, form_year):
         partnership = form.save()
-
-        # Test for academic_years / start_date
-        formset_years.instance = partnership
-        if not formset_years.is_valid():
-            return self.form_invalid(form, formset_years)
-
-        # Resume saving
-        formset_years.save()
+        form_year.save()
+        form_year.save_m2m()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
