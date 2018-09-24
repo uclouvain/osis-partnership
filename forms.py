@@ -774,10 +774,7 @@ class PartnershipForm(forms.ModelForm):
             ):
                 self.add_error(
                     'university_offers',
-                    _('invalid_offer %(offer) %(ucl_university_labo)' % {
-                        'offer': offer,
-                        'ucl_university_labo': ucl_university_labo,
-                    })
+                    _('invalid_offer {} {}'.format(offer, ucl_university_labo))
                 )
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-03 17:41+0200\n"
+"POT-Creation-Date: 2018-09-24 10:39+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -195,6 +195,15 @@ msgid "partnership_start_date_after_agreement_error"
 msgstr ""
 
 msgid "partnership_start_date_gf_too_late"
+msgstr ""
+
+msgid "invalid_partner_entity"
+msgstr ""
+
+msgid "invalid_ucl_university_labo"
+msgstr ""
+
+msgid "invalid_offer {} {}"
 msgstr ""
 
 msgid "partnership_year_academic_year_error"
