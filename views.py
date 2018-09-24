@@ -1,5 +1,6 @@
 from copy import copy
 
+from base.models.academic_year import AcademicYear, find_academic_years
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -877,6 +878,8 @@ class PartnershipFormMixin(object):
     def get_form_year(self):
         kwargs = self.get_form_kwargs()
         kwargs['prefix'] = 'year'
+        if kwargs['instance'] is not None:
+            kwargs['instance'] = kwargs['instance'].current_year
         return PartnershipYearForm(**kwargs)
 
     def get_form_kwargs(self):
@@ -896,11 +899,10 @@ class PartnershipFormMixin(object):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_year = self.get_form_year()
-        if form.is_valid():
+        form_year_is_valid = form_year.is_valid()
+        if form.is_valid() and form_year_is_valid:
             return self.form_valid(form, form_year)
         else:
-            # Do the valid to ensure the errors are calculated
-            form_year.is_valid()
             return self.form_invalid(form, form_year)
 
 
@@ -921,8 +923,19 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         # Resume saving
         partnership.save()
         form.save_m2m()
-        form_year.save()
-        form_year.save_m2m()
+
+        # Create years
+        start_year = form_year.cleaned_data['start_academic_year'].year
+        end_year = form_year.cleaned_data['end_academic_year'].year
+        academic_years = find_academic_years(start_year=start_year, end_year=end_year)
+        for academic_year in academic_years:
+            partnership_year = form_year.save(commit=False)
+            partnership.id = None  # Force the creation of a new PartnershipYear
+            partnership_year.partnership = partnership
+            partnership_year.academic_year = academic_year
+            partnership_year.save()
+            form_year.save_m2m()
+
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
@@ -941,14 +954,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if hasattr(self.object, 'partner'):
-            kwargs['partnership_pk'] = self.object.partner.pk
-        else:
-            kwargs['partnership_pk'] = None
-        return kwargs
-
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
 
@@ -956,7 +961,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     def form_valid(self, form, form_year):
         partnership = form.save()
         form_year.save()
-        form_year.save_m2m()
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
@@ -1136,7 +1140,7 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = Partner.objects.all()
-        pk = self.forwarded.get('partnership_pk', None)
+        pk = self.forwarded.get('partner_pk', None)
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         qs = qs.distinct()

@@ -703,11 +703,12 @@ class PartnershipForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        pk = kwargs.pop('partnership_pk', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
         self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
-        if pk is not None:
-            self.fields['partner'].widget.forward.append(forward.Const(pk, 'partnership_pk'))
+        try:
+            self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
+        except Partner.DoesNotExist:
+            pass
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']
@@ -718,6 +719,7 @@ class PartnershipForm(forms.ModelForm):
         return partner
 
     def clean(self):
+        super(PartnershipForm, self).clean()
         partner = self.cleaned_data['partner']
         partner_entity = self.cleaned_data['partner_entity']
         ucl_university = self.cleaned_data['ucl_university']
@@ -732,8 +734,26 @@ class PartnershipForm(forms.ModelForm):
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
 
+        return self.cleaned_data
+
 
 class PartnershipYearForm(forms.ModelForm):
+
+    start_academic_year = forms.ModelChoiceField(
+        label=_('start_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    from_academic_year = forms.ModelChoiceField(
+        label=_('from_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    end_academic_year = forms.ModelChoiceField(
+        label=_('end_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
 
     class Meta:
         model = PartnershipYear
@@ -758,9 +778,24 @@ class PartnershipYearForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        pk = kwargs.pop('partnership_pk', None)
         super(PartnershipYearForm, self).__init__(*args, **kwargs)
         self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
+        current_academic_year = AcademicYear.objects.filter(year=date.today().year).first()
+        try:
+            self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
+            self.fields['from_academic_year'].initial = current_academic_year
+            self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
+        except Partnership.DoesNotExist:
+            self.fields['start_academic_year'].initial = current_academic_year
+            del self.fields['from_academic_year']
+            self.fields['end_academic_year'].initial = current_academic_year
+
+    def clean(self):
+        super(PartnershipYearForm, self).clean()
+        if self.cleaned_data['start_academic_year'].year > self.cleaned_data['end_academic_year'].year:
+            self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
+            self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
+        return self.cleaned_data
 
 
 class PartnershipAgreementForm(forms.ModelForm):
