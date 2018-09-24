@@ -597,9 +597,9 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
         if ordering == 'country':
-            return ['partner__contact_address__country', 'partner__contact_address__city', 'partner__name']
+            return ['partner__contact_address__country__name', 'partner__contact_address__city', 'partner__name']
         elif ordering == '-country':
-            return ['-partner__contact_address__country', '-partner__contact_address__city', '-partner__name']
+            return ['-partner__contact_address__country__name', '-partner__contact_address__city', '-partner__name']
         elif ordering == 'ucl':
             return [
                 'ucl_university__entityversion__parent__entityversion__acronym',
