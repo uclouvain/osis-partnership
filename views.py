@@ -930,7 +930,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         academic_years = find_academic_years(start_year=start_year, end_year=end_year)
         for academic_year in academic_years:
             partnership_year = form_year.save(commit=False)
-            partnership.id = None  # Force the creation of a new PartnershipYear
+            partnership_year.id = None  # Force the creation of a new PartnershipYear
             partnership_year.partnership = partnership
             partnership_year.academic_year = academic_year
             partnership_year.save()

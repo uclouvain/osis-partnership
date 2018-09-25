@@ -78,8 +78,8 @@
           <tr>
             <th></th>
             <th>{% trans "partnership_type" %}</th>
-            <th>{% trans "education_field" %}</th>
-            <th>{% trans "education_level" %}</th>
+            <th>{% trans "education_fields" %}</th>
+            <th>{% trans "education_levels" %}</th>
             <th>{% trans "is_sms" %}</th>
             <th>{% trans "is_smp" %}</th>
             <th>{% trans "is_sta" %}</th>
@@ -92,8 +92,16 @@
           <tr>
             <th>{{ partnership_year.academic_year }}</th>
             <td>{{ partnership_year.get_partnership_type_display }}</td>
-            <td>{{ partnership_year.get_education_field_display }}</td>
-            <td>{{ partnership_year.get_education_level_display|default_if_none:"" }}</td>
+            <td>
+              <ul class="list-unstyled">
+                {% for education_field in partnership_year.education_fields.all %}<li><strong>{{ education_field.code }}</strong> - {{ education_field.label }}</li>{% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul class="list-unstyled">
+                {% for education_level in partnership_year.education_levels.all %}<li><strong>{{ education_level.code }}</strong> - {{ education_level.label }}</li>{% endfor %}
+              </ul>
+            </td>
             <td><i class="fa {{ partnership_year.is_sms|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
             <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
             <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
