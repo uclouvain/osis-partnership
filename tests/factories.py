@@ -6,7 +6,8 @@ from django.utils import timezone
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipTag,
-                                PartnershipYear, PartnerTag, PartnerType)
+                                PartnershipYear, PartnerTag, PartnerType,
+                                UCLManagementEntity)
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -174,3 +175,26 @@ class ContactFactory(factory.DjangoModelFactory):
 
     type = factory.SubFactory(ContactTypeFactory)
     title = Contact.TITLE_MISTER
+
+
+class UCLManagementEntityFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = UCLManagementEntity
+
+    entity = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+        #country=factory.SelfAttribute('..partner.contact_address.country'),
+    )
+    # factory =
+    academic_respondent = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )
+    administrative_responsible = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory'
+    )
+    contact_in_person = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )
+    contact_out_person = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )
