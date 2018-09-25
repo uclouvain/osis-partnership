@@ -971,6 +971,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         first_year = partnership.years.order_by('academic_year__year').select_related('academic_year').first()
         first_year_education_fields = first_year.education_fields.all()
         first_year_education_levels = first_year.education_levels.all()
+        first_year_entities = first_year.entities.all()
         academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
         for academic_year in academic_years:
             first_year.id = None
@@ -978,6 +979,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             first_year.save()
             first_year.education_fields = first_year_education_fields
             first_year.education_levels = first_year_education_levels
+            first_year.entities = first_year_entities
 
         # Update years
         academic_years = find_academic_years(start_year=from_year, end_year=end_year)
@@ -1214,7 +1216,6 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         return sorted(self.get_ucl_universities(), key=lambda x: x.most_recent_acronym)
 
     def get_result_label(self, result):
-        title = result.entityversion_set.latest("start_date").title
         if result.entityversion_set:
             title = result.entityversion_set.latest("start_date").title
         else:
@@ -1244,6 +1245,34 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
     def get_result_label(self, result):
         title = result.entityversion_set.latest("start_date").title
         return '{0.most_recent_acronym} - {1}'.format(result, title)
+
+
+class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.all()
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
+
+    def get_result_label(self, result):
+        try:
+            title = result.entityversion_set.latest("start_date").title
+            return '{0.most_recent_acronym} - {1}'.format(result, title)
+        except EntityVersion.DoesNotExist:
+            return result.most_recent_acronym
+
+
+class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
+
+    def get_result_label(self, result):
+        return '{0.acronym} - {0.title}'.format(result)
 
 
 class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):

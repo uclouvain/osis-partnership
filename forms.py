@@ -761,7 +761,8 @@ class PartnershipYearForm(forms.ModelForm):
             'partnership_type',
             'education_fields',
             'education_levels',
-            'university_offers',
+            'entities',
+            'offers',
             'is_sms',
             'is_smp',
             'is_sta',
@@ -770,9 +771,11 @@ class PartnershipYearForm(forms.ModelForm):
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
             'education_levels': autocomplete.ModelSelect2Multiple(),
-            'university_offers': autocomplete.ModelSelect2Multiple(
-                url='partnerships:autocomplete:university_offers',
-                forward=['ucl_university_labo'],
+            'entities': autocomplete.ModelSelect2Multiple(
+                url='partnerships:autocomplete:partnership_year_entities',
+            ),
+            'offers': autocomplete.ModelSelect2Multiple(
+                url='partnerships:autocomplete:partnership_year_offers',
             ),
         }
 

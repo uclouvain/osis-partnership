@@ -51,6 +51,7 @@
     {% bootstrap_field form_year.education_fields %}
   </div>
 </div>
+<h4>{% trans "planned_activity" %}</h4>
 <div class="row">
   <div class="col-xs-12 col-sm-6">
     {% bootstrap_field form_year.is_sms %}
@@ -64,7 +65,10 @@
     {% bootstrap_field form_year.education_levels %}
   </div>
   <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.university_offers %}
+    {% bootstrap_field form_year.entities %}
+  </div>
+  <div class="col-xs-12 col-sm-12">
+    {% bootstrap_field form_year.offers %}
   </div>
 </div>
 <div class="row">

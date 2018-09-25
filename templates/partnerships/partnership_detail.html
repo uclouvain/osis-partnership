@@ -80,10 +80,9 @@
             <th>{% trans "partnership_type" %}</th>
             <th>{% trans "education_fields" %}</th>
             <th>{% trans "education_levels" %}</th>
-            <th>{% trans "is_sms" %}</th>
-            <th>{% trans "is_smp" %}</th>
-            <th>{% trans "is_sta" %}</th>
-            <th>{% trans "is_stt" %}</th>
+            <th>{% trans "planned_activity" %}</th>
+            <th>{% trans "partnership_year_entities" %}</th>
+            <th>{% trans "partnership_year_offers" %}</th>
             <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
@@ -102,10 +101,17 @@
                 {% for education_level in partnership_year.education_levels.all %}<li><strong>{{ education_level.code }}</strong> - {{ education_level.label }}</li>{% endfor %}
               </ul>
             </td>
-            <td><i class="fa {{ partnership_year.is_sms|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_stt|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td>{{ partnership_year.planned_activity }}</td>
+            <td>
+              <ul class="list-unstyled">
+                {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul class="list-unstyled">
+                {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% endfor %}
+              </ul>
+            </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
           {% endfor %}

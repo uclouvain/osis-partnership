@@ -465,7 +465,7 @@ class Partnership(models.Model):
     def university_offers(self):
         if self.current_year is None:
             return EducationGroupYear.objects.none()
-        return self.current_year.university_offers
+        return self.current_year.offers
 
     @cached_property
     def entities_acronyms(self):
@@ -554,10 +554,15 @@ class PartnershipYear(models.Model):
         verbose_name=_('education_levels'),
         blank=False,
     )
-    # TODO add entities
-    university_offers = models.ManyToManyField(
+    entities = models.ManyToManyField(
+        'base.Entity',
+        verbose_name=_('partnership_year_entities'),
+        related_name='+',
+        blank=True,
+    )
+    offers = models.ManyToManyField(
         'base.EducationGroupYear',
-        verbose_name=_('university_offers'),
+        verbose_name=_('partnership_year_offers'),
         related_name='partnerships',
         blank=True,
     )
@@ -586,6 +591,19 @@ class PartnershipYear(models.Model):
             if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
                 return True
         return False
+
+    @cached_property
+    def planned_activity(self):
+        activities = []
+        if self.is_sms:
+            activities.append('SMS')
+        if self.is_smp:
+            activities.append('SMP')
+        if self.is_sta:
+            activities.append('STA')
+        if self.is_stt:
+            activities.append('STT')
+        return ', '.join(activities)
 
 
 class PartnershipAgreement(models.Model):
