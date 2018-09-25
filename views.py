@@ -1174,13 +1174,16 @@ class UCLManagementEntityUpdateView(UCLManagementEntityFormMixin, UpdateView):
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
 
 
-class UCLManagementEntityDeleteView(DeleteView):
-    pass
+class UCLManagementEntityDeleteView(UCLManagementEntityMixin, DeleteView):
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
+    context_object_name = "ucl_management_entity"
+    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
 
 class UCLManagementEntityDetailView(UCLManagementEntityMixin, DetailView):
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
     context_object_name = "ucl_management_entity"
+
 
 # Autocompletes
 

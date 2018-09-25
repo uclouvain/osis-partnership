@@ -10,6 +10,7 @@
   <div class="page-header">
     <h1>{{ ucl_management_entity }}</h1>
     <a href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'edit' %}</a>
+    <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'delete' %}</a>
   </div>
 
   <div class="panel panel-default">
