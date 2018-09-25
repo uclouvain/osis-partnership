@@ -960,7 +960,42 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save()
-        form_year.save()
+
+        start_year = form_year.cleaned_data['start_academic_year'].year
+        from_year = form_year.cleaned_data['from_academic_year'].year
+        end_year = form_year.cleaned_data['end_academic_year'].year
+
+        # Create missing start year if needed
+        first_year = partnership.years.order_by('academic_year__year').select_related('academic_year').first()
+        first_year_education_fields = first_year.education_fields.all()
+        first_year_education_levels = first_year.education_levels.all()
+        academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
+        for academic_year in academic_years:
+            first_year.id = None
+            first_year.academic_year = academic_year
+            first_year.save()
+            first_year.education_fields = first_year_education_fields
+            first_year.education_levels = first_year_education_levels
+
+        # Update years
+        academic_years = find_academic_years(start_year=from_year, end_year=end_year)
+        for academic_year in academic_years:
+            partnership_year = form_year.save(commit=False)
+            try:
+                partnership_year.pk = PartnershipYear.objects.get(
+                    partnership=partnership, academic_year=academic_year
+                ).pk
+            except PartnershipYear.DoesNotExist:
+                partnership_year.pk = None
+            partnership_year.academic_year = academic_year
+            partnership_year.save()
+            form_year.save_m2m()
+
+        # Delete no longer used years
+        PartnershipYear.objects.filter(partnership=partnership).filter(
+            Q(academic_year__year__lt=start_year) | Q(academic_year__year__gt=end_year)
+        ).delete()
+
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 

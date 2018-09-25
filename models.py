@@ -456,7 +456,7 @@ class Partnership(models.Model):
         now = timezone.now()
         return (
             self.years
-                .filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now)
+                .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
                 .prefetch_related('education_fields', 'education_levels')
                 .first()
         )
