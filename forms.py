@@ -783,6 +783,7 @@ class PartnershipYearForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super(PartnershipYearForm, self).__init__(*args, **kwargs)
         self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
+        self.fields['partnership_type'].disabled = True
         current_academic_year = AcademicYear.objects.filter(year=date.today().year).first()
         try:
             self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
@@ -795,6 +796,9 @@ class PartnershipYearForm(forms.ModelForm):
 
     def clean(self):
         super(PartnershipYearForm, self).clean()
+        if self.cleaned_data['is_sms'] or self.cleaned_data['is_smp']:
+            if not self.cleaned_data['education_levels']:
+                self.add_error('education_levels', ValidationError(_('education_levels_empty_errors')))
         if self.cleaned_data['start_academic_year'].year > self.cleaned_data['end_academic_year'].year:
             self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
             self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))

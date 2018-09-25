@@ -546,13 +546,13 @@ class PartnershipYear(models.Model):
     )
     education_fields = models.ManyToManyField(
         PartnershipYearEducationField,
-        verbose_name=_('education_fields'),
+        verbose_name=_('partnership_year_education_fields'),
         blank=False,
     )
     education_levels = models.ManyToManyField(
         PartnershipYearEducationLevel,
-        verbose_name=_('education_levels'),
-        blank=False,
+        verbose_name=_('partnership_year_education_levels'),
+        blank=True,
     )
     entities = models.ManyToManyField(
         'base.Entity',

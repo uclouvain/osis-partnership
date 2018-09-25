@@ -894,9 +894,9 @@ class PartnershipFormMixin(object):
         kwargs['current_academic_year'] = AcademicYear.objects.filter(year=date.today().year).first()
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
-    def form_invalid(self, form, formset_years):
+    def form_invalid(self, form, form_year):
         messages.error(self.request, _('partnership_error'))
-        return self.render_to_response(self.get_context_data(form=form, formset_years=formset_years))
+        return self.render_to_response(self.get_context_data(form=form, form_year=form_year))
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
