@@ -84,6 +84,9 @@
   </div>
   {% if form_year.from_academic_year %}
   <div class="col-xs-12 col-sm-12">
+    <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
+  </div>
+  <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form_year.from_academic_year %}
   </div>
   {% endif %}

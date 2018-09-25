@@ -1,4 +1,5 @@
 from copy import copy
+from datetime import date
 
 from base.models.academic_year import AcademicYear, find_academic_years
 from base.models.education_group_year import EducationGroupYear
@@ -890,6 +891,7 @@ class PartnershipFormMixin(object):
     def get_context_data(self, **kwargs):
         if 'form_year' not in kwargs:
             kwargs['form_year'] = self.get_form_year()
+        kwargs['current_academic_year'] = AcademicYear.objects.filter(year=date.today().year).first()
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
     def form_invalid(self, form, formset_years):
