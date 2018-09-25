@@ -769,14 +769,18 @@ class UCLManagementEntity(models.Model):
         'base.Person',
         related_name='+',
     )
-    contact_in = models.ForeignKey(
-        'partnership.Contact',
+    contact_in_person = models.ForeignKey(
+        'base.Person',
         related_name='+',
     )
-    contact_out = models.ForeignKey(
-        'partnership.Contact',
+    contact_in_email = models.EmailField()
+    contact_in_portail = models.URLField()
+    contact_out_person = models.ForeignKey(
+        'base.Person',
         related_name='+',
     )
+    contact_out_email = models.EmailField()
+    contact_out_portail = models.URLField()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
