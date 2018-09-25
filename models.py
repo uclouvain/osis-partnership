@@ -820,8 +820,8 @@ class PartnershipConfiguration(models.Model):
 
 
 class UCLManagementEntity(models.Model):
-    faculty = models.ForeignKey('base.EntityVersion')
-    entity = models.ForeignKey('base.Entity')
+    faculty = models.ForeignKey('base.EntityVersion', null=True, blank=True)
+    entity = models.ForeignKey('base.Entity', null=True, blank=True)
     academic_respondent = models.ForeignKey(
         'base.Person',
         related_name='+',
@@ -833,16 +833,20 @@ class UCLManagementEntity(models.Model):
     contact_in_person = models.ForeignKey(
         'base.Person',
         related_name='+',
+        null=True, blank=True,
     )
-    contact_in_email = models.EmailField()
-    contact_in_portail = models.URLField()
+    contact_in_email = models.EmailField(null=True, blank=True)
+    contact_in_url = models.URLField(null=True, blank=True)
     contact_out_person = models.ForeignKey(
         'base.Person',
         related_name='+',
+        null=True, blank=True,
     )
-    contact_out_email = models.EmailField()
-    contact_out_portail = models.URLField()
+    contact_out_email = models.EmailField(null=True, blank=True)
+    contact_out_url = models.URLField(null=True, blank=True)
 
+    def get_absolute_url(self):
+        return reverse('partnerships:ucl_management_entities:detail', kwargs={'pk': self.pk})
 
 ##### FIXME Generic Model which should be moved to a more generic app
 

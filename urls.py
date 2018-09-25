@@ -32,7 +32,6 @@ from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                UclUniversityLaboAutocompleteView,
                                UniversityOffersAutocompleteFilterView,
                                UniversityOffersAutocompleteView,
-                               FacultyAutocompleteView,
                                EntityAutocompleteView,
 )
 
@@ -74,9 +73,9 @@ urlpatterns = [
     url(r'^UCLManagementEntities/', include([
         url(r'^$', UCLManagementEntityListView.as_view(), name="list"),
         url(r'^create/$', UCLManagementEntityCreateView.as_view(), name="create"),
-        url(r'^edit/$', UCLManagementEntityUpdateView.as_view(), name="update"),
-        url(r'^delete/$', UCLManagementEntityDeleteView.as_view(), name="delete"),
-        url(r'^detail/$', UCLManagementEntityListView.as_view(), name="detail"),
+        url(r'^(?P<pk>\d+)/$', UCLManagementEntityDetailView.as_view(), name="detail"),
+        url(r'^(?P<pk>\d+)/edit/$', UCLManagementEntityUpdateView.as_view(), name="update"),
+        url(r'^(?P<pk>\d+)/delete/$', UCLManagementEntityDeleteView.as_view(), name="delete"),
     ], namespace='ucl_management_entities')),
     url(r'^autocomplete/', include([
         url('^person/$', PersonAutocompleteView.as_view(), name='person'),
@@ -86,7 +85,6 @@ urlpatterns = [
         url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
         url('^ucl_university_labo/$', UclUniversityLaboAutocompleteView.as_view(), name='ucl_university_labo'),
         url('^university_offers/$', UniversityOffersAutocompleteView.as_view(), name='university_offers'),
-        url('^faculty/$', FacultyAutocompleteView.as_view(), name='faculty'),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url('^partner-partnerships-filter/$', PartnerAutocompletePartnershipsFilterView.as_view(), name='partner_partnerships_filter',),
