@@ -30,7 +30,9 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearInlineFormset)
+                               PartnershipYearInlineFormset,
+                               UCLManagementEntityForm
+)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
@@ -1130,27 +1132,28 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
 # UCLManagementEntities views :
 
+class UCLManagementEntityMixin(LoginRequiredMixin):
+    model = UCLManagementEntity
+
+class UCLManagementEntityFormMixin(UCLManagementEntityMixin):
+    form_class = UCLManagementEntityForm
 
 class UCLManagementEntityListView(ListView):
-    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
+    context_object_name = "ucl_manager_entities"
 
-
-class UCLManagementEntityCreateView(CreateView):
-    model = UCLManagementEntity
-    fields = '__all__'
-
+class UCLManagementEntityCreateView(UCLManagementEntityFormMixin, CreateView):
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
 
 class UCLManagementEntityUpdateView(UpdateView):
-    model = UCLManagementEntity
     fields = '__all__'
 
 
 class UCLManagementEntityDeleteView(DeleteView):
-    model = UCLManagementEntity
-
+    pass
 
 class UCLManagementEntityDetailView(DetailView):
-    model = UCLManagementEntity
+    pass
 
 
 # Autocompletes
@@ -1164,6 +1167,23 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
                 Q(first_name__icontains=self.q) |
                 Q(middle_name__icontains=self.q) |
                 Q(last_name__icontains=self.q)
+            )
+        return qs.distinct()
+
+
+class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = EntityVersion.objects.all()
+        return qs.distinct()
+
+class EntityAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.prefetch_related('entityversion_set').all()
+        if self.q:
+            qs = qs.filter(
+                entityversion__acronym__icontains=self.q
             )
         return qs.distinct()
 

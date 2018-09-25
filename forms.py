@@ -15,7 +15,7 @@ from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType)
+                                PartnerType, UCLManagementEntity)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -884,3 +884,28 @@ class PartnershipConfigurationForm(forms.ModelForm):
                 ValidationError(_('invalid_partnership_update_max_date'))
             )
         return self.cleaned_data
+
+class UCLManagementEntityForm(forms.ModelForm):
+
+    class Meta:
+        model = UCLManagementEntity
+        fields = [
+            'faculty',
+            'entity',
+            'administrative_responsible',
+            'academic_respondent',
+        ]
+        widgets = {
+            'faculty': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:faculty',
+            ),
+            'entity': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:entity',
+            ),
+            'administrative_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'academic_respondent': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+        }
