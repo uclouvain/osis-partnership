@@ -21,17 +21,23 @@
                 <td>{% trans 'administrative_responsible' %}</td>
                 <td>{% trans 'contact_in' %}</td>
                 <td>{% trans 'contact_out' %}</td>
+                <td></td>
               </tr>
             </thead>
             <tbody>
-              {% for ucl_manager_entity in ucl_manager_entities %}
+              {% for ucl_management_entity in ucl_management_entities %}
                 <tr>
-                  <td>{{ ucl_manager_entity.faculty }}</td>
-                  <td>{{ ucl_manager_entity.entity }}</td>
-                  <td>{{ ucl_manager_entity.academic_respondent }}</td>
-                  <td>{{ ucl_manager_entity.administrative_responsible }}</td>
-                  <td>{{ ucl_manager_entity.contact_in }}</td>
-                  <td>{{ ucl_manager_entity.contact_out }}</td>
+                  <td>{{ ucl_management_entity.faculty }}</td>
+                  <td>{{ ucl_management_entity.entity }}</td>
+                  <td>{{ ucl_management_entity.academic_respondent }}</td>
+                  <td>{{ ucl_management_entity.administrative_responsible }}</td>
+                  <td>{{ ucl_management_entity.contact_in }}</td>
+                  <td>{{ ucl_management_entity.contact_out }}</td>
+                  <td>
+                    <a href="{% url 'partnerships:ucl_management_entities:detail' pk=ucl_management_entity.pk %}" class="btn btn-default">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>

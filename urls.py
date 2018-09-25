@@ -76,9 +76,9 @@ urlpatterns = [
     url(r'^UCLManagementEntities/', include([
         url(r'^$', UCLManagementEntityListView.as_view(), name="list"),
         url(r'^create/$', UCLManagementEntityCreateView.as_view(), name="create"),
-        url(r'^edit/$', UCLManagementEntityUpdateView.as_view(), name="update"),
-        url(r'^delete/$', UCLManagementEntityDeleteView.as_view(), name="delete"),
-        url(r'^detail/$', UCLManagementEntityListView.as_view(), name="detail"),
+        url(r'^(?P<pk>\d+)/$', UCLManagementEntityDetailView.as_view(), name="detail"),
+        url(r'^(?P<pk>\d+)/edit/$', UCLManagementEntityUpdateView.as_view(), name="update"),
+        url(r'^(?P<pk>\d+)/delete/$', UCLManagementEntityDeleteView.as_view(), name="delete"),
     ], namespace='ucl_management_entities')),
     url(r'^autocomplete/', include([
         url('^person/$', PersonAutocompleteView.as_view(), name='person'),

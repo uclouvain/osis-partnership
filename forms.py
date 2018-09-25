@@ -920,10 +920,16 @@ class UCLManagementEntityForm(forms.ModelForm):
             'entity',
             'administrative_responsible',
             'academic_responsible',
+            'contact_in_person',
+            'contact_in_email',
+            'contact_in_url',
+            'contact_out_person',
+            'contact_out_email',
+            'contact_out_url',
         ]
         widgets = {
             'faculty': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:faculty',
+                url='partnerships:autocomplete:ucl_university',
             ),
             'entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:entity',
@@ -932,6 +938,12 @@ class UCLManagementEntityForm(forms.ModelForm):
                 url='partnerships:autocomplete:person',
             ),
             'academic_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_in_person': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_out_person': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
             ),
         }

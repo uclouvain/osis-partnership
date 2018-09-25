@@ -1149,31 +1149,38 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         messages.success(self.request, _('configuration_saved'))
         return super().form_valid(form)
 
+
 # UCLManagementEntities views :
+
 
 class UCLManagementEntityMixin(LoginRequiredMixin):
     model = UCLManagementEntity
 
+
 class UCLManagementEntityFormMixin(UCLManagementEntityMixin):
     form_class = UCLManagementEntityForm
 
-class UCLManagementEntityListView(ListView):
+
+class UCLManagementEntityListView(UCLManagementEntityMixin, ListView):
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
-    context_object_name = "ucl_manager_entities"
+    context_object_name = "ucl_management_entities"
+
 
 class UCLManagementEntityCreateView(UCLManagementEntityFormMixin, CreateView):
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
 
-class UCLManagementEntityUpdateView(UpdateView):
-    fields = '__all__'
+
+class UCLManagementEntityUpdateView(UCLManagementEntityFormMixin, UpdateView):
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
 
 
 class UCLManagementEntityDeleteView(DeleteView):
     pass
 
-class UCLManagementEntityDetailView(DetailView):
-    pass
 
+class UCLManagementEntityDetailView(UCLManagementEntityMixin, DetailView):
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
+    context_object_name = "ucl_management_entity"
 
 # Autocompletes
 
@@ -1190,11 +1197,11 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
         return qs.distinct()
 
 
-class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
+# class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
 
-    def get_queryset(self):
-        qs = EntityVersion.objects.all()
-        return qs.distinct()
+#     def get_queryset(self):
+#         qs = EntityVersion.objects.all()
+#         return qs.distinct()
 
 class EntityAutocompleteView(autocomplete.Select2QuerySetView):
 

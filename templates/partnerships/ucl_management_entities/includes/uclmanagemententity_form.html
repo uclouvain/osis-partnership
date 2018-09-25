@@ -4,33 +4,30 @@
 <div class="row row-fluid">
   <div class="col-12">
     {% bootstrap_form_errors form %}
-    <div class="form-group required_field">
-      <label class="control-label" for="{{ form.faculty.id_for_label }}">{{ form.faculty.label }}</label>
-      {{ form.faculty }}
-      <label class="control-label" for="{{ form.entity.id_for_label }}">{{ form.entity.label }}</label>
-      {{ form.entity }}
-      <label class="control-label" for="{{ form.academic_respondent.id_for_label }}">{{ form.academic_respondent.label }}</label>
-      {{ form.academic_respondent }}
-      <label class="control-label" for="{{ form.administrative_responsible.id_for_label }}">{{ form.administrative_responsible.label }}</label>
-      {{ form.administrative_responsible }}
-    </div>
+    {% bootstrap_field form.faculty %}
+    {% bootstrap_field form.entity %}
+    {% bootstrap_field form.academic_respondent %}
+    {% bootstrap_field form.administrative_responsible %}
   </div>
 </div>
-{% comment %}
-<h2>{% trans "contact_in" %}</h2>
 <div class="row row-fluid">
   <div class="col-xs-12 col-sm-6">
-    {% bootstrap_form_errors contact_in_form %}
-    {{ bootstrap_form contact_in_form }}
+    <h2>{% trans "contact_in" %}</h2>
+    {% bootstrap_field form.contact_in_person %}
+    {% bootstrap_field form.contact_in_email %}
+    {% bootstrap_field form.contact_in_url %}
   </div>
-</div>
-<h2>{% trans "contact_out" %}</h2>
-<div class="row row-fluid">
   <div class="col-xs-12 col-sm-6">
-    {% bootstrap_form_errors contact_out_form %}
-    {{ bootstrap_form contact_out_form }}
+    <h2>{% trans "contact_out" %}</h2>
+    {% bootstrap_field form.contact_out_person %}
+    {% bootstrap_field form.contact_out_email %}
+    {% bootstrap_field form.contact_out_url %}
   </div>
 </div>
-{% endcomment %}
+<div class="row">
+  <div class="col-sm-12">
+    <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
+  </div>
+</div>
 <input type="submit" value="{% trans "submit" %}" name="submit" />
 {{ form.media }}
