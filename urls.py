@@ -32,7 +32,11 @@ from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                UclUniversityLaboAutocompleteView,
                                UniversityOffersAutocompleteFilterView,
                                UniversityOffersAutocompleteView,
-                               PartnershipYearEntitiesAutocompleteView, PartnershipYearOffersAutocompleteView)
+                               PartnershipYearEntitiesAutocompleteView,
+                               PartnershipYearOffersAutocompleteView,
+                               FacultyAutocompleteView,
+                               EntityAutocompleteView)
+
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -86,6 +90,8 @@ urlpatterns = [
         url('^university_offers/$', UniversityOffersAutocompleteView.as_view(), name='university_offers'),
         url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
         url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
+        url('^faculty/$', FacultyAutocompleteView.as_view(), name='faculty'),
+        url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url('^partner-partnerships-filter/$', PartnerAutocompletePartnershipsFilterView.as_view(), name='partner_partnerships_filter',),
         url('^partner-entity-partnerships-filter/$', PartnerEntityAutocompletePartnershipsFilterView.as_view(), name='partner_entity_partnerships_filter',),
