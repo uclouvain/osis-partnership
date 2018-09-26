@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -741,6 +742,28 @@ class PartnershipConfiguration(models.Model):
             return PartnershipConfiguration.objects.get()
         except PartnershipConfiguration.DoesNotExist:
             return PartnershipConfiguration.objects.create()
+
+    def get_current_academic_year_for_creation(self):
+        limit_date = date(
+            date.today().year,
+            self.partnership_creation_max_date_month,
+            self.partnership_creation_max_date_day,
+        )
+        if date.today() < limit_date:
+            return AcademicYear.objects.filter(year=date.today().year + 1).first()
+        else:
+            return AcademicYear.objects.filter(year=date.today().year + 2).first()
+
+    def get_current_academic_year_for_modification(self):
+        limit_date = date(
+            date.today().year,
+            self.partnership_update_max_date_month,
+            self.partnership_update_max_date_day,
+        )
+        if date.today() < limit_date:
+            return AcademicYear.objects.filter(year=date.today().year).first()
+        else:
+            return AcademicYear.objects.filter(year=date.today().year + 1).first()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app

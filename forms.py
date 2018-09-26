@@ -784,12 +784,17 @@ class PartnershipYearForm(forms.ModelForm):
         super(PartnershipYearForm, self).__init__(*args, **kwargs)
         self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
         self.fields['partnership_type'].disabled = True
-        current_academic_year = AcademicYear.objects.filter(year=date.today().year).first()
         try:
             self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
+            current_academic_year = (
+                PartnershipConfiguration.get_configuration().get_current_academic_year_for_modification()
+            )
             self.fields['from_academic_year'].initial = current_academic_year
             self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
         except Partnership.DoesNotExist:
+            current_academic_year = (
+                PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation()
+            )
             self.fields['start_academic_year'].initial = current_academic_year
             del self.fields['from_academic_year']
             self.fields['end_academic_year'].initial = current_academic_year

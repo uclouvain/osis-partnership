@@ -1,7 +1,7 @@
 from copy import copy
 from datetime import date
 
-from base.models.academic_year import AcademicYear, find_academic_years
+from base.models.academic_year import AcademicYear, find_academic_years, current_academic_year
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -891,7 +891,7 @@ class PartnershipFormMixin(object):
     def get_context_data(self, **kwargs):
         if 'form_year' not in kwargs:
             kwargs['form_year'] = self.get_form_year()
-        kwargs['current_academic_year'] = AcademicYear.objects.filter(year=date.today().year).first()
+        kwargs['current_academic_year'] = current_academic_year()
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
     def form_invalid(self, form, form_year):
