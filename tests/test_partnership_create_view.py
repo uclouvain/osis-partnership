@@ -93,3 +93,9 @@ class PartnershipCreateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+
+    def test_post_past_start_date_as_adri(self):
+        pass
+
+    def test_post_past_start_date_as_gf(self):
+        pass

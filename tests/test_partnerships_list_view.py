@@ -11,7 +11,8 @@ from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipFactory,
                                          PartnershipTagFactory,
                                          PartnershipYearFactory,
-                                         PartnerTagFactory, PartnerTypeFactory)
+                                         PartnerTagFactory, PartnerTypeFactory, PartnershipYearEducationFieldFactory,
+                                         PartnershipYearEducationLevelFactory)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
@@ -32,7 +33,7 @@ class PartnershipsListViewTest(TestCase):
         # university_offer
         cls.university_offer = EducationGroupYearFactory()
         cls.partnership_university_offer = PartnershipFactory()
-        partnership_year = PartnershipYearFactory(partnership=cls.partnership_university_offer, year=2101)
+        partnership_year = PartnershipYearFactory(partnership=cls.partnership_university_offer, academic_year__year=2101)
         partnership_year.offers.add(cls.university_offer)
         # partner
         cls.partner = PartnerFactory()
@@ -69,19 +70,23 @@ class PartnershipsListViewTest(TestCase):
         #PartnershipYearFactory(partnership=cls.partnership_education_level, education_level='ISCED-9')
         # is_sms
         cls.partnership_is_sms = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_sms, is_sms=True)
+        PartnershipYearFactory(partnership=cls.partnership_is_sms, is_sms=True, academic_year__year=2150)
         # is_smp
         cls.partnership_is_smp = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_smp, is_smp=True)
+        PartnershipYearFactory(partnership=cls.partnership_is_smp, is_smp=True, academic_year__year=2151)
         # is_sta
         cls.partnership_is_sta = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_sta, is_sta=True)
+        PartnershipYearFactory(partnership=cls.partnership_is_sta, is_sta=True, academic_year__year=2152)
         # is_stt
         cls.partnership_is_stt = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_stt, is_stt=True)
+        PartnershipYearFactory(partnership=cls.partnership_is_stt, is_stt=True, academic_year__year=2153)
         # partnership_type
         cls.partnership_type = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_type, partnership_type='codiplomation')
+        PartnershipYearFactory(
+            partnership=cls.partnership_type,
+            partnership_type='codiplomation',
+            academic_year__year=2154,
+        )
         # tags
         cls.tag = PartnershipTagFactory()
         cls.partnership_tag = PartnershipFactory(tags=[cls.tag])
@@ -125,17 +130,18 @@ class PartnershipsListViewTest(TestCase):
             comment='all_filters',
         )
         cls.partnership_all_filters.partner.tags.add(PartnerTagFactory())
-        cls.partnership_all_filters.university_offers.add(EducationGroupYearFactory())
-        PartnershipYearFactory(
+        partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_all_filters,
-            education_field='1015',
-            education_level='ISCED-8',
             is_sms=False,
             is_smp=False,
             is_sta=False,
             is_stt=False,
             partnership_type='autre',
+            academic_year__year=2160,
         )
+        partnership_year.offers.add(EducationGroupYearFactory())
+        partnership_year.education_fields.add(PartnershipYearEducationFieldFactory(code='1015'))
+        partnership_year.education_levels.add(PartnershipYearEducationLevelFactory(code='ISCED-8'))
         cls.partnership_all_filters.tags.add(PartnershipTagFactory())
         PartnershipAgreementFactory(
             partnership=cls.partnership_all_filters,
@@ -375,7 +381,7 @@ class PartnershipsListViewTest(TestCase):
         query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
             'ucl_university': str(self.partnership_all_filters.ucl_university.pk),
             'ucl_university_labo': str(self.partnership_all_filters.ucl_university_labo.pk),
-            'university_offers': str(self.partnership_all_filters.university_offers.first().pk),
+            'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
             'partner': str(self.partnership_all_filters.partner.pk),
             'partner_entity': str(self.partnership_all_filters.partner_entity.pk),
             'city': 'all_filters',

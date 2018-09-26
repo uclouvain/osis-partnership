@@ -27,7 +27,6 @@ class PartnershipAgreementCreateViewTest(TestCase):
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
-        date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
         cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf)

@@ -1,6 +1,7 @@
 import datetime
 
 from base.models.enums.entity_type import FACULTY
+from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_manager import EntityManagerFactory
@@ -11,7 +12,8 @@ from django.test import TestCase
 from django.urls import reverse
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipFactory,
-                                         PartnershipYearFactory)
+                                         PartnershipYearFactory, PartnershipYearEducationFieldFactory,
+                                         PartnershipYearEducationLevelFactory)
 
 
 class PartnershipUpdateViewTest(TestCase):
@@ -28,9 +30,6 @@ class PartnershipUpdateViewTest(TestCase):
         EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Dates :
-        cls.date_ok = datetime.datetime.today() + datetime.timedelta(365)
-        cls.date_ko = datetime.datetime.today() - datetime.timedelta(365)
-
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
@@ -39,32 +38,15 @@ class PartnershipUpdateViewTest(TestCase):
             partner=cls.partner,
             partner_entity=cls.partner_entity
         )
-        cls.partnership_ko = PartnershipFactory(
-            partner=cls.partner,
-            partner_entity=cls.partner_entity,
-        )
         cls.url = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership.pk})
-        cls.url_ko = reverse(
-            'partnerships:update',
-            kwargs={'pk': cls.partnership_ko.pk}
-        )
 
         # Years
-        cls.year_0 = PartnershipYearFactory(
-            partnership=cls.partnership,
-            academic_year__year=2180,
-            is_sms=True,
-            is_smp=True,
-            is_sta=True,
-            is_stt=True,
-        )
-        cls.year_1 = PartnershipYearFactory(
-            partnership=cls.partnership,
-            academic_year__year=2181,
-            is_sms=True,
-            is_sta=True,
-        )
+        cls.from_academic_year = AcademicYearFactory(year=2150)
+        cls.end_academic_year = AcademicYearFactory(year=2151)
+
+        cls.education_field = PartnershipYearEducationFieldFactory()
+        cls.education_level = PartnershipYearEducationLevelFactory()
 
         # Ucl
         cls.ucl_university = EntityFactory()
@@ -81,34 +63,16 @@ class PartnershipUpdateViewTest(TestCase):
             'ucl_university': cls.ucl_university.pk,
             'ucl_university_labo': cls.ucl_university_labo.pk,
             'university_offers': [cls.university_offer.pk],
-            'years-0-academic_year': '',
-            'years-0-education_field': '',
-            'years-0-education_level': '',
-            'years-0-id': '',
-            'years-0-partnership_type': '',
-            'years-1-academic_year': '',
-            'years-1-education_field': '',
-            'years-1-education_level': '',
-            'years-1-id': '',
-            'years-1-partnership_type': '',
-            'years-2-academic_year': '',
-            'years-2-education_field': '',
-            'years-2-education_level': '',
-            'years-2-id': '',
-            'years-2-partnership_type': '',
-            'years-INITIAL_FORMS': '0',
-            'years-MAX_NUM_FORMS': '1000',
-            'years-MIN_NUM_FORMS': '0',
-            'years-TOTAL_FORMS': '3',
-        }
-
-    def make_data(self, date, partnership):
-        return {
-            'start_date': date,
-            'years-0-partnership': partnership.pk,
-            'years-1-partnership': partnership.pk,
-            'years-2-partnership': partnership.pk,
-            **self.data,
+            'year-is_sms': True,
+            'year-is_smp': False,
+            'year-is_sta': True,
+            'year-is_stt': False,
+            'year-education_fields': [cls.education_field.pk],
+            'year-education_levels': [cls.education_level.pk],
+            'year-entities': [],
+            'year-offers': [],
+            'year-from_academic_year': cls.from_academic_year.pk,
+            'year-end_academic_year': cls.end_academic_year.pk,
         }
 
     def test_get_partnership_as_anonymous(self):
@@ -136,32 +100,35 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
-    def test_post_out_of_date_as_adri(self):
-        self.client.force_login(self.user_adri)
-        data = self.make_data(self.date_ko.strftime('%d/%m/%y'), self.partnership)
-        response = self.client.post(self.url_ko, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
-
     def test_post(self):
         self.client.force_login(self.user_adri)
-        data = self.make_data(
-            self.date_ok.strftime('%d/%m/%y'),
-            self.partnership,
-        )
+        data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
     def test_post_empty_sm(self):
         pass
 
-    def test_post_prior_start_date(self):
+    def test_post_past_start_date_as_gf(self):
+        pass
+
+    def test_post_past_from_date_as_gf(self):
         pass
 
     def test_post_past_start_date(self):
         pass
 
-    def test_post_prior_end_date(self):
+    def test_post_post_start_date(self):
+        pass
+
+    def test_post_past_from_date(self):
+        pass
+
+    def test_post_post_from_date(self):
         pass
 
     def test_post_past_end_date(self):
+        pass
+
+    def test_post_post_end_date(self):
         pass

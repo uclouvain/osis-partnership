@@ -622,7 +622,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('ucl_university_labo', None):
             queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
         if data.get('university_offers', None):
-            queryset = queryset.filter(university_offers__in=data['university_offers'])
+            queryset = queryset.filter(years__offers__in=data['university_offers'])
         if data.get('partner', None):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
@@ -1055,15 +1055,6 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
             kwargs['form_media'] = self.get_form_media()
         return super(PartnershipAgreementsFormMixin, self).get_context_data(**kwargs)
 
-    def check_partnership_start_date(self, form):
-        if form.cleaned_data['start_academic_year'].year < self.partnership.start_date.year:
-            form.add_error(
-                'start_academic_year',
-                ValidationError(_('partnership_agreement_start_date_before_partnership_error'))
-            )
-            return False
-        return True
-
     def form_invalid(self, form, form_media):
         messages.error(self.request, _('partnership_agreement_error'))
         return self.render_to_response(self.get_context_data(form=form, form_media=form_media))
@@ -1084,8 +1075,6 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 
     @transaction.atomic
     def form_valid(self, form, form_media):
-        if not self.check_partnership_start_date(form):
-            return self.form_invalid(form, form_media)
         media = form_media.save(commit=False)
         media.author = self.request.user
         media.save()
@@ -1111,8 +1100,6 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 
     @transaction.atomic
     def form_valid(self, form, form_media):
-        if not self.check_partnership_start_date(form):
-            return self.form_invalid(form, form_media)
         form_media.save()
         form.save()
         messages.success(self.request, _('partnership_agreement_success'))
