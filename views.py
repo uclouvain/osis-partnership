@@ -1,20 +1,13 @@
 from copy import copy
-from datetime import date
 
-from base.models.academic_year import AcademicYear, find_academic_years, current_academic_year
-from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY
-from base.models.person import Person
 from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
-from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet, Value, When)
+from django.db import transaction
+from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -26,6 +19,13 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
+
+from base.models.academic_year import find_academic_years, current_academic_year
+from base.models.education_group_year import EducationGroupYear
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
+from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,

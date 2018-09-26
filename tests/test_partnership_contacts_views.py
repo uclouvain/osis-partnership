@@ -25,9 +25,9 @@ class PartnershipContactCreateViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf)
         # Misc
         cls.url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': cls.partnership.pk})
 
@@ -113,9 +113,9 @@ class PartnershipContactUpdateViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf)
         # Misc
         cls.url = reverse('partnerships:contacts:update', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
@@ -210,9 +210,9 @@ class PartnershipContactDeleteViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf)
         # Misc
         cls.url = reverse('partnerships:contacts:delete', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk

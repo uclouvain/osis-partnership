@@ -42,7 +42,6 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partnership_ko = PartnershipFactory(
             partner=cls.partner,
             partner_entity=cls.partner_entity,
-            start_date=cls.date_ko,
         )
         cls.url = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership.pk})
@@ -152,33 +151,17 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
-    def test_post_with_years(self):
-        self.client.force_login(self.user_adri)
-        data = self.make_data(
-            self.date_ok.strftime('%d/%m/%y'),
-            self.partnership,
-        )
-        years_data = {
-            'years-0-academic_year': self.year_0.academic_year.pk,
-            'years-0-education_field': self.year_0.education_field,
-            'years-0-education_level': self.year_0.education_level,
-            'years-0-id': self.year_0.pk,
-            'years-0-partnership_type': self.year_0.partnership_type,
-            'years-0-is_sms': 'on' if self.year_0.is_sms else 'off',
-            'years-0-is_smp': 'on' if self.year_0.is_smp else 'off',
-            'years-0-is_sta': 'on' if self.year_0.is_sta else 'off',
-            'years-0-is_stt': 'on' if self.year_0.is_stt else 'off',
-            'years-1-academic_year': self.year_1.academic_year.pk,
-            'years-1-education_field': self.year_1.education_field,
-            'years-1-education_level': self.year_1.education_level,
-            'years-1-id': self.year_1.pk,
-            'years-1-partnership_type': self.year_1.partnership_type,
-            'years-1-is_sms': 'on' if self.year_1.is_sms else 'off',
-            'years-1-is_smp': 'on' if self.year_1.is_smp else 'off',
-            'years-1-is_sta': 'on' if self.year_1.is_sta else 'off',
-            'years-1-is_stt': 'on' if self.year_1.is_stt else 'off',
-            'years-INITIAL_FORMS': '2',
-        }
-        data.update(years_data)
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+    def test_post_empty_sm(self):
+        pass
+
+    def test_post_prior_start_date(self):
+        pass
+
+    def test_post_past_start_date(self):
+        pass
+
+    def test_post_prior_end_date(self):
+        pass
+
+    def test_post_past_end_date(self):
+        pass
