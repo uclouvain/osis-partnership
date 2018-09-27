@@ -820,30 +820,51 @@ class PartnershipConfiguration(models.Model):
 
 
 class UCLManagementEntity(models.Model):
-    faculty = models.ForeignKey('base.EntityVersion', null=True, blank=True)
-    entity = models.ForeignKey('base.Entity', null=True, blank=True)
+    faculty = models.ForeignKey(
+        'base.EntityVersion', null=True, blank=True,
+        verbose_name=_("faculty")
+    )
+    entity = models.ForeignKey(
+        'base.Entity', null=True, blank=True,
+        verbose_name=_("entity")
+    )
     academic_responsible = models.ForeignKey(
         'base.Person',
         related_name='+',
+        verbose_name=_("academic_responsible"),
     )
     administrative_responsible = models.ForeignKey(
         'base.Person',
         related_name='+',
+        verbose_name=_("administrative_responsible"),
     )
     contact_in_person = models.ForeignKey(
         'base.Person',
         related_name='+',
         null=True, blank=True,
+        verbose_name=_("name"),
     )
-    contact_in_email = models.EmailField(null=True, blank=True)
-    contact_in_url = models.URLField(null=True, blank=True)
+    contact_in_email = models.EmailField(
+        null=True, blank=True,
+        verbose_name=_("email"),
+    )
+    contact_in_url = models.URLField(
+        null=True, blank=True,
+        verbose_name=_("portal"),
+    )
     contact_out_person = models.ForeignKey(
         'base.Person',
         related_name='+',
         null=True, blank=True,
+        verbose_name=_("name"),
     )
-    contact_out_email = models.EmailField(null=True, blank=True)
-    contact_out_url = models.URLField(null=True, blank=True)
+    contact_out_email = models.EmailField(
+        null=True, blank=True,
+        verbose_name=_("email"),
+    )
+    contact_out_url = models.URLField(
+        null=True, blank=True, verbose_name=_("portal")
+    )
 
     def get_absolute_url(self):
         return reverse('partnerships:ucl_management_entities:detail', kwargs={'pk': self.pk})
