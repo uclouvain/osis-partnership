@@ -761,7 +761,7 @@ class PartnershipConfiguration(models.Model):
 class UCLManagementEntity(models.Model):
     faculty = models.ForeignKey('base.EntityVersion', null=True, blank=True)
     entity = models.ForeignKey('base.Entity', null=True, blank=True)
-    academic_respondent = models.ForeignKey(
+    academic_responsible = models.ForeignKey(
         'base.Person',
         related_name='+',
     )
