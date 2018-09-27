@@ -893,7 +893,7 @@ class UCLManagementEntityForm(forms.ModelForm):
             'faculty',
             'entity',
             'administrative_responsible',
-            'academic_respondent',
+            'academic_responsible',
             'contact_in_person',
             'contact_in_email',
             'contact_in_url',
@@ -911,7 +911,7 @@ class UCLManagementEntityForm(forms.ModelForm):
             'administrative_responsible': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
             ),
-            'academic_respondent': autocomplete.ModelSelect2(
+            'academic_responsible': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
             ),
             'contact_in_person': autocomplete.ModelSelect2(
