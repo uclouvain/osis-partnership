@@ -14,7 +14,7 @@ from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType)
+                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -564,18 +564,18 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
-    # TODO FIXME
-    # education_field = forms.ChoiceField(
-    #     label=_('education_field'),
-    #     choices=((None, '---------'),),
-    #     widget=autocomplete.Select2(attrs={'data-width': '100%'}),
-    #     required=False,
-    # )
-    # education_level = forms.ChoiceField(
-    #     label=_('education_level'),
-    #     choices=((None, '---------'),) + PartnershipYear.EDUCATION_LEVEL_CHOICES,
-    #     required=False,
-    # )
+    education_field = forms.ModelChoiceField(
+        label=_('education_field'),
+        queryset=PartnershipYearEducationField.objects.filter(partnershipyear__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
+        required=False,
+    )
+    education_level = forms.ModelChoiceField(
+        label=_('education_level'),
+        queryset=PartnershipYearEducationLevel.objects.filter(partnershipyear__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
+        required=False,
+    )
     is_sms = forms.NullBooleanField(
         label=_('is_sms'),
         widget=CustomNullBooleanSelect(),

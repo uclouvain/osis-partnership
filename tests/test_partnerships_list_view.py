@@ -61,13 +61,15 @@ class PartnershipsListViewTest(TestCase):
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
         cls.partnership_partner_tags = PartnershipFactory(partner=partner_tag)
         # education_field
-        cls.partnership_education_field = PartnershipFactory()
-        # FIXME
-        #PartnershipYearFactory(partnership=cls.partnership_education_field, education_field='1088')
+        cls.education_field = PartnershipYearEducationFieldFactory()
+        partnership_year = PartnershipYearFactory(academic_year__year=2120)
+        partnership_year.education_fields.add(cls.education_field)
+        cls.partnership_education_field = PartnershipFactory(years=[partnership_year])
         # education_level
-        cls.partnership_education_level = PartnershipFactory()
-        # FIXME
-        #PartnershipYearFactory(partnership=cls.partnership_education_level, education_level='ISCED-9')
+        cls.education_level = PartnershipYearEducationLevelFactory()
+        partnership_year = PartnershipYearFactory(academic_year__year=2120)
+        partnership_year.education_levels.add(cls.education_level)
+        cls.partnership_education_level = PartnershipFactory(years=[partnership_year])
         # is_sms
         cls.partnership_is_sms = PartnershipFactory()
         PartnershipYearFactory(partnership=cls.partnership_is_sms, is_sms=True, academic_year__year=2150)
@@ -140,8 +142,10 @@ class PartnershipsListViewTest(TestCase):
             academic_year__year=2160,
         )
         partnership_year.offers.add(EducationGroupYearFactory())
-        partnership_year.education_fields.add(PartnershipYearEducationFieldFactory(code='1015'))
-        partnership_year.education_levels.add(PartnershipYearEducationLevelFactory(code='ISCED-8'))
+        cls.all_education_field = PartnershipYearEducationFieldFactory()
+        partnership_year.education_fields.add(cls.all_education_field)
+        cls.all_education_level = PartnershipYearEducationLevelFactory()
+        partnership_year.education_levels.add(cls.all_education_level)
         cls.partnership_all_filters.tags.add(PartnershipTagFactory())
         PartnershipAgreementFactory(
             partnership=cls.partnership_all_filters,
@@ -270,7 +274,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_education_field(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?education_field=1088')
+        response = self.client.get(self.url + '?education_field=' + str(self.education_field.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -278,7 +282,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_education_level(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?education_level=ISCED-9')
+        response = self.client.get(self.url + '?education_level=' + str(self.education_level.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -388,8 +392,8 @@ class PartnershipsListViewTest(TestCase):
             'country': str(self.partnership_all_filters.partner.contact_address.country.pk),
             'continent': str(self.partnership_all_filters.partner.contact_address.country.continent.pk),
             'partner_tags': str(self.partnership_all_filters.partner.tags.first().pk),
-            'education_field': '1015',
-            'education_level': 'ISCED-8',
+            'education_field': str(self.all_education_field.pk),
+            'education_level': str(self.all_education_level.pk),
             'is_sms': 'False',
             'is_smp': 'False',
             'is_sta': 'False',
