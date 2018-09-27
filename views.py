@@ -1133,35 +1133,33 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
 # UCLManagementEntities views :
 
-
-class UCLManagementEntityMixin(LoginRequiredMixin):
+class UCLManagementEntityListView(ListView):
     model = UCLManagementEntity
-
-
-class UCLManagementEntityFormMixin(UCLManagementEntityMixin):
-    form_class = UCLManagementEntityForm
-
-
-class UCLManagementEntityListView(UCLManagementEntityMixin, ListView):
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
 
 
-class UCLManagementEntityCreateView(UCLManagementEntityFormMixin, CreateView):
+class UCLManagementEntityCreateView(CreateView):
+    model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
+    form_class = UCLManagementEntityForm
 
 
-class UCLManagementEntityUpdateView(UCLManagementEntityFormMixin, UpdateView):
+class UCLManagementEntityUpdateView(UpdateView):
+    model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
+    form_class = UCLManagementEntityForm
 
 
-class UCLManagementEntityDeleteView(UCLManagementEntityMixin, DeleteView):
+class UCLManagementEntityDeleteView(DeleteView):
+    model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
 
-class UCLManagementEntityDetailView(UCLManagementEntityMixin, DetailView):
+class UCLManagementEntityDetailView(DetailView):
+    model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
     context_object_name = "ucl_management_entity"
 

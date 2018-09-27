@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 10:39+0200\n"
+"POT-Creation-Date: 2018-09-25 17:36+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1208,6 +1208,45 @@ msgid "add_partnership"
 msgstr ""
 
 msgid "search_partnership"
+msgstr ""
+
+msgid "ucl_management_form"
+msgstr ""
+
+msgid "add_uclmanagemententity"
+msgstr ""
+
+msgid "edit"
+msgstr ""
+
+msgid "delete"
+msgstr ""
+
+msgid "ucl_management_entity"
+msgstr ""
+
+msgid "faculty"
+msgstr ""
+
+msgid "entity"
+msgstr ""
+
+msgid "academic_respondent"
+msgstr ""
+
+msgid "administrative_responsible"
+msgstr ""
+
+msgid "portail"
+msgstr ""
+
+msgid "ucl_management_entities"
+msgstr ""
+
+msgid "add_ucl_management_entity"
+msgstr ""
+
+msgid "edit_uclmanagemententity"
 msgstr ""
 
 msgid "id"
