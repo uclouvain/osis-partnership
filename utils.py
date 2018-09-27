@@ -33,6 +33,14 @@ def user_is_gf(user):
     except Person.DoesNotExist:
         return False
 
+def user_is_gf_of_faculty(user, faculty):
+    if user_is_gf(user):
+        return user.person.entitymanager_set.filter(
+            entity__entity_version__entity_type="FACULTY"
+        ).exists()
+    else:
+        return False
+
 
 def user_is_in_user_faculty(user, other_user):
     # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
