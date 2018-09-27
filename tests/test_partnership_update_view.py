@@ -42,8 +42,9 @@ class PartnershipUpdateViewTest(TestCase):
                           kwargs={'pk': cls.partnership.pk})
 
         # Years
-        cls.from_academic_year = AcademicYearFactory(year=2150)
-        cls.end_academic_year = AcademicYearFactory(year=2151)
+        cls.start_academic_year = AcademicYearFactory(year=2140)
+        cls.from_academic_year = AcademicYearFactory(year=2151)
+        cls.end_academic_year = AcademicYearFactory(year=2160)
 
         cls.education_field = PartnershipYearEducationFieldFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
@@ -71,6 +72,7 @@ class PartnershipUpdateViewTest(TestCase):
             'year-education_levels': [cls.education_level.pk],
             'year-entities': [],
             'year-offers': [],
+            'year-start_academic_year': cls.start_academic_year.pk,
             'year-from_academic_year': cls.from_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
         }

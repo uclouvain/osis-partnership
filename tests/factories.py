@@ -4,6 +4,7 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
+from base.tests.factories.academic_year import get_current_year
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipTag,
@@ -157,7 +158,7 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
         model = PartnershipYear
 
     partnership_type = 'mobility'
-    academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory', year=2100)
+    academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory', year=get_current_year())
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
 
 
