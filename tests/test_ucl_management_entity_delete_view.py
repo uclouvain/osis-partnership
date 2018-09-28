@@ -44,19 +44,19 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_get_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_get_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_get_as_adri(self):
         self.client.force_login(self.other_gf_user)
@@ -72,19 +72,19 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_post_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_post_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('registration/login.html')
 
     def test_post_as_adri(self):
         self.client.force_login(self.adri_user)

@@ -37,22 +37,22 @@ class UCLManagementEntityDetailViewTest(TestCase):
 
     def test_get_authenticated(self):
         self.client.force_login(self.lambda_user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_gf(self):
         self.client.force_login(self.gf_user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
 
     def test_get_other_gf(self):
         self.client.force_login(self.other_gf_user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_adri(self):
         self.client.force_login(self.adri_user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')

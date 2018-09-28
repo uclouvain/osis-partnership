@@ -36,7 +36,7 @@ def user_is_gf(user):
 def user_is_gf_of_faculty(user, faculty):
     if user_is_gf(user):
         return user.person.entitymanager_set.filter(
-            entity__entity_version__entity_type="FACULTY"
+            entity=faculty,
         ).exists()
     else:
         return False

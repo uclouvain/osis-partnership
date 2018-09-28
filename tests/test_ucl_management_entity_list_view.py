@@ -25,12 +25,9 @@ class UCLManagementEntitiesListViewTest(TestCase):
         entity_version = EntityVersionFactory(acronym="ADRI")
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gf_user = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
         EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
-
-        faculty = EntityFactory()
-        entity_version = EntityVersionFactory(entity_type="FACULTY", entity=faculty)
 
         for i in range(GF_UME_NUMBER):
             UCLManagementEntityFactory(faculty=faculty)
@@ -48,7 +45,7 @@ class UCLManagementEntitiesListViewTest(TestCase):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
-        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_get_list_gf(self):
         self.client.force_login(self.gf_user)

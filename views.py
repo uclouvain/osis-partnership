@@ -36,7 +36,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
-from partnership.utils import user_is_adri, user_is_gf
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -1133,36 +1133,71 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
 # UCLManagementEntities views :
 
-class UCLManagementEntityListView(LoginRequiredMixin, ListView):
+class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
 
+    def test_func(self):
+        result = user_is_adri(self.request.user) or user_is_gf(self.request.user)
+        return result
 
-class UCLManagementEntityCreateView(LoginRequiredMixin, CreateView):
+    def get_queryset(self):
+        #import pdb; pdb.set_trace()
+        if not user_is_adri(self.request.user):
+            return super().get_queryset().filter(
+                faculty__entitymanager__person__user=self.request.user
+            )
+        return super().get_queryset()
+
+class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
     form_class = UCLManagementEntityForm
 
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
 
-class UCLManagementEntityUpdateView(LoginRequiredMixin, UpdateView):
+
+class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
     form_class = UCLManagementEntityForm
     context_object_name = "ucl_management_entity"
+    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        import pdb; pdb.set_trace()
+        return result
 
 
-class UCLManagementEntityDeleteView(LoginRequiredMixin, DeleteView):
+class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
 
-class UCLManagementEntityDetailView(LoginRequiredMixin, DetailView):
+
+class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
     context_object_name = "ucl_management_entity"
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        return result
 
 
 # Autocompletes
