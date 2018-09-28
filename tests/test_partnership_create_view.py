@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -34,6 +36,10 @@ class PartnershipCreateViewTest(TestCase):
 
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.end_academic_year = AcademicYearFactory(year=2151)
+        year = date.today().year
+        AcademicYearFactory(year=year)
+        AcademicYearFactory(year=year + 1)
+        AcademicYearFactory(year=year + 2)
 
         cls.education_field = PartnershipYearEducationFieldFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
@@ -95,7 +101,28 @@ class PartnershipCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
     def test_post_past_start_date_as_adri(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-start_academic_year'] = str(AcademicYearFactory(year=2000).pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
     def test_post_past_start_date_as_gf(self):
-        pass
+        self.client.force_login(self.user_gf)
+        data = self.data.copy()
+        data['year-start_academic_year'] = str(AcademicYearFactory(year=2000).pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+
+    def test_post_post_start_date_as_adri(self):
+        self.client.force_login(self.user_adri)
+        data = self.data
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+
+    def test_post_post_start_date_as_gf(self):
+        self.client.force_login(self.user_gf)
+        data = self.data
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')

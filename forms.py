@@ -784,6 +784,7 @@ class PartnershipYearForm(forms.ModelForm):
         self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
         self.fields['partnership_type'].disabled = True
         try:
+            # Update
             self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
             current_academic_year = (
                 PartnershipConfiguration.get_configuration().get_current_academic_year_for_modification()
@@ -791,10 +792,15 @@ class PartnershipYearForm(forms.ModelForm):
             self.fields['from_academic_year'].initial = current_academic_year
             self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
         except Partnership.DoesNotExist:
+            # Create
             current_academic_year = (
                 PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation()
             )
             self.fields['start_academic_year'].initial = current_academic_year
+            if not user_is_adri(self.user):
+                if current_academic_year is not None:
+                    self.fields['start_academic_year'].queryset = \
+                        AcademicYear.objects.filter(year__gte=current_academic_year.year)
             del self.fields['from_academic_year']
             self.fields['end_academic_year'].initial = current_academic_year
 
