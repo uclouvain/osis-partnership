@@ -12,8 +12,9 @@ class UCLManagementEntityDetailViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         faculty = EntityFactory()
-        entity_version = EntityVersionFactory(entity_type="FACULTY", entity=faculty)
-
+        other_faculty = EntityFactory()
+        EntityVersionFactory(entity_type="FACULTY", entity=faculty)
+        EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
 
@@ -21,14 +22,11 @@ class UCLManagementEntityDetailViewTest(TestCase):
         cls.lambda_user = UserFactory()
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gf_user = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
-        EntityManagerFactory(person__user=cls.other_gf_user, entity=entity_manager.entity)
-
-        entity_manger = EntityManagerFactory(entity=faculty, person=cls.gf_user.person)
-
+        EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         cls.url = reverse('partnerships:ucl_management_entities:detail', kwargs={'pk': cls.ucl_management_entity.pk})
 
