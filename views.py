@@ -1168,6 +1168,7 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UpdateView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
     form_class = UCLManagementEntityForm
+    context_object_name = "ucl_management_entity"
 
 
 class UCLManagementEntityDeleteView(LoginRequiredMixin, DeleteView):
