@@ -809,6 +809,10 @@ class PartnershipYearForm(forms.ModelForm):
         if self.cleaned_data['is_sms'] or self.cleaned_data['is_smp']:
             if not self.cleaned_data['education_levels']:
                 self.add_error('education_levels', ValidationError(_('education_levels_empty_errors')))
+        else:
+            del self.cleaned_data['education_levels']
+            del self.cleaned_data['entities']
+            del self.cleaned_data['offers']
         start_academic_year = self.cleaned_data.get('start_academic_year', None)
         if start_academic_year is not None and start_academic_year.year > self.cleaned_data['end_academic_year'].year:
             self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))

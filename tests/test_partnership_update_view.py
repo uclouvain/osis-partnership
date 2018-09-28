@@ -36,18 +36,27 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
-            partner_entity=cls.partner_entity
+            partner_entity=cls.partner_entity,
+            years=[],
         )
         cls.url = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership.pk})
 
         # Years
-        cls.start_academic_year = AcademicYearFactory(year=2140)
+        cls.academic_year_2149 = AcademicYearFactory(year=2149)
+        cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.from_academic_year = AcademicYearFactory(year=2151)
-        cls.end_academic_year = AcademicYearFactory(year=2160)
+        cls.end_academic_year = AcademicYearFactory(year=2152)
+        cls.academic_year_2153 = AcademicYearFactory(year=2153)
 
         cls.education_field = PartnershipYearEducationFieldFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
+
+        cls.partnership.years = [
+            PartnershipYearFactory(academic_year=cls.start_academic_year),
+            PartnershipYearFactory(academic_year=cls.from_academic_year),
+            PartnershipYearFactory(academic_year=cls.end_academic_year),
+        ]
 
         # Ucl
         cls.ucl_university = EntityFactory()
@@ -94,8 +103,9 @@ class PartnershipUpdateViewTest(TestCase):
 
     def test_get_own_partnership_as_gf(self):
         self.client.force_login(self.user_gf)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership_update.html')
+        self.assertNotIn('start_academic_year', response.context_data['form_year']['fields'])
 
     def test_get_other_partnership_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -109,28 +119,80 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
 
     def test_post_empty_sm(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-is_sms'] = False
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        year = response.context_data['partnership'].years.last()
+        self.assertFalse(year.education_levels.exists())
+        self.assertFalse(year.entities.exists())
+        self.assertFalse(year.offers.exists())
 
-    def test_post_past_start_date_as_gf(self):
-        pass
+    def test_post_start_date_as_gf(self):
+        self.client.force_login(self.user_gf)
+        data = self.data.copy()
+        data['year-start_academic_year'] = str(self.academic_year_2149.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 3)
 
     def test_post_past_from_date_as_gf(self):
-        pass
+        self.client.force_login(self.user_gf)
+        data = self.data.copy()
+        data['year-from_academic_year'] = str(self.academic_year_2149.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
     def test_post_past_start_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-start_academic_year'] = str(self.academic_year_2149.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 4)
 
     def test_post_post_start_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-start_academic_year'] = str(self.from_academic_year.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 2)
 
     def test_post_past_from_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-from_academic_year'] = str(self.start_academic_year.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 3)
+        self.assertTrue(response.context_data['partnership'].years.first().is_sms)
 
     def test_post_post_from_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-from_academic_year'] = str(self.end_academic_year.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 3)
+        self.assertFalse(response.context_data['partnership'].years.first().is_sms)
+        self.assertFalse(response.context_data['partnership'].years.all()[1].is_sms)
+        self.assertTrue(response.context_data['partnership'].years.last().is_sms)
 
     def test_post_past_end_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-end_academic_year'] = str(self.academic_year_2153.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 4)
 
     def test_post_post_end_date(self):
-        pass
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-end_academic_year'] = str(self.from_academic_year.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertEqual(response.context_data['partnership'].years.count(), 2)

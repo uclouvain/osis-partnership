@@ -879,8 +879,12 @@ class PartnershipFormMixin(object):
     def get_form_year(self):
         kwargs = self.get_form_kwargs()
         kwargs['prefix'] = 'year'
-        if kwargs['instance'] is not None:
-            kwargs['instance'] = kwargs['instance'].current_year
+        partnership = kwargs['instance']
+        if partnership is not None:
+            kwargs['instance'] = partnership.current_year
+            if kwargs['instance'] is None:
+                # No current year for this partnership, get the last available
+                kwargs['instance'] = partnership.years.last()
         return PartnershipYearForm(**kwargs)
 
     def get_form_kwargs(self):
@@ -972,6 +976,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         first_year_education_fields = first_year.education_fields.all()
         first_year_education_levels = first_year.education_levels.all()
         first_year_entities = first_year.entities.all()
+        first_year_offers = first_year.offers.all()
         academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
         for academic_year in academic_years:
             first_year.id = None
@@ -980,6 +985,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             first_year.education_fields = first_year_education_fields
             first_year.education_levels = first_year_education_levels
             first_year.entities = first_year_entities
+            first_year.offers = first_year_offers
 
         # Update years
         academic_years = find_academic_years(start_year=from_year, end_year=end_year)

@@ -131,7 +131,7 @@ class PartnershipFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def years(obj, create, extracted, **kwargs):
         if create:
-            if extracted:
+            if extracted is not None:
                 obj.years = extracted
             else:
                 obj.years = [PartnershipYearFactory(partnership=obj)]
