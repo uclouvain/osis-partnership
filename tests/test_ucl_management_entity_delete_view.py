@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from partnership.tests.factories import UCLManagementEntityFactory
+from partnership.tests.factories import UCLManagementEntityFactory, PartnershipFactory
 from base.tests.factories.user import UserFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
@@ -29,10 +29,17 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
+        cls.ucl_management_entity_linked = UCLManagementEntityFactory()
+        PartnershipFactory(ucl_management_entity=cls.ucl_management_entity_linked)
 
         cls.url = reverse(
             'partnerships:ucl_management_entities:delete',
             kwargs={"pk": cls.ucl_management_entity.pk}
+        )
+
+        cls.linked_url = reverse(
+            'partnerships:ucl_management_entities:delete',
+            kwargs={"pk": cls.ucl_management_entity_linked.pk},
         )
 
     def test_get_as_anonymous(self):
@@ -59,7 +66,7 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         self.assertTemplateUsed('registration/login.html')
 
     def test_get_as_adri(self):
-        self.client.force_login(self.other_gf_user)
+        self.client.force_login(self.adri_user)
         response = self.client.get(self.url)
         self.assertTemplateUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
 
@@ -90,3 +97,14 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url)
         self.assertFalse(UCLManagementEntity.objects.filter(pk=self.ucl_management_entity.pk).exists())
+
+    def test_get_for_linked_as_adri(self):
+        self.client.force_login(self.adri_user)
+        response = self.client.get(self.linked_url)
+        self.assertTemplateUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+
+    def test_post_for_linked_as_adri(self):
+        self.client.force_login(self.adri_user)
+        response = self.client.post(self.linked_url)
+        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        self.assertTemplateUsed('registration/login.html')
