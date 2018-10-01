@@ -157,7 +157,7 @@ class Partner(models.Model):
     name = models.CharField(_('Name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
     partner_type = models.ForeignKey(
-        'partnership.PartnerType',
+        PartnerType,
         verbose_name=_('partner_type'),
         related_name='partners',
         on_delete=models.PROTECT,
