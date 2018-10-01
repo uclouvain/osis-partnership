@@ -337,6 +337,13 @@ class Partnership(models.Model):
 
     start_date = models.DateField(_('start_date'))
 
+    contacts = models.ManyToManyField(
+        'partnership.Contact',
+        verbose_name=_('contacts'),
+        related_name='+',
+        blank=True,
+    )
+
     ucl_management_entity = models.ForeignKey(
         'partnership.UCLManagementEntity',
         verbose_name=_('ucl_management_entity'),

@@ -861,6 +861,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'ucl_university_labo', 'author'
             )
             .prefetch_related(
+                'contacts',
                 'tags',
                 Prefetch(
                     'years',
@@ -1205,7 +1206,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
-        if self.object.partnership:
+        if self.object.partnership.all():
             raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 
@@ -1241,12 +1242,6 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
             )
         return qs.distinct()
 
-
-# class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
-
-#     def get_queryset(self):
-#         qs = EntityVersion.objects.all()
-#         return qs.distinct()
 
 class EntityAutocompleteView(autocomplete.Select2QuerySetView):
 
