@@ -13,7 +13,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
-                               user_is_in_user_faculty)
+                               user_is_in_user_faculty, user_is_gf_of_faculty)
 
 
 class PartnerType(models.Model):
@@ -881,6 +881,12 @@ class UCLManagementEntity(models.Model):
 
     def __str__(self):
         return ("{} - {}, {}".format(self.academic_responsible, self.contact_in_person, self.contact_out_person))
+
+    def user_can_change(self, user):
+        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
+
+    def user_can_delete(self, user):
+        return user_is_adri(user) and not self.partnership.all()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app

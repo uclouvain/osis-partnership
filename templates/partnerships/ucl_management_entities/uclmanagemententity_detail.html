@@ -1,16 +1,20 @@
 {% extends "layout.html" %}
-{% load i18n static %}
+{% load i18n static partnerships %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
-  <li class="active">{{ partnership }}</li>
+  <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>
+  <li class="active">{{ ucl_management_entity }}</li>
 {% endblock %}
 
 {% block content %}
   <div class="page-header">
     <h1>{{ ucl_management_entity }}</h1>
-    <a href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'edit' %}</a>
-    <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'delete' %}</a>
+    {% if can_change_ucl_management_entity %}
+      <a href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'edit' %}</a>
+    {% endif %}
+    {% if can_delete_ucl_management_entity %}
+      <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'delete' %}</a>
+    {% endif %}
   </div>
 
   <div class="panel panel-default">
