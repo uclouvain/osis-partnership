@@ -183,9 +183,10 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
 
     entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
-        #country=factory.SelfAttribute('..partner.contact_address.country'),
     )
-    # factory =
+    faculty = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+    )
     academic_responsible = factory.SubFactory(
         'base.tests.factories.person.PersonFactory',
     )
