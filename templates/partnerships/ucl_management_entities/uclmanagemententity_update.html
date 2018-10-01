@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load i18n static %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
+  <li><a href="#">partnership</a></li>
+  <li><a href="{% url 'partnerships:ucl_management_entities:detail' pk=ucl_management_entity.pk %}">{{ ucl_management_entity }}</a></li>
+  <li class="active">{% trans "update_uclmanademententity" %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{% trans 'edit_uclmanagemententity' %}</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body uclmanagerentity_form">
+      <form action="{% url "partnerships:ucl_management_entities:create" %}" method="post">
+        {% include "partnerships/ucl_management_entities/includes/uclmanagemententity_form.html" %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

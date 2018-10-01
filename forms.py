@@ -14,7 +14,8 @@ from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel)
+                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel,
+                                UCLManagementEntity)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -732,7 +733,15 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-
+        for offer in university_offers:
+            if (
+                offer.management_entity != ucl_university_labo
+                and offer.administration_entity != ucl_university_labo
+            ):
+                self.add_error(
+                    'university_offers',
+                    _('invalid_offer {} {}'.format(offer, ucl_university_labo))
+                )
         return self.cleaned_data
 
 
@@ -884,3 +893,40 @@ class PartnershipConfigurationForm(forms.ModelForm):
                 ValidationError(_('invalid_partnership_update_max_date'))
             )
         return self.cleaned_data
+
+class UCLManagementEntityForm(forms.ModelForm):
+
+    class Meta:
+        model = UCLManagementEntity
+        fields = [
+            'faculty',
+            'entity',
+            'administrative_responsible',
+            'academic_responsible',
+            'contact_in_person',
+            'contact_in_email',
+            'contact_in_url',
+            'contact_out_person',
+            'contact_out_email',
+            'contact_out_url',
+        ]
+        widgets = {
+            'faculty': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:ucl_university',
+            ),
+            'entity': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:entity',
+            ),
+            'administrative_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'academic_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_in_person': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_out_person': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+        }

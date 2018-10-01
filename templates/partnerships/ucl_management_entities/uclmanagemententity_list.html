@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static %}
+
+{% block breadcrumb %}
+  <li class="active">{% trans "uclmanademententities" %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>
+      {% trans 'ucl_management_entities' %}
+    </h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="pull-right">
+            <a class="btn btn-default" type="button"
+               href="{% url "partnerships:ucl_management_entities:create" %}">
+              <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "add_ucl_management_entity" %}</span></a>
+          </div>
+        </div>
+      </div>
+      <div id="results">
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover">
+            <thead>
+              <tr>
+                <td>{% trans 'faculty' %}</td>
+                <td>{% trans 'entity' %}</td>
+                <td>{% trans 'academic_responsible' %}</td>
+                <td>{% trans 'administrative_responsible' %}</td>
+                <td>{% trans 'contact_in' %}</td>
+                <td>{% trans 'contact_out' %}</td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ucl_management_entity in ucl_management_entities %}
+                <tr>
+                  <td>{{ ucl_management_entity.faculty }}</td>
+                  <td>{{ ucl_management_entity.entity }}</td>
+                  <td>{{ ucl_management_entity.academic_responsible }}</td>
+                  <td>{{ ucl_management_entity.administrative_responsible }}</td>
+                  <td>{{ ucl_management_entity.contact_in }}</td>
+                  <td>{{ ucl_management_entity.contact_out }}</td>
+                  <td>
+                    <a href="{% url 'partnerships:ucl_management_entities:detail' pk=ucl_management_entity.pk %}" class="btn btn-default">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-8">
+            {% include "partnerships/includes/pagination.html" %}
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

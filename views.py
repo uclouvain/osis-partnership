@@ -31,11 +31,17 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
-                               PartnershipFilterForm, PartnershipForm, PartnershipYearForm)
+                               PartnershipFilterForm, PartnershipForm,
+                               PartnershipYearInlineFormset,
+                               UCLManagementEntityForm,
+                               PartnershipYearForm
+)
+
+
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear)
-from partnership.utils import user_is_adri, user_is_gf
+                                PartnershipYear, UCLManagementEntity)
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -1141,6 +1147,74 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         return super().form_valid(form)
 
 
+# UCLManagementEntities views :
+
+class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
+    context_object_name = "ucl_management_entities"
+
+    def test_func(self):
+        result = user_is_adri(self.request.user) or user_is_gf(self.request.user)
+        return result
+
+    def get_queryset(self):
+        #import pdb; pdb.set_trace()
+        if not user_is_adri(self.request.user):
+            return super().get_queryset().filter(
+                faculty__entitymanager__person__user=self.request.user
+            )
+        return super().get_queryset()
+
+class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
+    form_class = UCLManagementEntityForm
+
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
+
+
+class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
+    form_class = UCLManagementEntityForm
+    context_object_name = "ucl_management_entity"
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        import pdb; pdb.set_trace()
+        return result
+
+
+class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
+    context_object_name = "ucl_management_entity"
+    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
+
+
+class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
+    context_object_name = "ucl_management_entity"
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        return result
+
+
 # Autocompletes
 
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1152,6 +1226,23 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
                 Q(first_name__icontains=self.q) |
                 Q(middle_name__icontains=self.q) |
                 Q(last_name__icontains=self.q)
+            )
+        return qs.distinct()
+
+
+# class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
+
+#     def get_queryset(self):
+#         qs = EntityVersion.objects.all()
+#         return qs.distinct()
+
+class EntityAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.prefetch_related('entityversion_set').all()
+        if self.q:
+            qs = qs.filter(
+                entityversion__acronym__icontains=self.q
             )
         return qs.distinct()
 
