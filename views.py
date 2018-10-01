@@ -1184,7 +1184,6 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
     form_class = UCLManagementEntityForm
     context_object_name = "ucl_management_entity"
-    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
     def test_func(self):
         self.object = self.get_object()
