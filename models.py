@@ -777,12 +777,16 @@ class PartnershipConfiguration(models.Model):
 
 class UCLManagementEntity(models.Model):
     faculty = models.ForeignKey(
-        'base.Entity', null=True, blank=True,
+        'base.Entity',
+        null=True,
+        blank=True,
         verbose_name=_("faculty"),
         related_name='+',
     )
     entity = models.ForeignKey(
-        'base.Entity', null=True, blank=True,
+        'base.Entity',
+        null=True,
+        blank=True,
         verbose_name=_("entity"),
         related_name='+',
     )
@@ -803,11 +807,13 @@ class UCLManagementEntity(models.Model):
         verbose_name=_("name"),
     )
     contact_in_email = models.EmailField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_("email"),
     )
     contact_in_url = models.URLField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_("portal"),
     )
     contact_out_person = models.ForeignKey(
@@ -817,11 +823,14 @@ class UCLManagementEntity(models.Model):
         verbose_name=_("name"),
     )
     contact_out_email = models.EmailField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_("email"),
     )
     contact_out_url = models.URLField(
-        null=True, blank=True, verbose_name=_("portal")
+        null=True,
+        blank=True,
+        verbose_name=_("portal")
     )
 
     def get_absolute_url(self):
