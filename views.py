@@ -1227,6 +1227,11 @@ class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, Det
         )
         return result
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_change_ucl_management_entity'] = self.object.user_can_change(self.request.user)
+        context['can_delete_ucl_management_entity'] = self.object.user_can_delete(self.request.user)
+        return context
 
 # Autocompletes
 
