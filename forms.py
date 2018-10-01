@@ -1,21 +1,21 @@
 from datetime import date
 
+from dal import autocomplete, forward
+from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.person import Person
-from dal import autocomplete, forward
-from django import forms
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.forms import BaseInlineFormSet, inlineformset_factory
-from django.utils.translation import ugettext_lazy as _
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel,
+                                UCLManagementEntity)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -565,15 +565,16 @@ class PartnershipFilterForm(forms.Form):
 
     # Partnerships
 
-    education_field = forms.ChoiceField(
+    education_field = forms.ModelChoiceField(
         label=_('education_field'),
-        choices=((None, '---------'),),
-        widget=autocomplete.Select2(attrs={'data-width': '100%'}),
+        queryset=PartnershipYearEducationField.objects.filter(partnershipyear__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
-    education_level = forms.ChoiceField(
+    education_level = forms.ModelChoiceField(
         label=_('education_level'),
-        choices=((None, '---------'),) + PartnershipYear.EDUCATION_LEVEL_CHOICES,
+        queryset=PartnershipYearEducationLevel.objects.filter(partnershipyear__isnull=False),
+        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     is_sms = forms.NullBooleanField(
@@ -642,19 +643,12 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
-        education_fields = filter(
-            lambda x: Partnership.objects.filter(years__education_field=x[0]).exists(),
-            PartnershipYear.EDUCATION_FIELD_CHOICES,
-        )
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')
-        )
-        self.fields['education_field'].choices = ((None, '---------'),) + tuple(
-            education_fields
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
@@ -664,23 +658,27 @@ class PartnershipForm(forms.ModelForm):
     class Meta:
         model = Partnership
         fields = (
-            'start_date',
-            'supervisor',
             'partner',
             'partner_entity',
+
             'ucl_university',
             'ucl_university_labo',
-            'university_offers',
+            'supervisor',
+
             'comment',
             'tags',
         )
         widgets = {
-            'start_date': DatePickerInput(
-                format=DATE_FORMAT,
-                attrs={'class': 'datepicker', 'autocomplete': 'off'},
+            'partner': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:partner',
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_partner_entity',
+                },
             ),
-            'supervisor': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:person',
+            'partner_entity': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:partner_entity',
+                forward=['partner'],
             ),
             'ucl_university': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university',
@@ -697,31 +695,20 @@ class PartnershipForm(forms.ModelForm):
                     'data-reset': '#id_university_offers',
                 },
             ),
-            'university_offers': autocomplete.ModelSelect2Multiple(
-                url='partnerships:autocomplete:university_offers',
-                forward=['ucl_university_labo'],
+            'supervisor': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
             ),
             'tags': autocomplete.Select2Multiple(),
-            'partner': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:partner',
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_partner_entity',
-                },
-            ),
-            'partner_entity': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:partner_entity',
-                forward=['partner'],
-            ),
         }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        pk = kwargs.pop('partnership_pk', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
         self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
-        if pk is not None:
-            self.fields['partner'].widget.forward.append(forward.Const(pk, 'partnership_pk'))
+        try:
+            self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
+        except Partner.DoesNotExist:
+            pass
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']
@@ -731,33 +718,12 @@ class PartnershipForm(forms.ModelForm):
             raise ValidationError(_('partnership_inactif_partner_error'))
         return partner
 
-    def clean_start_date(self):
-        start_date = self.cleaned_data['start_date']
-        # Check for agreements
-        if self.instance.agreements.filter(start_academic_year__year__lt=start_date.year).exists():
-            raise ValidationError(_('partnership_start_date_after_agreement_error'))
-        if user_is_adri(self.user):
-            return start_date
-        if self.instance.pk is not None and self.instance.start_date == start_date:
-            return start_date
-        # GF User can create if before year N - 1 and the day/month specified in the configuration.
-        today = date.today()
-        configuration = PartnershipConfiguration.get_configuration()
-        min_date = date(
-            today.year,
-            configuration.partnership_creation_max_date_month,
-            configuration.partnership_creation_max_date_day
-        )
-        if start_date.year == today.year or start_date <= min_date:
-            raise ValidationError(_('partnership_start_date_gf_too_late'))
-        return start_date
-
     def clean(self):
+        super(PartnershipForm, self).clean()
         partner = self.cleaned_data['partner']
         partner_entity = self.cleaned_data['partner_entity']
         ucl_university = self.cleaned_data['ucl_university']
         ucl_university_labo = self.cleaned_data['ucl_university_labo']
-        university_offers = self.cleaned_data['university_offers']
 
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
@@ -776,48 +742,91 @@ class PartnershipForm(forms.ModelForm):
                     'university_offers',
                     _('invalid_offer {} {}'.format(offer, ucl_university_labo))
                 )
+        return self.cleaned_data
 
 
 class PartnershipYearForm(forms.ModelForm):
 
+    start_academic_year = forms.ModelChoiceField(
+        label=_('start_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    from_academic_year = forms.ModelChoiceField(
+        label=_('from_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    end_academic_year = forms.ModelChoiceField(
+        label=_('end_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+
     class Meta:
         model = PartnershipYear
         fields = (
-            'academic_year',
-            'education_field',
-            'education_level',
+            'partnership_type',
+            'education_fields',
+            'education_levels',
+            'entities',
+            'offers',
             'is_sms',
             'is_smp',
             'is_sta',
             'is_stt',
-            'partnership_type',
         )
         widgets = {
-            'education_field': autocomplete.Select2(),
+            'education_fields': autocomplete.ModelSelect2Multiple(),
+            'education_levels': autocomplete.ModelSelect2Multiple(),
+            'entities': autocomplete.ModelSelect2Multiple(
+                url='partnerships:autocomplete:partnership_year_entities',
+            ),
+            'offers': autocomplete.ModelSelect2Multiple(
+                url='partnerships:autocomplete:partnership_year_offers',
+            ),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(PartnershipYearForm, self).__init__(*args, **kwargs)
+        self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
+        self.fields['partnership_type'].disabled = True
+        try:
+            # Update
+            self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
+            current_academic_year = (
+                PartnershipConfiguration.get_configuration().get_current_academic_year_for_modification()
+            )
+            self.fields['from_academic_year'].initial = current_academic_year
+            self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
+        except Partnership.DoesNotExist:
+            # Create
+            current_academic_year = (
+                PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation()
+            )
+            self.fields['start_academic_year'].initial = current_academic_year
+            if not user_is_adri(self.user):
+                if current_academic_year is not None:
+                    self.fields['start_academic_year'].queryset = \
+                        AcademicYear.objects.filter(year__gte=current_academic_year.year)
+            del self.fields['from_academic_year']
+            self.fields['end_academic_year'].initial = current_academic_year
 
-class BasePartnershipYearInlineFormset(BaseInlineFormSet):
     def clean(self):
-        super(BasePartnershipYearInlineFormset, self).clean()
-        for form in self.forms:
-            try:
-                if form.cleaned_data.get('DELETE', False) or form.cleaned_data.get('academic_year', None) is None:
-                    continue
-                if self.instance.start_date is None:
-                    continue
-                if form.cleaned_data['academic_year'].year < self.instance.start_date.year:
-                    form.add_error('academic_year', ValidationError(_('partnership_year_academic_year_error')))
-            except AttributeError:
-                pass
-
-
-PartnershipYearInlineFormset = inlineformset_factory(
-    Partnership,
-    PartnershipYear,
-    form=PartnershipYearForm,
-    formset=BasePartnershipYearInlineFormset,
-)
+        super(PartnershipYearForm, self).clean()
+        if self.cleaned_data['is_sms'] or self.cleaned_data['is_smp']:
+            if not self.cleaned_data['education_levels']:
+                self.add_error('education_levels', ValidationError(_('education_levels_empty_errors')))
+        else:
+            del self.cleaned_data['education_levels']
+            del self.cleaned_data['entities']
+            del self.cleaned_data['offers']
+        start_academic_year = self.cleaned_data.get('start_academic_year', None)
+        if start_academic_year is not None and start_academic_year.year > self.cleaned_data['end_academic_year'].year:
+            self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
+            self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
+        return self.cleaned_data
 
 
 class PartnershipAgreementForm(forms.ModelForm):

@@ -1,18 +1,13 @@
 from copy import copy
 
-from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY
-from base.models.person import Person
 from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
-from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet, Value, When)
+from django.db import transaction
+from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -24,6 +19,13 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
+
+from base.models.academic_year import find_academic_years, current_academic_year
+from base.models.education_group_year import EducationGroupYear
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
+from base.models.person import Person
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
@@ -31,8 +33,11 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
                                PartnershipYearInlineFormset,
-                               UCLManagementEntityForm
+                               UCLManagementEntityForm,
+                               PartnershipYearForm
 )
+
+
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
@@ -599,9 +604,9 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
         if ordering == 'country':
-            return ['partner__contact_address__country', 'partner__contact_address__city', 'partner__name']
+            return ['partner__contact_address__country__name', 'partner__contact_address__city', 'partner__name']
         elif ordering == '-country':
-            return ['-partner__contact_address__country', '-partner__contact_address__city', '-partner__name']
+            return ['-partner__contact_address__country__name', '-partner__contact_address__city', '-partner__name']
         elif ordering == 'ucl':
             return [
                 'ucl_university__entityversion__parent__entityversion__acronym',
@@ -623,7 +628,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('ucl_university_labo', None):
             queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
         if data.get('university_offers', None):
-            queryset = queryset.filter(university_offers__in=data['university_offers'])
+            queryset = queryset.filter(years__offers__in=data['university_offers'])
         if data.get('partner', None):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
@@ -655,9 +660,9 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('supervisor', None):
             queryset = queryset.filter(supervisor=data['supervisor'])
         if data.get('education_field', None):
-            queryset = queryset.filter(years__education_field=data['education_field'])
+            queryset = queryset.filter(years__education_fields=data['education_field'])
         if data.get('education_level', None):
-            queryset = queryset.filter(years__education_level=data['education_level'])
+            queryset = queryset.filter(years__education_levels=data['education_level'])
         if data.get('tags', None):
             queryset = queryset.filter(tags__in=data['tags'])
         if data.get('partnership_in', None):
@@ -718,10 +723,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'ucl_university_labo', 'ucl_university',
                 'partner__contact_address__country', 'partner_entity',
                 'supervisor',
-            ).prefetch_related(
-                Prefetch('university_offers', queryset=EducationGroupYear.objects.select_related('academic_year')),
             )
-            .annotate(university_offers_count=Count('university_offers'))
         )
         form = self.get_form()
         if not form.is_bound:
@@ -864,18 +866,13 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'contacts',
                 'tags',
                 Prefetch(
-                    'university_offers',
-                    queryset=EducationGroupYear.objects.select_related('academic_year')
-                ),
-                Prefetch(
                     'years',
                     queryset=PartnershipYear.objects.select_related('academic_year')
                 ),
                 Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                     'start_academic_year', 'end_academic_year', 'media'
                 ).order_by("-start_academic_year", "-end_academic_year")),
-            )
-            .annotate(university_offers_count=Count('university_offers')),
+            ),
             pk=self.kwargs['pk'],
         )
 
@@ -885,38 +882,40 @@ class PartnershipFormMixin(object):
     model = Partnership
     form_class = PartnershipForm
 
-    def get_formset_years(self):
-        kwargs = self.get_formset_kwargs()
-        kwargs['prefix'] = 'years'
-        return PartnershipYearInlineFormset(**kwargs)
+    def get_form_year(self):
+        kwargs = self.get_form_kwargs()
+        kwargs['prefix'] = 'year'
+        partnership = kwargs['instance']
+        if partnership is not None:
+            kwargs['instance'] = partnership.current_year
+            if kwargs['instance'] is None:
+                # No current year for this partnership, get the last available
+                kwargs['instance'] = partnership.years.last()
+        return PartnershipYearForm(**kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
-    def get_formset_kwargs(self):
-        kwargs = super(PartnershipFormMixin, self).get_form_kwargs()
-        return kwargs
-
     def get_context_data(self, **kwargs):
-        if 'formset_years' not in kwargs:
-            kwargs['formset_years'] = self.get_formset_years()
+        if 'form_year' not in kwargs:
+            kwargs['form_year'] = self.get_form_year()
+        kwargs['current_academic_year'] = current_academic_year()
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
-    def form_invalid(self, form, formset_years):
+    def form_invalid(self, form, form_year):
         messages.error(self.request, _('partnership_error'))
-        return self.render_to_response(self.get_context_data(form=form, formset_years=formset_years))
+        return self.render_to_response(self.get_context_data(form=form, form_year=form_year))
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        formset_years = self.get_formset_years()
-        if form.is_valid():
-            return self.form_valid(form, formset_years)
+        form_year = self.get_form_year()
+        form_year_is_valid = form_year.is_valid()
+        if form.is_valid() and form_year_is_valid:
+            return self.form_valid(form, form_year)
         else:
-            # Do the valid to ensure the errors are calculated
-            formset_years.is_valid()
-            return self.form_invalid(form, formset_years)
+            return self.form_invalid(form, form_year)
 
 
 class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
@@ -929,20 +928,26 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return Partnership.user_can_add(self.request.user)
 
     @transaction.atomic
-    def form_valid(self, form, formset_years):
+    def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
         partnership.author = self.request.user
-
-        # Test for academic_years / start_date
-        formset_years.instance = partnership
-        if not formset_years.is_valid():
-            return self.form_invalid(form, formset_years)
 
         # Resume saving
         partnership.save()
         form.save_m2m()
-        formset_years.instance = partnership
-        formset_years.save()
+
+        # Create years
+        start_year = form_year.cleaned_data['start_academic_year'].year
+        end_year = form_year.cleaned_data['end_academic_year'].year
+        academic_years = find_academic_years(start_year=start_year, end_year=end_year)
+        for academic_year in academic_years:
+            partnership_year = form_year.save(commit=False)
+            partnership_year.id = None  # Force the creation of a new PartnershipYear
+            partnership_year.partnership = partnership
+            partnership_year.academic_year = academic_year
+            partnership_year.save()
+            form_year.save_m2m()
+
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
@@ -961,28 +966,52 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if hasattr(self.object, 'partner'):
-            kwargs['partnership_pk'] = self.object.partner.pk
-        else:
-            kwargs['partnership_pk'] = None
-        return kwargs
-
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
 
     @transaction.atomic
-    def form_valid(self, form, formset_years):
+    def form_valid(self, form, form_year):
         partnership = form.save()
 
-        # Test for academic_years / start_date
-        formset_years.instance = partnership
-        if not formset_years.is_valid():
-            return self.form_invalid(form, formset_years)
+        start_year = form_year.cleaned_data['start_academic_year'].year
+        from_year = form_year.cleaned_data['from_academic_year'].year
+        end_year = form_year.cleaned_data['end_academic_year'].year
 
-        # Resume saving
-        formset_years.save()
+        # Create missing start year if needed
+        first_year = partnership.years.order_by('academic_year__year').select_related('academic_year').first()
+        first_year_education_fields = first_year.education_fields.all()
+        first_year_education_levels = first_year.education_levels.all()
+        first_year_entities = first_year.entities.all()
+        first_year_offers = first_year.offers.all()
+        academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
+        for academic_year in academic_years:
+            first_year.id = None
+            first_year.academic_year = academic_year
+            first_year.save()
+            first_year.education_fields = first_year_education_fields
+            first_year.education_levels = first_year_education_levels
+            first_year.entities = first_year_entities
+            first_year.offers = first_year_offers
+
+        # Update years
+        academic_years = find_academic_years(start_year=from_year, end_year=end_year)
+        for academic_year in academic_years:
+            partnership_year = form_year.save(commit=False)
+            try:
+                partnership_year.pk = PartnershipYear.objects.get(
+                    partnership=partnership, academic_year=academic_year
+                ).pk
+            except PartnershipYear.DoesNotExist:
+                partnership_year.pk = None
+            partnership_year.academic_year = academic_year
+            partnership_year.save()
+            form_year.save_m2m()
+
+        # Delete no longer used years
+        PartnershipYear.objects.filter(partnership=partnership).filter(
+            Q(academic_year__year__lt=start_year) | Q(academic_year__year__gt=end_year)
+        ).delete()
+
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
 
@@ -1038,15 +1067,6 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
             kwargs['form_media'] = self.get_form_media()
         return super(PartnershipAgreementsFormMixin, self).get_context_data(**kwargs)
 
-    def check_partnership_start_date(self, form):
-        if form.cleaned_data['start_academic_year'].year < self.partnership.start_date.year:
-            form.add_error(
-                'start_academic_year',
-                ValidationError(_('partnership_agreement_start_date_before_partnership_error'))
-            )
-            return False
-        return True
-
     def form_invalid(self, form, form_media):
         messages.error(self.request, _('partnership_agreement_error'))
         return self.render_to_response(self.get_context_data(form=form, form_media=form_media))
@@ -1067,8 +1087,6 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 
     @transaction.atomic
     def form_valid(self, form, form_media):
-        if not self.check_partnership_start_date(form):
-            return self.form_invalid(form, form_media)
         media = form_media.save(commit=False)
         media.author = self.request.user
         media.save()
@@ -1094,8 +1112,6 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 
     @transaction.atomic
     def form_valid(self, form, form_media):
-        if not self.check_partnership_start_date(form):
-            return self.form_invalid(form, form_media)
         form_media.save()
         form.save()
         messages.success(self.request, _('partnership_agreement_success'))
@@ -1247,7 +1263,7 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = Partner.objects.all()
-        pk = self.forwarded.get('partnership_pk', None)
+        pk = self.forwarded.get('partner_pk', None)
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         qs = qs.distinct()
@@ -1284,7 +1300,6 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         return sorted(self.get_ucl_universities(), key=lambda x: x.most_recent_acronym)
 
     def get_result_label(self, result):
-        title = result.entityversion_set.latest("start_date").title
         if result.entityversion_set:
             title = result.entityversion_set.latest("start_date").title
         else:
@@ -1314,6 +1329,34 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
     def get_result_label(self, result):
         title = result.entityversion_set.latest("start_date").title
         return '{0.most_recent_acronym} - {1}'.format(result, title)
+
+
+class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.all()
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
+
+    def get_result_label(self, result):
+        try:
+            title = result.entityversion_set.latest("start_date").title
+            return '{0.most_recent_acronym} - {1}'.format(result, title)
+        except EntityVersion.DoesNotExist:
+            return result.most_recent_acronym
+
+
+class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
+
+    def get_result_label(self, result):
+        return '{0.acronym} - {0.title}'.format(result)
 
 
 class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):

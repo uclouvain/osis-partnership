@@ -2,7 +2,10 @@ from django.conf.urls import include, url
 from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                PartnerAutocompleteView, PartnerCreateView,
                                PartnerDetailView,
-                               PartnerEntityAutocompletePartnershipsFilterView,
+                               Partner
+                               
+                               
+                               AutocompletePartnershipsFilterView,
                                PartnerEntityAutocompleteView,
                                PartnerEntityCreateView,
                                PartnerEntityDeleteView,
@@ -33,7 +36,9 @@ from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                UniversityOffersAutocompleteFilterView,
                                UniversityOffersAutocompleteView,
                                EntityAutocompleteView,
-)
+                               PartnershipYearEntitiesAutocompleteView,
+                               PartnershipYearOffersAutocompleteView)
+
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -86,6 +91,8 @@ urlpatterns = [
         url('^ucl_university_labo/$', UclUniversityLaboAutocompleteView.as_view(), name='ucl_university_labo'),
         url('^university_offers/$', UniversityOffersAutocompleteView.as_view(), name='university_offers'),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
+        url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
+        url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
         # Partnerships filter
         url('^partner-partnerships-filter/$', PartnerAutocompletePartnershipsFilterView.as_view(), name='partner_partnerships_filter',),
         url('^partner-entity-partnerships-filter/$', PartnerEntityAutocompletePartnershipsFilterView.as_view(), name='partner_entity_partnerships_filter',),

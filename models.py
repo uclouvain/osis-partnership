@@ -1,17 +1,20 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.models.person import Person
 from django.conf import settings
 from django.db import models
-from django.db.models import Max
+from django.db.models import Max, Min
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+from base.models.academic_year import AcademicYear
+from base.models.education_group_year import EducationGroupYear
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
+from base.models.person import Person
 from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
                                user_is_in_user_faculty)
 
@@ -308,12 +311,6 @@ class Partnership(models.Model):
         blank=True,
         null=True,
     )
-    university_offers = models.ManyToManyField(
-        'base.EducationGroupYear',
-        verbose_name=_('university_offers'),
-        related_name='partnerships',
-        blank=True,
-    )
     supervisor = models.ForeignKey(
         'base.Person',
         verbose_name=_('partnership_supervisor'),
@@ -321,8 +318,6 @@ class Partnership(models.Model):
         blank=True,
         null=True,
     )
-
-    start_date = models.DateField(_('start_date'))
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
@@ -389,6 +384,24 @@ class Partnership(models.Model):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
 
     @cached_property
+    def start_academic_year(self):
+        partnership_year = self.years.order_by('academic_year__year').first()
+        if partnership_year is None:
+            return None
+        return partnership_year.academic_year
+
+    @cached_property
+    def end_academic_year(self):
+        partnership_year = self.years.order_by('academic_year__year').last()
+        if partnership_year is None:
+            return None
+        return partnership_year.academic_year
+
+    @cached_property
+    def start_date(self):
+        return self.years.aggregate(start_date=Min('academic_year__start_date'))['start_date']
+
+    @cached_property
     def end_date(self):
         if not self.validated_agreements.exists():
             return None
@@ -443,7 +456,18 @@ class Partnership(models.Model):
     @cached_property
     def current_year(self):
         now = timezone.now()
-        return self.years.filter(academic_year__start_date__gte=now, academic_year__end_date__lte=now).first()
+        return (
+            self.years
+                .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
+                .prefetch_related('education_fields', 'education_levels')
+                .first()
+        )
+
+    @property
+    def university_offers(self):
+        if self.current_year is None:
+            return EducationGroupYear.objects.none()
+        return self.current_year.offers
 
     @cached_property
     def entities_acronyms(self):
@@ -475,150 +499,29 @@ class Partnership(models.Model):
         return mark_safe(' / '.join(map(add_tooltip, entities)))
 
 
+class PartnershipYearEducationField(models.Model):
+    code = models.CharField(max_length=30, unique=True)
+    label = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ('code',)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.code, self.label)
+
+
+class PartnershipYearEducationLevel(models.Model):
+    code = models.CharField(max_length=30, unique=True)
+    label = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ('code',)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.code, self.label)
+
+
 class PartnershipYear(models.Model):
-    EDUCATION_FIELD_CHOICES = (
-        ('0110', _('0110 - Education, not further defined')),
-        ('0111', _('0111 - Education science')),
-        ('0112', _('0112 - Training for pre-school teachers')),
-        ('0113', _('0113 - Teacher training without subject specialization')),
-        ('0114', _('0114 - Teacher training with subject specialization')),
-        ('0119', _('0119 - Education, not elsewhere classified')),
-        ('0188', _('0188 - Education, inter-disciplinary programmes')),
-        ('0210', _('0210 - Arts, not further defined')),
-        ('0211', _('0211 - Audio-visual techniques and media production')),
-        ('0212', _('0212 - Fashion, interior and industrial design')),
-        ('0213', _('0213 - Fine arts')),
-        ('0214', _('0214 - Handicrafts')),
-        ('0215', _('0215 - Music and performing arts')),
-        ('0219', _('0219 - Arts, not elsewhere classified')),
-        ('0220', _('0220 - Humanities (except languages), not further defined')),
-        ('0221', _('0221 - Religion and theology')),
-        ('0222', _('0222 - History and archaeology')),
-        ('0223', _('0223 - Philosophy and ethics')),
-        ('0229', _('0229 - Humanities (except languages), not elsewhere classified')),
-        ('0230', _('0230 - Languages, not further defined')),
-        ('0231', _('0231 - Language acquisition')),
-        ('0232', _('0232 - Literature and linguistics')),
-        ('0239', _('0239 - Languages, not elsewhere classified')),
-        ('0288', _('0288 - Arts and humanities, inter-disciplinary programmes')),
-        ('0310', _('0310 - Social and behavioural sciences, not further defined')),
-        ('0311', _('0311 - Economics')),
-        ('0312', _('0312 - Political sciences and civics')),
-        ('0313', _('0313 - Psychology')),
-        ('0314', _('0314 - Sociology and cultural studies')),
-        ('0319', _('0319 - Social and behavioural sciences, not elsewhere classified')),
-        ('0320', _('0320 - Journalism and information, not further defined')),
-        ('0321', _('0321 - Journalism and reporting')),
-        ('0322', _('0322 - Library, information and archival studies')),
-        ('0329', _('0329 - Journalism and information, not elsewhere classified')),
-        ('0388', _('0388 - Social sciences, journalism and information, inter-disciplinary programmes')),
-        ('0410', _('0410 - Business and administration, not further defined')),
-        ('0411', _('0411 - Accounting and taxation')),
-        ('0412', _('0412 - Finance, banking and insurance')),
-        ('0413', _('0413 - Management and administration')),
-        ('0414', _('0414 - Marketing and advertising')),
-        ('0415', _('0415 - Secretarial and office work')),
-        ('0416', _('0416 - Wholesale and retail sales')),
-        ('0417', _('0417 - Work skills')),
-        ('0419', _('0419 - Business and administration, not elsewhere classified')),
-        ('0421', _('0421 - Law')),
-        ('0429', _('0429 - Law, not elsewhere classified')),
-        ('0488', _('0488 - Business, administration and law, inter-disciplinary programmes')),
-        ('0510', _('0510 - Biological and related sciences, not further defined')),
-        ('0511', _('0511 - Biology')),
-        ('0512', _('0512 - Biochemistry')),
-        ('0519', _('0519 - Biological and related sciences, not elsewhere classifed')),
-        ('0520', _('0520 - Environment, not further defined')),
-        ('0521', _('0521 - Environmental sciences')),
-        ('0522', _('0522 - Natural environments and wildlife')),
-        ('0529', _('0529 - Environment, not elsewhere classified')),
-        ('0530', _('0530 - Physical sciences, not further defined')),
-        ('0531', _('0531 - Chemistry')),
-        ('0532', _('0532 - Earth sciences')),
-        ('0533', _('0533 - Physics')),
-        ('0539', _('0539 - Physical sciences, not elsewhere classified')),
-        ('0540', _('0540 - Mathematics and statistics, not further defined')),
-        ('0541', _('0541 - Mathematics')),
-        ('0542', _('0542 - Statistics')),
-        ('0549', _('0549 - Mathematics and statistics, not elsewhere classified')),
-        ('0588', _('0588 - Natural sciences, mathematics and statistics, inter-disciplinary programmes')),
-        ('0610', _('0610 - Information and Communication Technologies (ICTs), not further defined')),
-        ('0611', _('0611 - Computer use')),
-        ('0612', _('0612 - Database and network design and administration')),
-        ('0613', _('0613 - Software and applications development and analysis')),
-        ('0619', _('0619 - Information and Communication Technologies (ICTs), not elsewhere classified')),
-        ('0688', _('0688 - Information and Communication Technologies (ICTs), inter-disciplinary programmes')),
-        ('0710', _('0710 - Engineering and engineering trades, not further defined')),
-        ('0711', _('0711 - Chemical engineering and processes')),
-        ('0712', _('0712 - Environmental protection technology')),
-        ('0713', _('0713 - Electricity and energy')),
-        ('0714', _('0714 - Electronics and automation')),
-        ('0715', _('0715 - Mechanics and metal trades')),
-        ('0716', _('0716 - Motor vehicles, ships and aircraft')),
-        ('0719', _('0719 - Engineering and engineering trades, not elsewhere classified')),
-        ('0720', _('0720 - Manufacturing and processing, not further defined')),
-        ('0721', _('0721 - Food processing')),
-        ('0722', _('0722 - Materials (glass, paper, plastic and wood)')),
-        ('0723', _('0723 - Textiles (clothes, footwear and leather)')),
-        ('0724', _('0724 - Mining and extraction')),
-        ('0729', _('0729 - Manufacturing and processing, not elsewhere classified')),
-        ('0730', _('0730 - Architecture and construction, not further defined')),
-        ('0731', _('0731 - Architecture and town planning')),
-        ('0732', _('0732 - Building and civil engineering')),
-        ('0739', _('0739 - Architecture and construction, not elsewhere classified')),
-        ('0788', _('0788 - Engineering, manufacturing and construction, inter-disciplinary programmes')),
-        ('0810', _('0810 - Agriculture, not further defined')),
-        ('0811', _('0811 - Crop and livestock production')),
-        ('0812', _('0812 - Horticulture')),
-        ('0819', _('0819 - Agriculture, not elsewhere classified')),
-        ('0821', _('0821 - Forestry')),
-        ('0829', _('0829 - Forestry, not elsewhere classified')),
-        ('0831', _('0831 - Fisheries')),
-        ('0839', _('0839 - Fisheries, not elsewhere classified')),
-        ('0841', _('0841 - Veterinary')),
-        ('0849', _('0849 - Veterinary, not elsewhere classified')),
-        ('0888', _('0888 - Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes')),
-        ('0910', _('0910 - Health, not further defined')),
-        ('0911', _('0911 - Dental studies')),
-        ('0912', _('0912 - Medicine')),
-        ('0913', _('0913 - Nursing and midwifery')),
-        ('0914', _('0914 - Medical diagnostic and treatment technology')),
-        ('0915', _('0915 - Therapy and rehabilitation')),
-        ('0916', _('0916 - Pharmacy')),
-        ('0917', _('0917 - Traditional and complementary medicine and therapy')),
-        ('0919', _('0919 - Health, not elsewhere classified')),
-        ('0920', _('0920 - Welfare, not further defined')),
-        ('0921', _('0921 - Care of the elderly and of disabled adults')),
-        ('0922', _('0922 - Child care and youth services')),
-        ('0923', _('0923 - Social work and counselling')),
-        ('0929', _('0929 - Welfare, not elsewhere classified')),
-        ('0988', _('0988 - Health and Welfare, inter-disciplinary programmes')),
-        ('1010', _('1010 - Personal services, not further defined')),
-        ('1011', _('1011 - Domestic services')),
-        ('1012', _('1012 - Hair and beauty services')),
-        ('1013', _('1013 - Hotel, restaurants and catering')),
-        ('1014', _('1014 - Sports')),
-        ('1015', _('1015 - Travel, tourism and leisure')),
-        ('1019', _('1019 - Personal services, not elsewhere classified')),
-        ('1020', _('1020 - Hygiene and occupational health services, not further defined')),
-        ('1021', _('1021 - Community sanitation')),
-        ('1022', _('1022 - Occupational health and safety')),
-        ('1029', _('1029 - Hygiene and occupational health services, not elsewhere classified')),
-        ('1030', _('1030 - Security services, not further defined')),
-        ('1031', _('1031 - Military and defence')),
-        ('1032', _('1032 - Protection of persons and property')),
-        ('1039', _('1039 - Security services, not elsewhere classified')),
-        ('1041', _('1041 - Transport services')),
-        ('1049', _('1049 - Transport services, not elsewhere classified')),
-        ('1088', _('1088 - Services, inter-disciplinary programmes')),
-    )
-    EDUCATION_LEVEL_CHOICES = (
-        ('ISCED-5', _('Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)')),
-        ('ISCED-6', _('First cycle / Bachelor’s or equivalent level (EQF-6)')),
-        ('ISCED-7', _('Second cycle / Master’s or equivalent level (EQF-7)')),
-        ('ISCED-8', _('Third cycle / Doctoral or equivalent level (EQF-8)')),
-        ('ISCED-9', _('Not elsewhere classified')),
-    )
     TYPE_MOBILITY = 'mobility'
     TYPE_CHOICES = (
         ('intention', _('Déclaration d’intention')),
@@ -643,17 +546,27 @@ class PartnershipYear(models.Model):
         on_delete=models.PROTECT,
         related_name='+',
     )
-    education_field = models.CharField(
-        _('education_field'),
-        max_length=255,
-        choices=EDUCATION_FIELD_CHOICES,
+    education_fields = models.ManyToManyField(
+        PartnershipYearEducationField,
+        verbose_name=_('partnership_year_education_fields'),
+        blank=False,
     )
-    education_level = models.CharField(
-        _('education_level'),
-        max_length=255,
-        choices=EDUCATION_LEVEL_CHOICES,
+    education_levels = models.ManyToManyField(
+        PartnershipYearEducationLevel,
+        verbose_name=_('partnership_year_education_levels'),
         blank=True,
-        null=True,
+    )
+    entities = models.ManyToManyField(
+        'base.Entity',
+        verbose_name=_('partnership_year_entities'),
+        related_name='+',
+        blank=True,
+    )
+    offers = models.ManyToManyField(
+        'base.EducationGroupYear',
+        verbose_name=_('partnership_year_offers'),
+        related_name='partnerships',
+        blank=True,
     )
     is_sms = models.BooleanField(_('is_sms'), default=False, blank=True)
     is_smp = models.BooleanField(_('is_smp'), default=False, blank=True)
@@ -680,6 +593,19 @@ class PartnershipYear(models.Model):
             if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
                 return True
         return False
+
+    @cached_property
+    def planned_activity(self):
+        activities = []
+        if self.is_sms:
+            activities.append('SMS')
+        if self.is_smp:
+            activities.append('SMP')
+        if self.is_sta:
+            activities.append('STA')
+        if self.is_stt:
+            activities.append('STT')
+        return ', '.join(activities)
 
 
 class PartnershipAgreement(models.Model):
@@ -817,6 +743,28 @@ class PartnershipConfiguration(models.Model):
             return PartnershipConfiguration.objects.get()
         except PartnershipConfiguration.DoesNotExist:
             return PartnershipConfiguration.objects.create()
+
+    def get_current_academic_year_for_creation(self):
+        limit_date = date(
+            date.today().year,
+            self.partnership_creation_max_date_month,
+            self.partnership_creation_max_date_day,
+        )
+        if date.today() < limit_date:
+            return AcademicYear.objects.filter(year=date.today().year + 1).first()
+        else:
+            return AcademicYear.objects.filter(year=date.today().year + 2).first()
+
+    def get_current_academic_year_for_modification(self):
+        limit_date = date(
+            date.today().year,
+            self.partnership_update_max_date_month,
+            self.partnership_update_max_date_day,
+        )
+        if date.today() < limit_date:
+            return AcademicYear.objects.filter(year=date.today().year).first()
+        else:
+            return AcademicYear.objects.filter(year=date.today().year + 1).first()
 
 
 class UCLManagementEntity(models.Model):
