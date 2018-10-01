@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Value, When)
@@ -861,7 +862,6 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'ucl_university_labo', 'author'
             )
             .prefetch_related(
-                'contacts',
                 'tags',
                 Prefetch(
                     'university_offers',
@@ -1172,12 +1172,23 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
         )
         return result
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 
 class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.partnership:
+            raise PermissionDenied
+        return super().dispatch(*args, **kwargs)
 
     def test_func(self):
         result = user_is_adri(self.request.user)
