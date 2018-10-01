@@ -335,10 +335,12 @@ class Partnership(models.Model):
         blank=True,
     )
 
+    start_date = models.DateField(_('start_date'))
+
     ucl_management_entity = models.ForeignKey(
         'partnership.UCLManagementEntity',
         verbose_name=_('ucl_management_entity'),
-        related_name='+',
+        related_name='partnership',
         blank=True,
         null=True,
     )

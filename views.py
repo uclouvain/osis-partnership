@@ -6,8 +6,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet)
+from django.core.exceptions import PermissionDenied
+from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet, Value, When)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -860,7 +861,6 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
                 'ucl_university_labo', 'author'
             )
             .prefetch_related(
-                'contacts',
                 'tags',
                 Prefetch(
                     'years',
@@ -1191,12 +1191,23 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
         )
         return result
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 
 class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.partnership:
+            raise PermissionDenied
+        return super().dispatch(*args, **kwargs)
 
     def test_func(self):
         result = user_is_adri(self.request.user)
