@@ -671,6 +671,7 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university',
             'ucl_university_labo',
             'university_offers',
+            'ucl_management_entity',
             'comment',
             'tags',
         )
