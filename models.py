@@ -282,6 +282,15 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
+    external_id = models.CharField(
+        _('external_id'),
+        help_text=_('to_synchronize_with_epc'),
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+
     partner = models.ForeignKey(
         Partner,
         verbose_name=_('partner'),
