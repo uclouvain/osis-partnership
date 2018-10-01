@@ -660,11 +660,9 @@ class PartnershipForm(forms.ModelForm):
         fields = (
             'partner',
             'partner_entity',
-
             'ucl_university',
             'ucl_university_labo',
             'supervisor',
-
             'comment',
             'tags',
         )

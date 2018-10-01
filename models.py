@@ -335,6 +335,14 @@ class Partnership(models.Model):
         blank=True,
     )
 
+    ucl_management_entity = models.ForeignKey(
+        'partnership.UCLManagementEntity',
+        verbose_name=_('ucl_management_entity'),
+        related_name='+',
+        blank=True,
+        null=True,
+    )
+
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
         'partnership.PartnershipTag',
@@ -809,6 +817,10 @@ class UCLManagementEntity(models.Model):
 
     def get_absolute_url(self):
         return reverse('partnerships:ucl_management_entities:detail', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return ("{} - {}, {}".format(self.academic_responsible, self.contact_in_person, self.contact_out_person))
+
 
 ##### FIXME Generic Model which should be moved to a more generic app
 

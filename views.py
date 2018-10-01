@@ -1162,7 +1162,6 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
         return result
 
     def get_queryset(self):
-        #import pdb; pdb.set_trace()
         if not user_is_adri(self.request.user):
             return super().get_queryset().filter(
                 faculty__entitymanager__person__user=self.request.user
@@ -1190,7 +1189,6 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
         result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
             self.request.user, self.object.faculty
         )
-        import pdb; pdb.set_trace()
         return result
 
 
