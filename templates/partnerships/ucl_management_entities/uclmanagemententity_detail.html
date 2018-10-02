@@ -9,16 +9,21 @@
 {% block content %}
   <div class="page-header">
     <h1>{{ ucl_management_entity }}</h1>
-    {% if can_change_ucl_management_entity %}
-      <a href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'Edit' %}</a>
-    {% endif %}
-    {% if can_delete_ucl_management_entity %}
-      <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'Delete' %}</a>
-    {% endif %}
   </div>
 
   <div class="panel panel-default">
     <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          {% if can_change_ucl_management_entity %}
+            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'Edit' %}</a>
+          {% endif %}
+          {% if can_delete_ucl_management_entity %}
+            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'Delete' %}</a>
+          {% endif %}
+        </div>
+      </div>
+
       <!-- UCL Management Entity -->
       <div class="row">
         <div class="col-12">
