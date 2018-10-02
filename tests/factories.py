@@ -3,11 +3,21 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
-from partnership.models import (Address, Contact, ContactType, Media, Partner,
-                                PartnerEntity, Partnership,
-                                PartnershipAgreement, PartnershipTag,
-                                PartnershipYear, PartnerTag, PartnerType,
-                                UCLManagementEntity)
+from partnership.models import (
+    Address,
+    Contact,
+    ContactType,
+    Media,
+    Partner,
+    PartnerEntity,
+    Partnership,
+    PartnershipAgreement,
+    PartnershipTag,
+    PartnershipYear,
+    PartnerTag,
+    PartnerType,
+    UCLManagementEntity,
+)
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
