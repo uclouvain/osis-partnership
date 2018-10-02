@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-25 17:36+0200\n"
+"POT-Creation-Date: 2018-10-02 11:49+0200\n"
 "PO-Revision-Date: 2018-07-26 17:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -366,6 +366,9 @@ msgid "start_date"
 msgstr ""
 
 msgid "contacts"
+msgstr ""
+
+msgid "ucl_management_entity"
 msgstr ""
 
 msgid "can_access_partnerships"
@@ -919,6 +922,21 @@ msgstr ""
 msgid "partnership_update_max_date_month"
 msgstr ""
 
+msgid "faculty"
+msgstr ""
+
+msgid "entity"
+msgstr ""
+
+msgid "academic_responsible"
+msgstr ""
+
+msgid "administrative_responsible"
+msgstr ""
+
+msgid "portal"
+msgstr ""
+
 msgid "countries"
 msgstr ""
 
@@ -1049,6 +1067,11 @@ msgstr ""
 
 msgid "add_partner"
 msgstr ""
+
+#, fuzzy
+#| msgid "contact_type"
+msgid "contact"
+msgstr "contact type"
 
 msgid "UCL"
 msgstr ""
@@ -1213,40 +1236,84 @@ msgstr ""
 msgid "ucl_management_form"
 msgstr ""
 
+msgid "ucl_management_entities"
+msgstr ""
+
+msgid "create_uclmanagemententity"
+msgstr ""
+
 msgid "add_uclmanagemententity"
 msgstr ""
 
-msgid "edit"
+msgid "create_ucl_management_entity"
 msgstr ""
 
-msgid "delete"
+msgid "ucl_management_entities_list"
 msgstr ""
 
-msgid "ucl_management_entity"
+msgid "delete_uclmanademententity"
 msgstr ""
 
-msgid "faculty"
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr ""
 
-msgid "entity"
+msgid "delete_ucl_management_entity"
 msgstr ""
 
-msgid "academic_respondent"
+msgid "Ucl_management_entities"
 msgstr ""
 
-msgid "administrative_responsible"
+msgid "Edit"
 msgstr ""
 
-msgid "portail"
+msgid "Delete"
 msgstr ""
 
-msgid "ucl_management_entities"
+msgid "Ucl_management_entity"
+msgstr ""
+
+msgid "Faculty"
+msgstr ""
+
+msgid "Entity"
+msgstr ""
+
+msgid "Academic_responsible"
+msgstr ""
+
+msgid "Administrative_responsible"
+msgstr ""
+
+#, fuzzy
+#| msgid "contact_title"
+msgid "Contact_in"
+msgstr "title"
+
+msgid "Email"
+msgstr ""
+
+msgid "Portail"
+msgstr ""
+
+#, fuzzy
+#| msgid "contact_type"
+msgid "Contact_out"
+msgstr "contact type"
+
+msgid "uclmanademententities"
 msgstr ""
 
 msgid "add_ucl_management_entity"
 msgstr ""
 
+msgid "update_uclmanademententity"
+msgstr ""
+
 msgid "edit_uclmanagemententity"
+msgstr ""
+
+msgid "update_ucl_management_entity"
 msgstr ""
 
 msgid "id"
