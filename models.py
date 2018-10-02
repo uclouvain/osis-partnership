@@ -997,6 +997,27 @@ class Financing(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.academic_year, self.name)
 
+    def get_absolute_url(self):
+        return reverse('partnerships:financings:detail', kwargs={'pk': self.pk})
+
+    def user_can_change(self, user):
+        return True
+
+    def user_can_delete(self, user):
+        return True
+
+    @classmethod
+    def user_can_add(self, user):
+        return True
+
+    @classmethod
+    def user_can_import(self, user):
+        return True
+
+    @classmethod
+    def user_can_export(self, user):
+        return True
+
 
 class ContactType(models.Model):
     value = models.CharField(max_length=255, unique=True)
