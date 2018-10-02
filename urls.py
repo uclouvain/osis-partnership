@@ -1,5 +1,7 @@
 from django.conf.urls import include, url
-from partnership.views import (PartnerAutocompletePartnershipsFilterView,
+
+from partnership.views import (EntityAutocompleteView,
+                               PartnerAutocompletePartnershipsFilterView,
                                PartnerAutocompleteView, PartnerCreateView,
                                PartnerDetailView,
                                PartnerEntityAutocompletePartnershipsFilterView,
@@ -20,12 +22,12 @@ from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                PartneshipAgreementDeleteView,
                                PartneshipAgreementUpdateView,
                                PartneshipConfigurationUpdateView,
-                               UCLManagementEntityListView,
+                               PersonAutocompleteView, SimilarPartnerView,
                                UCLManagementEntityCreateView,
-                               UCLManagementEntityUpdateView,
                                UCLManagementEntityDeleteView,
                                UCLManagementEntityDetailView,
-                               PersonAutocompleteView, SimilarPartnerView,
+                               UCLManagementEntityListView,
+                               UCLManagementEntityUpdateView,
                                UclUniversityAutocompleteFilterView,
                                UclUniversityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
@@ -35,8 +37,8 @@ from partnership.views import (PartnerAutocompletePartnershipsFilterView,
                                PartnershipYearEntitiesAutocompleteView,
                                PartnershipYearOffersAutocompleteView,
                                FacultyAutocompleteView,
-                               EntityAutocompleteView)
-
+                               EntityAutocompleteView,
+                               UniversityOffersAutocompleteView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -46,9 +48,9 @@ urlpatterns = [
     url(r'^create/$', PartnershipCreateView.as_view(), name="create"),
     url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="update"),
     url(r'^(?P<partnership_pk>\d+)/contacts/', include([
-        url('^new/$', PartnershipContactCreateView.as_view(), name="create"),
-        url('^(?P<pk>\d+)/update/$', PartnershipContactUpdateView.as_view(), name="update"),
-        url('^(?P<pk>\d+)/delete/$', PartnershipContactDeleteView.as_view(), name="delete"),
+        url(r'^new/$', PartnershipContactCreateView.as_view(), name="create"),
+        url(r'^(?P<pk>\d+)/update/$', PartnershipContactUpdateView.as_view(), name="update"),
+        url(r'^(?P<pk>\d+)/delete/$', PartnershipContactDeleteView.as_view(), name="delete"),
     ], namespace='contacts')),
     url(r'^(?P<partnership_pk>\d+)/agreements/', include([
         url(r'^(?P<pk>\d+)/delete/$', PartneshipAgreementDeleteView.as_view(), name="delete"),
@@ -62,12 +64,12 @@ urlpatterns = [
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),
         url(r'^(?P<pk>\d+)/update/$', PartnerUpdateView.as_view(), name="update"),
         url(r'^(?P<partner_pk>\d+)/medias/', include([
-            url('^new/$', PartnerMediaCreateView.as_view(), name="create"),
+            url(r'^new/$', PartnerMediaCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerMediaUpdateView.as_view(), name="update"),
             url(r'^(?P<pk>\d+)/delete/$', PartnerMediaDeleteView.as_view(), name="delete"),
         ], namespace='medias')),
         url(r'^(?P<partner_pk>\d+)/entities/', include([
-            url('^new/$', PartnerEntityCreateView.as_view(), name="create"),
+            url(r'^new/$', PartnerEntityCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerEntityUpdateView.as_view(), name="update"),
             url(r'^(?P<pk>\d+)/delete/$', PartnerEntityDeleteView.as_view(), name="delete"),
         ], namespace='entities')),
@@ -93,10 +95,30 @@ urlpatterns = [
         url('^faculty/$', FacultyAutocompleteView.as_view(), name='faculty'),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
-        url('^partner-partnerships-filter/$', PartnerAutocompletePartnershipsFilterView.as_view(), name='partner_partnerships_filter',),
-        url('^partner-entity-partnerships-filter/$', PartnerEntityAutocompletePartnershipsFilterView.as_view(), name='partner_entity_partnerships_filter',),
-        url('^ucl_university_filter/$', UclUniversityAutocompleteFilterView.as_view(), name='ucl_university_filter'),
-        url('^ucl_university_labo_filter/$', UclUniversityLaboAutocompleteFilterView.as_view(), name='ucl_university_labo_filter'),
-        url('^university_offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
+        url(
+            r'^partner-partnerships-filter/$',
+            PartnerAutocompletePartnershipsFilterView.as_view(),
+            name='partner_partnerships_filter',
+        ),
+        url(
+            r'^partner-entity-partnerships-filter/$',
+            PartnerEntityAutocompletePartnershipsFilterView.as_view(),
+            name='partner_entity_partnerships_filter',
+        ),
+        url(
+            r'^ucl_university_filter/$',
+            UclUniversityAutocompleteFilterView.as_view(),
+            name='ucl_university_filter',
+        ),
+        url(
+            r'^ucl_university_labo_filter/$',
+            UclUniversityLaboAutocompleteFilterView.as_view(),
+            name='ucl_university_labo_filter',
+        ),
+        url(
+            r'^university_offers_filter/$',
+            UniversityOffersAutocompleteFilterView.as_view(),
+            name='university_offers_filter',
+        ),
     ], namespace='autocomplete')),
 ]

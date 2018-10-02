@@ -1,6 +1,7 @@
-from base.tests.factories.user import UserFactory
 from django.test import TestCase
 from django.urls import reverse
+
+from base.tests.factories.user import UserFactory
 from partnership.tests.factories import PartnershipFactory
 
 

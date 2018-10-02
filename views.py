@@ -4,9 +4,8 @@ from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.core.exceptions import PermissionDenied
 from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Value, When)
 from django.db.models.functions import Now
@@ -799,7 +798,8 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                 str(partnership.partner),
                 str(partnership.partner_entity) if partnership.partner_entity else None,
                 str(partnership.ucl_university.entityversion_set.all()[0]),
-                str(partnership.ucl_university_labo.entityversion_set.all()[0]) if partnership.ucl_university_labo else '',
+                str(partnership.ucl_university_labo.entityversion_set.all()[0])
+                if partnership.ucl_university_labo else '',
                 ', '.join(map(str, partnership.university_offers.all())),
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
                 partnership.start_date.strftime('%Y-%m-%d'),
@@ -1169,6 +1169,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
             )
         return super().get_queryset()
 
+
 class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
@@ -1234,6 +1235,7 @@ class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, Det
         return context
 
 # Autocompletes
+
 
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 

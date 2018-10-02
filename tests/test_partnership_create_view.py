@@ -3,6 +3,9 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
+from django.test import TestCase
+from django.urls import reverse
+
 from base.models.enums.entity_type import FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
@@ -11,6 +14,7 @@ from base.tests.factories.entity_manager import EntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import ContactType
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipYearEducationFieldFactory,
                                          PartnershipYearEducationLevelFactory)
