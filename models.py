@@ -482,6 +482,13 @@ class Partnership(models.Model):
 
         return mark_safe(' / '.join(map(add_tooltip, entities)))
 
+    def get_supervisor(self):
+        if self.supervisor:
+            return self.supervisor
+        if self.ucl_management_entity:
+            return self.ucl_management_entity.academic_responsible
+        return None
+
 
 class PartnershipYear(models.Model):
     EDUCATION_FIELD_CHOICES = (

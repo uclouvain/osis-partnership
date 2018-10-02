@@ -16,10 +16,22 @@
     <div class="panel-body">
       <!-- UCL Management Entity -->
       <div class="row">
-        <div class="col-12">
+
+        <div class="col-sm-offset-3 col-sm-6">
+
           <form method="post">{% csrf_token %}
-            <p>Are you sure you want to delete "{{ object }}"?</p>
-            <input type="submit" value="Confirm">
+
+            <p>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
+
+            <div class="row button-row">
+              <div class="col-sm-6">
+                <a href="{{ ucl_management_entity.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+              </div>
+              <div class="col-sm-6">
+                <button type="submit" class="btn btn-primary btn-block">{% trans "delete_ucl_management_entity" %}</button>
+              </div>
+            </div>
+
           </form>
         </div>
       </div>
