@@ -9,7 +9,6 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
@@ -292,13 +291,13 @@ class Partnership(models.Model):
     )
 
     partner = models.ForeignKey(
-        'partnership.Partner',
+        Partner,
         verbose_name=_('partner'),
         on_delete=models.PROTECT,
         related_name='partnerships',
     )
     partner_entity = models.ForeignKey(
-        'partnership.PartnerEntity',
+        PartnerEntity,
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
@@ -354,7 +353,7 @@ class Partnership(models.Model):
 
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
-        'partnership.PartnershipTag',
+        PartnershipTag,
         verbose_name=_('tags'),
         related_name='partnerships',
         blank=True,
@@ -810,7 +809,8 @@ class UCLManagementEntity(models.Model):
     contact_in_person = models.ForeignKey(
         'base.Person',
         related_name='+',
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_("name"),
     )
     contact_in_email = models.EmailField(
@@ -841,10 +841,17 @@ class UCLManagementEntity(models.Model):
     )
 
     def get_absolute_url(self):
-        return reverse('partnerships:ucl_management_entities:detail', kwargs={'pk': self.pk})
+        return reverse(
+            'partnerships:ucl_management_entities:detail',
+            kwargs={'pk': self.pk}
+        )
 
     def __str__(self):
-        return ("{} - {}, {}".format(self.academic_responsible, self.contact_in_person, self.contact_out_person))
+        return ("{} - {}, {}".format(
+            self.academic_responsible,
+            self.contact_in_person,
+            self.contact_out_person
+        ))
 
     def user_can_change(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)

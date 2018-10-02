@@ -3,7 +3,6 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
-
 from base.tests.factories.academic_year import get_current_year
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership,
