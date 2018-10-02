@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static %}
+
+{% block breadcrumb %}
+  <li class="active">{% trans "financings" %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>
+      {% trans 'financings' %}
+    </h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="pull-right">
+            {% if can_add_financing %}
+              <a class="btn btn-default" type="button"
+                 href="{% url "partnerships:financings:create" %}">
+                <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "add_financing" %}</span></a>
+            {% endif %}
+            {% if can_import_financing %}
+              <a class="btn btn-danger" type="button"
+                 href="#" %}">
+                <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "import_financing" %}</span></a>
+            {% endif %}
+            {% if can_export_financing %}
+              <a class="btn btn-danger" type="button"
+                 href="#" %}">
+                <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "export_financing" %}</span></a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div id="results">
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover">
+            <thead>
+              <tr>
+                <td>{% trans 'name' %}</td>
+                <td>{% trans 'url' %}</td>
+                <td>{% trans 'countries' %}</td>
+                <td>{% trans 'academic_year' %}</td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for financing in financings %}
+                <tr>
+                  <td>{{ financing.name }}</td>
+                  <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
+                  <td>
+                    {% for country in financing.countries.all %}
+                      {{ country.iso_code }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                      {% trans "no_country_yet" %}
+                    {% endfor %}
+                  </td>
+                  <td>{{ financing.academic_year }}</td>
+                  <td>
+                    <a href="{{ financing.get_absolute_url }}" class="btn btn-default">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

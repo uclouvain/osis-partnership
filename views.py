@@ -32,10 +32,10 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
                                PartnershipYearInlineFormset,
-                               UCLManagementEntityForm)
+                               UCLManagementEntityForm, FinancingForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear, UCLManagementEntity)
+                                PartnershipYear, UCLManagementEntity, Financing)
 from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
 
 
@@ -1150,6 +1150,11 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
             )
         return super().get_queryset()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_add_ucl_management_entity'] = self.object.user_can_add(self.request.user)
+        return context
+
 
 class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = UCLManagementEntity
@@ -1214,6 +1219,55 @@ class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, Det
         context['can_change_ucl_management_entity'] = self.object.user_can_change(self.request.user)
         context['can_delete_ucl_management_entity'] = self.object.user_can_delete(self.request.user)
         return context
+
+
+# Financing views :
+
+
+class FinancingCreateView(LoginRequiredMixin, CreateView):
+    model = Financing
+    template_name = "partnerships/financings/financing_create.html"
+    form_class = FinancingForm
+
+
+class FinancingDetailView(LoginRequiredMixin, DetailView):
+    model = Financing
+    template_name = "partnerships/financings/financing_detail.html"
+    context_object_name = "financing"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_change_financing'] = self.object.user_can_change(self.request.user)
+        context['can_delete_financing'] = self.object.user_can_delete(self.request.user)
+        return context
+
+
+class FinancingUpdateView(LoginRequiredMixin, UpdateView):
+    model = Financing
+    template_name = "partnerships/financings/financing_update.html"
+    form_class = FinancingForm
+    context_object_name = "financing"
+
+
+class FinancingDeleteView(LoginRequiredMixin, DeleteView):
+    model = Financing
+    template_name = "partnerships/financings/financing_delete.html"
+    context_object_name = "financing"
+    success_url = reverse_lazy('partnerships:financings:list')
+
+
+class FinancingListView(LoginRequiredMixin, ListView):
+    model = Financing
+    template_name = "partnerships/financings/financing_list.html"
+    context_object_name = "financings"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_add_financing'] = Financing.user_can_add(self.request.user)
+        context['can_import_financing'] = Financing.user_can_import(self.request.user)
+        context['can_export_financing'] = Financing.user_can_export(self.request.user)
+        return context
+
 
 # Autocompletes
 

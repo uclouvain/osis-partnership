@@ -27,6 +27,12 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="pull-right">
+              <a class="btn btn-default" type="button"
+                 href="{% url "partnerships:partners:list" %}"><span class="hidden-xs">{% trans "partners" %}</span>
+              </a>
+              <a class="btn btn-default" type="button"
+                 href="{% url "partnerships:ucl_management_entities:list" %}"><span class="hidden-xs">{% trans "ucl_management_entities" %}</span>
+              </a>
               {% if can_change_configuration %}
               <a class="btn btn-default" type="button"
                  href="{% url "partnerships:configuration_update" %}">
