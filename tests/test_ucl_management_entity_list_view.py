@@ -1,14 +1,16 @@
-from base.tests.factories.entity_version import EntityVersionFactory
+from django.test import TestCase
+from django.urls import reverse
+
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_manager import EntityManagerFactory
+from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person_entity import PersonEntityFactory
-from django.test import TestCase
-from partnership.tests.factories import UCLManagementEntityFactory
 from base.tests.factories.user import UserFactory
-from django.urls import reverse
+from partnership.tests.factories import UCLManagementEntityFactory
 
 GF_UME_NUMBER = 3
 OTHER_GF_UME_NUMBER = 7
+
 
 class UCLManagementEntitiesListViewTest(TestCase):
 

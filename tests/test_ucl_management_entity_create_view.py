@@ -1,13 +1,13 @@
 from django.test import TestCase
 from django.urls import reverse
-from base.tests.factories.user import UserFactory
-from base.tests.factories.entity import EntityFactory
-from base.tests.factories.person import PersonFactory
-from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
-from base.tests.factories.person_entity import PersonEntityFactory
+
 from base.models.enums.entity_type import FACULTY
-from django.urls import reverse
+from base.tests.factories.entity import EntityFactory
+from base.tests.factories.entity_manager import EntityManagerFactory
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
+from base.tests.factories.person_entity import PersonEntityFactory
+from base.tests.factories.user import UserFactory
 
 
 class UCLManagementEntityCreateViewTest(TestCase):

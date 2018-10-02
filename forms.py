@@ -1,16 +1,17 @@
 from datetime import date
 
-from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.academic_year import AcademicYear
-from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
-from base.models.person import Person
 from dal import autocomplete, forward
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import BaseInlineFormSet, inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
+
+from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
+from base.models.academic_year import AcademicYear
+from base.models.education_group_year import EducationGroupYear
+from base.models.entity import Entity
+from base.models.person import Person
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
@@ -885,6 +886,7 @@ class PartnershipConfigurationForm(forms.ModelForm):
                 ValidationError(_('invalid_partnership_update_max_date'))
             )
         return self.cleaned_data
+
 
 class UCLManagementEntityForm(forms.ModelForm):
 

@@ -1,14 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
-from base.tests.factories.user import UserFactory
-from base.tests.factories.entity import EntityFactory
-from base.tests.factories.person import PersonFactory
-from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
-from base.tests.factories.person_entity import PersonEntityFactory
+
 from base.models.enums.entity_type import FACULTY
-from partnership.tests.factories import UCLManagementEntityFactory, PartnershipFactory
-from django.urls import reverse
+from base.tests.factories.entity import EntityFactory
+from base.tests.factories.entity_manager import EntityManagerFactory
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
+from base.tests.factories.person_entity import PersonEntityFactory
+from base.tests.factories.user import UserFactory
+from partnership.tests.factories import (PartnershipFactory,
+                                         UCLManagementEntityFactory)
 
 
 class UCLManagementEntityUpdateViewTest(TestCase):
@@ -75,7 +76,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
         self.assertTemplateUsed(response, 'registration/login.html')
-
 
     def test_get_view_gf_user(self):
         self.client.force_login(self.gf_user)
@@ -223,7 +223,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         self.assertEqual(
             response.context_data['ucl_management_entity'].academic_responsible.pk,
             data['academic_responsible']
-       )
+        )
         self.assertEqual(
             response.context_data['ucl_management_entity'].administrative_responsible.pk,
             data['administrative_responsible']

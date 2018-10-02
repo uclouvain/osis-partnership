@@ -1,13 +1,16 @@
 from django.test import TestCase
 from django.urls import reverse
-from partnership.tests.factories import UCLManagementEntityFactory, PartnershipFactory
-from base.tests.factories.user import UserFactory
+
 from base.tests.factories.entity import EntityFactory
-from base.tests.factories.person import PersonFactory
-from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.entity_manager import EntityManagerFactory
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
 from base.tests.factories.person_entity import PersonEntityFactory
+from base.tests.factories.user import UserFactory
 from partnership.models import UCLManagementEntity
+from partnership.tests.factories import (PartnershipFactory,
+                                         UCLManagementEntityFactory)
+
 
 class UCLManagementEntityDeleteViewTest(TestCase):
 
