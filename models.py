@@ -628,6 +628,16 @@ class PartnershipAgreement(models.Model):
         (STATUS_REFUSED, _('status_refused')),
     )
 
+    external_id = models.CharField(
+        _('external_id'),
+        help_text=_('to_synchronize_with_epc'),
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    changed = models.DateField(_('changed'), auto_now=True, editable=False)
+
     partnership = models.ForeignKey(
         Partnership,
         verbose_name=_('partnership'),

@@ -6,11 +6,11 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
-from base.models.academic_year import current_academic_year
+from base.models.academic_year import current_academic_year, AcademicYear
 from base.models.entity import Entity
 from base.models.person import Person
 from partnership.models import Address, Media, Partner, PartnerType, Partnership, PartnershipYear, \
-    PartnershipYearEducationField
+    PartnershipYearEducationField, PartnershipAgreement
 from reference.models.country import Country
 
 COUNTRIES_OLD_TO_ISO = {
@@ -152,7 +152,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Init
-        csv_filepath = options['csv_filepath']
+        csv_folder = options['csv_folder']
         # Read CSV file
         # We may need to do that on the fly if the files are too big
         partners_lines = []
@@ -161,17 +161,17 @@ class Command(BaseCommand):
 
         # Reading files
         self.stdout.write("Reading files 1/5")
-        with open(os.path.join(csv_filepath, 'partenaires.csv'), 'r') as csv_file:
+        with open(os.path.join(csv_folder, 'partenaires.csv'), 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=';')
             next(csv_reader)  # Header
             for row in csv_reader:
                 partners_lines.append(row)
-        with open(os.path.join(csv_filepath, 'partenariats.csv'), 'r') as csv_file:
+        with open(os.path.join(csv_folder, 'partenariats.csv'), 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=';')
             next(csv_reader)  # Header
             for row in csv_reader:
                 partnerships_lines.append(row)
-        with open(os.path.join(csv_filepath, 'accords.csv'), 'r') as csv_file:
+        with open(os.path.join(csv_folder, 'accords.csv'), 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=';')
             next(csv_reader)  # Header
             for row in csv_reader:
@@ -201,7 +201,7 @@ class Command(BaseCommand):
         self.filename = 'partenariats.csv'
         total_lines_number = len(partnerships_lines)
         self.print_progress_bar(0, total_lines_number)
-        for (index, line) in enumerate(partners_lines, 1):
+        for (index, line) in enumerate(partnerships_lines, 1):
             self.line = index + 1
             self.import_partnership(line)
             self.print_progress_bar(index, total_lines_number)
@@ -211,7 +211,7 @@ class Command(BaseCommand):
         self.filename = 'accords.csv'
         total_lines_number = len(agreements_lines)
         self.print_progress_bar(0, total_lines_number)
-        for (index, line) in enumerate(partners_lines, 1):
+        for (index, line) in enumerate(agreements_lines, 1):
             self.line = index + 1
             self.import_agreement(line)
             self.print_progress_bar(index, total_lines_number)
@@ -269,7 +269,7 @@ class Command(BaseCommand):
 
     # PARTNERS
 
-    def get_partner_default_value(self):
+    def get_default_value(self):
         if self.default_values is None:
             partner_type = PartnerType.objects.all().first()
             if partner_type is None:
@@ -366,6 +366,7 @@ class Command(BaseCommand):
     def get_education_field(self, code):
         if not code:
             return None
+        code = code.rjust(4, '0')
         try:
             return PartnershipYearEducationField.objects.get(code=code)
         except PartnershipYearEducationField.DoesNotExist:
@@ -376,7 +377,7 @@ class Command(BaseCommand):
         if not acronym:
             return None
         try:
-            return Entity.objects.filter()
+            return Entity.objects.filter(entityversion__acronym=acronym).order_by('entityversion__start_date').last()
         except Entity.DoesNotExist:
             self.write_error('Unknown entity {acronym}'.format(acronym=acronym))
             return None
@@ -384,21 +385,25 @@ class Command(BaseCommand):
     def get_supervisor(self, global_id):
         if not global_id:
             return None
+        global_id = global_id.rjust(8, '0')
+
         try:
             return Person.objects.get(global_id=global_id)
         except Person.DoesNotExist:
             self.write_error('Unknown responsable {global_id}'.format(global_id=global_id))
             return None
 
+    @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
             self.write_error('No external id')
             return
         external_id = line[1]
+        default_values = self.get_default_value()
         try:
             partnership = Partnership.objects.get(external_id=external_id)
         except Partnership.DoesNotExist:
-            partnership = Partnership(external_id=external_id)
+            partnership = Partnership(external_id=external_id, author=default_values['author'])
 
         partner = self.partners_by_csv_id.get(line[5], None)
         if partner is None:
@@ -412,7 +417,6 @@ class Command(BaseCommand):
         partnership.save()
 
         # TODO CREATE MANAGEMENT ENTITY IF NON EXISTENT
-
 
         partnership_year = partnership.current_year
         if partnership_year is None:
@@ -435,8 +439,55 @@ class Command(BaseCommand):
 
     # AGREEMENTS
 
+    @transaction.atomic
     def import_agreement(self, line):
+        if not line[0]:
+            self.write_error('No external id')
+            return
+
         partnership = self.partnerships_for_agreements.get('{0}-{1}'.format(line[5], line[7]), None)
         if partnership is None:
             self.write_error('No partnership for partner/fmp {0}-{1}'.format(line[5], line[7]))
             return
+
+        external_id = line[0]
+        default_values = self.get_default_value()
+        try:
+            agreement = PartnershipAgreement.objects.get(external_id=external_id)
+        except PartnershipAgreement.DoesNotExist:
+            agreement = PartnershipAgreement(external_id=external_id)
+
+        try:
+            start_year, end_year = map(int, line[1].split('-'))
+        except ValueError:
+            self.write_error('Invalid couverture {0}'.format(line[1]))
+            return
+        agreement.partnership = partnership
+        try:
+            agreement.start_academic_year = AcademicYear.objects.get(year=start_year)
+        except AcademicYear.DoesNotExist:
+            self.write_error('Academic year does not exist {0}'.format(start_year))
+            return
+        try:
+            agreement.end_academic_year = AcademicYear.objects.get(year=end_year - 1)
+        except AcademicYear.DoesNotExist:
+            self.write_error('Academic year does not exist {0}'.format(end_year - 1))
+            return
+
+        try:
+            media = agreement.media
+            if media.name == line[10]:
+                media.url = line[11]
+                media.save()
+        except Media.DoesNotExist:
+            media = Media.objects.create(
+                name=line[10],
+                url=line[11],
+                visibility=Media.VISIBILITY_STAFF,
+                author=default_values['author'],
+            )
+            media.save()
+            agreement.media = media
+        agreement.status = PartnershipAgreement.STATUS_VALIDATED
+        agreement.eligible = True
+        agreement.save()
