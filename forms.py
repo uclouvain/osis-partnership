@@ -725,11 +725,7 @@ class PartnershipForm(forms.ModelForm):
         return partner
 
     def clean(self):
-<<<<<<< HEAD
         super(PartnershipForm, self).clean()
-=======
-        super().clean()
->>>>>>> changed the way choices are generated for education_fields in PartnershipFilterForm, also corrected clean() method in PartnershipForm
         partner = self.cleaned_data['partner']
         partner_entity = self.cleaned_data['partner_entity']
         ucl_university = self.cleaned_data['ucl_university']
@@ -743,9 +739,6 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-<<<<<<< HEAD
-
-=======
         for offer in university_offers:
             if (
                 offer.management_entity != ucl_university_labo
@@ -758,7 +751,6 @@ class PartnershipForm(forms.ModelForm):
                         'ucl_university_labo': ucl_university_labo,
                     })
                 )
->>>>>>> changed the way choices are generated for education_fields in PartnershipFilterForm, also corrected clean() method in PartnershipForm
         return self.cleaned_data
 
 
