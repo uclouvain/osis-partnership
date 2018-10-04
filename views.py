@@ -1138,6 +1138,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
+    ordering = ['faculty']
 
     def test_func(self):
         result = user_is_adri(self.request.user) or user_is_gf(self.request.user)

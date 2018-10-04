@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-02 11:49+0200\n"
+"POT-Creation-Date: 2018-10-04 18:50+0200\n"
 "PO-Revision-Date: 2018-08-03 17:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -374,11 +374,6 @@ msgstr "Date de début"
 
 msgid "contacts"
 msgstr "Contacts"
-
-#, fuzzy
-#| msgid "parent_entity"
-msgid "ucl_management_entity"
-msgstr "Entité parente"
 
 msgid "can_access_partnerships"
 msgstr "Peux accéder aux partenariats"
@@ -1091,11 +1086,6 @@ msgstr "Partenaire"
 msgid "add_partner"
 msgstr "Ajouter un partenaire"
 
-#, fuzzy
-#| msgid "contacts"
-msgid "contact"
-msgstr "Contacts"
-
 msgid "UCL"
 msgstr "UCL"
 
@@ -1262,11 +1252,8 @@ msgstr "Ajouter un partenariat"
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
-msgid "ucl_management_form"
-msgstr ""
-
 msgid "ucl_management_entities"
-msgstr ""
+msgstr "entités de gestion UCL"
 
 #, fuzzy
 #| msgid "add_partner_entity"
@@ -1309,7 +1296,7 @@ msgid "Ucl_management_entities"
 msgstr "Entité parente"
 
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #, fuzzy
 #| msgid "delete_media"
@@ -1322,7 +1309,7 @@ msgid "Ucl_management_entity"
 msgstr "Entité parente"
 
 msgid "Faculty"
-msgstr ""
+msgstr "Faculté"
 
 #, fuzzy
 #| msgid "identity"
@@ -1335,7 +1322,7 @@ msgid "Academic_responsible"
 msgstr "Années académiques"
 
 msgid "Administrative_responsible"
-msgstr ""
+msgstr "Responsable administratif"
 
 #, fuzzy
 #| msgid "contact_in"
@@ -1348,7 +1335,7 @@ msgid "Email"
 msgstr "Email"
 
 msgid "Portail"
-msgstr ""
+msgstr "Portail"
 
 #, fuzzy
 #| msgid "contact_out"
@@ -1356,22 +1343,9 @@ msgid "Contact_out"
 msgstr "Contact de type mobilité out"
 
 #, fuzzy
-#| msgid "parent_entity"
-msgid "uclmanademententities"
-msgstr "Entité parente"
-
-#, fuzzy
 #| msgid "add_partner_entity"
 msgid "add_ucl_management_entity"
 msgstr "Ajouter une entité partenaire"
-
-#, fuzzy
-#| msgid "add_partner_entity"
-msgid "update_uclmanademententity"
-msgstr "Ajouter une entité partenaire"
-
-msgid "edit_uclmanagemententity"
-msgstr ""
 
 #, fuzzy
 #| msgid "add_partner_entity"
@@ -1423,6 +1397,26 @@ msgstr "Accord sauvegardé avec succès."
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
+
+#, fuzzy
+#~| msgid "parent_entity"
+#~ msgid "ucl_management_entity"
+#~ msgstr "Entité parente"
+
+#, fuzzy
+#~| msgid "contacts"
+#~ msgid "contact"
+#~ msgstr "Contacts"
+
+#, fuzzy
+#~| msgid "parent_entity"
+#~ msgid "uclmanademententities"
+#~ msgstr "Entité parente"
+
+#, fuzzy
+#~| msgid "add_partner_entity"
+#~ msgid "update_uclmanademententity"
+#~ msgstr "Ajouter une entité partenaire"
 
 #~ msgid "title"
 #~ msgstr "Titre"
