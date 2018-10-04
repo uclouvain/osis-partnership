@@ -672,7 +672,6 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university',
             'ucl_university_labo',
             'university_offers',
-            'ucl_management_entity',
             'comment',
             'tags',
         )
@@ -928,11 +927,11 @@ class UCLManagementEntityForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.partnership or (
-            self.user and not user_is_adri(self.user)
+        if (self.instance.pk is not None and self.instance.faculty.partnerships.exists()) or (
+            self.user is not None and not user_is_adri(self.user)
         ):
-            self.fields['entity'].widget.attrs['disabled'] = True
-            self.fields['faculty'].widget.attrs['disabled'] = True
-        if self.user and not user_is_adri(self.user):
-            self.fields['academic_responsible'].widget.attrs['disabled'] = True
-            self.fields['administrative_responsible'].widget.attrs['disabled'] = True
+            self.fields['entity'].disabled = True
+            self.fields['faculty'].disabled = True
+        if self.user is not None and not user_is_adri(self.user):
+            self.fields['academic_responsible'].disabled = True
+            self.fields['administrative_responsible'].disabled = True

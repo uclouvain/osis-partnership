@@ -13,7 +13,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="row">
+      <div class="row row-fluid">
         <div class="col-sm-12">
           {% if can_change_ucl_management_entity %}
             <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'Edit' %}</a>
@@ -25,12 +25,12 @@
       </div>
 
       <!-- UCL Management Entity -->
-      <div class="row">
+      <div class="row row-fluid">
         <div class="col-12">
           <h2>{% trans 'Ucl_management_entity' %}</h2>
           <dl class="dl-horizontal">
             <dt>{% trans 'Faculty' %}</dt>
-            <dd>{{ ucl_management_entity.faculty|default_if_none:"" }}</dd>
+            <dd>{{ ucl_management_entity.faculty }}</dd>
             <dt>{% trans 'Entity' %}</dt>
             <dd>{{ ucl_management_entity.entity|default_if_none:"" }}</dd>
             <dt>{% trans 'Academic_responsible' %}</dt>
@@ -40,7 +40,7 @@
           </dl>
         </div>
       </div>
-      <div class="row">
+      <div class="row row-fluid">
         <!-- Contact in -->
         <div class="col-xs-12 col-sm-6">
           <h2>{% trans 'Contact_in' %}</h2>

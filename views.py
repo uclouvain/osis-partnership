@@ -1188,7 +1188,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
-        if self.object.partnership.all():
+        if self.object.faculty is not None and self.object.faculty.partnerships.all():
             raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 

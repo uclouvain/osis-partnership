@@ -332,14 +332,6 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    ucl_management_entity = models.ForeignKey(
-        'partnership.UCLManagementEntity',
-        verbose_name=_('ucl_management_entity'),
-        related_name='partnership',
-        blank=True,
-        null=True,
-    )
-
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
         PartnershipTag,
@@ -484,9 +476,9 @@ class Partnership(models.Model):
         return mark_safe(' / '.join(map(add_tooltip, entities)))
 
     def get_supervisor(self):
-        if self.supervisor:
+        if self.supervisor is not None:
             return self.supervisor
-        if self.ucl_management_entity:
+        if self.ucl_management_entity is not None:
             return self.ucl_management_entity.academic_responsible
         return None
 
@@ -838,8 +830,6 @@ class PartnershipConfiguration(models.Model):
 class UCLManagementEntity(models.Model):
     faculty = models.ForeignKey(
         'base.Entity',
-        null=True,
-        blank=True,
         verbose_name=_("faculty"),
         related_name='+',
     )
@@ -880,7 +870,8 @@ class UCLManagementEntity(models.Model):
     contact_out_person = models.ForeignKey(
         'base.Person',
         related_name='+',
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_("name"),
     )
     contact_out_email = models.EmailField(
@@ -894,6 +885,9 @@ class UCLManagementEntity(models.Model):
         verbose_name=_("portal")
     )
 
+    class Meta:
+        pass
+
     def get_absolute_url(self):
         return reverse(
             'partnerships:ucl_management_entities:detail',
@@ -901,17 +895,13 @@ class UCLManagementEntity(models.Model):
         )
 
     def __str__(self):
-        return ("{} - {}, {}".format(
-            self.academic_responsible,
-            self.contact_in_person,
-            self.contact_out_person
-        ))
+        return ("{} {}".format(self.faculty, self.entity))
 
     def user_can_change(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
 
     def user_can_delete(self, user):
-        return user_is_adri(user) and not self.partnership.all()
+        return user_is_adri(user) and not self.faculty.partnerships.exists()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
