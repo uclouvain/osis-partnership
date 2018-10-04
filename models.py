@@ -372,17 +372,7 @@ class Partnership(models.Model):
     def user_can_change(self, user):
         if user_is_adri(user):
             return True
-        if not user_is_in_user_faculty(user, self.author):
-            return False
-        # GF User can update if before year N and the day/month specified in the configuration.
-        today = date.today()
-        configuration = PartnershipConfiguration.get_configuration()
-        min_date = date(
-            today.year,
-            configuration.partnership_update_max_date_month,
-            configuration.partnership_update_max_date_day
-        )
-        return self.start_date > min_date
+        return user_is_in_user_faculty(user, self.author)
 
     @cached_property
     def is_valid(self):
@@ -694,6 +684,11 @@ class PartnershipAgreement(models.Model):
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
 
+    def user_can_change(self, user):
+        if user_is_adri(user):
+            return True
+        return self.status == self.STATUS_WAITING and user_is_in_user_faculty(user, self.partnership.author)
+
     @property
     def is_valid(self):
         return self.status == self.STATUS_VALIDATED
@@ -732,28 +727,16 @@ class PartnershipConfiguration(models.Model):
         (12, _('december')),
     )
 
-    partnership_creation_max_date_day = models.IntegerField(
-        _('partnership_creation_max_date_day'),
+    partnership_creation_update_max_date_day = models.IntegerField(
+        _('partnership_creation_update_max_date_day'),
         choices=DAYS_CHOICES,
         default=31,
     )
 
-    partnership_creation_max_date_month = models.IntegerField(
-        _('partnership_creation_max_date_month'),
+    partnership_creation_update_max_date_month = models.IntegerField(
+        _('partnership_creation_update_max_date_month'),
         choices=MONTHES_CHOICES,
         default=12,
-    )
-
-    partnership_update_max_date_day = models.IntegerField(
-        _('partnership_update_max_date_day'),
-        choices=DAYS_CHOICES,
-        default=1,
-    )
-
-    partnership_update_max_date_month = models.IntegerField(
-        _('partnership_update_max_date_month'),
-        choices=MONTHES_CHOICES,
-        default=3,
     )
 
     @staticmethod
@@ -763,27 +746,16 @@ class PartnershipConfiguration(models.Model):
         except PartnershipConfiguration.DoesNotExist:
             return PartnershipConfiguration.objects.create()
 
-    def get_current_academic_year_for_creation(self):
+    def get_current_academic_year_for_creation_modification(self):
         limit_date = date(
             date.today().year,
-            self.partnership_creation_max_date_month,
-            self.partnership_creation_max_date_day,
+            self.partnership_creation_update_max_date_month,
+            self.partnership_creation_update_max_date_day,
         )
         if date.today() < limit_date:
             return AcademicYear.objects.filter(year=date.today().year + 1).first()
         else:
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
-
-    def get_current_academic_year_for_modification(self):
-        limit_date = date(
-            date.today().year,
-            self.partnership_update_max_date_month,
-            self.partnership_update_max_date_day,
-        )
-        if date.today() < limit_date:
-            return AcademicYear.objects.filter(year=date.today().year).first()
-        else:
-            return AcademicYear.objects.filter(year=date.today().year + 1).first()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app

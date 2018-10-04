@@ -703,6 +703,17 @@ class PartnershipForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(PartnershipForm, self).__init__(*args, **kwargs)
+        if not user_is_adri(self.user):
+            # Restrict fields for GF
+            self.fields['ucl_university'].queryset = Entity.objects.filter(entitymanager__person__user=self.user)
+            if self.instance.pk is not None:
+                self.fields['partner'].disabled = True
+                self.fields['ucl_university'].disabled = True
+                self.fields['ucl_university_labo'].disabled = True
+                self.fields['supervisor'].disabled = True
+                self.fields['comment'].disabled = True
+                self.fields['tags'].disabled = True
+
         self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         try:
             self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
@@ -719,10 +730,10 @@ class PartnershipForm(forms.ModelForm):
 
     def clean(self):
         super(PartnershipForm, self).clean()
-        partner = self.cleaned_data['partner']
-        partner_entity = self.cleaned_data['partner_entity']
-        ucl_university = self.cleaned_data['ucl_university']
-        ucl_university_labo = self.cleaned_data['ucl_university_labo']
+        partner = self.cleaned_data.get('partner', None)
+        partner_entity = self.cleaned_data.get('partner_entity', None)
+        ucl_university = self.cleaned_data.get('ucl_university', None)
+        ucl_university_labo = self.cleaned_data.get('ucl_university_labo', None)
 
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
@@ -783,19 +794,16 @@ class PartnershipYearForm(forms.ModelForm):
         super(PartnershipYearForm, self).__init__(*args, **kwargs)
         self.fields['partnership_type'].initial = PartnershipYear.TYPE_MOBILITY
         self.fields['partnership_type'].disabled = True
+        current_academic_year = (
+            PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
+        )
         try:
             # Update
             self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
-            current_academic_year = (
-                PartnershipConfiguration.get_configuration().get_current_academic_year_for_modification()
-            )
             self.fields['from_academic_year'].initial = current_academic_year
             self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
         except Partnership.DoesNotExist:
             # Create
-            current_academic_year = (
-                PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation()
-            )
             self.fields['start_academic_year'].initial = current_academic_year
             if not user_is_adri(self.user):
                 if current_academic_year is not None:
@@ -852,10 +860,8 @@ class PartnershipConfigurationForm(forms.ModelForm):
     class Meta:
         model = PartnershipConfiguration
         fields = [
-            'partnership_creation_max_date_day',
-            'partnership_creation_max_date_month',
-            'partnership_update_max_date_day',
-            'partnership_update_max_date_month',
+            'partnership_creation_update_max_date_day',
+            'partnership_creation_update_max_date_month',
         ]
 
     def clean(self):
@@ -863,24 +869,11 @@ class PartnershipConfigurationForm(forms.ModelForm):
         try:
             date(
                 2001,
-                self.cleaned_data['partnership_creation_max_date_month'],
-                self.cleaned_data['partnership_creation_max_date_day'],
+                self.cleaned_data['partnership_creation_update_max_date_month'],
+                self.cleaned_data['partnership_creation_update_max_date_day'],
             )
         except ValueError:
             self.add_error(
-                'partnership_creation_max_date_day',
+                'partnership_creation_update_max_date_day',
                 ValidationError(_('invalid_partnership_creation_max_date'))
             )
-
-        try:
-            date(
-                2001,
-                self.cleaned_data['partnership_update_max_date_month'],
-                self.cleaned_data['partnership_update_max_date_day'],
-            )
-        except ValueError:
-            self.add_error(
-                'partnership_update_max_date_day',
-                ValidationError(_('invalid_partnership_update_max_date'))
-            )
-        return self.cleaned_data

@@ -37,6 +37,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
             partner_entity=cls.partner_entity,
+            author=cls.user_gf,
             years=[],
         )
         cls.url = reverse('partnerships:update',
@@ -104,8 +105,8 @@ class PartnershipUpdateViewTest(TestCase):
     def test_get_own_partnership_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_update.html')
-        self.assertNotIn('start_academic_year', response.context_data['form_year']['fields'])
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
+        self.assertNotIn('start_academic_year', response.context_data['form_year'].fields)
 
     def test_get_other_partnership_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -117,6 +118,12 @@ class PartnershipUpdateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+
+    def test_post_empty(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
     def test_post_empty_sm(self):
         self.client.force_login(self.user_adri)

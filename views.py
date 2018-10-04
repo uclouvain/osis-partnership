@@ -1016,9 +1016,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
     context_object_name = 'agreement'
 
-    def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
-
     def dispatch(self, request, *args, **kwargs):
         self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
         return super(PartnershipAgreementsMixin, self).dispatch(request, *args, **kwargs)
@@ -1079,6 +1076,9 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
 class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
     template_name = 'partnerships/agreements/create.html'
 
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+
     @transaction.atomic
     def form_valid(self, form, form_media):
         media = form_media.save(commit=False)
@@ -1101,6 +1101,9 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     template_name = 'partnerships/agreements/update.html'
 
+    def test_func(self):
+        return self.get_object().user_can_change(self.request.user)
+
     def get_queryset(self):
         return PartnershipAgreement.objects.select_related('start_academic_year', 'end_academic_year')
 
@@ -1118,6 +1121,9 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 
 class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
     template_name = 'partnerships/agreements/delete.html'
+
+    def test_func(self):
+        return self.get_object().user_can_change(self.request.user)
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -1201,6 +1207,8 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_ucl_universities(self):
         qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
+        if not user_is_adri(self.request.user):
+            qs = qs.filter(entitymanager__person__user=self.request.user)
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
         return qs.distinct()

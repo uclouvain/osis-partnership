@@ -26,10 +26,8 @@ class PartnershipCreateViewTest(TestCase):
         entity_version = EntityVersionFactory(acronym='ADRI')
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
         cls.country = CountryFactory()
         cls.user_other_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
@@ -52,6 +50,9 @@ class PartnershipCreateViewTest(TestCase):
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
+
+        EntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
+        EntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
         cls.data = {
             'comment': '',
