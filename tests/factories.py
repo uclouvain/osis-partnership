@@ -202,10 +202,10 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
     class Meta:
         model = UCLManagementEntity
 
-    entity = factory.SubFactory(
+    faculty = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
     )
-    faculty = factory.SubFactory(
+    entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
     )
     academic_responsible = factory.SubFactory(
