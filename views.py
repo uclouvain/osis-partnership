@@ -1307,7 +1307,10 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_ucl_university_labos(self):
         qs = Entity.objects.all()
-        ucl_university = self.forwarded.get('ucl_university', None)
+        ucl_university = self.forwarded.get(
+            'ucl_university',
+            self.forwarded.get('faculty', None)
+        )
         if ucl_university:
             qs = qs.filter(entityversion__parent=ucl_university)
         else:

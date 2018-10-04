@@ -906,9 +906,14 @@ class UCLManagementEntityForm(forms.ModelForm):
         widgets = {
             'faculty': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university',
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_entity',
+                },
             ),
             'entity': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:entity',
+                url='partnerships:autocomplete:ucl_university_labo',
+                forward=['faculty'],
             ),
             'administrative_responsible': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
