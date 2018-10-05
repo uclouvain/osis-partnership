@@ -136,14 +136,6 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertFalse(year.entities.exists())
         self.assertFalse(year.offers.exists())
 
-    def test_post_start_date_as_gf(self):
-        self.client.force_login(self.user_gf)
-        data = self.data.copy()
-        data['year-start_academic_year'] = str(self.academic_year_2149.pk)
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
-        self.assertEqual(response.context_data['partnership'].years.count(), 3)
-
     def test_post_past_from_date_as_gf(self):
         self.client.force_login(self.user_gf)
         data = self.data.copy()

@@ -83,9 +83,15 @@
 <h3>{% trans "partnership_when" %}</h3>
 
 <div class="row">
+  {% if form_year.start_academic_year %}
   <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form_year.start_academic_year %}
   </div>
+  {% else %}
+  <div class="col-xs-12 col-sm-12">
+    {{ object.start_academic_year }}
+  </div>
+  {% endif %}
   {% if form_year.from_academic_year %}
   <div class="col-xs-12 col-sm-12">
     <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
