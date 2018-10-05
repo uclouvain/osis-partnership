@@ -16,7 +16,7 @@
     <div class="panel-body ucl_management_entity_form">
       <div class="row">
         <div class="col-12">
-          <form action="{% url "partnerships:ucl_management_entities:create" %}" method="post">
+          <form action="{% url "partnerships:ucl_management_entities:update" pk=ucl_management_entity.pk %}" method="post">
 
             {% include "partnerships/ucl_management_entities/includes/uclmanagemententity_form.html" %}
 
