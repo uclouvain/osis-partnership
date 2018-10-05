@@ -35,8 +35,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm,
-                               PartnershipYearInlineFormset, PartnershipYearForm)
+                               PartnershipYearForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear)
