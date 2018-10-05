@@ -455,7 +455,7 @@ class PartnershipFilterForm(forms.Form):
             attrs={
                 'data-width': '100%',
                 'class': 'resetting',
-                'data-reset': '#id_ucl_university_labo, #id_university_offers',
+                'data-reset': '#id_ucl_university_labo',
             },
         ),
     )
@@ -470,21 +470,7 @@ class PartnershipFilterForm(forms.Form):
             forward=['ucl_university'],
             attrs={
                 'data-width': '100%',
-                'class': 'resetting',
-                'data-reset': '#id_university_offers',
             },
-        ),
-    )
-
-    university_offers = forms.ModelMultipleChoiceField(
-        label=_('university_offers'),
-        queryset=EducationGroupYear.objects.select_related('academic_year')
-        .filter(partnerships__isnull=False).distinct(),
-        required=False,
-        widget=autocomplete.ModelSelect2Multiple(
-            url='partnerships:autocomplete:university_offers_filter',
-            forward=['ucl_university_labo'],
-            attrs={'data-width': '100%'},
         ),
     )
 
@@ -688,10 +674,6 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university_labo': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
                 forward=['ucl_university'],
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_university_offers',
-                },
             ),
             'supervisor': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
@@ -742,15 +724,6 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-        for offer in university_offers:
-            if (
-                offer.management_entity != ucl_university_labo
-                and offer.administration_entity != ucl_university_labo
-            ):
-                self.add_error(
-                    'university_offers',
-                    _('invalid_offer {} {}'.format(offer, ucl_university_labo))
-                )
         return self.cleaned_data
 
 

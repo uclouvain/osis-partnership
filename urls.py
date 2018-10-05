@@ -32,13 +32,10 @@ from partnership.views import (EntityAutocompleteView,
                                UclUniversityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
                                UclUniversityLaboAutocompleteView,
-                               UniversityOffersAutocompleteFilterView,
-                               UniversityOffersAutocompleteView,
                                PartnershipYearEntitiesAutocompleteView,
                                PartnershipYearOffersAutocompleteView,
-                               FacultyAutocompleteView,
-                               EntityAutocompleteView,
-                               UniversityOffersAutocompleteView)
+                               EntityAutocompleteView)
+
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -89,10 +86,8 @@ urlpatterns = [
         url('^partner-entity/$', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
         url('^ucl_university_labo/$', UclUniversityLaboAutocompleteView.as_view(), name='ucl_university_labo'),
-        url('^university_offers/$', UniversityOffersAutocompleteView.as_view(), name='university_offers'),
         url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
         url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
-        url('^faculty/$', FacultyAutocompleteView.as_view(), name='faculty'),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url(
@@ -114,11 +109,6 @@ urlpatterns = [
             r'^ucl_university_labo_filter/$',
             UclUniversityLaboAutocompleteFilterView.as_view(),
             name='ucl_university_labo_filter',
-        ),
-        url(
-            r'^university_offers_filter/$',
-            UniversityOffersAutocompleteFilterView.as_view(),
-            name='university_offers_filter',
         ),
     ], namespace='autocomplete')),
 ]

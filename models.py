@@ -334,8 +334,6 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    start_date = models.DateField(_('start_date'))
-
     contacts = models.ManyToManyField(
         'partnership.Contact',
         verbose_name=_('contacts'),
