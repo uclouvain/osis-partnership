@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-05 17:48+0200\n"
-"PO-Revision-Date: 2018-10-05 17:17+0200\n"
+"POT-Creation-Date: 2018-10-05 18:25+0200\n"
+"PO-Revision-Date: 2018-10-05 18:25+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -929,13 +929,13 @@ msgid "entity"
 msgstr "Entité"
 
 msgid "academic_responsible"
-msgstr "responsable académique"
+msgstr "Responsable académique"
 
 msgid "administrative_responsible"
-msgstr "responsable administratif"
+msgstr "Responsable administratif"
 
 msgid "contact_in_name"
-msgstr "Nom du contact"
+msgstr "\t"
 
 msgid "portal"
 msgstr "portail"
@@ -1251,13 +1251,13 @@ msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
 msgid "ucl_management_entities"
-msgstr "entités de gestion UCL"
+msgstr "Entités de gestion UCL"
 
 msgid "create_ucl_management_entity"
-msgstr "créer une entité de gestion UCL"
+msgstr "Créer une entité de gestion UCL"
 
 msgid "ucl_management_entities_list"
-msgstr "liste des entités de gestion UCL"
+msgstr "Liste des entités de gestion UCL"
 
 msgid "delete_ucl_management_entity"
 msgstr "Supprimer l'entité de gestion UCL"
@@ -1276,21 +1276,11 @@ msgstr "Dates"
 msgid "delete"
 msgstr "Supprimer"
 
-#, fuzzy
-#| msgid "parent_entity"
 msgid "ucl_management_entity"
-msgstr "Entité parente"
-
-#, fuzzy
-#| msgid "portal"
-msgid "portail"
-msgstr "portail"
-
-msgid "add_ucl_management_entity"
-msgstr "Ajouter une entité de gestion UCL"
+msgstr "Entité de gestion UCL"
 
 msgid "update_ucl_management_entity"
-msgstr "mettre à jour l'entité de gestion UCL"
+msgstr "Mettre à jour l'entité de gestion UCL"
 
 msgid "id"
 msgstr "ID"
@@ -1337,6 +1327,14 @@ msgstr "Accord sauvegardé avec succès."
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
+
+#, fuzzy
+#~| msgid "portal"
+#~ msgid "portail"
+#~ msgstr "portail"
+
+#~ msgid "add_ucl_management_entity"
+#~ msgstr "Ajouter une entité de gestion UCL"
 
 #~ msgid "create_uclmanagemententity"
 #~ msgstr "créer une entité de gestion UCL"

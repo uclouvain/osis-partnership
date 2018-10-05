@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-05 17:48+0200\n"
-"PO-Revision-Date: 2018-10-05 17:33+0200\n"
+"POT-Creation-Date: 2018-10-05 18:25+0200\n"
+"PO-Revision-Date: 2018-10-05 18:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -986,7 +986,7 @@ msgid "add_partnership_agreements"
 msgstr "add partnership agreements"
 
 msgid "cancel"
-msgstr "cancel"
+msgstr "Cancel"
 
 msgid "delete_partnership_agreement"
 msgstr "delete partnership agreement"
@@ -995,7 +995,7 @@ msgid "partnership_agreement_delete_warning"
 msgstr ""
 
 msgid "mandatory_fields_help_text"
-msgstr ""
+msgstr "The fields marked with a * are mandatory"
 
 msgid "update_partnership_agreement"
 msgstr "update partnership agreement"
@@ -1262,14 +1262,6 @@ msgstr "Delete"
 msgid "ucl_management_entity"
 msgstr "UCL management entity"
 
-#, fuzzy
-#| msgid "portal"
-msgid "portail"
-msgstr "Portal"
-
-msgid "add_ucl_management_entity"
-msgstr "add UCL management entity"
-
 msgid "update_ucl_management_entity"
 msgstr "update UCL management entity"
 
@@ -1317,6 +1309,14 @@ msgstr ""
 
 msgid "configuration_saved"
 msgstr "configuration saved"
+
+#, fuzzy
+#~| msgid "portal"
+#~ msgid "portail"
+#~ msgstr "Portal"
+
+#~ msgid "add_ucl_management_entity"
+#~ msgstr "add UCL management entity"
 
 #~ msgid "create_uclmanagemententity"
 #~ msgstr "create UCL management entity"
