@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-04 18:50+0200\n"
-"PO-Revision-Date: 2018-07-26 17:48+0200\n"
+"PO-Revision-Date: 2018-10-05 10:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -225,7 +225,7 @@ msgid "contact_out"
 msgstr ""
 
 msgid "parent_entity"
-msgstr ""
+msgstr "parent entity"
 
 msgid "created"
 msgstr "created"
@@ -330,34 +330,34 @@ msgid "Other"
 msgstr ""
 
 msgid "external_id"
-msgstr ""
+msgstr "external ID"
 
 msgid "to_synchronize_with_epc"
-msgstr ""
+msgstr "to synchronize with EPC"
 
 msgid "changed"
-msgstr ""
+msgstr "changed"
 
 msgid "now_known_as"
-msgstr ""
+msgstr "now known as"
 
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
 
 msgid "is_nonprofit"
-msgstr ""
+msgstr "is non-profit"
 
 msgid "is_public"
-msgstr ""
+msgstr "is public"
 
 msgid "contact_type"
 msgstr "contact type"
 
 msgid "use_egracons"
-msgstr ""
+msgstr "use egracons"
 
 msgid "medias"
-msgstr ""
+msgstr "medias"
 
 msgid "can_access_partners"
 msgstr "can access partners"
@@ -962,7 +962,7 @@ msgid "visibility_staff_student"
 msgstr ""
 
 msgid "file"
-msgstr ""
+msgstr "file"
 
 msgid "media_file_or_url"
 msgstr "media file or URL"
@@ -992,7 +992,7 @@ msgid "mandatory_fields_help_text"
 msgstr ""
 
 msgid "update_partnership_agreement"
-msgstr ""
+msgstr "update partnership agreement"
 
 msgid "update_configuration"
 msgstr "update configuration"

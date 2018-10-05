@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-04 18:50+0200\n"
-"PO-Revision-Date: 2018-08-03 17:42+0200\n"
+"PO-Revision-Date: 2018-10-05 10:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "Yes"
 msgstr "Oui"
@@ -199,18 +199,14 @@ msgstr "La date de début se situe après le début d'un accord."
 msgid "partnership_start_date_gf_too_late"
 msgstr "La date limite pour créer ce partenariat est passée."
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "invalid_partner_entity"
-msgstr "Ajouter une entité partenaire"
+msgstr "entité partenaire invalide"
 
-#, fuzzy
-#| msgid "ucl_university_labo"
 msgid "invalid_ucl_university_labo"
-msgstr "École / laboratoire"
+msgstr "laboratoire d'université UCL"
 
 msgid "invalid_offer {} {}"
-msgstr ""
+msgstr "offre invalide : {} {}"
 
 msgid "partnership_year_academic_year_error"
 msgstr "L’année académique est antérieure à l’année de début du partenariat."
@@ -927,23 +923,19 @@ msgid "partnership_update_max_date_month"
 msgstr "Mois maximum pour la mise à jour d'un partenariat."
 
 msgid "faculty"
-msgstr ""
+msgstr "faculté"
 
-#, fuzzy
-#| msgid "identity"
 msgid "entity"
-msgstr "Identité"
+msgstr "entité"
 
-#, fuzzy
-#| msgid "academic_years"
 msgid "academic_responsible"
-msgstr "Années académiques"
+msgstr "responsable académique"
 
 msgid "administrative_responsible"
-msgstr ""
+msgstr "responsable administratif"
 
 msgid "portal"
-msgstr ""
+msgstr "portail"
 
 msgid "countries"
 msgstr "Pays"
@@ -1255,71 +1247,48 @@ msgstr "Rechercher les partenariats"
 msgid "ucl_management_entities"
 msgstr "entités de gestion UCL"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "create_uclmanagemententity"
-msgstr "Ajouter une entité partenaire"
+msgstr "créer une entité de gestion UCL"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "add_uclmanagemententity"
-msgstr "Ajouter une entité partenaire"
+msgstr "Ajouter une entité de gestion UCL"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "create_ucl_management_entity"
-msgstr "Ajouter une entité partenaire"
+msgstr "créer une entité de gestion UCL"
 
-#, fuzzy
-#| msgid "parent_entity"
 msgid "ucl_management_entities_list"
-msgstr "Entité parente"
+msgstr "liste des entités de gestion UCL"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "delete_uclmanademententity"
-msgstr "Ajouter une entité partenaire"
+msgstr "suppression de l'entité de gestion UCL"
 
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete this contact?"
+#, python-format
 msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce contact?"
+msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "delete_ucl_management_entity"
-msgstr "Ajouter une entité partenaire"
+msgstr "Supprimer l'entité de gestion UCL"
 
-#, fuzzy
-#| msgid "parent_entity"
 msgid "Ucl_management_entities"
-msgstr "Entité parente"
+msgstr "Entités de gestion UCL"
 
 msgid "Edit"
 msgstr "Modifier"
 
-#, fuzzy
-#| msgid "delete_media"
 msgid "Delete"
-msgstr "Supprimer le média"
+msgstr "Supprimer"
 
-#, fuzzy
-#| msgid "parent_entity"
 msgid "Ucl_management_entity"
-msgstr "Entité parente"
+msgstr "Entité de gestion UCL"
 
 msgid "Faculty"
 msgstr "Faculté"
 
-#, fuzzy
-#| msgid "identity"
 msgid "Entity"
-msgstr "Identité"
+msgstr "Entité"
 
-#, fuzzy
-#| msgid "academic_years"
 msgid "Academic_responsible"
-msgstr "Années académiques"
+msgstr "Responsable académique"
 
 msgid "Administrative_responsible"
 msgstr "Responsable administratif"
@@ -1342,15 +1311,11 @@ msgstr "Portail"
 msgid "Contact_out"
 msgstr "Contact de type mobilité out"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "add_ucl_management_entity"
-msgstr "Ajouter une entité partenaire"
+msgstr "Ajouter une entité de gestion UCL"
 
-#, fuzzy
-#| msgid "add_partner_entity"
 msgid "update_ucl_management_entity"
-msgstr "Ajouter une entité partenaire"
+msgstr "mettre à jour l'entité de gestion UCL"
 
 msgid "id"
 msgstr "ID"
