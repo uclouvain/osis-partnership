@@ -213,19 +213,19 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     def test_post_view_with_linked_adri_user(self):
         self.client.force_login(self.adri_user)
         data = self.data
-        data['entity'] = self.ucl_management_entity_linked.entity.pk
-        data['faculty'] = self.ucl_management_entity_linked.faculty.pk
+        del data['entity']
+        del data['faculty']
         response = self.client.post(self.linked_url, data=data, follow=True)
         self.assertTemplateUsed(
             response,
             'partnerships/ucl_management_entities/uclmanagemententity_detail.html'
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].academic_responsible.pk,
+            str(response.context_data['ucl_management_entity'].academic_responsible.pk),
             data['academic_responsible']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].administrative_responsible.pk,
+            str(response.context_data['ucl_management_entity'].administrative_responsible.pk),
             data['administrative_responsible']
         )
         self.assertEqual(
@@ -251,12 +251,4 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         self.assertEqual(
             response.context_data['ucl_management_entity'].contact_out_url,
             data['contact_out_url']
-        )
-        self.assertEqual(
-            response.context_data['ucl_management_entity'].faculty.pk,
-            data['faculty']
-        )
-        self.assertEqual(
-            response.context_data['ucl_management_entity'].entity.pk,
-            data['entity']
         )
