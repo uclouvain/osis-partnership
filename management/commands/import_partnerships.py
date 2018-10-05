@@ -251,19 +251,27 @@ class Command(BaseCommand):
         day, month, year = map(int, date_string.split('/'))
         return date(year, month, day)
 
-    def get_country(self, old_code):
+    def get_country(self, old_code, line):
         if not old_code:
             return None
         if old_code not in self.countries:
             iso = COUNTRIES_OLD_TO_ISO.get(old_code, None)
             if iso is None:
-                self.write_error('Unknown old country code {code}'.format(code=old_code))
+                self.write_error('Unknown old country code {code} (fmp_id={fmp_id} ; nom={nom})'.format(
+                    code=old_code,
+                    fmp_id=line[2],
+                    nom=line[6],
+                ))
                 self.countries[old_code] = None
             else:
                 try:
                     self.countries[old_code] = Country.objects.get(iso_code=iso)
                 except Country.DoesNotExist:
-                    self.write_error('Unknown country for iso {iso}'.format(iso=iso))
+                    self.write_error('Unknown country for iso {iso} (fmp_id={fmp_id} ; nom={nom})'.format(
+                        iso=iso,
+                        fmp_id=line[2],
+                        nom=line[6],
+                    ))
                     self.countries[old_code] = None
         return self.countries[old_code]
 
@@ -294,13 +302,14 @@ class Command(BaseCommand):
 
         # Mandatory fields not in the CSV file
         default_values = self.get_default_value()
+        partner.is_valid = True
         partner.author = default_values['author']
         partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
-        partner.erasmus_code = line[4] if line[4] else None
+        partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
         partner.name = line[6] if line[6] else None
         partner.start_date = self.parse_date(line[7])
         partner.end_date = self.parse_date(line[8])
@@ -315,7 +324,7 @@ class Command(BaseCommand):
         partner.contact_type = line[17] if line[17] else None
         partner.website = line[18] if line[18] else default_values['website']
         partner.contact_address.city = line[19] if line[19] else None
-        partner.contact_address.country = self.get_country(line[22])
+        partner.contact_address.country = self.get_country(line[22], line)
         partner.use_egracons = line[23] == 'YES'
 
         # Save
@@ -354,7 +363,11 @@ class Command(BaseCommand):
         if not now_known_as or line[2] not in self.partners_by_code:
             return
         if now_known_as not in self.partners_by_code:
-            self.write_error("Unknown partner {partner}".format(partner=now_known_as))
+            self.write_error("Unknown partner {partner} (fmp_id={fmp_id} ; nom={nom})".format(
+                partner=now_known_as,
+                fmp_id=line[2],
+                nom=line[6],
+            ))
             return
         partner = self.partners_by_code[line[2]]
         partner.now_known_as = self.partners_by_code[now_known_as]
@@ -385,7 +398,7 @@ class Command(BaseCommand):
     def get_supervisor(self, global_id):
         if not global_id:
             return None
-        global_id = global_id.rjust(8, '0')
+        global_id = global_id.strip('\n').rjust(8, '0')
 
         try:
             return Person.objects.get(global_id=global_id)
@@ -396,7 +409,9 @@ class Command(BaseCommand):
     @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
-            self.write_error('No external id')
+            self.write_error('Invalid partenariat_id (partenariat_id_osis={0}, partenariat_id={1})'.format(
+                line[0], line[1],
+            ))
             return
         external_id = line[1]
         default_values = self.get_default_value()
@@ -407,7 +422,12 @@ class Command(BaseCommand):
 
         partner = self.partners_by_csv_id.get(line[5], None)
         if partner is None:
-            self.write_error('No partner for id {partner_id}'.format(partner_id=line[5]))
+            self.write_error('Invalid partenaire_id_osis {partner_id} '
+                             '(partenariat_id_osis={osis}, partenariat_id={partenariat_id})'.format(
+                partner_id=line[5],
+                osis=line[0],
+                partenariat_id=line[1],
+            ))
             return
 
         partnership.partner = partner
@@ -447,7 +467,14 @@ class Command(BaseCommand):
 
         partnership = self.partnerships_for_agreements.get('{0}-{1}'.format(line[5], line[7]), None)
         if partnership is None:
-            self.write_error('No partnership for partner/fmp {0}-{1}'.format(line[5], line[7]))
+            self.write_error('No partnership for partner/fmp {0}-{1} (num_accord={2}, '
+                             'partenaire_id_osis={3}, entite_fmp={4})'.format(
+                line[5],
+                line[7],
+                line[0],
+                line[5],
+                line[7],
+            ))
             return
 
         external_id = line[0]
@@ -460,18 +487,36 @@ class Command(BaseCommand):
         try:
             start_year, end_year = map(int, line[1].split('-'))
         except ValueError:
-            self.write_error('Invalid couverture {0}'.format(line[1]))
+            self.write_error('Invalid couverture {0} (num_accord={1}, '
+                             'partenaire_id_osis={2}, entite_fmp={3})'.format(
+                line[1],
+                line[0],
+                line[5],
+                line[7],
+            ))
             return
         agreement.partnership = partnership
         try:
             agreement.start_academic_year = AcademicYear.objects.get(year=start_year)
         except AcademicYear.DoesNotExist:
-            self.write_error('Academic year does not exist {0}'.format(start_year))
+            self.write_error('Academic year does not exist in OSIS : {0} (num_accord={1}, '
+                             'partenaire_id_osis={2}, entite_fmp={3})'.format(
+                start_year,
+                line[0],
+                line[5],
+                line[7],
+            ))
             return
         try:
             agreement.end_academic_year = AcademicYear.objects.get(year=end_year - 1)
         except AcademicYear.DoesNotExist:
-            self.write_error('Academic year does not exist {0}'.format(end_year - 1))
+            self.write_error('Academic year does not exist in OSIS : {0} (num_accord={1}, '
+                             'partenaire_id_osis={2}, entite_fmp={3})'.format(
+                end_year - 1,
+                line[0],
+                line[5],
+                line[7],
+            ))
             return
 
         try:
