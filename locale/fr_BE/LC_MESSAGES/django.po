@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-05 21:25+0200\n"
-"PO-Revision-Date: 2018-10-05 22:06+0200\n"
+"PO-Revision-Date: 2018-10-05 22:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -720,7 +720,7 @@ msgstr "Mois maximum pour la création ou la modification"
 #: templates/partnerships/ucl_management_entities/uclmanagemententity_detail.html:32
 #: templates/partnerships/ucl_management_entities/uclmanagemententity_list.html:31
 msgid "faculty"
-msgstr ""
+msgstr "Faculté"
 
 #: models.py:784
 #: templates/partnerships/ucl_management_entities/uclmanagemententity_detail.html:34
