@@ -935,7 +935,7 @@ class UCLManagementEntityForm(forms.ModelForm):
             ),
             'entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
-                forward=['faculty'],
+                forward=(forward.Field('faculty', 'ucl_university'),),
             ),
             'administrative_responsible': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',

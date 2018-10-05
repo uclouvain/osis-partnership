@@ -1283,7 +1283,6 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(name__icontains=self.q)
         qs = qs.distinct()
         if pk is not None:
-            print(pk)
             current = Partner.objects.get(pk=pk)
             return [current] + list(filter(lambda x: x.is_actif, qs))
         return list(filter(lambda x: x.is_actif, qs))
@@ -1328,10 +1327,7 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_ucl_university_labos(self):
         qs = Entity.objects.all()
-        ucl_university = self.forwarded.get(
-            'ucl_university',
-            self.forwarded.get('faculty', None)
-        )
+        ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
             qs = qs.filter(entityversion__parent=ucl_university)
         else:

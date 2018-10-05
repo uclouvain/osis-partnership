@@ -801,7 +801,7 @@ class UCLManagementEntity(models.Model):
         related_name='+',
         null=True,
         blank=True,
-        verbose_name=_("name"),
+        verbose_name=_("contact_in_name"),
     )
     contact_in_email = models.EmailField(
         null=True,
@@ -818,7 +818,7 @@ class UCLManagementEntity(models.Model):
         related_name='+',
         null=True,
         blank=True,
-        verbose_name=_("name"),
+        verbose_name=_("contact_out_name"),
     )
     contact_out_email = models.EmailField(
         null=True,
