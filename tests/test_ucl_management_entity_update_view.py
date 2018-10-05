@@ -222,7 +222,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         )
         self.assertEqual(
             str(response.context_data['ucl_management_entity'].academic_responsible.pk),
-            data['academic_responsible']
+            str(data['academic_responsible'])
         )
         self.assertEqual(
             str(response.context_data['ucl_management_entity'].administrative_responsible.pk),
