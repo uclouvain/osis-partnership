@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-04 18:50+0200\n"
-"PO-Revision-Date: 2018-10-05 10:49+0200\n"
+"POT-Creation-Date: 2018-10-05 17:48+0200\n"
+"PO-Revision-Date: 2018-10-05 17:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -923,10 +923,10 @@ msgid "partnership_update_max_date_month"
 msgstr "Mois maximum pour la mise à jour d'un partenariat."
 
 msgid "faculty"
-msgstr "faculté"
+msgstr "Faculté"
 
 msgid "entity"
-msgstr "entité"
+msgstr "Entité"
 
 msgid "academic_responsible"
 msgstr "responsable académique"
@@ -934,8 +934,14 @@ msgstr "responsable académique"
 msgid "administrative_responsible"
 msgstr "responsable administratif"
 
+msgid "contact_in_name"
+msgstr "Nom du contact"
+
 msgid "portal"
 msgstr "portail"
+
+msgid "contact_out_name"
+msgstr "Nom du contact"
 
 msgid "countries"
 msgstr "Pays"
@@ -1247,69 +1253,38 @@ msgstr "Rechercher les partenariats"
 msgid "ucl_management_entities"
 msgstr "entités de gestion UCL"
 
-msgid "create_uclmanagemententity"
-msgstr "créer une entité de gestion UCL"
-
-msgid "add_uclmanagemententity"
-msgstr "Ajouter une entité de gestion UCL"
-
 msgid "create_ucl_management_entity"
 msgstr "créer une entité de gestion UCL"
 
 msgid "ucl_management_entities_list"
 msgstr "liste des entités de gestion UCL"
 
-msgid "delete_uclmanademententity"
-msgstr "suppression de l'entité de gestion UCL"
+msgid "delete_ucl_management_entity"
+msgstr "Supprimer l'entité de gestion UCL"
 
 #, python-format
 msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
 
-msgid "delete_ucl_management_entity"
-msgstr "Supprimer l'entité de gestion UCL"
+#, fuzzy
+#| msgid "dates"
+msgid "update"
+msgstr "Dates"
 
-msgid "Ucl_management_entities"
-msgstr "Entités de gestion UCL"
-
-msgid "Edit"
-msgstr "Modifier"
-
-msgid "Delete"
+#, fuzzy
+#| msgid "Delete"
+msgid "delete"
 msgstr "Supprimer"
 
-msgid "Ucl_management_entity"
-msgstr "Entité de gestion UCL"
-
-msgid "Faculty"
-msgstr "Faculté"
-
-msgid "Entity"
-msgstr "Entité"
-
-msgid "Academic_responsible"
-msgstr "Responsable académique"
-
-msgid "Administrative_responsible"
-msgstr "Responsable administratif"
+#, fuzzy
+#| msgid "parent_entity"
+msgid "ucl_management_entity"
+msgstr "Entité parente"
 
 #, fuzzy
-#| msgid "contact_in"
-msgid "Contact_in"
-msgstr "Contact de type mobilité in"
-
-#, fuzzy
-#| msgid "email"
-msgid "Email"
-msgstr "Email"
-
-msgid "Portail"
-msgstr "Portail"
-
-#, fuzzy
-#| msgid "contact_out"
-msgid "Contact_out"
-msgstr "Contact de type mobilité out"
+#| msgid "portal"
+msgid "portail"
+msgstr "portail"
 
 msgid "add_ucl_management_entity"
 msgstr "Ajouter une entité de gestion UCL"
@@ -1363,10 +1338,53 @@ msgstr "Accord sauvegardé avec succès."
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
 
+#~ msgid "create_uclmanagemententity"
+#~ msgstr "créer une entité de gestion UCL"
+
+#~ msgid "add_uclmanagemententity"
+#~ msgstr "Ajouter une entité de gestion UCL"
+
+#~ msgid "Edit"
+#~ msgstr "Modifier"
+
+#~ msgid "Ucl_management_entity"
+#~ msgstr "Entité de gestion UCL"
+
+#~ msgid "Faculty"
+#~ msgstr "Faculté"
+
+#~ msgid "Entity"
+#~ msgstr "Entité"
+
+#~ msgid "Academic_responsible"
+#~ msgstr "Responsable académique"
+
+#~ msgid "Administrative_responsible"
+#~ msgstr "Responsable administratif"
+
 #, fuzzy
-#~| msgid "parent_entity"
-#~ msgid "ucl_management_entity"
-#~ msgstr "Entité parente"
+#~| msgid "contact_in"
+#~ msgid "Contact_in"
+#~ msgstr "Contact de type mobilité in"
+
+#, fuzzy
+#~| msgid "email"
+#~ msgid "Email"
+#~ msgstr "Email"
+
+#~ msgid "Portail"
+#~ msgstr "Portail"
+
+#, fuzzy
+#~| msgid "contact_out"
+#~ msgid "Contact_out"
+#~ msgstr "Contact de type mobilité out"
+
+#~ msgid "delete_uclmanademententity"
+#~ msgstr "suppression de l'entité de gestion UCL"
+
+#~ msgid "Ucl_management_entities"
+#~ msgstr "Entités de gestion UCL"
 
 #, fuzzy
 #~| msgid "contacts"

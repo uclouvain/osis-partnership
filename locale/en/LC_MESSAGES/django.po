@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-04 18:50+0200\n"
-"PO-Revision-Date: 2018-10-05 10:37+0200\n"
+"POT-Creation-Date: 2018-10-05 17:48+0200\n"
+"PO-Revision-Date: 2018-10-05 17:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -51,7 +51,7 @@ msgid "website"
 msgstr "website"
 
 msgid "email"
-msgstr "email"
+msgstr "Email"
 
 msgid "start_date_gt_end_date_error"
 msgstr "the start date can't be after the end date"
@@ -219,10 +219,10 @@ msgid "invalid_partnership_update_max_date"
 msgstr ""
 
 msgid "contact_in"
-msgstr ""
+msgstr "In mobility contact"
 
 msgid "contact_out"
-msgstr ""
+msgstr "Out mobility contact"
 
 msgid "parent_entity"
 msgstr "parent entity"
@@ -872,40 +872,40 @@ msgid "financing"
 msgstr "financing"
 
 msgid "january"
-msgstr "january"
+msgstr "January"
 
 msgid "february"
-msgstr "february"
+msgstr "February"
 
 msgid "march"
-msgstr "march"
+msgstr "March"
 
 msgid "april"
-msgstr "april"
+msgstr "April"
 
 msgid "may"
-msgstr "may"
+msgstr "May"
 
 msgid "june"
-msgstr "june"
+msgstr "June"
 
 msgid "july"
-msgstr "july"
+msgstr "July"
 
 msgid "august"
-msgstr "august"
+msgstr "August"
 
 msgid "september"
-msgstr "september"
+msgstr "September"
 
 msgid "october"
-msgstr "october"
+msgstr "October"
 
 msgid "november"
-msgstr "november"
+msgstr "November"
 
 msgid "december"
-msgstr "december"
+msgstr "December"
 
 msgid "partnership_creation_max_date_day"
 msgstr ""
@@ -926,13 +926,19 @@ msgid "entity"
 msgstr "entity"
 
 msgid "academic_responsible"
-msgstr "academic responsible"
+msgstr "Academic responsible"
 
 msgid "administrative_responsible"
-msgstr "administrative responsible"
+msgstr "Administrative responsible"
+
+msgid "contact_in_name"
+msgstr "Nom du contact"
 
 msgid "portal"
-msgstr "portal"
+msgstr "Portal"
+
+msgid "contact_out_name"
+msgstr "Nom du contact"
 
 msgid "countries"
 msgstr "countries"
@@ -1225,17 +1231,8 @@ msgstr "add partnership"
 msgid "search_partnership"
 msgstr "search partnership"
 
-msgid "ucl_management_form"
-msgstr "ucl management form"
-
 msgid "ucl_management_entities"
 msgstr "UCL management entities"
-
-msgid "create_uclmanagemententity"
-msgstr "create UCL management entity"
-
-msgid "add_uclmanagemententity"
-msgstr "add UCL management entity"
 
 msgid "create_ucl_management_entity"
 msgstr "create UCL management entity"
@@ -1243,52 +1240,32 @@ msgstr "create UCL management entity"
 msgid "ucl_management_entities_list"
 msgstr "UCL management entities list"
 
+msgid "delete_ucl_management_entity"
+msgstr "delete UCL management entity"
+
 #, python-format
 msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Are you sure you want to delete \"%(object)s\"?"
 
-msgid "delete_ucl_management_entity"
-msgstr "delete UCL management entity"
+#, fuzzy
+#| msgid "dates"
+msgid "update"
+msgstr "dates"
 
-msgid "Ucl_management_entities"
-msgstr "UCL management entities"
-
-msgid "Edit"
-msgstr "Edit"
-
-msgid "Delete"
+#, fuzzy
+#| msgid "Delete"
+msgid "delete"
 msgstr "Delete"
 
-msgid "Ucl_management_entity"
+#, fuzzy
+#| msgid "Ucl_management_entity"
+msgid "ucl_management_entity"
 msgstr "UCL management entity"
 
-msgid "Faculty"
-msgstr "Faculty"
-
-msgid "Entity"
-msgstr "Entity"
-
-msgid "Academic_responsible"
-msgstr "Academic responsible"
-
-msgid "Administrative_responsible"
-msgstr "Administrative responsible"
-
 #, fuzzy
-#| msgid "contact_title"
-msgid "Contact_in"
-msgstr "title"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Portail"
+#| msgid "portal"
+msgid "portail"
 msgstr "Portal"
-
-#, fuzzy
-#| msgid "contact_type"
-msgid "Contact_out"
-msgstr "contact type"
 
 msgid "add_ucl_management_entity"
 msgstr "add UCL management entity"
@@ -1340,6 +1317,50 @@ msgstr ""
 
 msgid "configuration_saved"
 msgstr "configuration saved"
+
+#~ msgid "create_uclmanagemententity"
+#~ msgstr "create UCL management entity"
+
+#~ msgid "add_uclmanagemententity"
+#~ msgstr "add UCL management entity"
+
+#~ msgid "Edit"
+#~ msgstr "Edit"
+
+#~ msgid "Faculty"
+#~ msgstr "Faculty"
+
+#~ msgid "Entity"
+#~ msgstr "Entity"
+
+#~ msgid "Academic_responsible"
+#~ msgstr "Academic responsible"
+
+#~ msgid "Administrative_responsible"
+#~ msgstr "Administrative responsible"
+
+#~ msgid "Contact_in"
+#~ msgstr "Contact in"
+
+#~ msgid "Email"
+#~ msgstr "Email"
+
+#~ msgid "Portail"
+#~ msgstr "Portal"
+
+#~ msgid "Contact_out"
+#~ msgstr "Contact out"
+
+#, fuzzy
+#~| msgid "delete_ucl_management_entity"
+#~ msgid "delete_uclmanademententity"
+#~ msgstr "delete UCL management entity"
+
+#~ msgid "ucl_management_form"
+#~ msgstr "ucl management form"
+
+#~ msgid "Ucl_management_entities"
+#~ msgstr "UCL management entities"
 
 #, fuzzy
 #~| msgid "contact_type"
