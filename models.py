@@ -832,7 +832,7 @@ class UCLManagementEntity(models.Model):
     )
 
     class Meta:
-        pass
+        unique_together = ("faculty", "entity")
 
     def get_absolute_url(self):
         return reverse(
