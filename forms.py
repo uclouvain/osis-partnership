@@ -642,13 +642,6 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
-
-        education_field_ids = Partnership.objects.filter(years__isnull=False).order_by(
-            "years__education_field"
-        ).distinct("years__education_field").values_list("years__education_field", flat=True)
-        education_fields_dict = dict(PartnershipYear.EDUCATION_FIELD_CHOICES)
-        education_fields = ((field_id, education_fields_dict[field_id]) for field_id in education_field_ids)
-
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
