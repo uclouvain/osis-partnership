@@ -141,6 +141,7 @@ class Command(BaseCommand):
     # Cache
 
     countries = {}
+    academic_years = {}
     partners_by_code = {}
     partners_by_csv_id = {}
     partnerships_for_agreements = {}
@@ -406,6 +407,14 @@ class Command(BaseCommand):
             self.write_error('Unknown responsable {global_id}'.format(global_id=global_id))
             return None
 
+    def get_academic_year(self, year):
+        if year not in self.academic_years:
+            try:
+                self.academic_years[year] = AcademicYear.objects.get(year=year)
+            except AcademicYear.DoesNotExist:
+                self.academic_years[year] = None
+        return self.academic_years[year]
+
     @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
@@ -438,22 +447,33 @@ class Command(BaseCommand):
 
         # TODO CREATE MANAGEMENT ENTITY IF NON EXISTENT
 
-        partnership_year = partnership.current_year
-        if partnership_year is None:
-            partnership_year = PartnershipYear(
-                partnership=partnership,
-                academic_year=current_academic_year(),
-                partnership_type=PartnershipYear.TYPE_MOBILITY
-            )
-        partnership_year.is_sms = bool(line[13])
-        partnership_year.is_sta = bool(line[14])
-        partnership_year.save()
         educations_fields = []
         for code in [line[15], line[16], line[17]]:
             education_field = self.get_education_field(code)
             if education_field:
                 educations_fields.append(education_field)
-        partnership_year.education_fields = educations_fields
+
+        try:
+            end_year = int(line[3])
+        except ValueError:
+            end_year = 2019
+        for year in range(2018, end_year):
+            academic_year = self.get_academic_year(year)
+            if academic_year is None:
+                self.write_error('No academic year for year {year}'.format(year))
+                continue
+            try:
+                partnership_year = partnership.years.get(academic_year=academic_year)
+            except PartnershipYear.DoesNotExist:
+                partnership_year = PartnershipYear(
+                    partnership=partnership,
+                    academic_year=academic_year,
+                    partnership_type=PartnershipYear.TYPE_MOBILITY
+                )
+            partnership_year.is_sms = bool(line[13])
+            partnership_year.is_sta = bool(line[14])
+            partnership_year.save()
+            partnership_year.education_fields = educations_fields
 
         self.partnerships_for_agreements['{0}-{1}'.format(line[5], line[11])] = partnership
 
