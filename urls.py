@@ -16,8 +16,10 @@ from partnership.views import (EntityAutocompleteView,
                                PartnershipContactUpdateView,
                                PartnershipCreateView, PartnershipDetailView,
                                PartnershipExportView, PartnershipsListView,
-                               PartnershipUpdateView, PartnersListView,
-                               PartnerUpdateView,
+                               PartnershipUpdateView,
+                               PartnershipYearEntitiesAutocompleteView,
+                               PartnershipYearOffersAutocompleteView,
+                               PartnersListView, PartnerUpdateView,
                                PartneshipAgreementCreateView,
                                PartneshipAgreementDeleteView,
                                PartneshipAgreementUpdateView,
@@ -31,11 +33,7 @@ from partnership.views import (EntityAutocompleteView,
                                UclUniversityAutocompleteFilterView,
                                UclUniversityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
-                               UclUniversityLaboAutocompleteView,
-                               PartnershipYearEntitiesAutocompleteView,
-                               PartnershipYearOffersAutocompleteView,
-                               EntityAutocompleteView)
-
+                               UclUniversityLaboAutocompleteView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),

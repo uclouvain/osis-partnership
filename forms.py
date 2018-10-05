@@ -13,9 +13,10 @@ from base.models.person import Person
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel,
-                                UCLManagementEntity)
+                                PartnershipTag, PartnershipYear,
+                                PartnershipYearEducationField,
+                                PartnershipYearEducationLevel, PartnerTag,
+                                PartnerType, UCLManagementEntity)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -868,17 +869,6 @@ class PartnershipConfigurationForm(forms.ModelForm):
             self.add_error(
                 'partnership_creation_update_max_date_day',
                 ValidationError(_('invalid_partnership_creation_max_date'))
-            )
-        try:
-            date(
-                2001,
-                self.cleaned_data['partnership_update_max_date_month'],
-                self.cleaned_data['partnership_update_max_date_day'],
-            )
-        except ValueError:
-            self.add_error(
-                'partnership_update_max_date_day',
-                ValidationError(_('invalid_partnership_update_max_date'))
             )
         return self.cleaned_data
 

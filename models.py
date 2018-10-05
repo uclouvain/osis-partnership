@@ -9,13 +9,14 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
-                               user_is_in_user_faculty, user_is_gf_of_faculty)
+                               user_is_gf_of_faculty, user_is_in_user_faculty)
 
 
 class PartnerType(models.Model):

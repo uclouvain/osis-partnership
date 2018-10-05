@@ -3,9 +3,6 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from django.test import TestCase
-from django.urls import reverse
-
 from base.models.enums.entity_type import FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory

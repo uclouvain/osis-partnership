@@ -13,8 +13,9 @@ from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipFactory,
-                                         PartnershipYearFactory, PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory)
+                                         PartnershipYearEducationFieldFactory,
+                                         PartnershipYearEducationLevelFactory,
+                                         PartnershipYearFactory)
 
 
 class PartnershipUpdateViewTest(TestCase):

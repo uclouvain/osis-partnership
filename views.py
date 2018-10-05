@@ -20,7 +20,8 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 
-from base.models.academic_year import find_academic_years, current_academic_year
+from base.models.academic_year import (current_academic_year,
+                                       find_academic_years)
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -32,9 +33,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm,
-                               UCLManagementEntityForm
-)
+                               PartnershipYearForm, UCLManagementEntityForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
