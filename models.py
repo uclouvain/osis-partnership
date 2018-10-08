@@ -497,6 +497,13 @@ class Partnership(models.Model):
 
         return mark_safe(' / '.join(map(add_tooltip, entities)))
 
+    @cached_property
+    def ucl_management_entity(self):
+        try:
+            return UCLManagementEntity.objects.get(faculty=self.ucl_university, entity=self.ucl_university_labo)
+        except UCLManagementEntity.DoesNotExist:
+            return None
+
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
