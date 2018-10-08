@@ -20,6 +20,10 @@
         if (data.erasmus_code !== null) {
             $('#partner-erasmus-code').text(data.erasmus_code);
         }
+
+        var $partnerEntityLink = $('#partner-entity-create-link');
+
+        $partnerEntityLink.attr('href', $partnerEntityLink.attr('data-href').replace('0', data.id)).removeClass('hidden');
     });
 
 })(jQuery);

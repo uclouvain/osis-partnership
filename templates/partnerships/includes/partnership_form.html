@@ -18,7 +18,9 @@
     <div class="form-group required_field">
       <label class="control-label" for="{{ form.partner_entity.id_for_label }}">{% trans "partner_entity_inside_partner" %}</label>
       {{ form.partner_entity }}
-      <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner_entity" %}</a> TODO
+      <a href="{% if partnership %}{% url "partnerships:partners:entities:create" partnership.partner.pk %}{% else %}#{% endif %}"
+         class="{% if not partnership %}hidden{% endif %}"
+         id="partner-entity-create-link" data-href="{% url "partnerships:partners:entities:create" 0 %}" target="_blank">{% trans "add_partner_entity" %}</a>
     </div>
   </div>
 </div>
