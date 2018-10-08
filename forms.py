@@ -475,6 +475,18 @@ class PartnershipFilterForm(forms.Form):
         ),
     )
 
+    university_offers = forms.ModelMultipleChoiceField(
+        label=_('university_offers'),
+        queryset=EducationGroupYear.objects.select_related('academic_year')
+        .filter(partnerships__isnull=False).distinct(),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:university_offers_filter',
+            forward=['ucl_university_labo'],
+            attrs={'data-width': '100%'},
+        ),
+    )
+
     # Partner
 
     partner = forms.ModelChoiceField(

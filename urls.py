@@ -33,7 +33,7 @@ from partnership.views import (EntityAutocompleteView,
                                UclUniversityAutocompleteFilterView,
                                UclUniversityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
-                               UclUniversityLaboAutocompleteView)
+                               UclUniversityLaboAutocompleteView, UniversityOffersAutocompleteFilterView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -108,5 +108,6 @@ urlpatterns = [
             UclUniversityLaboAutocompleteFilterView.as_view(),
             name='ucl_university_labo_filter',
         ),
+        url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
     ], namespace='autocomplete')),
 ]
