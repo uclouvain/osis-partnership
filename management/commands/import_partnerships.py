@@ -6,11 +6,12 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
-from base.models.academic_year import current_academic_year, AcademicYear
+from base.models.academic_year import AcademicYear, current_academic_year
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Address, Media, Partner, PartnerType, Partnership, PartnershipYear, \
-    PartnershipYearEducationField, PartnershipAgreement
+from partnership.models import (Address, Media, Partner, Partnership,
+                                PartnershipAgreement, PartnershipYear,
+                                PartnershipYearEducationField, PartnerType)
 from reference.models.country import Country
 
 COUNTRIES_OLD_TO_ISO = {

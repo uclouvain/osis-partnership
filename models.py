@@ -16,7 +16,7 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
-                               user_is_in_user_faculty)
+                               user_is_gf_of_faculty, user_is_in_user_faculty)
 
 
 class PartnerType(models.Model):
@@ -497,6 +497,13 @@ class Partnership(models.Model):
 
         return mark_safe(' / '.join(map(add_tooltip, entities)))
 
+    def get_supervisor(self):
+        if self.supervisor is not None:
+            return self.supervisor
+        if self.ucl_management_entity is not None:
+            return self.ucl_management_entity.academic_responsible
+        return None
+
 
 class PartnershipYearEducationField(models.Model):
     code = models.CharField(max_length=30, unique=True)
@@ -756,6 +763,83 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 1).first()
         else:
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
+
+
+class UCLManagementEntity(models.Model):
+    faculty = models.ForeignKey(
+        'base.Entity',
+        verbose_name=_("faculty"),
+        related_name='+',
+    )
+    entity = models.ForeignKey(
+        'base.Entity',
+        null=True,
+        blank=True,
+        verbose_name=_("entity"),
+        related_name='+',
+    )
+    academic_responsible = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        verbose_name=_("academic_responsible"),
+    )
+    administrative_responsible = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        verbose_name=_("administrative_responsible"),
+    )
+    contact_in_person = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        null=True,
+        blank=True,
+        verbose_name=_("contact_in_name"),
+    )
+    contact_in_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name=_("email"),
+    )
+    contact_in_url = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=_("portal"),
+    )
+    contact_out_person = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        null=True,
+        blank=True,
+        verbose_name=_("contact_out_name"),
+    )
+    contact_out_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name=_("email"),
+    )
+    contact_out_url = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=_("portal")
+    )
+
+    class Meta:
+        unique_together = ("faculty", "entity")
+
+    def get_absolute_url(self):
+        return reverse(
+            'partnerships:ucl_management_entities:detail',
+            kwargs={'pk': self.pk}
+        )
+
+    def __str__(self):
+        return ("{} {}".format(self.faculty, self.entity))
+
+    def user_can_change(self, user):
+        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
+
+    def user_can_delete(self, user):
+        return user_is_adri(user) and not self.faculty.partnerships.exists()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app

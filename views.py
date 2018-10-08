@@ -4,10 +4,10 @@ from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet)
+from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet, Value, When)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -20,7 +20,8 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 
-from base.models.academic_year import find_academic_years, current_academic_year
+from base.models.academic_year import (current_academic_year,
+                                       find_academic_years)
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -32,11 +33,11 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm)
+                               PartnershipYearForm, UCLManagementEntityForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear)
-from partnership.utils import user_is_adri, user_is_gf
+                                PartnershipYear, UCLManagementEntity)
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -796,7 +797,8 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                 str(partnership.partner),
                 str(partnership.partner_entity) if partnership.partner_entity else None,
                 str(partnership.ucl_university.entityversion_set.all()[0]),
-                str(partnership.ucl_university_labo.entityversion_set.all()[0]) if partnership.ucl_university_labo else '',
+                str(partnership.ucl_university_labo.entityversion_set.all()[0])
+                    if partnership.ucl_university_labo else '',
                 ', '.join(map(str, partnership.university_offers.all())),
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
                 partnership.start_date.strftime('%Y-%m-%d'),
@@ -1148,7 +1150,92 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         return super().form_valid(form)
 
 
+# UCLManagementEntities views :
+
+class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
+    context_object_name = "ucl_management_entities"
+    ordering = ['faculty']
+
+    def test_func(self):
+        result = user_is_adri(self.request.user) or user_is_gf(self.request.user)
+        return result
+
+    def get_queryset(self):
+        if not user_is_adri(self.request.user):
+            return super().get_queryset().filter(
+                faculty__entitymanager__person__user=self.request.user
+            )
+        return super().get_queryset()
+
+
+class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
+    form_class = UCLManagementEntityForm
+
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
+
+
+class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
+    form_class = UCLManagementEntityForm
+    context_object_name = "ucl_management_entity"
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        return result
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
+    context_object_name = "ucl_management_entity"
+    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.faculty is not None and self.object.faculty.partnerships.all():
+            raise PermissionDenied
+        return super().dispatch(*args, **kwargs)
+
+    def test_func(self):
+        result = user_is_adri(self.request.user)
+        return result
+
+
+class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = UCLManagementEntity
+    template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
+    context_object_name = "ucl_management_entity"
+
+    def test_func(self):
+        self.object = self.get_object()
+        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
+            self.request.user, self.object.faculty
+        )
+        return result
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_change_ucl_management_entity'] = self.object.user_can_change(self.request.user)
+        context['can_delete_ucl_management_entity'] = self.object.user_can_delete(self.request.user)
+        return context
+
 # Autocompletes
+
 
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 
@@ -1159,6 +1246,17 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
                 Q(first_name__icontains=self.q) |
                 Q(middle_name__icontains=self.q) |
                 Q(last_name__icontains=self.q)
+            )
+        return qs.distinct()
+
+
+class EntityAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Entity.objects.prefetch_related('entityversion_set').all()
+        if self.q:
+            qs = qs.filter(
+                entityversion__acronym__icontains=self.q
             )
         return qs.distinct()
 
@@ -1184,7 +1282,6 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(name__icontains=self.q)
         qs = qs.distinct()
         if pk is not None:
-            print(pk)
             current = Partner.objects.get(pk=pk)
             return [current] + list(filter(lambda x: x.is_actif, qs))
         return list(filter(lambda x: x.is_actif, qs))

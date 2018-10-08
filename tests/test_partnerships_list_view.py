@@ -1,17 +1,19 @@
+from django.test import TestCase
+from django.urls import reverse
+
 from base.models.academic_year import AcademicYear
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
-from django.test import TestCase
-from django.urls import reverse
 from partnership.models import PartnershipAgreement
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipAgreementFactory,
                                          PartnershipFactory,
                                          PartnershipTagFactory,
                                          PartnershipYearFactory,
-                                         PartnerTagFactory, PartnerTypeFactory, PartnershipYearEducationFieldFactory,
+                                         PartnerTagFactory, PartnerTypeFactory,
+                                         PartnershipYearEducationFieldFactory,
                                          PartnershipYearEducationLevelFactory)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory

@@ -13,8 +13,10 @@ from base.models.person import Person
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipTag, PartnershipYear, PartnerTag,
-                                PartnerType, PartnershipYearEducationField, PartnershipYearEducationLevel)
+                                PartnershipTag, PartnershipYear,
+                                PartnershipYearEducationField,
+                                PartnershipYearEducationLevel, PartnerTag,
+                                PartnerType, UCLManagementEntity)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -454,7 +456,7 @@ class PartnershipFilterForm(forms.Form):
             attrs={
                 'data-width': '100%',
                 'class': 'resetting',
-                'data-reset': '#id_ucl_university_labo, #id_university_offers',
+                'data-reset': '#id_ucl_university_labo',
             },
         ),
     )
@@ -469,21 +471,7 @@ class PartnershipFilterForm(forms.Form):
             forward=['ucl_university'],
             attrs={
                 'data-width': '100%',
-                'class': 'resetting',
-                'data-reset': '#id_university_offers',
             },
-        ),
-    )
-
-    university_offers = forms.ModelMultipleChoiceField(
-        label=_('university_offers'),
-        queryset=EducationGroupYear.objects.select_related('academic_year')
-        .filter(partnerships__isnull=False).distinct(),
-        required=False,
-        widget=autocomplete.ModelSelect2Multiple(
-            url='partnerships:autocomplete:university_offers_filter',
-            forward=['ucl_university_labo'],
-            attrs={'data-width': '100%'},
         ),
     )
 
@@ -659,11 +647,9 @@ class PartnershipForm(forms.ModelForm):
         fields = (
             'partner',
             'partner_entity',
-
             'ucl_university',
             'ucl_university_labo',
             'supervisor',
-
             'comment',
             'tags',
         )
@@ -689,10 +675,6 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university_labo': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
                 forward=['ucl_university'],
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_university_offers',
-                },
             ),
             'supervisor': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
@@ -743,7 +725,6 @@ class PartnershipForm(forms.ModelForm):
             and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
         ):
             self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
-
         return self.cleaned_data
 
 
@@ -889,3 +870,58 @@ class PartnershipConfigurationForm(forms.ModelForm):
                 'partnership_creation_update_max_date_day',
                 ValidationError(_('invalid_partnership_creation_max_date'))
             )
+        return self.cleaned_data
+
+
+class UCLManagementEntityForm(forms.ModelForm):
+    class Meta:
+        model = UCLManagementEntity
+        fields = [
+            'faculty',
+            'entity',
+            'administrative_responsible',
+            'academic_responsible',
+            'contact_in_person',
+            'contact_in_email',
+            'contact_in_url',
+            'contact_out_person',
+            'contact_out_email',
+            'contact_out_url',
+        ]
+        widgets = {
+            'faculty': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:ucl_university',
+                attrs={
+                    'class': 'resetting',
+                    'data-reset': '#id_entity',
+                },
+            ),
+            'entity': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:ucl_university_labo',
+                forward=(forward.Field('faculty', 'ucl_university'),),
+            ),
+            'administrative_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'academic_responsible': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_in_person': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+            'contact_out_person': autocomplete.ModelSelect2(
+                url='partnerships:autocomplete:person',
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if (self.instance.pk is not None and self.instance.faculty.partnerships.exists()) or (
+            self.user is not None and not user_is_adri(self.user)
+        ):
+            self.fields['entity'].disabled = True
+            self.fields['faculty'].disabled = True
+        if self.user is not None and not user_is_adri(self.user):
+            self.fields['academic_responsible'].disabled = True
+            self.fields['administrative_responsible'].disabled = True
