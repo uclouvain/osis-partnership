@@ -8,6 +8,7 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import UCLManagementEntity
 from partnership.tests.factories import (PartnershipFactory,
                                          UCLManagementEntityFactory)
 
@@ -95,18 +96,18 @@ class UCLManagementEntityUpdateViewTest(TestCase):
 
     def test_post_view_anonymous(self):
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_view_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_view_gf_user(self):
         self.client.force_login(self.gf_user)
-        data = self.data
+        data = self.data.copy()
         data['academic_responsible'] = self.ucl_management_entity.academic_responsible.pk
         data['administrative_responsible'] = self.ucl_management_entity.administrative_responsible.pk
         data['entity'] = self.ucl_management_entity.entity.pk
@@ -114,141 +115,144 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(
             response,
-            'partnerships/ucl_management_entities/uclmanagemententity_detail.html'
+            'partnerships/ucl_management_entities/uclmanagemententity_list.html'
         )
+        ucl_management_entity = UCLManagementEntity.objects.get(pk=self.ucl_management_entity.pk)
         self.assertEqual(
-            response.context_data['ucl_management_entity'].academic_responsible.pk,
+            ucl_management_entity.academic_responsible.pk,
             data['academic_responsible'],
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].administrative_responsible.pk,
+            ucl_management_entity.administrative_responsible.pk,
             data['administrative_responsible']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].entity.pk,
+            ucl_management_entity.entity.pk,
             data['entity'],
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].faculty.pk,
+            ucl_management_entity.faculty.pk,
             data['faculty'],
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_email,
+            ucl_management_entity.contact_in_email,
             data['contact_in_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_in_person.pk),
+            str(ucl_management_entity.contact_in_person.pk),
             data['contact_in_person'],
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_url,
+            ucl_management_entity.contact_in_url,
             data['contact_in_url']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_email,
+            ucl_management_entity.contact_out_email,
             data['contact_out_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_out_person.pk),
+            str(ucl_management_entity.contact_out_person.pk),
             data['contact_out_person']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_url,
+            ucl_management_entity.contact_out_url,
             data['contact_out_url']
         )
 
     def test_post_view_other_gf_user(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
 
     def test_post_view_adri_user(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(
             response,
-            'partnerships/ucl_management_entities/uclmanagemententity_detail.html'
+            'partnerships/ucl_management_entities/uclmanagemententity_list.html'
         )
+        ucl_management_entity = UCLManagementEntity.objects.get(pk=self.ucl_management_entity.pk)
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].academic_responsible.pk),
+            str(ucl_management_entity.academic_responsible.pk),
             self.data['academic_responsible']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].administrative_responsible.pk),
+            str(ucl_management_entity.administrative_responsible.pk),
             self.data['administrative_responsible']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_email,
+            ucl_management_entity.contact_in_email,
             self.data['contact_in_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_in_person.pk),
+            str(ucl_management_entity.contact_in_person.pk),
             self.data['contact_in_person']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_url,
+            ucl_management_entity.contact_in_url,
             self.data['contact_in_url']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_email,
+            ucl_management_entity.contact_out_email,
             self.data['contact_out_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_out_person.pk),
+            str(ucl_management_entity.contact_out_person.pk),
             self.data['contact_out_person']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_url,
+            ucl_management_entity.contact_out_url,
             self.data['contact_out_url']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].faculty.pk),
+            str(ucl_management_entity.faculty.pk),
             self.data['faculty']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].entity.pk),
+            str(ucl_management_entity.entity.pk),
             self.data['entity']
         )
 
     def test_post_view_with_linked_adri_user(self):
         self.client.force_login(self.adri_user)
-        data = self.data
+        data = self.data.copy()
         del data['entity']
         del data['faculty']
         response = self.client.post(self.linked_url, data=data, follow=True)
         self.assertTemplateUsed(
             response,
-            'partnerships/ucl_management_entities/uclmanagemententity_detail.html'
+            'partnerships/ucl_management_entities/uclmanagemententity_list.html'
         )
+        ucl_management_entity = UCLManagementEntity.objects.get(pk=self.ucl_management_entity_linked.pk)
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].academic_responsible.pk),
+            str(ucl_management_entity.academic_responsible.pk),
             str(data['academic_responsible'])
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].administrative_responsible.pk),
+            str(ucl_management_entity.administrative_responsible.pk),
             str(data['administrative_responsible'])
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_email,
+            ucl_management_entity.contact_in_email,
             data['contact_in_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_in_person.pk),
+            str(ucl_management_entity.contact_in_person.pk),
             data['contact_in_person']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_in_url,
+            ucl_management_entity.contact_in_url,
             data['contact_in_url']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_email,
+            ucl_management_entity.contact_out_email,
             data['contact_out_email']
         )
         self.assertEqual(
-            str(response.context_data['ucl_management_entity'].contact_out_person.pk),
+            str(ucl_management_entity.contact_out_person.pk),
             data['contact_out_person']
         )
         self.assertEqual(
-            response.context_data['ucl_management_entity'].contact_out_url,
+            ucl_management_entity.contact_out_url,
             data['contact_out_url']
         )

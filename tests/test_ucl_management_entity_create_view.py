@@ -73,22 +73,22 @@ class UCLManagementEntityCreateViewTest(TestCase):
 
     def test_post_anonymous(self):
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_lambda_user(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_gf_user(self):
         self.client.force_login(self.gf_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
