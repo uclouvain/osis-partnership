@@ -798,7 +798,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                 str(partnership.partner_entity) if partnership.partner_entity else None,
                 str(partnership.ucl_university.entityversion_set.all()[0]),
                 str(partnership.ucl_university_labo.entityversion_set.all()[0])
-                if partnership.ucl_university_labo else '',
+                    if partnership.ucl_university_labo else '',
                 ', '.join(map(str, partnership.university_offers.all())),
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
                 partnership.start_date.strftime('%Y-%m-%d'),

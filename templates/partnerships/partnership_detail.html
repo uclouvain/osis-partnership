@@ -80,6 +80,7 @@
             <th>{% trans "planned_activity" %}</th>
             <th>{% trans "education_levels" %}</th>
             <th>{% trans "partnership_year_entities" %}</th>
+            <th>{% trans "partnership_year_offers" %}</th>
             <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
@@ -102,6 +103,11 @@
             <td>
               <ul class="list-unstyled">
                 {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul class="list-unstyled">
+                {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% endfor %}
               </ul>
             </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>

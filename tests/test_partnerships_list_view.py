@@ -11,10 +11,10 @@ from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipAgreementFactory,
                                          PartnershipFactory,
                                          PartnershipTagFactory,
-                                         PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory,
                                          PartnershipYearFactory,
-                                         PartnerTagFactory, PartnerTypeFactory)
+                                         PartnerTagFactory, PartnerTypeFactory,
+                                         PartnershipYearEducationFieldFactory,
+                                         PartnershipYearEducationLevelFactory)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
@@ -32,6 +32,11 @@ class PartnershipsListViewTest(TestCase):
         # ucl_university_labo
         cls.ucl_university_labo = EntityFactory()
         cls.partnership_ucl_university_labo = PartnershipFactory(ucl_university_labo=cls.ucl_university_labo)
+        # university_offer
+        cls.university_offer = EducationGroupYearFactory()
+        cls.partnership_university_offer = PartnershipFactory()
+        partnership_year = PartnershipYearFactory(partnership=cls.partnership_university_offer, academic_year__year=2101)
+        partnership_year.offers.add(cls.university_offer)
         # partner
         cls.partner = PartnerFactory()
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
@@ -138,6 +143,7 @@ class PartnershipsListViewTest(TestCase):
             partnership_type='autre',
             academic_year__year=2160,
         )
+        partnership_year.offers.add(EducationGroupYearFactory())
         cls.all_education_field = PartnershipYearEducationFieldFactory()
         partnership_year.education_fields.add(cls.all_education_field)
         cls.all_education_level = PartnershipYearEducationLevelFactory()
@@ -203,6 +209,14 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
+
+    def test_filter_university_offers(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url + '?university_offers=' + str(self.university_offer.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_university_offer)
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -373,6 +387,7 @@ class PartnershipsListViewTest(TestCase):
         query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
             'ucl_university': str(self.partnership_all_filters.ucl_university.pk),
             'ucl_university_labo': str(self.partnership_all_filters.ucl_university_labo.pk),
+            'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
             'partner': str(self.partnership_all_filters.partner.pk),
             'partner_entity': str(self.partnership_all_filters.partner_entity.pk),
             'city': 'all_filters',
