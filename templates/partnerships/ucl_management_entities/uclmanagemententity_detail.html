@@ -13,20 +13,20 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="row row-fluid">
+      <div class="row">
         <div class="col-sm-12">
           {% if can_change_ucl_management_entity %}
-            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}">{% trans 'update' %}</a>
+            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}"><i class="fa fa-fw fa-pencil"></i> {% trans 'update' %}</a>
           {% endif %}
           {% if can_delete_ucl_management_entity %}
-            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}">{% trans 'delete' %}</a>
+            <a class="btn btn-danger" href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}"><i class="fa fa-fw fa-cross"></i> {% trans 'delete' %}</a>
           {% endif %}
         </div>
       </div>
 
       <!-- UCL Management Entity -->
-      <div class="row row-fluid">
-        <div class="col-12">
+      <div class="row">
+        <div class="col-sm-12">
           <h2>{% trans 'ucl_management_entity' %}</h2>
           <dl class="dl-horizontal">
             <dt>{% trans 'faculty' %}</dt>
@@ -40,7 +40,7 @@
           </dl>
         </div>
       </div>
-      <div class="row row-fluid">
+      <div class="row">
         <!-- Contact in -->
         <div class="col-xs-12 col-sm-6">
           <h2>{% trans 'contact_in' %}</h2>

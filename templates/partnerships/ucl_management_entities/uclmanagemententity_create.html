@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% load i18n static %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>
   <li class="active">{% trans "create_ucl_management_entity" %}</li>
@@ -14,7 +18,9 @@
   <div class="panel panel-default">
     <div class="panel-body uclmanagemententity_form">
       <form action="{% url "partnerships:ucl_management_entities:create" %}" method="post">
+
         {% include "partnerships/ucl_management_entities/includes/uclmanagemententity_form.html" %}
+
         <div class="row">
           <div class="col-sm-12">
             <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>

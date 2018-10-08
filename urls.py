@@ -70,7 +70,7 @@ urlpatterns = [
         ], namespace='entities')),
         url(r'^new/$', PartnerCreateView.as_view(), name="create"),
     ], namespace='partners')),
-    url(r'^UCLManagementEntities/', include([
+    url(r'^ucl_management_entities/', include([
         url(r'^$', UCLManagementEntityListView.as_view(), name="list"),
         url(r'^create/$', UCLManagementEntityCreateView.as_view(), name="create"),
         url(r'^(?P<pk>\d+)/$', UCLManagementEntityDetailView.as_view(), name="detail"),

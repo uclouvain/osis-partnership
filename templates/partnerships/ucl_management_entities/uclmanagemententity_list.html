@@ -24,6 +24,7 @@
         </div>
       </div>
       <div id="results">
+        {% if ucl_management_entities %}
         <div class="table-responsive">
           <table class="table table-stripped table-hover">
             <thead>
@@ -47,8 +48,8 @@
                   <td>{{ ucl_management_entity.contact_in_person|default_if_none:"" }}</td>
                   <td>{{ ucl_management_entity.contact_out_person|default_if_none:"" }}</td>
                   <td>
-                    <a href="{{ ucl_management_entity.get_absolute_url }}" class="btn btn-default">
-                      <i class="fa fa-eye"></i>
+                    <a href="{% url "partnerships:ucl_management_entities:update" ucl_management_entity.pk %}" class="btn btn-default">
+                      <i class="fa fa-pencil"></i>
                     </a>
                   </td>
                 </tr>
@@ -61,6 +62,13 @@
             {% include "partnerships/includes/pagination.html" %}
           </div>
         </div>
+        {% else %}
+        <div class="row">
+          <div class="col-sm-12">
+            <p>{% trans "ucl_management_entities_empty" %}</p>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
