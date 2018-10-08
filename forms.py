@@ -690,6 +690,7 @@ class PartnershipForm(forms.ModelForm):
             ),
             'supervisor': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
+                attrs={'data-placeholder': _('same_supervisor_than_management_entity')},
             ),
             'tags': autocomplete.Select2Multiple(),
         }

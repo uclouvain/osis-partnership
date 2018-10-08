@@ -3,20 +3,26 @@
 {% bootstrap_form_errors form %}
 {% bootstrap_form_errors form_year %}
 
-<h2>{% trans 'Partner' %}</h2>
+<h2>{% trans 'partner_university' %}</h2>
 <div class="row row-fluid">
   <div class="col-xs-12 col-sm-6">
     <div class="form-group required_field">
-      <label class="control-label" for="{{ form.partner.id_for_label }}">{{ form.partner.label }}</label>
+      <label class="control-label" for="{{ form.partner.id_for_label }}">{% trans "Name" %}</label>
       {{ form.partner }}
       <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>
     </div>
   </div>
-  <div class="col-xs-12 col-sm-6">
-    {% bootstrap_field form.partner_entity %}
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code"></dd></dl></div>
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "erasmus_code" %}</dt><dd id="partner-erasmus-code"></dd></dl></div>
+  <div class="col-xs-12 col-sm-12">
+    <div class="form-group required_field">
+      <label class="control-label" for="{{ form.partner_entity.id_for_label }}">{% trans "partner_entity_inside_partner" %}</label>
+      {{ form.partner_entity }}
+      <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner_entity" %}</a> TODO
+    </div>
   </div>
 </div>
-<h2>{% trans 'UCL' %}</h2>
+<h2>{% trans 'ucl_entity_partner' %}</h2>
 <div class="row">
   <div class="col-xs-12 col-sm-6">
     {% bootstrap_field form.ucl_university %}

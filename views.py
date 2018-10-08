@@ -1277,6 +1277,17 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
 
 class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': self.get_result_value(result),
+                'text': self.get_result_label(result),
+                'pic_code': result.pic_code,
+                'erasmus_code': result.erasmus_code,
+            } for result in context['object_list']
+        ]
+
     def get_queryset(self):
         qs = Partner.objects.all()
         pk = self.forwarded.get('partner_pk', None)
