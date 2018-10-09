@@ -12,3 +12,8 @@ def change_current_url_param(field_name, value, urlencode=None):
         encoded_querystring = '&'.join(filtered_querystring)
         url = '{}&{}'.format(url, encoded_querystring)
     return url
+
+
+@register.simple_tag(takes_context=True)
+def full_uri(context, url):
+    return context['request'].build_absolute_uri(url)

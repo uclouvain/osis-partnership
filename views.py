@@ -1,15 +1,18 @@
 from copy import copy
 
 from dal import autocomplete
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.mail import send_mail
 from django.db import transaction
-from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet, Value, When, Subquery)
+from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
+                              QuerySet, Subquery)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import ugettext
@@ -37,7 +40,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -289,6 +292,28 @@ class PartnerFormMixin(object):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
+        if not user_is_adri(self.request.user):
+            send_mail(
+                _('partner_created'),
+                render_to_string(
+                    'partnerships/mails/plain_partner_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partner': partner,
+                    },
+                    request=self.request,
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                get_adri_emails(),
+                html_message=render_to_string(
+                    'partnerships/mails/partner_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partner': partner,
+                    },
+                    request=self.request,
+                ),
+            )
         return redirect(partner)
 
     def form_invalid(self, form, form_address):
@@ -990,6 +1015,28 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             form_year.save_m2m()
 
         messages.success(self.request, _('partnership_success'))
+        if not user_is_adri(self.request.user):
+            send_mail(
+                _('partnership_created'),
+                render_to_string(
+                    'partnerships/mails/plain_partnership_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                get_adri_emails(),
+                html_message=render_to_string(
+                    'partnerships/mails/partnership_creation.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
+                ),
+            )
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
