@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from base.models.entity_version import EntityVersion
@@ -55,9 +56,7 @@ def user_is_gf(user):
 
 def user_is_gf_of_faculty(user, faculty):
     if user_is_gf(user):
-        return user.person.entitymanager_set.filter(
-            entity=faculty,
-        ).exists()
+        return User.objects.filter(pk=user.pk, person__entitymanager__entity=faculty).exists()
     else:
         return False
 
