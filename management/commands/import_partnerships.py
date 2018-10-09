@@ -259,6 +259,9 @@ class Command(BaseCommand):
     def get_country(self, old_code, line):
         if not old_code:
             return None
+        # Fix for bad data in csv
+        if old_code == 'PT':
+            old_code = 'P'
         if old_code not in self.countries:
             iso = COUNTRIES_OLD_TO_ISO.get(old_code, None)
             if iso is None:
@@ -269,6 +272,14 @@ class Command(BaseCommand):
                 ))
                 self.countries[old_code] = None
             else:
+                # Fix for bad data in csv
+                code_fix = {
+                    'UK': 'GB',
+                    'EL': 'GR',
+                    'CW': 'NL',
+                }
+                if iso in code_fix:
+                    iso = code_fix[iso]
                 try:
                     self.countries[old_code] = Country.objects.get(iso_code=iso)
                 except Country.DoesNotExist:
@@ -504,6 +515,9 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def import_agreement(self, line):
+        if not line[3]:
+            return
+
         if not line[0]:
             self.write_error('No external id')
             return
