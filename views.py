@@ -1335,13 +1335,23 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        # Remove multitple EntityVersion to get only the last one
-        qs = Entity.objects.filter(entityversion__end_date__isnull=True, entityversion__entity_type=FACULTY)
+        qs = (
+            Entity.objects
+                .annotate(
+                    most_recent_acronym=Subquery(
+                        EntityVersion.objects
+                            .filter(entity=OuterRef('pk'))
+                            .order_by('-start_date')
+                            .values('acronym')[:1]
+                    ),
+                )
+                .filter(entityversion__entity_type=FACULTY)
+        )
         if not user_is_adri(self.request.user):
             qs = qs.filter(entitymanager__person__user=self.request.user)
         if self.q:
-            qs = qs.filter(entityversion__acronym__icontains=self.q)
-        qs = qs.order_by('entityversion__acronym')
+            qs = qs.filter(most_recent_acronym__icontains=self.q)
+        qs = qs.order_by('most_recent_acronym')
         return qs.distinct()
 
     def get_result_label(self, result):
@@ -1355,17 +1365,22 @@ class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
 class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Entity.objects.all()
-        # Remove multitple EntityVersion to get only the last one
-        qs = qs.filter(entityversion__end_date__isnull=True)
+        qs = Entity.objects.annotate(
+            most_recent_acronym=Subquery(
+                EntityVersion.objects
+                    .filter(entity=OuterRef('pk'))
+                    .order_by('-start_date')
+                    .values('acronym')[:1]
+            ),
+        )
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
             qs = qs.filter(entityversion__parent=ucl_university)
         else:
             return Entity.objects.none()
         if self.q:
-            qs = qs.filter(entityversion__acronym__icontains=self.q)
-        qs = qs.order_by('entityversion__acronym')
+            qs = qs.filter(most_recent_acronym__icontains=self.q)
+        qs = qs.order_by('most_recent_acronym')
         return qs.distinct()
 
     def get_result_label(self, result):
