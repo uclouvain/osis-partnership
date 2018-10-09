@@ -729,13 +729,13 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 ),
                 ucl_university_parent_most_recent_acronym=Subquery(
                     EntityVersion.objects
-                        .filter(entity__parent_of=OuterRef('ucl_university__pk'))
+                        .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
                 ucl_university_parent_most_recent_title=Subquery(
                     EntityVersion.objects
-                        .filter(entity__parent_of=OuterRef('ucl_university__pk'))
+                        .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
                         .order_by('-start_date')
                         .values('title')[:1]
                 ),
