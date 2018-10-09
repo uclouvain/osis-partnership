@@ -709,7 +709,6 @@ class PartnershipForm(forms.ModelForm):
                 self.fields['comment'].disabled = True
                 self.fields['tags'].disabled = True
 
-        self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         try:
             self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
         except Partner.DoesNotExist:
