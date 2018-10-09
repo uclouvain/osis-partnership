@@ -35,6 +35,10 @@
               {% endif %}
               {% if can_add_partnership %}
               <a class="btn btn-default" type="button"
+                 href="{% url "partnerships:ucl_management_entities:list" %}">
+                <i class="fa fa-fw fa-cog"></i> <span class="hidden-xs">{% trans "ucl_management_entities" %}</span>
+              </a>
+              <a class="btn btn-default" type="button"
                  href="{% url "partnerships:create" %}">
                 <i class="fa fa-fw fa-plus"></i> <span class="hidden-xs">{% trans "add_partnership" %}</span>
               </a>

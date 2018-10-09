@@ -60,7 +60,7 @@
             </dd>
 
             <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{{ partnership.supervisor|default_if_none:"" }}</dd>
+            <dd>{{ partnership.get_supervisor|default_if_none:"" }}</dd>
 
             <dt>{% trans "dates" %}</dt>
             <dd>

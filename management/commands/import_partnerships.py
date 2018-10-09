@@ -6,11 +6,12 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
-from base.models.academic_year import current_academic_year, AcademicYear
+from base.models.academic_year import AcademicYear, current_academic_year
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Address, Media, Partner, PartnerType, Partnership, PartnershipYear, \
-    PartnershipYearEducationField, PartnershipAgreement
+from partnership.models import (Address, Media, Partner, Partnership,
+                                PartnershipAgreement, PartnershipYear,
+                                PartnershipYearEducationField, PartnerType, UCLManagementEntity)
 from reference.models.country import Country
 
 COUNTRIES_OLD_TO_ISO = {
@@ -141,6 +142,9 @@ class Command(BaseCommand):
     # Cache
 
     countries = {}
+    supervisors = {}
+    entities = {}
+    education_fields = {}
     academic_years = {}
     partners_by_code = {}
     partners_by_csv_id = {}
@@ -255,6 +259,9 @@ class Command(BaseCommand):
     def get_country(self, old_code, line):
         if not old_code:
             return None
+        # Fix for bad data in csv
+        if old_code == 'PT':
+            old_code = 'P'
         if old_code not in self.countries:
             iso = COUNTRIES_OLD_TO_ISO.get(old_code, None)
             if iso is None:
@@ -265,6 +272,14 @@ class Command(BaseCommand):
                 ))
                 self.countries[old_code] = None
             else:
+                # Fix for bad data in csv
+                code_fix = {
+                    'UK': 'GB',
+                    'EL': 'GR',
+                    'CW': 'NL',
+                }
+                if iso in code_fix:
+                    iso = code_fix[iso]
                 try:
                     self.countries[old_code] = Country.objects.get(iso_code=iso)
                 except Country.DoesNotExist:
@@ -381,31 +396,43 @@ class Command(BaseCommand):
         if not code:
             return None
         code = code.rjust(4, '0')
-        try:
-            return PartnershipYearEducationField.objects.get(code=code)
-        except PartnershipYearEducationField.DoesNotExist:
-            self.write_error('Unknown education field {code}'.format(code=code))
-            return None
+        if code not in self.education_fields:
+            try:
+                self.education_fields[code] = PartnershipYearEducationField.objects.get(code=code)
+            except PartnershipYearEducationField.DoesNotExist:
+                self.write_error('Unknown education field {code}'.format(code=code))
+                self.education_fields[code] = None
+        return self.education_fields[code]
 
     def get_entity_by_acronym(self, acronym):
         if not acronym:
             return None
-        try:
-            return Entity.objects.filter(entityversion__acronym=acronym).order_by('entityversion__start_date').last()
-        except Entity.DoesNotExist:
-            self.write_error('Unknown entity {acronym}'.format(acronym=acronym))
-            return None
+        if acronym not in self.entities:
+            try:
+                self.entities[acronym] = (
+                    Entity.objects
+                        .filter(entityversion__acronym=acronym)
+                        .order_by('entityversion__start_date')
+                        .last()
+                )
+            except Entity.DoesNotExist:
+                self.write_error('Unknown entity {acronym}'.format(acronym=acronym))
+                self.entities[acronym] = None
+        return self.entities[acronym]
 
     def get_supervisor(self, global_id):
         if not global_id:
             return None
         global_id = global_id.strip('\n').rjust(8, '0')
 
-        try:
-            return Person.objects.get(global_id=global_id)
-        except Person.DoesNotExist:
-            self.write_error('Unknown responsable {global_id}'.format(global_id=global_id))
-            return None
+        if global_id not in self.supervisors:
+            try:
+                self.supervisors[global_id] = Person.objects.get(global_id=global_id)
+            except Person.DoesNotExist:
+                self.write_error('Unknown responsable {global_id}'.format(global_id=global_id))
+                self.supervisors[global_id] = None
+
+        return self.supervisors[global_id]
 
     def get_academic_year(self, year):
         if year not in self.academic_years:
@@ -445,7 +472,14 @@ class Command(BaseCommand):
         partnership.supervisor = self.get_supervisor(line[12])
         partnership.save()
 
-        # TODO CREATE MANAGEMENT ENTITY IF NON EXISTENT
+        UCLManagementEntity.objects.get_or_create(
+            defaults={
+                'academic_responsible': partnership.supervisor,
+                'administrative_responsible': partnership.supervisor,
+            },
+            faculty=partnership.ucl_university,
+            entity=partnership.ucl_university_labo,
+        )
 
         educations_fields = []
         for code in [line[15], line[16], line[17]]:
@@ -481,6 +515,9 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def import_agreement(self, line):
+        if not line[3]:
+            return
+
         if not line[0]:
             self.write_error('No external id')
             return

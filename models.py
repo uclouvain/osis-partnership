@@ -16,7 +16,7 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
-                               user_is_in_user_faculty)
+                               user_is_gf_of_faculty, user_is_in_user_faculty)
 
 
 class PartnerType(models.Model):
@@ -408,6 +408,11 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
+        if hasattr(self, 'validity_end_year'):
+            # Queryset was annotated
+            if self.validity_end_year is None:
+                return None
+            return '{0}-{1}'.format(self.validity_end_year, str(self.validity_end_year + 1)[:-2])
         agreement = (
             self.validated_agreements
                 .select_related('end_academic_year')
@@ -416,7 +421,7 @@ class Partnership(models.Model):
         )
         if agreement is None:
             return None
-        return agreement.end_academic_year
+        return str(agreement.end_academic_year)
 
     @cached_property
     def valid_agreements_dates_ranges(self):
@@ -471,6 +476,36 @@ class Partnership(models.Model):
     @cached_property
     def entities_acronyms(self):
         """ Get a string of the entities acronyms with tooltips with the title """
+        try:
+            # Try with annotation first to not do another request
+            return self._get_entities_acronyms_by_annotation()
+        except AttributeError:
+            return self._get_entities_acronyms()
+
+
+    def _get_entities_acronyms_by_annotation(self):
+        entities = []
+        if self.ucl_university_parent_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_parent_most_recent_title,
+                self.ucl_university_parent_most_recent_acronym,
+            ))
+        if self.ucl_university_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_most_recent_title,
+                self.ucl_university_most_recent_acronym,
+            ))
+        if self.ucl_university_labo_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_labo_most_recent_title,
+                self.ucl_university_labo_most_recent_acronym,
+            ))
+        return mark_safe(' / '.join(entities))
+
+    def _get_entities_acronyms(self):
         entities = []
         university = self.ucl_university.entityversion_set.latest('start_date')
         if university.parent is not None:
@@ -481,8 +516,6 @@ class Partnership(models.Model):
         if self.ucl_university_labo is not None:
             labo = self.ucl_university_labo.entityversion_set.latest('start_date')
             entities.append(labo)
-        if self.university_offers.exists():
-            entities += list(self.university_offers.select_related('academic_year'))
 
         def add_tooltip(entity):
             if isinstance(entity, EntityVersion):
@@ -496,6 +529,20 @@ class Partnership(models.Model):
             )
 
         return mark_safe(' / '.join(map(add_tooltip, entities)))
+
+    @cached_property
+    def ucl_management_entity(self):
+        try:
+            return UCLManagementEntity.objects.get(faculty=self.ucl_university, entity=self.ucl_university_labo)
+        except UCLManagementEntity.DoesNotExist:
+            return None
+
+    def get_supervisor(self):
+        if self.supervisor is not None:
+            return self.supervisor
+        if self.ucl_management_entity is not None:
+            return self.ucl_management_entity.academic_responsible
+        return None
 
 
 class PartnershipYearEducationField(models.Model):
@@ -646,7 +693,7 @@ class PartnershipAgreement(models.Model):
         'base.AcademicYear',
         verbose_name=_('end_academic_year'),
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name='partnership_agreements_end',
     )
 
     media = models.ForeignKey(
@@ -756,6 +803,83 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 1).first()
         else:
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
+
+
+class UCLManagementEntity(models.Model):
+    faculty = models.ForeignKey(
+        'base.Entity',
+        verbose_name=_("faculty"),
+        related_name='faculty_managements',
+    )
+    entity = models.ForeignKey(
+        'base.Entity',
+        null=True,
+        blank=True,
+        verbose_name=_("entity"),
+        related_name='entity_managements',
+    )
+    academic_responsible = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        verbose_name=_("academic_responsible"),
+    )
+    administrative_responsible = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        verbose_name=_("administrative_responsible"),
+    )
+    contact_in_person = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        null=True,
+        blank=True,
+        verbose_name=_("contact_in_name"),
+    )
+    contact_in_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name=_("email"),
+    )
+    contact_in_url = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=_("portal"),
+    )
+    contact_out_person = models.ForeignKey(
+        'base.Person',
+        related_name='+',
+        null=True,
+        blank=True,
+        verbose_name=_("contact_out_name"),
+    )
+    contact_out_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name=_("email"),
+    )
+    contact_out_url = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name=_("portal")
+    )
+
+    class Meta:
+        unique_together = ("faculty", "entity")
+
+    def get_absolute_url(self):
+        return reverse(
+            'partnerships:ucl_management_entities:detail',
+            kwargs={'pk': self.pk}
+        )
+
+    def __str__(self):
+        return ("{} {}".format(self.faculty, self.entity))
+
+    def user_can_change(self, user):
+        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
+
+    def user_can_delete(self, user):
+        return user_is_adri(user) and not self.faculty.partnerships.exists()
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
