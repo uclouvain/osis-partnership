@@ -7,7 +7,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import (Case, Count, Exists, Max, OuterRef, Prefetch, Q,
-                              QuerySet, Value, When)
+                              QuerySet, Value, When, Subquery)
 from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -1156,18 +1156,36 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
-    ordering = ['faculty']
 
     def test_func(self):
         result = user_is_adri(self.request.user) or user_is_gf(self.request.user)
         return result
 
     def get_queryset(self):
+        queryset = (
+            UCLManagementEntity.objects
+            .annotate(
+                faculty_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('faculty__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                entity_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('entity__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+            )
+            .order_by('faculty_most_recent_acronym', 'entity_most_recent_acronym')
+            .select_related('academic_responsible', 'administrative_responsible')
+        )
         if not user_is_adri(self.request.user):
-            return super().get_queryset().filter(
+            queryset = queryset.filter(
                 faculty__entitymanager__person__user=self.request.user
             )
-        return super().get_queryset()
+        return queryset
 
 
 class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

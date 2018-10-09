@@ -41,8 +41,8 @@
             <tbody>
               {% for ucl_management_entity in ucl_management_entities %}
                 <tr>
-                  <td>{{ ucl_management_entity.faculty|default_if_none:"" }}</td>
-                  <td>{{ ucl_management_entity.entity|default_if_none:"" }}</td>
+                  <td>{{ ucl_management_entity.faculty_most_recent_acronym|default_if_none:"" }}</td>
+                  <td>{{ ucl_management_entity.entity_most_recent_acronym|default_if_none:"" }}</td>
                   <td>{{ ucl_management_entity.academic_responsible|default_if_none:"" }}</td>
                   <td>{{ ucl_management_entity.administrative_responsible|default_if_none:"" }}</td>
                   <td>{{ ucl_management_entity.contact_in_person|default_if_none:"" }}</td>
