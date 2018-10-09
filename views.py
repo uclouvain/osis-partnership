@@ -1314,18 +1314,17 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
         return qs.distinct()
 
 
-class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
+class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
 
-    def get_ucl_universities(self):
-        qs = Entity.objects.filter(entityversion__entity_type=FACULTY)
+    def get_queryset(self):
+        # Remove multitple EntityVersion to get only the last one
+        qs = Entity.objects.filter(entityversion__end_date__isnull=True, entityversion__entity_type=FACULTY)
         if not user_is_adri(self.request.user):
             qs = qs.filter(entitymanager__person__user=self.request.user)
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
+        qs = qs.order_by('entityversion__acronym')
         return qs.distinct()
-
-    def get_queryset(self):
-        return sorted(self.get_ucl_universities(), key=lambda x: x.most_recent_acronym)
 
     def get_result_label(self, result):
         if result.entityversion_set:
@@ -1335,10 +1334,12 @@ class UclUniversityAutocompleteView(autocomplete.Select2QuerySetView):
         return '{0.most_recent_acronym} - {1}'.format(result, title)
 
 
-class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
+class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
-    def get_ucl_university_labos(self):
+    def get_queryset(self):
         qs = Entity.objects.all()
+        # Remove multitple EntityVersion to get only the last one
+        qs = qs.filter(entityversion__end_date__isnull=True)
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
             qs = qs.filter(entityversion__parent=ucl_university)
@@ -1346,17 +1347,28 @@ class UclUniversityLaboAutocompleteView(autocomplete.Select2QuerySetView):
             return Entity.objects.none()
         if self.q:
             qs = qs.filter(entityversion__acronym__icontains=self.q)
+        qs = qs.order_by('entityversion__acronym')
         return qs.distinct()
-
-    def get_queryset(self):
-        return sorted(
-            self.get_ucl_university_labos(),
-            key=lambda x: x.most_recent_acronym,
-        )
 
     def get_result_label(self, result):
         title = result.entityversion_set.latest("start_date").title
         return '{0.most_recent_acronym} - {1}'.format(result, title)
+
+
+class UclUniversityAutocompleteView(FacultyAutocompleteView):
+
+    def get_queryset(self):
+        queryset = super(UclUniversityAutocompleteView, self).get_queryset()
+        queryset = queryset.filter(faculty_managements__isnull=False)
+        return queryset
+
+
+class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
+
+    def get_queryset(self):
+        queryset = super(UclUniversityLaboAutocompleteView, self).get_queryset()
+        queryset = queryset.filter(entity_managements__isnull=False)
+        return queryset
 
 
 class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
@@ -1432,8 +1444,9 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
-        qs = super().get_ucl_universities()
-        return sorted(qs.filter(partnerships__isnull=False), key=lambda x: x.most_recent_acronym)
+        qs = super(UclUniversityAutocompleteFilterView, self).get_queryset()
+        qs = qs.filter(partnerships__isnull=False)
+        return qs
 
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):

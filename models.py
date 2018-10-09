@@ -776,14 +776,14 @@ class UCLManagementEntity(models.Model):
     faculty = models.ForeignKey(
         'base.Entity',
         verbose_name=_("faculty"),
-        related_name='+',
+        related_name='faculty_managements',
     )
     entity = models.ForeignKey(
         'base.Entity',
         null=True,
         blank=True,
         verbose_name=_("entity"),
-        related_name='+',
+        related_name='entity_managements',
     )
     academic_responsible = models.ForeignKey(
         'base.Person',
