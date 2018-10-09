@@ -408,6 +408,9 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
+        if hasattr(self, 'validity_end_year'):
+            # Queryset was annotated
+            return '{0}-{1}'.format(self.validity_end_year, str(self.validity_end_year + 1)[:-2])
         agreement = (
             self.validated_agreements
                 .select_related('end_academic_year')
@@ -471,6 +474,36 @@ class Partnership(models.Model):
     @cached_property
     def entities_acronyms(self):
         """ Get a string of the entities acronyms with tooltips with the title """
+        try:
+            # Try with annotation first to not do another request
+            return self._get_entities_acronyms_by_annotation()
+        except AttributeError:
+            return self._get_entities_acronyms()
+
+
+    def _get_entities_acronyms_by_annotation(self):
+        entities = []
+        if self.ucl_university_parent_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_parent_most_recent_title,
+                self.ucl_university_parent_most_recent_acronym,
+            ))
+        if self.ucl_university_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_most_recent_title,
+                self.ucl_university_most_recent_acronym,
+            ))
+        if self.ucl_university_labo_most_recent_acronym:
+            entities.append(format_html(
+                '<abbr title="{0}">{1}</abbr>',
+                self.ucl_university_labo_most_recent_title,
+                self.ucl_university_labo_most_recent_acronym,
+            ))
+        return mark_safe(' / '.join(entities))
+
+    def _get_entities_acronyms(self):
         entities = []
         university = self.ucl_university.entityversion_set.latest('start_date')
         if university.parent is not None:
@@ -481,8 +514,6 @@ class Partnership(models.Model):
         if self.ucl_university_labo is not None:
             labo = self.ucl_university_labo.entityversion_set.latest('start_date')
             entities.append(labo)
-        if self.university_offers.exists():
-            entities += list(self.university_offers.select_related('academic_year'))
 
         def add_tooltip(entity):
             if isinstance(entity, EntityVersion):
@@ -660,7 +691,7 @@ class PartnershipAgreement(models.Model):
         'base.AcademicYear',
         verbose_name=_('end_academic_year'),
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name='partnership_agreements_end',
     )
 
     media = models.ForeignKey(

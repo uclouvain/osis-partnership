@@ -21,7 +21,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
 from django.views.generic.list import MultipleObjectMixin
 
 from base.models.academic_year import (current_academic_year,
-                                       find_academic_years)
+                                       find_academic_years, AcademicYear)
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -719,6 +719,50 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'ucl_university_labo', 'ucl_university',
                 'partner__contact_address__country', 'partner_entity',
                 'supervisor',
+            )
+            .annotate(
+                validity_end_year=Subquery(
+                    AcademicYear.objects
+                        .filter(partnership_agreements_end__partnership=OuterRef('pk'), partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED)
+                        .order_by('-end_date')
+                        .values('year')[:1]
+                ),
+                ucl_university_parent_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity__parent_of=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                ucl_university_parent_most_recent_title=Subquery(
+                    EntityVersion.objects
+                        .filter(entity__parent_of=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('title')[:1]
+                ),
+                ucl_university_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                ucl_university_most_recent_title=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('title')[:1]
+                ),
+                ucl_university_labo_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university_labo__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                ucl_university_labo_most_recent_title=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university_labo__pk'))
+                        .order_by('-start_date')
+                        .values('title')[:1]
+                ),
             )
         )
         form = self.get_form()
