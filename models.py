@@ -410,6 +410,8 @@ class Partnership(models.Model):
     def validity_end(self):
         if hasattr(self, 'validity_end_year'):
             # Queryset was annotated
+            if self.validity_end_year is None:
+                return None
             return '{0}-{1}'.format(self.validity_end_year, str(self.validity_end_year + 1)[:-2])
         agreement = (
             self.validated_agreements
@@ -419,7 +421,7 @@ class Partnership(models.Model):
         )
         if agreement is None:
             return None
-        return agreement.end_academic_year
+        return str(agreement.end_academic_year)
 
     @cached_property
     def valid_agreements_dates_ranges(self):
