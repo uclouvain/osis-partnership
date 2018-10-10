@@ -1,6 +1,7 @@
 import csv
 import os
 from datetime import date
+from urllib.parse import quote_plus
 
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
@@ -579,12 +580,12 @@ class Command(BaseCommand):
         try:
             media = agreement.media
             if media.name == line[10]:
-                media.url = line[11]
+                media.url = line[11].replace(' ', '+')
                 media.save()
         except Media.DoesNotExist:
             media = Media.objects.create(
                 name=line[10],
-                url=line[11],
+                url=line[11].replace(' ', '+'),
                 visibility=Media.VISIBILITY_STAFF,
                 author=default_values['author'],
             )
