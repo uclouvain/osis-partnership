@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-08 16:28+0200\n"
+"POT-Creation-Date: 2018-10-10 16:47+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -675,6 +675,60 @@ msgstr "Validity end"
 msgid "partnerships_export"
 msgstr "Export partnerships"
 
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner <a href=\"%(url)s\">%(partner)s</a> has been successfully created by "
+"%(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partnership <a href=\"%(url)s\">%(partnership)s</a> has been successfully "
+"created by %(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner %(partner)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"partnership %(partnership)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
 msgid "partner_entity_delete_warning"
 msgstr "Are you sure you want to delete this partner entity?"
 
@@ -817,14 +871,14 @@ msgstr "No partnership contact yet"
 msgid "change_configuration"
 msgstr "Change configuration"
 
+msgid "ucl_management_entities"
+msgstr "UCL management entities"
+
 msgid "add_partnership"
 msgstr "Add partnership"
 
 msgid "search_partnership"
 msgstr "Search partnership"
-
-msgid "ucl_management_entities"
-msgstr "UCL management entities"
 
 msgid "create_ucl_management_entity"
 msgstr "Create UCL management entities"
@@ -862,6 +916,11 @@ msgstr "ID"
 msgid "partner_saved"
 msgstr "Partner successfully saved"
 
+#, fuzzy
+#| msgid "partnership_create"
+msgid "partner_created"
+msgstr "Create partnership"
+
 msgid "partner_error"
 msgstr ""
 
@@ -891,6 +950,11 @@ msgstr ""
 
 msgid "partnership_success"
 msgstr ""
+
+#, fuzzy
+#| msgid "partnership_create"
+msgid "partnership_created"
+msgstr "Create partnership"
 
 msgid "partnership_agreement_error"
 msgstr ""

@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-08 16:28+0200\n"
-"PO-Revision-Date: 2018-10-05 22:39+0200\n"
+"POT-Creation-Date: 2018-10-10 16:47+0200\n"
+"PO-Revision-Date: 2018-10-10 16:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.6\n"
 
 msgid "Yes"
 msgstr "Oui"
@@ -171,7 +171,7 @@ msgid "partnership_type"
 msgstr "Type de partenariat"
 
 msgid "partnership_supervisor"
-msgstr "Responsable Académique du partenariat"
+msgstr "Responsable académique du partenariat"
 
 msgid "partnership_in"
 msgstr "Partenariats en cours en"
@@ -220,7 +220,7 @@ msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
 
 msgid "start_date_after_from_date"
-msgstr ""
+msgstr "La date de début se situe après la date de modification."
 
 msgid "from_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
@@ -423,7 +423,7 @@ msgid "partnership_year_entities"
 msgstr "Entités concernées"
 
 msgid "partnership_year_offers"
-msgstr "Offres principalements concernées"
+msgstr "Offres principalement concernées"
 
 msgid "partnership_year"
 msgstr "Année de partenariat"
@@ -505,13 +505,13 @@ msgid "academic_responsible"
 msgstr "Responsable académique"
 
 msgid "administrative_responsible"
-msgstr ""
+msgstr "Responsable administratif"
 
 msgid "contact_in_name"
 msgstr "Nom du contact de type mobilité in"
 
 msgid "portal"
-msgstr ""
+msgstr "Portail"
 
 msgid "contact_out_name"
 msgstr "Nom du contact de type mobilité out"
@@ -581,15 +581,13 @@ msgstr "Mettre à jour l'accord"
 msgid "update_configuration"
 msgstr "Mettre à jour la configuration"
 
-#, fuzzy, python-format
-#| msgid ""
-#| "partnership_configuration_creation_max_date_%(min_year)s_%(max_year)s"
+#, python-format
 msgid ""
 "partnership_configuration_creation_modification_max_date_%(min_year)s_"
 "%(max_year)s"
 msgstr ""
-"Date maximum pour la création d'un partenariat de l'année %(min_year)s-"
-"%(max_year)s."
+"Date maximum pour la création ou la modification d'un partenariat de l'année "
+"%(min_year)s-%(max_year)s."
 
 msgid "confirm_contact_delete"
 msgstr ""
@@ -681,6 +679,60 @@ msgstr "Fin de validité"
 
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner <a href=\"%(url)s\">%(partner)s</a> has been successfully created by "
+"%(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partnership <a href=\"%(url)s\">%(partnership)s</a> has been successfully "
+"created by %(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner %(partner)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"partnership %(partnership)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
 
 msgid "partner_entity_delete_warning"
 msgstr ""
@@ -810,7 +862,7 @@ msgid "education_fields"
 msgstr "Domaines d'étude"
 
 msgid "education_levels"
-msgstr "Niveaux d'études conercnés"
+msgstr "Niveaux d’études UCL concernés"
 
 msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
@@ -830,14 +882,14 @@ msgstr "Il n'y a pas encore de contact."
 msgid "change_configuration"
 msgstr "Modifier la configuration"
 
+msgid "ucl_management_entities"
+msgstr "Entités de gestion UCL"
+
 msgid "add_partnership"
 msgstr "Ajouter un partenariat"
 
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
-
-msgid "ucl_management_entities"
-msgstr "Entités de gestion UCL"
 
 msgid "create_ucl_management_entity"
 msgstr "Créer une entité de gestion UCL"
@@ -861,10 +913,8 @@ msgstr "Delete"
 msgid "ucl_management_entity"
 msgstr "Entité de gestion UCL"
 
-#, fuzzy
-#| msgid "ucl_management_entities"
 msgid "ucl_management_entities_empty"
-msgstr "Entités de gestion UCL"
+msgstr "Il n'y a pas encore d'entités de gestion UCL"
 
 msgid "update_ucl_management_entity"
 msgstr "Mettre à jour l'entité de gestion UCL"
@@ -874,6 +924,9 @@ msgstr "ID"
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
+
+msgid "partner_created"
+msgstr "Partenaire créé"
 
 msgid "partner_error"
 msgstr "Erreur lors de la sauvegarde du partenaire."
@@ -904,6 +957,9 @@ msgstr "Erreur lors de la sauvegarde du partenariat."
 
 msgid "partnership_success"
 msgstr "Partenariat sauvegardé avec succès."
+
+msgid "partnership_created"
+msgstr "Partenariat créé"
 
 msgid "partnership_agreement_error"
 msgstr "Erreur lors de la sauvegarde de l'accord."
