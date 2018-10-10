@@ -22,4 +22,3 @@ htmlcov/
 dev.py
 ghostdriver.log
 .DS_Store
-.coveragerc

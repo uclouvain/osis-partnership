@@ -15,6 +15,7 @@ install:
   - pip install -r travis-requirements.txt
   - rm -Rf partnership
   - ln -s $PROJECT_DIR partnership
+  - cp partnership/.coveragerc .
 
 before_script:
   - cp .env.example .env
