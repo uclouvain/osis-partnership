@@ -6,6 +6,7 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
+from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import PartnershipAgreement
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipAgreementFactory,
@@ -413,3 +414,10 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_all_filters)
+
+    def test_export_all(self):
+        self.client.force_login(self.user)
+        url = reverse('partnerships:export')
+        response = self.client.get(url)
+        self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')
+        self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)

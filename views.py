@@ -7,10 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
-from django.db import transaction
+from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
-from django.db.models.functions import Now
+from django.db.models.functions import Now, ExtractYear
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -830,7 +830,6 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
             ugettext('partner_entity'),
             ugettext('ucl_university'),
             ugettext('ucl_university_labo'),
-            ugettext('university_offers'),
             ugettext('supervisor'),
             ugettext('start_date'),
             ugettext('comment'),
@@ -847,6 +846,12 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
             queryset
             .annotate(
                 tags_list=StringAgg('tags__value', ', '),
+                start_date=Subquery(
+                    PartnershipYear.objects
+                    .filter(partnership=OuterRef('pk'))
+                    .order_by('academic_year__year')
+                    .values('academic_year__start_date')[:1]
+                ),
             )
             .select_related('author')
             .prefetch_related(
@@ -861,16 +866,27 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
             )
         )
         for partnership in queryset:
+            # We use prefetch to get the entities
+            try:
+                ucl_university = partnership.ucl_university.entityversion_set.all()[0]
+            except IndexError:
+                ucl_university = ''
+            if partnership.ucl_university_labo:
+                try:
+                    ucl_university_labo = partnership.ucl_university_labo.entityversion_set.all()[0]
+                except IndexError:
+                    ucl_university_labo = ''
+            else:
+                ucl_university_labo = ''
+
             yield [
                 partnership.pk,
                 str(partnership.partner),
                 str(partnership.partner_entity) if partnership.partner_entity else None,
-                str(partnership.ucl_university.entityversion_set.all()[0]),
-                str(partnership.ucl_university_labo.entityversion_set.all()[0])
-                    if partnership.ucl_university_labo else '',
-                ', '.join(map(str, partnership.university_offers.all())),
+                str(ucl_university),
+                str(ucl_university_labo),
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
-                partnership.start_date.strftime('%Y-%m-%d'),
+                partnership.start_date,
                 partnership.comment,
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
