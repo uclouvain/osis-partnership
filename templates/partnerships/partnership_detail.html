@@ -86,7 +86,8 @@
         </thead>
         <tbody>
           {% for partnership_year in partnership.years.all %}
-          <tr {% if partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}>
+          <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+              {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}>
             <th>{{ partnership_year.academic_year }}</th>
             <td>{{ partnership_year.get_partnership_type_display }}</td>
             <td>
