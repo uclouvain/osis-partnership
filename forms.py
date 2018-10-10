@@ -448,7 +448,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university = forms.ModelChoiceField(
         label=_('ucl_university'),
-        queryset=Entity.objects.filter(partnerships__isnull=False),
+        queryset=Entity.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('ucl_university'),
         required=False,
         widget=autocomplete.ModelSelect2(
@@ -463,7 +463,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_university_labo = forms.ModelChoiceField(
         label=_('ucl_university_labo'),
-        queryset=Entity.objects.filter(partnerships_labo__isnull=False),
+        queryset=Entity.objects.filter(partnerships_labo__isnull=False).distinct(),
         empty_label=_('ucl_university_labo_filter'),
         required=False,
         widget=autocomplete.ModelSelect2(
@@ -566,13 +566,13 @@ class PartnershipFilterForm(forms.Form):
 
     education_field = forms.ModelChoiceField(
         label=_('education_field'),
-        queryset=PartnershipYearEducationField.objects.filter(partnershipyear__isnull=False),
+        queryset=PartnershipYearEducationField.objects.filter(partnershipyear__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     education_level = forms.ModelChoiceField(
         label=_('education_level'),
-        queryset=PartnershipYearEducationLevel.objects.filter(partnershipyear__isnull=False),
+        queryset=PartnershipYearEducationLevel.objects.filter(partnershipyear__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
@@ -603,7 +603,7 @@ class PartnershipFilterForm(forms.Form):
     )
     supervisor = forms.ModelChoiceField(
         label=_('partnership_supervisor'),
-        queryset=Person.objects.filter(partnerships_supervisor__isnull=False),
+        queryset=Person.objects.filter(partnerships_supervisor__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
