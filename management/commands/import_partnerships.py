@@ -580,12 +580,12 @@ class Command(BaseCommand):
         try:
             media = agreement.media
             if media.name == line[10]:
-                media.url = line[11].replace(' ', '+')
+                media.url = line[11].replace(' ', '%20')
                 media.save()
         except Media.DoesNotExist:
             media = Media.objects.create(
                 name=line[10],
-                url=line[11].replace(' ', '+'),
+                url=line[11].replace(' ', '%20'),
                 visibility=Media.VISIBILITY_STAFF,
                 author=default_values['author'],
             )
