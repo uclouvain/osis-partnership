@@ -117,7 +117,7 @@
         </tbody>
       </table>
 
-      <a id="show-all-years" role="button" data-toggle="collapse" href=".years-collapse">{% trans "partnership_years_show_all_years" %}</a>
+      {% if show_more_year_link %}<a id="show-all-years" role="button" data-toggle="collapse" href=".years-collapse">{% trans "partnership_years_show_all_years" %}</a>{% endif %}
       {% endif %}
 
       {% if partnership.comment is not None %}

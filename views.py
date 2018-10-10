@@ -934,7 +934,13 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PartnershipDetailView, self).get_context_data(**kwargs)
-        context['can_change'] = context['object'].user_can_change(self.request.user)
+        context['can_change'] = self.object.user_can_change(self.request.user)
+        if self.object.current_year is None:
+            context['show_more_year_link'] = self.object.years.count() > 1
+        else:
+            year = self.object.current_year.academic_year.year
+            context['show_more_year_link'] = \
+                self.object.years.exclude(academic_year__year__in=[year, year + 1]).exists()
         return context
 
     def get_object(self):
