@@ -5,3 +5,5 @@ omit =
     */migrations/*
     venv/*
     */tests/*
+    */management/*
+    */admin.py
