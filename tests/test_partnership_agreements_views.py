@@ -29,7 +29,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         # Misc
         cls.url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': cls.partnership.pk})
         cls.data = {
@@ -110,7 +110,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
         # Misc
         cls.url = reverse('partnerships:agreements:update', kwargs={
@@ -213,9 +213,9 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
-        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf)
+        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         PartnershipAgreementFactory(partnership=cls.partnership_out_of_date)
         # Misc
         cls.url = reverse('partnerships:agreements:delete', kwargs={

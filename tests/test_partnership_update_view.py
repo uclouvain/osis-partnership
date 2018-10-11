@@ -41,6 +41,7 @@ class PartnershipUpdateViewTest(TestCase):
             partner_entity=cls.partner_entity,
             author=cls.user_gf,
             years=[],
+            ucl_university = entity_manager.entity,
         )
         cls.url = reverse('partnerships:update',
                           kwargs={'pk': cls.partnership.pk})
