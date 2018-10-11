@@ -1279,8 +1279,13 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     context_object_name = "ucl_management_entities"
 
     def test_func(self):
-        result = user_is_adri(self.request.user) or user_is_gf(self.request.user)
+        result = UCLManagementEntity.user_can_list(self.request.user)
         return result
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_create_ucl_management_entity'] = UCLManagementEntity.user_can_create(self.request.user)
+        return context
 
     def get_queryset(self):
         queryset = (
@@ -1316,8 +1321,12 @@ class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, Cre
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
     def test_func(self):
-        result = user_is_adri(self.request.user)
+        result = UCLManagementEntity.user_can_create(self.request.user)
         return result
+
+    def form_valid(self, form):
+        messages.success(self.request, _('ucl_management_entity_create_success'))
+        return super().form_valid(form)
 
 
 class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -1329,15 +1338,17 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
 
     def test_func(self):
         self.object = self.get_object()
-        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
-            self.request.user, self.object.faculty
-        )
+        result = self.object.user_can_change(self.request.user)
         return result
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, _('ucl_management_entity_change_success'))
+        return super().form_valid(form)
 
 
 class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -1353,7 +1364,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
         return super().dispatch(*args, **kwargs)
 
     def test_func(self):
-        result = user_is_adri(self.request.user)
+        result = self.object.user_can_delete(self.request.user)
         return result
 
 
@@ -1364,9 +1375,7 @@ class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, Det
 
     def test_func(self):
         self.object = self.get_object()
-        result = user_is_adri(self.request.user) or user_is_gf_of_faculty(
-            self.request.user, self.object.faculty
-        )
+        result = self.object.user_can_read(self.request.user)
         return result
 
     def get_context_data(self, **kwargs):

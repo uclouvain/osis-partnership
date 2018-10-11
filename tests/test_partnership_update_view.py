@@ -15,7 +15,8 @@ from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipFactory,
                                          PartnershipYearEducationFieldFactory,
                                          PartnershipYearEducationLevelFactory,
-                                         PartnershipYearFactory)
+                                         PartnershipYearFactory,
+                                         UCLManagementEntityFactory)
 
 
 class PartnershipUpdateViewTest(TestCase):
@@ -66,6 +67,11 @@ class PartnershipUpdateViewTest(TestCase):
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
+        cls.ucl_university_not_choice = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        cls.ucl_university_labo_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
@@ -190,6 +196,22 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
         self.assertEqual(response.context_data['partnership'].years.count(), 4)
+
+    def test_post_invalid_ucl_university(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['ucl_university'] = self.ucl_university_not_choice.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
+
+    def test_post_invalid_ucl_university_labo(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['ucl_university_labo'] = self.ucl_university_not_choice.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
     def test_post_post_end_date(self):
         self.client.force_login(self.user_adri)
