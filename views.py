@@ -589,6 +589,11 @@ class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 
     template_name = 'partnerships/contacts/partnership_contact_update.html'
 
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, _("contact_update_success"))
+        return redirect(self.partnership)
+
 
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
