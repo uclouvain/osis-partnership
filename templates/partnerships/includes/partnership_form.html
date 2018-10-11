@@ -97,7 +97,7 @@
   </div>
   {% else %}
   <div class="col-xs-12 col-sm-12">
-    {{ object.start_academic_year }}
+    <dl><dt>{% trans "start_academic_year" %}</dt><dd>{{ object.start_academic_year }}</dd></dl>
   </div>
   {% endif %}
   {% if form_year.from_academic_year %}
