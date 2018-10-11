@@ -372,7 +372,7 @@ class Partnership(models.Model):
     def user_can_change(self, user):
         if user_is_adri(user):
             return True
-        return user_is_in_user_faculty(user, self.author)
+        return user_is_gf_of_faculty(user, self.ucl_university)
 
     @cached_property
     def is_valid(self):
@@ -734,7 +734,7 @@ class PartnershipAgreement(models.Model):
     def user_can_change(self, user):
         if user_is_adri(user):
             return True
-        return self.status == self.STATUS_WAITING and user_is_in_user_faculty(user, self.partnership.author)
+        return self.status == self.STATUS_WAITING and user_is_gf_of_faculty(user, self.partnership.ucl_university)
 
     @property
     def is_valid(self):
