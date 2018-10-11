@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Max, Min
 from django.urls import reverse
@@ -880,6 +881,15 @@ class UCLManagementEntity(models.Model):
 
     def user_can_delete(self, user):
         return user_is_adri(user) and not self.faculty.partnerships.exists()
+
+    def validate_unique(self, exclude=None):
+        if (self.entity is None):
+            if UCLManagementEntity.objects.exclude(id=self.id).filter(
+                faculty=self.faculty,
+                entity__isnull=True,
+            ).exists():
+                raise ValidationError(_("duplicate_ucl_management_entity_error_with_faculty"))
+        super(UCLManagementEntity, self).validate_unique(exclude)
 
 
 ##### FIXME Generic Model which should be moved to a more generic app
