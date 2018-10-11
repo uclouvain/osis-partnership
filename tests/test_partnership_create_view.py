@@ -14,7 +14,8 @@ from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory)
+                                         PartnershipYearEducationLevelFactory,
+                                         UCLManagementEntityFactory)
 from reference.tests.factories.country import CountryFactory
 
 
@@ -49,6 +50,11 @@ class PartnershipCreateViewTest(TestCase):
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
+        cls.ucl_university_not_choice = EntityFactory()
+        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        cls.ucl_university_labo_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
@@ -122,6 +128,22 @@ class PartnershipCreateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+
+    def test_post_ucl_university_invalid_as_adri(self):
+        self.client.force_login(self.user_adri)
+        data = self.data
+        data['ucl_university'] = self.ucl_university_not_choice.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+
+    def test_post_ucl_university_labo_invalid_as_adri(self):
+        self.client.force_login(self.user_adri)
+        data = self.data
+        data['ucl_university_labo'] = self.ucl_university_labo_not_choice.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)

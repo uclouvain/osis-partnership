@@ -15,6 +15,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
+      {% if can_create_ucl_management_entity %}
       <div class="row">
         <div class="col-sm-12">
           <div class="pull-right">
@@ -24,6 +25,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
       <div id="results">
         {% if ucl_management_entities %}
         <div class="table-responsive">

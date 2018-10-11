@@ -311,7 +311,10 @@ class Partnership(models.Model):
         verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to={'entityversion__entity_type': "FACULTY"},
+        limit_choices_to={
+            'entityversion__entity_type': "FACULTY",
+            'faculty_managements__isnull': False,
+        },
     )
     ucl_university_labo = models.ForeignKey(
         'base.Entity',
@@ -320,6 +323,7 @@ class Partnership(models.Model):
         related_name='partnerships_labo',
         blank=True,
         null=True,
+        limit_choices_to={'entity_managements__isnull': False}
     )
     supervisor = models.ForeignKey(
         'base.Person',
@@ -533,10 +537,10 @@ class Partnership(models.Model):
 
     @cached_property
     def ucl_management_entity(self):
-        try:
-            return UCLManagementEntity.objects.get(faculty=self.ucl_university, entity=self.ucl_university_labo)
-        except UCLManagementEntity.DoesNotExist:
-            return None
+        return UCLManagementEntity.objects.filter(
+            faculty=self.ucl_university,
+            entity=self.ucl_university_labo,
+        ).first()
 
     def get_supervisor(self):
         if self.supervisor is not None:
@@ -875,6 +879,17 @@ class UCLManagementEntity(models.Model):
 
     def __str__(self):
         return ("{} {}".format(self.faculty, self.entity))
+
+    @staticmethod
+    def user_can_list(user):
+        return user_is_adri(user) or user_is_gf(user)
+
+    def user_can_read(self, user):
+        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
+
+    @staticmethod
+    def user_can_create(user):
+        return user_is_adri(user)
 
     def user_can_change(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
