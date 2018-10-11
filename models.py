@@ -412,7 +412,7 @@ class Partnership(models.Model):
             # Queryset was annotated
             if self.validity_end_year is None:
                 return None
-            return '{0}-{1}'.format(self.validity_end_year, str(self.validity_end_year + 1)[:-2])
+            return '{0}-{1}'.format(self.validity_end_year, str(self.validity_end_year + 1)[-2:])
         agreement = (
             self.validated_agreements
                 .select_related('end_academic_year')
