@@ -12,8 +12,8 @@
       <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>
     </div>
   </div>
-  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code"></dd></dl></div>
-  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "erasmus_code" %}</dt><dd id="partner-erasmus-code"></dd></dl></div>
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code">{% if partnership %}{{ partnership.partner.pic_code }}{% endif %}</dd></dl></div>
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "erasmus_code" %}</dt><dd id="partner-erasmus-code">{% if partnership %}{{ partnership.partner.erasmus_code }}{% endif %}</dd></dl></div>
   <div class="col-xs-12 col-sm-12">
     <div class="form-group">
       <label class="control-label" for="{{ form.partner_entity.id_for_label }}">{% trans "partner_entity_inside_partner" %}</label>
