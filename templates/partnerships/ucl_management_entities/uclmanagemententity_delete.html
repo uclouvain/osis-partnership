@@ -2,6 +2,7 @@
 {% load i18n static %}
 
 {% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities_list' %}</a></li>
   <li><a href="{{ ucl_management_entity.get_absolute_url }}">{{ ucl_management_entity }}</a></li>
   <li class="active">{% trans "delete_ucl_management_entity" %}</li>
