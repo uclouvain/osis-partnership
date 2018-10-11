@@ -606,12 +606,14 @@ class PartnershipYear(models.Model):
     entities = models.ManyToManyField(
         'base.Entity',
         verbose_name=_('partnership_year_entities'),
+        help_text=_('partnership_year_entities_help_text'),
         related_name='+',
         blank=True,
     )
     offers = models.ManyToManyField(
         'base.EducationGroupYear',
         verbose_name=_('partnership_year_offers'),
+        help_text=_('partnership_year_offers_help_text'),
         related_name='partnerships',
         blank=True,
     )

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-10 16:47+0200\n"
+"POT-Creation-Date: 2018-10-11 14:47+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -419,7 +419,17 @@ msgstr "Partnership year education levels"
 msgid "partnership_year_entities"
 msgstr "Partnership year entities"
 
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "partnership_year_entities_help_text"
+msgstr "Partnership year entities"
+
 msgid "partnership_year_offers"
+msgstr "Partnership year offers"
+
+#, fuzzy
+#| msgid "partnership_year_offers"
+msgid "partnership_year_offers_help_text"
 msgstr "Partnership year offers"
 
 msgid "partnership_year"
@@ -512,6 +522,11 @@ msgstr "Portal"
 
 msgid "contact_out_name"
 msgstr "Out mobility contact name"
+
+#, fuzzy
+#| msgid "update_ucl_management_entity"
+msgid "duplicate_ucl_management_entity_error_with_faculty"
+msgstr "Update UCL management entity"
 
 msgid "countries"
 msgstr "Countries"
@@ -852,6 +867,14 @@ msgstr "Education fields"
 
 msgid "education_levels"
 msgstr "Education levels"
+
+#, fuzzy
+#| msgid "entities"
+msgid "all_entities"
+msgstr "Entities"
+
+msgid "all_offers"
+msgstr ""
 
 msgid "partnership_years_show_all_years"
 msgstr ""

@@ -103,12 +103,12 @@
             </td>
             <td>
               <ul class="list-unstyled">
-                {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% endfor %}
+                {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% empty %}<li>{% trans "all_entities" %}</li>{% endfor %}
               </ul>
             </td>
             <td>
               <ul class="list-unstyled">
-                {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% endfor %}
+                {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% empty %}<li>{% trans "all_offers" %}</li>{% endfor %}
               </ul>
             </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
