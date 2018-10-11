@@ -8,7 +8,7 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
-
+from partnership.tests.factories import UCLManagementEntityFactory
 
 class UCLManagementEntityCreateViewTest(TestCase):
 
@@ -35,6 +35,9 @@ class UCLManagementEntityCreateViewTest(TestCase):
         cls.administrative_responsible = PersonFactory()
         cls.contact_in_person = PersonFactory()
         cls.contact_out_person = PersonFactory()
+
+        # Case for duplicate with null entity:
+        UCLManagementEntityFactory(faculty=cls.faculty, entity=None)
 
         cls.data = {
             'academic_responsible': str(cls.academic_responsible.pk),
@@ -92,3 +95,12 @@ class UCLManagementEntityCreateViewTest(TestCase):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+
+    def test_post_adri_duplicate_faculty_null_entity(self):
+        self.client.force_login(self.adri_user)
+        data = self.data
+        del data['entity']
+        data['faculty'] = self.faculty.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_create.html')
