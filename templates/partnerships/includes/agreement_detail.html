@@ -22,8 +22,10 @@
           {% endif %}
         </dd>
 
+        {% if agreement.comment %}
         <dt>{% trans "comment" %}</dt>
         <dd>{{ agreement.comment|linebreaksbr }}</dd>
+        {% endif %}
 
         {% if show_partnership %}
         <dt>{% trans "ucl_university" %}</dt>
