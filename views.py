@@ -1319,6 +1319,10 @@ class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, Cre
         result = UCLManagementEntity.user_can_create(self.request.user)
         return result
 
+    def form_valid(self, form):
+        messages.success(self.request, _('ucl_management_entity_create_success'))
+        return super().form_valid(form)
+
 
 class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UCLManagementEntity
@@ -1336,6 +1340,10 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, _('ucl_management_entity_change_success'))
+        return super().form_valid(form)
 
 
 class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
