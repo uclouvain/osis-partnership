@@ -1593,9 +1593,22 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
     def get_queryset(self):
-        qs = super(UclUniversityAutocompleteFilterView, self).get_queryset()
-        qs = qs.filter(partnerships__isnull=False)
-        return qs
+        qs = (
+            Entity.objects
+            .annotate(
+                most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+            )
+            .filter(partnerships__isnull=False)
+        )
+        if self.q:
+            qs = qs.filter(most_recent_acronym__icontains=self.q)
+        qs = qs.order_by('most_recent_acronym')
+        return qs.distinct()
 
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
