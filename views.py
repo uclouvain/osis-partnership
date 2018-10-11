@@ -1601,7 +1601,7 @@ class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
 
     def get_queryset(self):
-        qs = super().get_ucl_university_labos()
+        qs = super().get_queryset()
         ucl_university = self.forwarded.get('ucl_university', None)
         if ucl_university:
             qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
