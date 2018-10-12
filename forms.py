@@ -713,6 +713,10 @@ class PartnershipForm(forms.ModelForm):
                     self.fields['supervisor'].disabled = True
                     self.fields['comment'].disabled = True
                     self.fields['tags'].disabled = True
+                else:
+                    faculty = self.fields['ucl_university'].queryset.first()
+                    if faculty is not None:
+                        self.fields['ucl_university'].initial = faculty.pk
                 self.fields['ucl_university'].disabled = True
             else:
                 self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
