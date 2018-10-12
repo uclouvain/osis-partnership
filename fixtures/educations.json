@@ -1,0 +1,977 @@
+[
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0110",
+      "label": "Education, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0111",
+      "label": "Education science"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0112",
+      "label": "Training for pre-school teachers"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0113",
+      "label": "Teacher training without subject specialization"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0114",
+      "label": "Teacher training with subject specialization"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0119",
+      "label": "Education, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0188",
+      "label": "Education, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0210",
+      "label": "Arts, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0211",
+      "label": "Audio-visual techniques and media production"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0212",
+      "label": "Fashion, interior and industrial design"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0213",
+      "label": "Fine arts"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0214",
+      "label": "Handicrafts"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0215",
+      "label": "Music and performing arts"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0219",
+      "label": "Arts, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0220",
+      "label": "Humanities (except languages), not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0221",
+      "label": "Religion and theology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0222",
+      "label": "History and archaeology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0223",
+      "label": "Philosophy and ethics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0229",
+      "label": "Humanities (except languages), not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0230",
+      "label": "Languages, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0231",
+      "label": "Language acquisition"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0232",
+      "label": "Literature and linguistics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0239",
+      "label": "Languages, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0288",
+      "label": "Arts and humanities, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0310",
+      "label": "Social and behavioural sciences, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0311",
+      "label": "Economics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0312",
+      "label": "Political sciences and civics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0313",
+      "label": "Psychology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0314",
+      "label": "Sociology and cultural studies"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0319",
+      "label": "Social and behavioural sciences, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0320",
+      "label": "Journalism and information, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0321",
+      "label": "Journalism and reporting"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0322",
+      "label": "Library, information and archival studies"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0329",
+      "label": "Journalism and information, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0388",
+      "label": "Social sciences, journalism and information, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0410",
+      "label": "Business and administration, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0411",
+      "label": "Accounting and taxation"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0412",
+      "label": "Finance, banking and insurance"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0413",
+      "label": "Management and administration"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0414",
+      "label": "Marketing and advertising"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0415",
+      "label": "Secretarial and office work"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0416",
+      "label": "Wholesale and retail sales"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0417",
+      "label": "Work skills"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0419",
+      "label": "Business and administration, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0421",
+      "label": "Law"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0429",
+      "label": "Law, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0488",
+      "label": "Business, administration and law, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0510",
+      "label": "Biological and related sciences, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0511",
+      "label": "Biology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0512",
+      "label": "Biochemistry"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0519",
+      "label": "Biological and related sciences, not elsewhere classifed"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0520",
+      "label": "Environment, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0521",
+      "label": "Environmental sciences"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0522",
+      "label": "Natural environments and wildlife"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0529",
+      "label": "Environment, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0530",
+      "label": "Physical sciences, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0531",
+      "label": "Chemistry"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0532",
+      "label": "Earth sciences"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0533",
+      "label": "Physics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0539",
+      "label": "Physical sciences, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0540",
+      "label": "Mathematics and statistics, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0541",
+      "label": "Mathematics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0542",
+      "label": "Statistics"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0549",
+      "label": "Mathematics and statistics, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0588",
+      "label": "Natural sciences, mathematics and statistics, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0610",
+      "label": "Information and Communication Technologies (ICTs), not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0611",
+      "label": "Computer use"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0612",
+      "label": "Database and network design and administration"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0613",
+      "label": "Software and applications development and analysis"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0619",
+      "label": "Information and Communication Technologies (ICTs), not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0688",
+      "label": "Information and Communication Technologies (ICTs), inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0710",
+      "label": "Engineering and engineering trades, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0711",
+      "label": "Chemical engineering and processes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0712",
+      "label": "Environmental protection technology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0713",
+      "label": "Electricity and energy"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0714",
+      "label": "Electronics and automation"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0715",
+      "label": "Mechanics and metal trades"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0716",
+      "label": "Motor vehicles, ships and aircraft"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0719",
+      "label": "Engineering and engineering trades, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0720",
+      "label": "Manufacturing and processing, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0721",
+      "label": "Food processing"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0722",
+      "label": "Materials (glass, paper, plastic and wood)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0723",
+      "label": "Textiles (clothes, footwear and leather)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0724",
+      "label": "Mining and extraction"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0729",
+      "label": "Manufacturing and processing, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0730",
+      "label": "Architecture and construction, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0731",
+      "label": "Architecture and town planning"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0732",
+      "label": "Building and civil engineering"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0739",
+      "label": "Architecture and construction, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0788",
+      "label": "Engineering, manufacturing and construction, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0810",
+      "label": "Agriculture, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0811",
+      "label": "Crop and livestock production"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0812",
+      "label": "Horticulture"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0819",
+      "label": "Agriculture, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0821",
+      "label": "Forestry"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0829",
+      "label": "Forestry, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0831",
+      "label": "Fisheries"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0839",
+      "label": "Fisheries, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0841",
+      "label": "Veterinary"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0849",
+      "label": "Veterinary, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0888",
+      "label": "Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0910",
+      "label": "Health, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0911",
+      "label": "Dental studies"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0912",
+      "label": "Medicine"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0913",
+      "label": "Nursing and midwifery"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0914",
+      "label": "Medical diagnostic and treatment technology"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0915",
+      "label": "Therapy and rehabilitation"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0916",
+      "label": "Pharmacy"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0917",
+      "label": "Traditional and complementary medicine and therapy"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0919",
+      "label": "Health, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0920",
+      "label": "Welfare, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0921",
+      "label": "Care of the elderly and of disabled adults"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0922",
+      "label": "Child care and youth services"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0923",
+      "label": "Social work and counselling"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0929",
+      "label": "Welfare, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "0988",
+      "label": "Health and Welfare, inter-disciplinary programmes"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1010",
+      "label": "Personal services, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1011",
+      "label": "Domestic services"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1012",
+      "label": "Hair and beauty services"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1013",
+      "label": "Hotel, restaurants and catering"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1014",
+      "label": "Sports"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1015",
+      "label": "Travel, tourism and leisure"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1019",
+      "label": "Personal services, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1020",
+      "label": "Hygiene and occupational health services, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1021",
+      "label": "Community sanitation"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1022",
+      "label": "Occupational health and safety"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1029",
+      "label": "Hygiene and occupational health services, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1030",
+      "label": "Security services, not further defined"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1031",
+      "label": "Military and defence"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1032",
+      "label": "Protection of persons and property"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1039",
+      "label": "Security services, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1041",
+      "label": "Transport services"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1049",
+      "label": "Transport services, not elsewhere classified"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationField",
+    "fields": {
+      "code": "1088",
+      "label": "Services, inter-disciplinary programmes"
+    }
+  },
+
+
+  {
+    "model": "partnership.PartnershipYearEducationLevel",
+    "fields": {
+      "code": "ISCED-5",
+      "label": "Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationLevel",
+    "fields": {
+      "code": "ISCED-6",
+      "label": "First cycle / Bachelor’s or equivalent level (EQF-6)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationLevel",
+    "fields": {
+      "code": "ISCED-7",
+      "label": "Second cycle / Master’s or equivalent level (EQF-7)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationLevel",
+    "fields": {
+      "code": "ISCED-8",
+      "label": "Third cycle / Doctoral or equivalent level (EQF-8)"
+    }
+  },
+  {
+    "model": "partnership.PartnershipYearEducationLevel",
+    "fields": {
+      "code": "ISCED-9",
+      "label": "Not elsewhere classified"
+    }
+  }
+]

@@ -3,10 +3,14 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
+
+from base.tests.factories.academic_year import get_current_year
 from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipTag,
-                                PartnershipYear, PartnerTag, PartnerType)
+                                PartnershipYear, PartnershipYearEducationField,
+                                PartnershipYearEducationLevel, PartnerTag,
+                                PartnerType, UCLManagementEntity)
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):
@@ -98,12 +102,9 @@ class PartnershipTagFactory(factory.DjangoModelFactory):
 class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
-        django_get_or_create = ('partner',)
 
     partner = factory.SubFactory(PartnerFactory)
     partner_entity = factory.SubFactory(PartnerEntityFactory, partner=factory.SelfAttribute('..partner'))
-
-    start_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=365))
 
     ucl_university = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
@@ -128,16 +129,38 @@ class PartnershipFactory(factory.DjangoModelFactory):
             else:
                 obj.contacts = [ContactFactory(), ContactFactory()]
 
+    @factory.post_generation
+    def years(obj, create, extracted, **kwargs):
+        if create:
+            if extracted is not None:
+                obj.years = extracted
+            else:
+                obj.years = [PartnershipYearFactory(partnership=obj)]
+
+
+class PartnershipYearEducationFieldFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipYearEducationField
+
+    code = factory.Sequence(lambda n: 'code-é-{0}'.format(n))
+    label = factory.Faker('word')
+
+
+class PartnershipYearEducationLevelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipYearEducationLevel
+
+    code = factory.Sequence(lambda n: 'code-é-{0}'.format(n))
+    label = factory.Faker('word')
+
 
 class PartnershipYearFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnershipYear
 
     partnership_type = 'mobility'
-    academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory')
+    academic_year = factory.SubFactory('base.tests.factories.academic_year.AcademicYearFactory', year=get_current_year())
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
-    education_field = '0812'
-    education_level = 'ISCED-5'
 
 
 class PartnershipAgreementFactory(factory.DjangoModelFactory):
@@ -174,3 +197,27 @@ class ContactFactory(factory.DjangoModelFactory):
 
     type = factory.SubFactory(ContactTypeFactory)
     title = Contact.TITLE_MISTER
+
+
+class UCLManagementEntityFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = UCLManagementEntity
+
+    faculty = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+    )
+    entity = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+    )
+    academic_responsible = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )
+    administrative_responsible = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory'
+    )
+    contact_in_person = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )
+    contact_out_person = factory.SubFactory(
+        'base.tests.factories.person.PersonFactory',
+    )

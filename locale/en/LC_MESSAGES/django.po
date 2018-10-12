@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-03 17:41+0200\n"
-"PO-Revision-Date: 2018-07-26 17:48+0200\n"
+"POT-Creation-Date: 2018-10-11 15:39+0200\n"
+"PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -18,160 +18,160 @@ msgstr ""
 "X-Generator: Poedit 2.0.4\n"
 
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 msgid "No"
-msgstr ""
+msgstr "No"
 
 msgid "partner_name"
-msgstr ""
+msgstr "Partner name"
 
 msgid "partner_start_date"
-msgstr ""
+msgstr "Partner start date"
 
 msgid "partner_end_date"
-msgstr ""
+msgstr "Partner end date"
 
 msgid "partner_code"
-msgstr ""
+msgstr "Partner code"
 
 msgid "pic_code"
-msgstr ""
+msgstr "PIC code"
 
 msgid "erasmus_code"
-msgstr ""
+msgstr "Erasmus code"
 
 msgid "comment"
-msgstr ""
+msgstr "Comment"
 
 msgid "phone"
-msgstr ""
+msgstr "Phone"
 
 msgid "website"
-msgstr ""
+msgstr "Website"
 
 msgid "email"
-msgstr ""
+msgstr "Email"
 
 msgid "start_date_gt_end_date_error"
-msgstr ""
+msgstr "The start date can't be later than the end date"
 
 msgid "required"
-msgstr ""
+msgstr "Required"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "address_name_help_text"
 msgstr ""
 
 msgid "address"
-msgstr ""
+msgstr "Address"
 
 msgid "postal_code"
-msgstr ""
+msgstr "Postal code"
 
 msgid "city"
-msgstr ""
+msgstr "City"
 
 msgid "country"
-msgstr ""
+msgstr "Country"
 
 msgid "contact_title"
-msgstr "title"
+msgstr "contact title"
 
 msgid "last_name"
-msgstr ""
+msgstr "Last name"
 
 msgid "first_name"
-msgstr ""
+msgstr "First name"
 
 msgid "function"
-msgstr ""
+msgstr "Function"
 
 msgid "mobile_phone"
-msgstr ""
+msgstr "Mobile phone"
 
 msgid "fax"
-msgstr ""
+msgstr "Fax"
 
 msgid "name"
-msgstr ""
+msgstr "name"
 
 msgid "partner_type"
-msgstr ""
+msgstr "Partner type"
 
 msgid "continent"
-msgstr ""
+msgstr "Continent"
 
 msgid "is_ies"
-msgstr ""
+msgstr "Is IES"
 
 msgid "is_valid"
-msgstr ""
+msgstr "Is valid"
 
 msgid "is_actif"
-msgstr ""
+msgstr "Is active"
 
 msgid "tags"
-msgstr ""
+msgstr "Tags"
 
 msgid "description"
-msgstr ""
+msgstr "Description"
 
 msgid "url"
-msgstr ""
+msgstr "URL"
 
 msgid "file_or_url_only"
-msgstr ""
+msgstr "File or URL only"
 
 msgid "file_or_url_required"
-msgstr ""
+msgstr "File or URL required"
 
 msgid "ucl_university"
-msgstr ""
+msgstr "UCL university"
 
 msgid "ucl_university_labo"
-msgstr ""
+msgstr "School / Laboratory"
 
 msgid "ucl_university_labo_filter"
-msgstr ""
+msgstr "School / Laboratory"
 
 msgid "university_offers"
-msgstr ""
+msgstr "University offers"
 
 msgid "partner"
-msgstr ""
+msgstr "Partner"
 
 msgid "partner_entity"
-msgstr ""
+msgstr "Partner entity"
 
 msgid "partner_tags"
-msgstr ""
+msgstr "Partner tags"
 
 msgid "education_field"
-msgstr ""
+msgstr "Education field"
 
 msgid "education_level"
-msgstr ""
+msgstr "Education level"
 
 msgid "is_sms"
-msgstr ""
+msgstr "Is SMS"
 
 msgid "is_smp"
-msgstr ""
+msgstr "Is SMP"
 
 msgid "is_sta"
-msgstr ""
+msgstr "Is STA"
 
 msgid "is_stt"
-msgstr ""
+msgstr "Is STT"
 
 msgid "partnership_type"
-msgstr ""
+msgstr "Partnership type"
 
 msgid "partnership_supervisor"
-msgstr ""
+msgstr "Partnership supervisor"
 
 msgid "partnership_in"
 msgstr ""
@@ -188,44 +188,61 @@ msgstr ""
 msgid "partnership_not_valid_in"
 msgstr ""
 
+#, fuzzy
+#| msgid "create_ucl_management_entity"
+msgid "same_supervisor_than_management_entity"
+msgstr "Create UCL management entities"
+
 msgid "partnership_inactif_partner_error"
 msgstr ""
 
-msgid "partnership_start_date_after_agreement_error"
+msgid "invalid_partner_entity"
+msgstr "Invalid partner entity"
+
+msgid "invalid_ucl_university_labo"
+msgstr "Invalid school or laboratory"
+
+msgid "start_academic_year"
+msgstr "Start academic year"
+
+msgid "from_academic_year"
 msgstr ""
 
-msgid "partnership_start_date_gf_too_late"
-msgstr ""
+msgid "end_academic_year"
+msgstr "End academic year"
 
-msgid "partnership_year_academic_year_error"
+msgid "education_levels_empty_errors"
 msgstr ""
 
 msgid "start_date_after_end_date"
 msgstr ""
 
+msgid "start_date_after_from_date"
+msgstr ""
+
+msgid "from_date_after_end_date"
+msgstr ""
+
 msgid "invalid_partnership_creation_max_date"
 msgstr ""
 
-msgid "invalid_partnership_update_max_date"
-msgstr ""
-
 msgid "contact_in"
-msgstr ""
+msgstr "In mobility contact"
 
 msgid "contact_out"
-msgstr ""
+msgstr "Out mobility contact"
 
 msgid "parent_entity"
-msgstr ""
+msgstr "Parent entity"
 
 msgid "created"
-msgstr ""
+msgstr "Created"
 
 msgid "modified"
-msgstr ""
+msgstr "Modified"
 
 msgid "author"
-msgstr ""
+msgstr "Author"
 
 msgid "Higher education institution (tertiary level)"
 msgstr ""
@@ -321,25 +338,25 @@ msgid "Other"
 msgstr ""
 
 msgid "external_id"
-msgstr ""
+msgstr "external ID"
 
 msgid "to_synchronize_with_epc"
-msgstr ""
+msgstr "To synchronize with EPC"
 
 msgid "changed"
-msgstr ""
+msgstr "Changed"
 
 msgid "now_known_as"
-msgstr ""
+msgstr "Now known as"
 
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
 
 msgid "is_nonprofit"
-msgstr ""
+msgstr "Is non-profit"
 
 msgid "is_public"
-msgstr ""
+msgstr "Is public"
 
 msgid "contact_type"
 msgstr "contact type"
@@ -348,455 +365,20 @@ msgid "use_egracons"
 msgstr ""
 
 msgid "medias"
-msgstr ""
+msgstr "Medias"
 
 msgid "can_access_partners"
-msgstr ""
-
-msgid "start_date"
-msgstr ""
+msgstr "Can access partners"
 
 msgid "contacts"
-msgstr ""
+msgstr "Contacts"
 
 msgid "can_access_partnerships"
-msgstr ""
+msgstr "Can access partnerships"
 
 #, python-brace-format
 msgid "partnership_with_{partner}"
-msgstr ""
-
-msgid "0110 - Education, not further defined"
-msgstr ""
-
-msgid "0111 - Education science"
-msgstr ""
-
-msgid "0112 - Training for pre-school teachers"
-msgstr ""
-
-msgid "0113 - Teacher training without subject specialization"
-msgstr ""
-
-msgid "0114 - Teacher training with subject specialization"
-msgstr ""
-
-msgid "0119 - Education, not elsewhere classified"
-msgstr ""
-
-msgid "0188 - Education, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0210 - Arts, not further defined"
-msgstr ""
-
-msgid "0211 - Audio-visual techniques and media production"
-msgstr ""
-
-msgid "0212 - Fashion, interior and industrial design"
-msgstr ""
-
-msgid "0213 - Fine arts"
-msgstr ""
-
-msgid "0214 - Handicrafts"
-msgstr ""
-
-msgid "0215 - Music and performing arts"
-msgstr ""
-
-msgid "0219 - Arts, not elsewhere classified"
-msgstr ""
-
-msgid "0220 - Humanities (except languages), not further defined"
-msgstr ""
-
-msgid "0221 - Religion and theology"
-msgstr ""
-
-msgid "0222 - History and archaeology"
-msgstr ""
-
-msgid "0223 - Philosophy and ethics"
-msgstr ""
-
-msgid "0229 - Humanities (except languages), not elsewhere classified"
-msgstr ""
-
-msgid "0230 - Languages, not further defined"
-msgstr ""
-
-msgid "0231 - Language acquisition"
-msgstr ""
-
-msgid "0232 - Literature and linguistics"
-msgstr ""
-
-msgid "0239 - Languages, not elsewhere classified"
-msgstr ""
-
-msgid "0288 - Arts and humanities, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0310 - Social and behavioural sciences, not further defined"
-msgstr ""
-
-msgid "0311 - Economics"
-msgstr ""
-
-msgid "0312 - Political sciences and civics"
-msgstr ""
-
-msgid "0313 - Psychology"
-msgstr ""
-
-msgid "0314 - Sociology and cultural studies"
-msgstr ""
-
-msgid "0319 - Social and behavioural sciences, not elsewhere classified"
-msgstr ""
-
-msgid "0320 - Journalism and information, not further defined"
-msgstr ""
-
-msgid "0321 - Journalism and reporting"
-msgstr ""
-
-msgid "0322 - Library, information and archival studies"
-msgstr ""
-
-msgid "0329 - Journalism and information, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0388 - Social sciences, journalism and information, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0410 - Business and administration, not further defined"
-msgstr ""
-
-msgid "0411 - Accounting and taxation"
-msgstr ""
-
-msgid "0412 - Finance, banking and insurance"
-msgstr ""
-
-msgid "0413 - Management and administration"
-msgstr ""
-
-msgid "0414 - Marketing and advertising"
-msgstr ""
-
-msgid "0415 - Secretarial and office work"
-msgstr ""
-
-msgid "0416 - Wholesale and retail sales"
-msgstr ""
-
-msgid "0417 - Work skills"
-msgstr ""
-
-msgid "0419 - Business and administration, not elsewhere classified"
-msgstr ""
-
-msgid "0421 - Law"
-msgstr ""
-
-msgid "0429 - Law, not elsewhere classified"
-msgstr ""
-
-msgid "0488 - Business, administration and law, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0510 - Biological and related sciences, not further defined"
-msgstr ""
-
-msgid "0511 - Biology"
-msgstr ""
-
-msgid "0512 - Biochemistry"
-msgstr ""
-
-msgid "0519 - Biological and related sciences, not elsewhere classifed"
-msgstr ""
-
-msgid "0520 - Environment, not further defined"
-msgstr ""
-
-msgid "0521 - Environmental sciences"
-msgstr ""
-
-msgid "0522 - Natural environments and wildlife"
-msgstr ""
-
-msgid "0529 - Environment, not elsewhere classified"
-msgstr ""
-
-msgid "0530 - Physical sciences, not further defined"
-msgstr ""
-
-msgid "0531 - Chemistry"
-msgstr ""
-
-msgid "0532 - Earth sciences"
-msgstr ""
-
-msgid "0533 - Physics"
-msgstr ""
-
-msgid "0539 - Physical sciences, not elsewhere classified"
-msgstr ""
-
-msgid "0540 - Mathematics and statistics, not further defined"
-msgstr ""
-
-msgid "0541 - Mathematics"
-msgstr ""
-
-msgid "0542 - Statistics"
-msgstr ""
-
-msgid "0549 - Mathematics and statistics, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0588 - Natural sciences, mathematics and statistics, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid ""
-"0610 - Information and Communication Technologies (ICTs), not further defined"
-msgstr ""
-
-msgid "0611 - Computer use"
-msgstr ""
-
-msgid "0612 - Database and network design and administration"
-msgstr ""
-
-msgid "0613 - Software and applications development and analysis"
-msgstr ""
-
-msgid ""
-"0619 - Information and Communication Technologies (ICTs), not elsewhere "
-"classified"
-msgstr ""
-
-msgid ""
-"0688 - Information and Communication Technologies (ICTs), inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0710 - Engineering and engineering trades, not further defined"
-msgstr ""
-
-msgid "0711 - Chemical engineering and processes"
-msgstr ""
-
-msgid "0712 - Environmental protection technology"
-msgstr ""
-
-msgid "0713 - Electricity and energy"
-msgstr ""
-
-msgid "0714 - Electronics and automation"
-msgstr ""
-
-msgid "0715 - Mechanics and metal trades"
-msgstr ""
-
-msgid "0716 - Motor vehicles, ships and aircraft"
-msgstr ""
-
-msgid "0719 - Engineering and engineering trades, not elsewhere classified"
-msgstr ""
-
-msgid "0720 - Manufacturing and processing, not further defined"
-msgstr ""
-
-msgid "0721 - Food processing"
-msgstr ""
-
-msgid "0722 - Materials (glass, paper, plastic and wood)"
-msgstr ""
-
-msgid "0723 - Textiles (clothes, footwear and leather)"
-msgstr ""
-
-msgid "0724 - Mining and extraction"
-msgstr ""
-
-msgid "0729 - Manufacturing and processing, not elsewhere classified"
-msgstr ""
-
-msgid "0730 - Architecture and construction, not further defined"
-msgstr ""
-
-msgid "0731 - Architecture and town planning"
-msgstr ""
-
-msgid "0732 - Building and civil engineering"
-msgstr ""
-
-msgid "0739 - Architecture and construction, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0788 - Engineering, manufacturing and construction, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0810 - Agriculture, not further defined"
-msgstr ""
-
-msgid "0811 - Crop and livestock production"
-msgstr ""
-
-msgid "0812 - Horticulture"
-msgstr ""
-
-msgid "0819 - Agriculture, not elsewhere classified"
-msgstr ""
-
-msgid "0821 - Forestry"
-msgstr ""
-
-msgid "0829 - Forestry, not elsewhere classified"
-msgstr ""
-
-msgid "0831 - Fisheries"
-msgstr ""
-
-msgid "0839 - Fisheries, not elsewhere classified"
-msgstr ""
-
-msgid "0841 - Veterinary"
-msgstr ""
-
-msgid "0849 - Veterinary, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0888 - Agriculture, forestry, fisheries, veterinary, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0910 - Health, not further defined"
-msgstr ""
-
-msgid "0911 - Dental studies"
-msgstr ""
-
-msgid "0912 - Medicine"
-msgstr ""
-
-msgid "0913 - Nursing and midwifery"
-msgstr ""
-
-msgid "0914 - Medical diagnostic and treatment technology"
-msgstr ""
-
-msgid "0915 - Therapy and rehabilitation"
-msgstr ""
-
-msgid "0916 - Pharmacy"
-msgstr ""
-
-msgid "0917 - Traditional and complementary medicine and therapy"
-msgstr ""
-
-msgid "0919 - Health, not elsewhere classified"
-msgstr ""
-
-msgid "0920 - Welfare, not further defined"
-msgstr ""
-
-msgid "0921 - Care of the elderly and of disabled adults"
-msgstr ""
-
-msgid "0922 - Child care and youth services"
-msgstr ""
-
-msgid "0923 - Social work and counselling"
-msgstr ""
-
-msgid "0929 - Welfare, not elsewhere classified"
-msgstr ""
-
-msgid "0988 - Health and Welfare, inter-disciplinary programmes"
-msgstr ""
-
-msgid "1010 - Personal services, not further defined"
-msgstr ""
-
-msgid "1011 - Domestic services"
-msgstr ""
-
-msgid "1012 - Hair and beauty services"
-msgstr ""
-
-msgid "1013 - Hotel, restaurants and catering"
-msgstr ""
-
-msgid "1014 - Sports"
-msgstr ""
-
-msgid "1015 - Travel, tourism and leisure"
-msgstr ""
-
-msgid "1019 - Personal services, not elsewhere classified"
-msgstr ""
-
-msgid "1020 - Hygiene and occupational health services, not further defined"
-msgstr ""
-
-msgid "1021 - Community sanitation"
-msgstr ""
-
-msgid "1022 - Occupational health and safety"
-msgstr ""
-
-msgid ""
-"1029 - Hygiene and occupational health services, not elsewhere classified"
-msgstr ""
-
-msgid "1030 - Security services, not further defined"
-msgstr ""
-
-msgid "1031 - Military and defence"
-msgstr ""
-
-msgid "1032 - Protection of persons and property"
-msgstr ""
-
-msgid "1039 - Security services, not elsewhere classified"
-msgstr ""
-
-msgid "1041 - Transport services"
-msgstr ""
-
-msgid "1049 - Transport services, not elsewhere classified"
-msgstr ""
-
-msgid "1088 - Services, inter-disciplinary programmes"
-msgstr ""
-
-msgid ""
-"Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)"
-msgstr ""
-
-msgid "First cycle / Bachelor’s or equivalent level (EQF-6)"
-msgstr ""
-
-msgid "Second cycle / Master’s or equivalent level (EQF-7)"
-msgstr ""
-
-msgid "Third cycle / Doctoral or equivalent level (EQF-8)"
-msgstr ""
-
-msgid "Not elsewhere classified"
-msgstr ""
+msgstr "Partnership with {partner}"
 
 msgid "Déclaration d’intention"
 msgstr ""
@@ -820,20 +402,42 @@ msgid "Projet Fonds d’appuie à l’internationnalisation"
 msgstr ""
 
 msgid "Autre"
-msgstr ""
+msgstr "Other"
 
 msgid "partnership"
-msgstr ""
+msgstr "Partnership"
 
 msgid "academic_year"
-msgstr ""
+msgstr "Academic year"
+
+msgid "partnership_year_education_fields"
+msgstr "Partnership year education fields"
+
+msgid "partnership_year_education_levels"
+msgstr "Partnership year education levels"
+
+msgid "partnership_year_entities"
+msgstr "Partnership year entities"
+
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "partnership_year_entities_help_text"
+msgstr "Partnership year entities"
+
+msgid "partnership_year_offers"
+msgstr "Partnership year offers"
+
+#, fuzzy
+#| msgid "partnership_year_offers"
+msgid "partnership_year_offers_help_text"
+msgstr "Partnership year offers"
 
 msgid "partnership_year"
-msgstr ""
+msgstr "Partnership year"
 
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
-msgstr ""
+msgstr "Partnership year {partnership} {year}"
 
 msgid "status_waiting"
 msgstr ""
@@ -844,23 +448,17 @@ msgstr ""
 msgid "status_refused"
 msgstr ""
 
-msgid "start_academic_year"
-msgstr ""
-
-msgid "end_academic_year"
-msgstr ""
-
 msgid "media"
-msgstr ""
+msgstr "Media"
 
 msgid "status"
-msgstr ""
+msgstr "Status"
 
 msgid "eligible"
-msgstr ""
+msgstr "Eligible"
 
 msgid "financing"
-msgstr ""
+msgstr "Financing"
 
 msgid "january"
 msgstr ""
@@ -898,29 +496,49 @@ msgstr ""
 msgid "december"
 msgstr ""
 
-msgid "partnership_creation_max_date_day"
+msgid "partnership_creation_update_max_date_day"
 msgstr ""
 
-msgid "partnership_creation_max_date_month"
+msgid "partnership_creation_update_max_date_month"
 msgstr ""
 
-msgid "partnership_update_max_date_day"
-msgstr ""
+msgid "faculty"
+msgstr "Faculty"
 
-msgid "partnership_update_max_date_month"
-msgstr ""
+msgid "entity"
+msgstr "Entity"
+
+msgid "academic_responsible"
+msgstr "Academic responsible"
+
+msgid "administrative_responsible"
+msgstr "Administrative responsible"
+
+msgid "contact_in_name"
+msgstr "In mobility contact name"
+
+msgid "portal"
+msgstr "Portal"
+
+msgid "contact_out_name"
+msgstr "Out mobility contact name"
+
+#, fuzzy
+#| msgid "update_ucl_management_entity"
+msgid "duplicate_ucl_management_entity_error_with_faculty"
+msgstr "Update UCL management entity"
 
 msgid "countries"
-msgstr ""
+msgstr "Countries"
 
 msgid "mister"
-msgstr ""
+msgstr "Mister"
 
 msgid "madame"
 msgstr ""
 
 msgid "society"
-msgstr ""
+msgstr "Society"
 
 msgid "city_french"
 msgstr ""
@@ -938,199 +556,266 @@ msgid "visibility_staff_student"
 msgstr ""
 
 msgid "file"
-msgstr ""
+msgstr "File"
 
 msgid "media_file_or_url"
-msgstr ""
+msgstr "Media file or URL"
 
 msgid "visibility"
-msgstr ""
+msgstr "Visibility"
 
 msgid "partnerships"
-msgstr ""
+msgstr "Partnerships"
 
 msgid "add_partner_entity"
-msgstr ""
+msgstr "Add partner entity"
 
 msgid "add_partnership_agreements"
-msgstr ""
+msgstr "Add partnership agreements"
 
 msgid "cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "delete_partnership_agreement"
-msgstr ""
+msgstr "Delete partnership agreement"
 
 msgid "partnership_agreement_delete_warning"
-msgstr ""
+msgstr "Are you sure you want to delete this partnership agreement?"
 
 msgid "mandatory_fields_help_text"
-msgstr ""
+msgstr "The fields marked with a * are mandatory"
 
 msgid "update_partnership_agreement"
-msgstr ""
+msgstr "Update partnership agreement"
 
 msgid "update_configuration"
-msgstr ""
+msgstr "Update configuration"
 
 #, python-format
-msgid "partnership_configuration_creation_max_date_%(min_year)s_%(max_year)s"
-msgstr ""
-
-#, python-format
-msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
+msgid ""
+"partnership_configuration_creation_modification_max_date_%(min_year)s_"
+"%(max_year)s"
 msgstr ""
 
 msgid "confirm_contact_delete"
 msgstr ""
 
 msgid "Are you sure you want to delete this contact?"
-msgstr ""
+msgstr "Are you sure you want to delete this contact?"
 
 msgid "identity"
-msgstr ""
+msgstr "Identity"
 
 msgid "coordinates"
-msgstr ""
+msgstr "Coordinates"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "partnership_contact_create"
-msgstr ""
+msgstr "Create partnership contact"
 
 msgid "create_contact"
 msgstr "create contact"
 
 msgid "partnership_contact_update"
-msgstr ""
+msgstr "Update partnership contact"
 
 msgid "update_contact"
 msgstr "update contact"
 
 msgid "academic_years"
-msgstr ""
+msgstr "Academic years"
 
 msgid "media_delete_warning"
-msgstr ""
+msgstr "Are you sure you want to delete this media?"
 
 msgid "external_link"
-msgstr ""
+msgstr "External link"
 
 msgid "update_media"
-msgstr ""
+msgstr "Update media"
 
 msgid "delete_media"
-msgstr ""
+msgstr "Delete media"
 
 msgid "first"
-msgstr ""
+msgstr "First"
 
 msgid "previous"
-msgstr ""
+msgstr "Previous"
 
 msgid "next"
-msgstr ""
+msgstr "Next"
 
 msgid "last"
-msgstr ""
+msgstr "Last"
 
-msgid "Partner"
-msgstr ""
+#, fuzzy
+#| msgid "partner_entity"
+msgid "partner_university"
+msgstr "Partner entity"
 
 msgid "add_partner"
+msgstr "Add partner"
+
+#, fuzzy
+#| msgid "partner_entity_saved"
+msgid "partner_entity_inside_partner"
+msgstr "Partner entity successfully saved"
+
+#, fuzzy
+#| msgid "edit_partnership"
+msgid "ucl_entity_partner"
+msgstr "Edit partnership"
+
+msgid "partnership_subject"
+msgstr "Partnership subject"
+
+msgid "planned_activity"
 msgstr ""
 
-msgid "UCL"
+msgid "partnership_when"
 msgstr ""
 
-msgid "years"
-msgstr ""
-
-msgid "partnership_year_unique_error"
-msgstr ""
+msgid "current_academic_year"
+msgstr "Current academic year"
 
 msgid "ucl"
 msgstr ""
 
 msgid "validity_end"
-msgstr ""
+msgstr "Validity end"
 
 msgid "partnerships_export"
+msgstr "Export partnerships"
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner <a href=\"%(url)s\">%(partner)s</a> has been successfully created by "
+"%(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partnership <a href=\"%(url)s\">%(partnership)s</a> has been successfully "
+"created by %(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner %(partner)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"partnership %(partnership)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
 msgstr ""
 
 msgid "partner_entity_delete_warning"
-msgstr ""
+msgstr "Are you sure you want to delete this partner entity?"
 
 msgid "partners"
-msgstr ""
+msgstr "Partners"
 
 msgid "delete_partner_entity"
-msgstr ""
+msgstr "Delete partner entity"
 
 msgid "update_partner_entity"
-msgstr ""
+msgstr "Update partner entity"
 
 msgid "informations"
-msgstr ""
+msgstr "Informations"
 
 msgid "contact_information"
-msgstr ""
+msgstr "Contact information"
 
 msgid "code"
-msgstr ""
+msgstr "Code"
 
 msgid "type"
-msgstr ""
+msgstr "Type"
 
 msgid "valid"
-msgstr ""
+msgstr "Valid"
 
 msgid "still_actif"
-msgstr ""
+msgstr "Still active"
 
 msgid "partners_export"
-msgstr ""
+msgstr "Export partners"
 
 msgid "similar_partners_possible"
 msgstr ""
 
 msgid "add_media"
-msgstr ""
+msgstr "Add media"
 
 msgid "new_partner"
-msgstr ""
+msgstr "New partner"
 
 msgid "add_media_after_creation"
 msgstr ""
 
 msgid "associated_entities"
-msgstr ""
+msgstr "Associated entities"
 
 msgid "add_entities_after_creation"
 msgstr ""
 
 msgid "update_partner"
-msgstr ""
+msgstr "Update partner"
 
 #, python-format
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
 msgstr ""
 
 msgid "contact_address"
-msgstr ""
+msgstr "Contact address"
 
 msgid "associated_tags"
-msgstr ""
+msgstr "Associated tags"
 
 msgid "new_media"
-msgstr ""
+msgstr "New media"
 
 msgid "no_media_yet"
-msgstr ""
+msgstr "No media yet"
 
 msgid "entities"
-msgstr ""
+msgstr "Entities"
 
 msgid "contact_mobility_in"
 msgstr ""
@@ -1139,94 +824,154 @@ msgid "contact_mobility_out"
 msgstr ""
 
 msgid "agreements"
-msgstr ""
+msgstr "Agreements"
 
 msgid "no_agreement_yet"
-msgstr ""
+msgstr "No agreement yet"
 
 msgid "close"
-msgstr ""
+msgstr "Close"
 
 msgid "submit"
-msgstr ""
+msgstr "Submit"
 
 msgid "search_partners"
-msgstr ""
+msgstr "Search partners"
 
 msgid "reset_search_fields"
-msgstr ""
+msgstr "Reset search fields"
 
 msgid "search"
-msgstr ""
+msgstr "Search"
 
 msgid "partnership_create"
-msgstr ""
+msgstr "Create partnership"
 
 msgid "edit_partnership"
-msgstr ""
+msgstr "Edit partnership"
 
 msgid "partnership_missing_valid_years"
-msgstr ""
+msgstr "This partnership is missing valid years"
 
 msgid "invalid_partner"
-msgstr ""
+msgstr "Invalid partner"
 
 msgid "inactive_partner"
-msgstr ""
+msgstr "Inactive partner"
 
 msgid "dates"
+msgstr "Dates"
+
+msgid "education_fields"
+msgstr "Education fields"
+
+msgid "education_levels"
+msgstr "Education levels"
+
+#, fuzzy
+#| msgid "entities"
+msgid "all_entities"
+msgstr "Entities"
+
+msgid "all_offers"
 msgstr ""
 
-msgid "partnership_has_missing_years"
+msgid "partnership_years_show_all_years"
 msgstr ""
 
 msgid "no_tag_yet"
-msgstr ""
+msgstr "No tag yet"
 
 msgid "add_contact"
-msgstr ""
+msgstr "Add contact"
 
 msgid "delete_contact"
-msgstr ""
+msgstr "Delete contact"
 
 msgid "no_partnership_contact_yet"
-msgstr ""
+msgstr "No partnership contact yet"
 
 msgid "change_configuration"
-msgstr ""
+msgstr "Change configuration"
+
+msgid "ucl_management_entities"
+msgstr "UCL management entities"
 
 msgid "add_partnership"
-msgstr ""
+msgstr "Add partnership"
 
 msgid "search_partnership"
-msgstr ""
+msgstr "Search partnership"
+
+msgid "create_ucl_management_entity"
+msgstr "Create UCL management entities"
+
+msgid "ucl_management_entities_list"
+msgstr "List of UCL management entities"
+
+msgid "delete_ucl_management_entity"
+msgstr "Delete UCL management entity"
+
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Are you sure you want to delete \"%(object)s\"?"
+
+msgid "update"
+msgstr "Update"
+
+msgid "delete"
+msgstr "Delete"
+
+msgid "ucl_management_entity"
+msgstr "UCL management entity"
+
+#, fuzzy
+#| msgid "ucl_management_entities"
+msgid "ucl_management_entities_empty"
+msgstr "UCL management entities"
+
+msgid "update_ucl_management_entity"
+msgstr "Update UCL management entity"
 
 msgid "id"
-msgstr ""
+msgstr "ID"
 
 msgid "partner_saved"
-msgstr ""
+msgstr "Partner successfully saved"
+
+#, fuzzy
+#| msgid "partnership_create"
+msgid "partner_created"
+msgstr "Create partnership"
 
 msgid "partner_error"
 msgstr ""
 
 msgid "partner_entity_saved"
-msgstr ""
+msgstr "Partner entity successfully saved"
 
 msgid "partner_entity_error"
 msgstr ""
 
 msgid "partner_media_saved"
-msgstr ""
+msgstr "Partner media successfully saved"
 
 msgid "partner_media_error"
 msgstr ""
 
 msgid "contact_creation_success"
-msgstr ""
+msgstr "Contact successfully created"
+
+#, fuzzy
+#| msgid "contact_creation_success"
+msgid "contact_update_success"
+msgstr "Contact successfully created"
 
 msgid "supervisor"
-msgstr ""
+msgstr "Supervisor"
+
+msgid "start_date"
+msgstr "Start date"
 
 msgid "partnership_error"
 msgstr ""
@@ -1234,8 +979,10 @@ msgstr ""
 msgid "partnership_success"
 msgstr ""
 
-msgid "partnership_agreement_start_date_before_partnership_error"
-msgstr ""
+#, fuzzy
+#| msgid "partnership_create"
+msgid "partnership_created"
+msgstr "Create partnership"
 
 msgid "partnership_agreement_error"
 msgstr ""
@@ -1244,4 +991,10 @@ msgid "partnership_agreement_success"
 msgstr ""
 
 msgid "configuration_saved"
-msgstr ""
+msgstr "Configuration saved"
+
+#~ msgid "Partner"
+#~ msgstr "Partner"
+
+#~ msgid "UCL"
+#~ msgstr "UCL"

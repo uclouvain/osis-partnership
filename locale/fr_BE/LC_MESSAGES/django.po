@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-03 17:41+0200\n"
-"PO-Revision-Date: 2018-08-03 17:42+0200\n"
+"POT-Creation-Date: 2018-10-11 15:39+0200\n"
+"PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -132,10 +132,10 @@ msgid "ucl_university"
 msgstr "Faculté"
 
 msgid "ucl_university_labo"
-msgstr "École / laboratoire"
+msgstr "Entité"
 
 msgid "ucl_university_labo_filter"
-msgstr "École / laboratoire"
+msgstr "Entité"
 
 msgid "university_offers"
 msgstr "Offres"
@@ -171,7 +171,7 @@ msgid "partnership_type"
 msgstr "Type de partenariat"
 
 msgid "partnership_supervisor"
-msgstr "Responsable Académique"
+msgstr "Responsable académique du partenariat"
 
 msgid "partnership_in"
 msgstr "Partenariats en cours en"
@@ -190,25 +190,42 @@ msgstr "Partenariats ayant un accord validé en"
 msgid "partnership_not_valid_in"
 msgstr "Partenariats n’ayant pas d’accord validé en"
 
+msgid "same_supervisor_than_management_entity"
+msgstr "Idem répondant mobilité facultaire"
+
 msgid "partnership_inactif_partner_error"
 msgstr "Ce partenaire est inactif."
 
-msgid "partnership_start_date_after_agreement_error"
-msgstr "La date de début se situe après le début d'un accord."
+msgid "invalid_partner_entity"
+msgstr "Entité partenaire invalide."
 
-msgid "partnership_start_date_gf_too_late"
-msgstr "La date limite pour créer ce partenariat est passée."
+msgid "invalid_ucl_university_labo"
+msgstr "École / laboratoire invalide."
 
-msgid "partnership_year_academic_year_error"
-msgstr "L’année académique est antérieure à l’année de début du partenariat."
+msgid "start_academic_year"
+msgstr "Année académique de début"
+
+msgid "from_academic_year"
+msgstr ""
+"Les éventuelles modifications ci-dessus s'appliqueront à partir de l'année "
+"académique"
+
+msgid "end_academic_year"
+msgstr "Année académique de fin"
+
+msgid "education_levels_empty_errors"
+msgstr "Ce champ est obligatoire."
 
 msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."
 
-msgid "invalid_partnership_creation_max_date"
-msgstr "Date invalide (le 29 février n'est pas autorisé)."
+msgid "start_date_after_from_date"
+msgstr "La date de début se situe après la date de modification."
 
-msgid "invalid_partnership_update_max_date"
+msgid "from_date_after_end_date"
+msgstr "La date de début se situe après la date de fin."
+
+msgid "invalid_partnership_creation_max_date"
 msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
 msgid "contact_in"
@@ -356,9 +373,6 @@ msgstr "Médias"
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
 
-msgid "start_date"
-msgstr "Date de début"
-
 msgid "contacts"
 msgstr "Contacts"
 
@@ -368,438 +382,6 @@ msgstr "Peux accéder aux partenariats"
 #, python-brace-format
 msgid "partnership_with_{partner}"
 msgstr "Partenariat avec {partner}"
-
-msgid "0110 - Education, not further defined"
-msgstr ""
-
-msgid "0111 - Education science"
-msgstr ""
-
-msgid "0112 - Training for pre-school teachers"
-msgstr ""
-
-msgid "0113 - Teacher training without subject specialization"
-msgstr ""
-
-msgid "0114 - Teacher training with subject specialization"
-msgstr ""
-
-msgid "0119 - Education, not elsewhere classified"
-msgstr ""
-
-msgid "0188 - Education, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0210 - Arts, not further defined"
-msgstr ""
-
-msgid "0211 - Audio-visual techniques and media production"
-msgstr ""
-
-msgid "0212 - Fashion, interior and industrial design"
-msgstr ""
-
-msgid "0213 - Fine arts"
-msgstr ""
-
-msgid "0214 - Handicrafts"
-msgstr ""
-
-msgid "0215 - Music and performing arts"
-msgstr ""
-
-msgid "0219 - Arts, not elsewhere classified"
-msgstr ""
-
-msgid "0220 - Humanities (except languages), not further defined"
-msgstr ""
-
-msgid "0221 - Religion and theology"
-msgstr ""
-
-msgid "0222 - History and archaeology"
-msgstr ""
-
-msgid "0223 - Philosophy and ethics"
-msgstr ""
-
-msgid "0229 - Humanities (except languages), not elsewhere classified"
-msgstr ""
-
-msgid "0230 - Languages, not further defined"
-msgstr ""
-
-msgid "0231 - Language acquisition"
-msgstr ""
-
-msgid "0232 - Literature and linguistics"
-msgstr ""
-
-msgid "0239 - Languages, not elsewhere classified"
-msgstr ""
-
-msgid "0288 - Arts and humanities, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0310 - Social and behavioural sciences, not further defined"
-msgstr ""
-
-msgid "0311 - Economics"
-msgstr ""
-
-msgid "0312 - Political sciences and civics"
-msgstr ""
-
-msgid "0313 - Psychology"
-msgstr ""
-
-msgid "0314 - Sociology and cultural studies"
-msgstr ""
-
-msgid "0319 - Social and behavioural sciences, not elsewhere classified"
-msgstr ""
-
-msgid "0320 - Journalism and information, not further defined"
-msgstr ""
-
-msgid "0321 - Journalism and reporting"
-msgstr ""
-
-msgid "0322 - Library, information and archival studies"
-msgstr ""
-
-msgid "0329 - Journalism and information, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0388 - Social sciences, journalism and information, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0410 - Business and administration, not further defined"
-msgstr ""
-
-msgid "0411 - Accounting and taxation"
-msgstr ""
-
-msgid "0412 - Finance, banking and insurance"
-msgstr ""
-
-msgid "0413 - Management and administration"
-msgstr ""
-
-msgid "0414 - Marketing and advertising"
-msgstr ""
-
-msgid "0415 - Secretarial and office work"
-msgstr ""
-
-msgid "0416 - Wholesale and retail sales"
-msgstr ""
-
-msgid "0417 - Work skills"
-msgstr ""
-
-msgid "0419 - Business and administration, not elsewhere classified"
-msgstr ""
-
-msgid "0421 - Law"
-msgstr ""
-
-msgid "0429 - Law, not elsewhere classified"
-msgstr ""
-
-msgid "0488 - Business, administration and law, inter-disciplinary programmes"
-msgstr ""
-
-msgid "0510 - Biological and related sciences, not further defined"
-msgstr ""
-
-msgid "0511 - Biology"
-msgstr ""
-
-msgid "0512 - Biochemistry"
-msgstr ""
-
-msgid "0519 - Biological and related sciences, not elsewhere classifed"
-msgstr ""
-
-msgid "0520 - Environment, not further defined"
-msgstr ""
-
-msgid "0521 - Environmental sciences"
-msgstr ""
-
-msgid "0522 - Natural environments and wildlife"
-msgstr ""
-
-msgid "0529 - Environment, not elsewhere classified"
-msgstr ""
-
-msgid "0530 - Physical sciences, not further defined"
-msgstr ""
-
-msgid "0531 - Chemistry"
-msgstr ""
-
-msgid "0532 - Earth sciences"
-msgstr ""
-
-msgid "0533 - Physics"
-msgstr ""
-
-msgid "0539 - Physical sciences, not elsewhere classified"
-msgstr ""
-
-msgid "0540 - Mathematics and statistics, not further defined"
-msgstr ""
-
-msgid "0541 - Mathematics"
-msgstr ""
-
-msgid "0542 - Statistics"
-msgstr ""
-
-msgid "0549 - Mathematics and statistics, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0588 - Natural sciences, mathematics and statistics, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid ""
-"0610 - Information and Communication Technologies (ICTs), not further defined"
-msgstr ""
-
-msgid "0611 - Computer use"
-msgstr ""
-
-msgid "0612 - Database and network design and administration"
-msgstr ""
-
-msgid "0613 - Software and applications development and analysis"
-msgstr ""
-
-msgid ""
-"0619 - Information and Communication Technologies (ICTs), not elsewhere "
-"classified"
-msgstr ""
-
-msgid ""
-"0688 - Information and Communication Technologies (ICTs), inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0710 - Engineering and engineering trades, not further defined"
-msgstr ""
-
-msgid "0711 - Chemical engineering and processes"
-msgstr ""
-
-msgid "0712 - Environmental protection technology"
-msgstr ""
-
-msgid "0713 - Electricity and energy"
-msgstr ""
-
-msgid "0714 - Electronics and automation"
-msgstr ""
-
-msgid "0715 - Mechanics and metal trades"
-msgstr ""
-
-msgid "0716 - Motor vehicles, ships and aircraft"
-msgstr ""
-
-msgid "0719 - Engineering and engineering trades, not elsewhere classified"
-msgstr ""
-
-msgid "0720 - Manufacturing and processing, not further defined"
-msgstr ""
-
-msgid "0721 - Food processing"
-msgstr ""
-
-msgid "0722 - Materials (glass, paper, plastic and wood)"
-msgstr ""
-
-msgid "0723 - Textiles (clothes, footwear and leather)"
-msgstr ""
-
-msgid "0724 - Mining and extraction"
-msgstr ""
-
-msgid "0729 - Manufacturing and processing, not elsewhere classified"
-msgstr ""
-
-msgid "0730 - Architecture and construction, not further defined"
-msgstr ""
-
-msgid "0731 - Architecture and town planning"
-msgstr ""
-
-msgid "0732 - Building and civil engineering"
-msgstr ""
-
-msgid "0739 - Architecture and construction, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0788 - Engineering, manufacturing and construction, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0810 - Agriculture, not further defined"
-msgstr ""
-
-msgid "0811 - Crop and livestock production"
-msgstr ""
-
-msgid "0812 - Horticulture"
-msgstr ""
-
-msgid "0819 - Agriculture, not elsewhere classified"
-msgstr ""
-
-msgid "0821 - Forestry"
-msgstr ""
-
-msgid "0829 - Forestry, not elsewhere classified"
-msgstr ""
-
-msgid "0831 - Fisheries"
-msgstr ""
-
-msgid "0839 - Fisheries, not elsewhere classified"
-msgstr ""
-
-msgid "0841 - Veterinary"
-msgstr ""
-
-msgid "0849 - Veterinary, not elsewhere classified"
-msgstr ""
-
-msgid ""
-"0888 - Agriculture, forestry, fisheries, veterinary, inter-disciplinary "
-"programmes"
-msgstr ""
-
-msgid "0910 - Health, not further defined"
-msgstr ""
-
-msgid "0911 - Dental studies"
-msgstr ""
-
-msgid "0912 - Medicine"
-msgstr ""
-
-msgid "0913 - Nursing and midwifery"
-msgstr ""
-
-msgid "0914 - Medical diagnostic and treatment technology"
-msgstr ""
-
-msgid "0915 - Therapy and rehabilitation"
-msgstr ""
-
-msgid "0916 - Pharmacy"
-msgstr ""
-
-msgid "0917 - Traditional and complementary medicine and therapy"
-msgstr ""
-
-msgid "0919 - Health, not elsewhere classified"
-msgstr ""
-
-msgid "0920 - Welfare, not further defined"
-msgstr ""
-
-msgid "0921 - Care of the elderly and of disabled adults"
-msgstr ""
-
-msgid "0922 - Child care and youth services"
-msgstr ""
-
-msgid "0923 - Social work and counselling"
-msgstr ""
-
-msgid "0929 - Welfare, not elsewhere classified"
-msgstr ""
-
-msgid "0988 - Health and Welfare, inter-disciplinary programmes"
-msgstr ""
-
-msgid "1010 - Personal services, not further defined"
-msgstr ""
-
-msgid "1011 - Domestic services"
-msgstr ""
-
-msgid "1012 - Hair and beauty services"
-msgstr ""
-
-msgid "1013 - Hotel, restaurants and catering"
-msgstr ""
-
-msgid "1014 - Sports"
-msgstr ""
-
-msgid "1015 - Travel, tourism and leisure"
-msgstr ""
-
-msgid "1019 - Personal services, not elsewhere classified"
-msgstr ""
-
-msgid "1020 - Hygiene and occupational health services, not further defined"
-msgstr ""
-
-msgid "1021 - Community sanitation"
-msgstr ""
-
-msgid "1022 - Occupational health and safety"
-msgstr ""
-
-msgid ""
-"1029 - Hygiene and occupational health services, not elsewhere classified"
-msgstr ""
-
-msgid "1030 - Security services, not further defined"
-msgstr ""
-
-msgid "1031 - Military and defence"
-msgstr ""
-
-msgid "1032 - Protection of persons and property"
-msgstr ""
-
-msgid "1039 - Security services, not elsewhere classified"
-msgstr ""
-
-msgid "1041 - Transport services"
-msgstr ""
-
-msgid "1049 - Transport services, not elsewhere classified"
-msgstr ""
-
-msgid "1088 - Services, inter-disciplinary programmes"
-msgstr ""
-
-msgid ""
-"Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)"
-msgstr ""
-
-msgid "First cycle / Bachelor’s or equivalent level (EQF-6)"
-msgstr ""
-
-msgid "Second cycle / Master’s or equivalent level (EQF-7)"
-msgstr ""
-
-msgid "Third cycle / Doctoral or equivalent level (EQF-8)"
-msgstr ""
-
-msgid "Not elsewhere classified"
-msgstr ""
 
 msgid "Déclaration d’intention"
 msgstr ""
@@ -831,6 +413,24 @@ msgstr "Partenariat"
 msgid "academic_year"
 msgstr "Année académique"
 
+msgid "partnership_year_education_fields"
+msgstr "Domaines d'études"
+
+msgid "partnership_year_education_levels"
+msgstr "Niveaux d’études UCL concernés"
+
+msgid "partnership_year_entities"
+msgstr "Entités concernées"
+
+msgid "partnership_year_entities_help_text"
+msgstr "Si non précisé alors toutes les entités seront concernées."
+
+msgid "partnership_year_offers"
+msgstr "Offres principalement concernées"
+
+msgid "partnership_year_offers_help_text"
+msgstr "Si non précisé alors toutes les offres seront concernées."
+
 msgid "partnership_year"
 msgstr "Année de partenariat"
 
@@ -846,12 +446,6 @@ msgstr "Validé"
 
 msgid "status_refused"
 msgstr "Refusé"
-
-msgid "start_academic_year"
-msgstr "Année académique de début"
-
-msgid "end_academic_year"
-msgstr "Année académique de fin"
 
 msgid "media"
 msgstr "Média"
@@ -901,17 +495,35 @@ msgstr "Novembre"
 msgid "december"
 msgstr "Décembre"
 
-msgid "partnership_creation_max_date_day"
-msgstr "Jour maximum pour la création"
+msgid "partnership_creation_update_max_date_day"
+msgstr "Jour maximum pour la création ou la modification"
 
-msgid "partnership_creation_max_date_month"
-msgstr "Mois maximum pour la création"
+msgid "partnership_creation_update_max_date_month"
+msgstr "Mois maximum pour la création ou la modification"
 
-msgid "partnership_update_max_date_day"
-msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
+msgid "faculty"
+msgstr "Faculté"
 
-msgid "partnership_update_max_date_month"
-msgstr "Mois maximum pour la mise à jour d'un partenariat."
+msgid "entity"
+msgstr "Entité"
+
+msgid "academic_responsible"
+msgstr "Responsable académique"
+
+msgid "administrative_responsible"
+msgstr "Responsable administratif"
+
+msgid "contact_in_name"
+msgstr "Nom du contact de type mobilité in"
+
+msgid "portal"
+msgstr "Portail"
+
+msgid "contact_out_name"
+msgstr "Nom du contact de type mobilité out"
+
+msgid "duplicate_ucl_management_entity_error_with_faculty"
+msgstr "Une entité de gestion avec cette faculté existe déjà."
 
 msgid "countries"
 msgstr "Pays"
@@ -979,16 +591,12 @@ msgid "update_configuration"
 msgstr "Mettre à jour la configuration"
 
 #, python-format
-msgid "partnership_configuration_creation_max_date_%(min_year)s_%(max_year)s"
+msgid ""
+"partnership_configuration_creation_modification_max_date_%(min_year)s_"
+"%(max_year)s"
 msgstr ""
-"Date maximum pour la création d'un partenariat de l'année %(min_year)s-"
-"%(max_year)s."
-
-#, python-format
-msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
-msgstr ""
-"Date maximum pour la mise à jour d'un partenariat de l'année %(min_year)s-"
-"%(max_year)s."
+"Date maximum pour la création ou la modification d'un partenariat de l'année "
+"%(min_year)s-%(max_year)s."
 
 msgid "confirm_contact_delete"
 msgstr ""
@@ -1048,20 +656,29 @@ msgstr "Suivant"
 msgid "last"
 msgstr "Dernier"
 
-msgid "Partner"
-msgstr "Partenaire"
+msgid "partner_university"
+msgstr "Université/organisme partenaire"
 
 msgid "add_partner"
 msgstr "Ajouter un partenaire"
 
-msgid "UCL"
-msgstr "UCL"
+msgid "partner_entity_inside_partner"
+msgstr "Entité au sein de l'université/l'organisme partenaire"
 
-msgid "years"
+msgid "ucl_entity_partner"
+msgstr "Entité UCL partenaire"
+
+msgid "partnership_subject"
+msgstr "Objet du partenariat"
+
+msgid "planned_activity"
+msgstr "Activités prévues"
+
+msgid "partnership_when"
 msgstr "Années"
 
-msgid "partnership_year_unique_error"
-msgstr "Une année avec cette année académique existe déjà."
+msgid "current_academic_year"
+msgstr "Année académique en cours"
 
 msgid "ucl"
 msgstr "UCL"
@@ -1071,6 +688,60 @@ msgstr "Fin de validité"
 
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner <a href=\"%(url)s\">%(partner)s</a> has been successfully created by "
+"%(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partnership <a href=\"%(url)s\">%(partnership)s</a> has been successfully "
+"created by %(username)s.\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"Partner %(partner)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"partnership %(partnership)s has been successfully created by %(username)s.\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
 
 msgid "partner_entity_delete_warning"
 msgstr ""
@@ -1099,10 +770,10 @@ msgid "type"
 msgstr "Type"
 
 msgid "valid"
-msgstr "Valide"
+msgstr "Validé"
 
 msgid "still_actif"
-msgstr "Toujours actif"
+msgstr "Actif"
 
 msgid "partners_export"
 msgstr "Exporter la liste des partenaires"
@@ -1196,8 +867,20 @@ msgstr "Le partenaire est inactif"
 msgid "dates"
 msgstr "Dates"
 
-msgid "partnership_has_missing_years"
-msgstr "Il manque des années académiques vis à vis des accords saisis."
+msgid "education_fields"
+msgstr "Domaines d'étude"
+
+msgid "education_levels"
+msgstr "Niveaux d’études UCL concernés"
+
+msgid "all_entities"
+msgstr "Toutes les entités"
+
+msgid "all_offers"
+msgstr "Toutes les offres"
+
+msgid "partnership_years_show_all_years"
+msgstr "Montrer toutes les années."
 
 msgid "no_tag_yet"
 msgstr "Il n'y a pas encore de tag."
@@ -1214,17 +897,51 @@ msgstr "Il n'y a pas encore de contact."
 msgid "change_configuration"
 msgstr "Modifier la configuration"
 
+msgid "ucl_management_entities"
+msgstr "Entités de gestion UCL"
+
 msgid "add_partnership"
 msgstr "Ajouter un partenariat"
 
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
+msgid "create_ucl_management_entity"
+msgstr "Créer une entité de gestion UCL"
+
+msgid "ucl_management_entities_list"
+msgstr "Liste des entités de gestion UCL"
+
+msgid "delete_ucl_management_entity"
+msgstr "Supprimer l'entité de gestion UCL"
+
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
+
+msgid "update"
+msgstr "Mettre à jour"
+
+msgid "delete"
+msgstr "Delete"
+
+msgid "ucl_management_entity"
+msgstr "Entité de gestion UCL"
+
+msgid "ucl_management_entities_empty"
+msgstr "Il n'y a pas encore d'entités de gestion UCL"
+
+msgid "update_ucl_management_entity"
+msgstr "Mettre à jour l'entité de gestion UCL"
+
 msgid "id"
 msgstr "ID"
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
+
+msgid "partner_created"
+msgstr "Partenaire créé"
 
 msgid "partner_error"
 msgstr "Erreur lors de la sauvegarde du partenaire."
@@ -1244,8 +961,14 @@ msgstr "Erreur lors de la sauvegarde du média."
 msgid "contact_creation_success"
 msgstr "Contact créé avec succès."
 
+msgid "contact_update_success"
+msgstr "Contact modifié avec succès."
+
 msgid "supervisor"
 msgstr "Superviseur"
+
+msgid "start_date"
+msgstr "Date de début"
 
 msgid "partnership_error"
 msgstr "Erreur lors de la sauvegarde du partenariat."
@@ -1253,9 +976,8 @@ msgstr "Erreur lors de la sauvegarde du partenariat."
 msgid "partnership_success"
 msgstr "Partenariat sauvegardé avec succès."
 
-msgid "partnership_agreement_start_date_before_partnership_error"
-msgstr ""
-"L'année académique de début se situe avant la date de début du partenariat."
+msgid "partnership_created"
+msgstr "Partenariat créé"
 
 msgid "partnership_agreement_error"
 msgstr "Erreur lors de la sauvegarde de l'accord."
@@ -1265,6 +987,47 @@ msgstr "Accord sauvegardé avec succès."
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
+
+#~ msgid "invalid_partnership_update_max_date"
+#~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
+
+#~ msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
+#~ msgstr ""
+#~ "Date maximum pour la mise à jour d'un partenariat de l'année %(min_year)s-"
+#~ "%(max_year)s."
+
+#~ msgid "Partner"
+#~ msgstr "Partenaire"
+
+#~ msgid "UCL"
+#~ msgstr "UCL"
+
+#~ msgid "partnership_start_date_after_agreement_error"
+#~ msgstr "La date de début se situe après le début d'un accord."
+
+#~ msgid "partnership_start_date_gf_too_late"
+#~ msgstr "La date limite pour créer ce partenariat est passée."
+
+#~ msgid "partnership_year_academic_year_error"
+#~ msgstr ""
+#~ "L’année académique est antérieure à l’année de début du partenariat."
+
+#~ msgid "partnership_update_max_date_day"
+#~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
+
+#~ msgid "partnership_update_max_date_month"
+#~ msgstr "Mois maximum pour la mise à jour d'un partenariat."
+
+#~ msgid "years"
+#~ msgstr "Années"
+
+#~ msgid "partnership_has_missing_years"
+#~ msgstr "Il manque des années académiques vis à vis des accords saisis."
+
+#~ msgid "partnership_agreement_start_date_before_partnership_error"
+#~ msgstr ""
+#~ "L'année académique de début se situe avant la date de début du "
+#~ "partenariat."
 
 #~ msgid "title"
 #~ msgstr "Titre"
@@ -1278,12 +1041,6 @@ msgstr "La configuration à bien été mise à jour."
 #~ msgid "role"
 #~ msgstr "Rôle"
 
-#~ msgid "offers"
-#~ msgstr "Offres"
-
-#~ msgid "education_fields"
-#~ msgstr "Domaines d'étude"
-
 #~ msgid "partnership_creation_max_date_day_help_text"
 #~ msgstr "Jour du mois maximum pour la création d'un partenariat."
 
@@ -1292,9 +1049,6 @@ msgstr "La configuration à bien été mise à jour."
 
 #~ msgid "partnership_update_max_date_month_help_text"
 #~ msgstr "Mois maximum pour la mise à jour d'un partenariat (de l'année N)."
-
-#~ msgid "current_partnership"
-#~ msgstr "Partenariats en cours"
 
 #~ msgid "new_contact"
 #~ msgstr "Nouveau contact"
@@ -1310,9 +1064,6 @@ msgstr "La configuration à bien été mise à jour."
 
 #~ msgid "not_valid"
 #~ msgstr "Non valide"
-
-#~ msgid "no_university"
-#~ msgstr "Pas de faculté"
 
 #~ msgid "mobility_type"
 #~ msgstr "Type de mobilité"

@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% load i18n static partnerships %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>
+  <li class="active">{{ ucl_management_entity }}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ ucl_management_entity }}</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          {% if can_change_ucl_management_entity %}
+            <a class="btn btn-default" href="{% url 'partnerships:ucl_management_entities:update' pk=ucl_management_entity.pk %}"><i class="fa fa-fw fa-pencil"></i> {% trans 'update' %}</a>
+          {% endif %}
+          {% if can_delete_ucl_management_entity %}
+            <a class="btn btn-danger" href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}"><i class="fa fa-fw fa-cross"></i> {% trans 'delete' %}</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- UCL Management Entity -->
+      <div class="row">
+        <div class="col-sm-12">
+          <h2>{% trans 'ucl_management_entity' %}</h2>
+          <dl class="dl-horizontal">
+            <dt>{% trans 'faculty' %}</dt>
+            <dd>{{ ucl_management_entity.faculty }}</dd>
+            <dt>{% trans 'entity' %}</dt>
+            <dd>{{ ucl_management_entity.entity|default_if_none:"" }}</dd>
+            <dt>{% trans 'academic_responsible' %}</dt>
+            <dd>{{ ucl_management_entity.academic_responsible }}</dd>
+            <dt>{% trans 'administrative_responsible' %}</dt>
+            <dd>{{ ucl_management_entity.administrative_responsible }}</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="row">
+        <!-- Contact in -->
+        <div class="col-xs-12 col-sm-6">
+          <h2>{% trans 'contact_in' %}</h2>
+          <dl class="dl-horizontal">
+            <dt>{% trans 'Name' %}</dt>
+            <dd>{{ ucl_management_entity.contact_in_person|default_if_none:"" }}</dd>
+            <dt>{% trans 'email' %}</dt>
+            <dd>{{ ucl_management_entity.contact_in_email|default_if_none:"" }}</dd>
+            <dt>{% trans 'portal' %}</dt>
+            <dd>{{ ucl_management_entity.contact_in_url|default_if_none:"" }}</dd>
+          </dl>
+        </div>
+        <!-- Contact out -->
+        <div class="col-xs-12 col-sm-6">
+          <h2>{% trans 'contact_out' %}</h2>
+          <dl class="dl-horizontal">
+            <dt>{% trans 'Name' %}</dt>
+            <dd>{{ ucl_management_entity.contact_out_person|default_if_none:"" }}</dd>
+            <dt>{% trans 'email' %}</dt>
+            <dd>{{ ucl_management_entity.contact_out_email|default_if_none:"" }}</dd>
+            <dt>{% trans 'portal' %}</dt>
+            <dd>{{ ucl_management_entity.contact_out_url|default_if_none:"" }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

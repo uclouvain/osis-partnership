@@ -1,7 +1,11 @@
 from datetime import date
 
-from base.models.person import Person
+from django.contrib.auth.models import User
 from django.db.models import Q
+from django.contrib.auth import get_user_model
+from base.models.entity_version import EntityVersion
+
+from base.models.person import Person
 
 
 def user_is_adri(user):
@@ -21,6 +25,22 @@ def user_is_adri(user):
         return False
 
 
+def get_adri_users():
+    return get_user_model().objects.filter(
+        person__personentity__entity__entityversion__acronym='ADRI'
+    )
+
+
+def get_user_faculties(user):
+    return EntityVersion.objects.filter(
+        entity_type="FACULTY", entity__entitymanager__person__user=user
+    )
+
+
+def get_adri_emails():
+    return get_adri_users().values('email')
+
+
 def user_is_gf(user):
     # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
     try:
@@ -31,6 +51,13 @@ def user_is_gf(user):
             .exists()
         )
     except Person.DoesNotExist:
+        return False
+
+
+def user_is_gf_of_faculty(user, faculty):
+    if user_is_gf(user):
+        return User.objects.filter(pk=user.pk, person__entitymanager__entity=faculty).exists()
+    else:
         return False
 
 

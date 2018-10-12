@@ -1,0 +1,11 @@
+{% load i18n url_utils %}{% full_uri url=partner.get_absolute_url as full_url %}{% blocktrans with url=full_url username=user.username %}Hello,
+
+Partner {{ partner }} has been successfully created by {{ username }}.
+
+You can access it at this url :
+
+{{ url }}
+
+Regards,
+
+Osis team{% endblocktrans %}

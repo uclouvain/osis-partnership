@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = partnership
+omit =
+    */migrations/*
+    venv/*
+    */tests/*
+    */management/*
+    */admin.py

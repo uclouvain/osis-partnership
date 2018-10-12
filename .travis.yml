@@ -13,9 +13,9 @@ install:
   - git submodule init
   - git submodule update
   - pip install -r travis-requirements.txt
-  - pip install django-autocomplete-light
   - rm -Rf partnership
   - ln -s $PROJECT_DIR partnership
+  - cp partnership/.coveragerc .
 
 before_script:
   - cp .env.example .env
@@ -31,5 +31,5 @@ script:
   - coverage run manage.py test --exclude-tag=selenium partnership
 
 after_success:
- - pip install coveralls
- - coveralls
+ - pip install python-coveralls
+ - coveralls --base_dir /home/travis/build/uclouvain/osis-partnership/
