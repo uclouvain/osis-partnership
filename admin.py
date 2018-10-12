@@ -4,7 +4,8 @@ from partnership.models import (Address, Contact, ContactType, Financing,
                                 Media, Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipTag,
                                 PartnershipYear, PartnerTag, PartnerType,
-                                UCLManagementEntity)
+                                UCLManagementEntity,
+                                PartnershipYearEducationField)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -98,3 +99,5 @@ admin.site.register(ContactType)
 admin.site.register(Contact)
 admin.site.register(Address)
 admin.site.register(UCLManagementEntity)
+admin.site.register(PartnershipYear)
+admin.site.register(PartnershipYearEducationField)

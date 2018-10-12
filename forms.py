@@ -696,21 +696,26 @@ class PartnershipForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user', None)
         super(PartnershipForm, self).__init__(*args, **kwargs)
-        if not user_is_adri(self.user):
-            # Restrict fields for GF
-            self.fields['ucl_university'].queryset = Entity.objects.filter(entitymanager__person__user=self.user)
-            if self.instance.pk is not None:
-                self.fields['partner'].disabled = True
+        if self.user is not None:
+            if not user_is_adri(self.user):
+
+                # Restrict fields for GF
+                self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.filter(
+                    entitymanager__person__user=self.user,
+                    faculty_managements__isnull=False,
+                ).distinct()
+
+                if self.instance.pk is not None:
+                    self.fields['partner'].disabled = True
+                    self.fields['ucl_university_labo'].disabled = True
+                    self.fields['supervisor'].disabled = True
+                    self.fields['comment'].disabled = True
+                    self.fields['tags'].disabled = True
                 self.fields['ucl_university'].disabled = True
-                self.fields['ucl_university_labo'].disabled = True
-                self.fields['supervisor'].disabled = True
-                self.fields['comment'].disabled = True
-                self.fields['tags'].disabled = True
-
-        self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
-
+            else:
+                self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         try:
             self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
         except Partner.DoesNotExist:
