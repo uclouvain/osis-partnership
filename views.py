@@ -11,6 +11,7 @@ from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
 from django.db.models.functions import Now, ExtractYear
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -608,13 +609,12 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     form_class = PartnershipFilterForm
 
-    def get_initial(self):
-        initial = {}
-        if user_is_gf(self.request.user):
+    def get(self, *args, **kwargs):
+        if not self.request.GET and user_is_gf(self.request.user):
             university = self.request.user.person.entitymanager_set.first().entity
             if Partnership.objects.filter(ucl_university=university).exists():
-                initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
-        return initial
+                return HttpResponseRedirect('?ucl_university={0}'.format(self.request.user.person.entitymanager_set.first().entity.pk))
+        return super(PartnershipListFilterMixin, self).get(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super(PartnershipListFilterMixin, self).get_form_kwargs()
