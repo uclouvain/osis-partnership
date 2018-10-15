@@ -900,12 +900,15 @@ class UCLManagementEntity(models.Model):
         return user_is_adri(user) and not self.faculty.partnerships.exists()
 
     def validate_unique(self, exclude=None):
-        if (self.entity is None):
-            if UCLManagementEntity.objects.exclude(id=self.id).filter(
-                faculty=self.faculty,
-                entity__isnull=True,
-            ).exists():
-                raise ValidationError(_("duplicate_ucl_management_entity_error_with_faculty"))
+        if (self.entity is None):# and hasattr(self, faculty) and self.faculty is not None):
+            try:
+                if UCLManagementEntity.objects.exclude(id=self.id).filter(
+                        faculty=self.faculty,
+                        entity__isnull=True,
+                ).exists():
+                    raise ValidationError(_("duplicate_ucl_management_entity_error_with_faculty"))
+            except Entity.DoesNotExist:
+                pass
         super(UCLManagementEntity, self).validate_unique(exclude)
 
 
