@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-11 15:39+0200\n"
-"PO-Revision-Date: 2018-10-11 15:39+0200\n"
+"POT-Creation-Date: 2018-10-15 12:03+0200\n"
+"PO-Revision-Date: 2018-10-15 12:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -978,6 +978,12 @@ msgstr "Partenariat sauvegardé avec succès."
 
 msgid "partnership_created"
 msgstr "Partenariat créé"
+
+msgid "partnership_agreement_warning_before"
+msgstr "L'accord commence avant le partenariat."
+
+msgid "partnership_agreement_warning_after"
+msgstr "L'accord finis après le partenariat."
 
 msgid "partnership_agreement_error"
 msgstr "Erreur lors de la sauvegarde de l'accord."
