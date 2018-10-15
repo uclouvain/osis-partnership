@@ -1020,6 +1020,12 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     def test_func(self):
         return Partnership.user_can_add(self.request.user)
 
+    def get_initial(self):
+        initial = {}
+        if user_is_gf(self.request.user):
+            initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
+        return initial
+
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
