@@ -14,6 +14,8 @@
 
     $('#id_partner').on('select2:select', function (e) {
         var data = e.params.data;
+        $('#partner-pic-code').text("");
+        $('#partner-erasmus-code').text("");
         if (data.pic_code !== null) {
             $('#partner-pic-code').text(data.pic_code);
         }
