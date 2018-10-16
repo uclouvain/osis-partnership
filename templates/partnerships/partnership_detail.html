@@ -62,7 +62,7 @@
             <dt>{% trans "partnership_supervisor" %}</dt>
             <dd>{{ partnership.get_supervisor|default_if_none:"" }}</dd>
 
-            <dt>{% trans "dates" %}</dt>
+            <dt>{% trans "Validated_agreements" %}</dt>
             <dd>
               {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
             </dd>
