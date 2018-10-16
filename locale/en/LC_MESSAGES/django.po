@@ -993,19 +993,6 @@ msgstr ""
 msgid "configuration_saved"
 msgstr "Configuration saved"
 
-#, fuzzy
-#| msgid "ucl_management_entities"
-msgid "ucl_management_entity_create_success"
-msgstr "UCL management entities"
-
-#, fuzzy
-#| msgid "ucl_management_entities"
-msgid "ucl_management_entity_change_success"
-msgstr "UCL management entities"
-
-#~ msgid "dates"
-#~ msgstr "Dates"
-
 #~ msgid "Partner"
 #~ msgstr "Partner"
 

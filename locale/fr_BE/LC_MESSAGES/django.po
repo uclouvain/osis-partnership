@@ -988,19 +988,6 @@ msgstr "Accord sauvegardé avec succès."
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
 
-#, fuzzy
-#| msgid "ucl_management_entities"
-msgid "ucl_management_entity_create_success"
-msgstr "Entités de gestion UCL"
-
-#, fuzzy
-#| msgid "ucl_management_entities"
-msgid "ucl_management_entity_change_success"
-msgstr "Entités de gestion UCL"
-
-#~ msgid "dates"
-#~ msgstr "Dates"
-
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
