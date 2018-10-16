@@ -41,7 +41,7 @@ msgstr "Code PIC"
 msgid "erasmus_code"
 msgstr "Code Erasmus"
 
-msgid "comment"
+msgid "Comment"
 msgstr "Commentaire"
 
 msgid "phone"

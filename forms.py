@@ -55,7 +55,7 @@ class PartnerForm(forms.ModelForm):
             'is_nonprofit': forms.CheckboxInput(),
             'is_public': forms.CheckboxInput(),
             'use_egracons': forms.CheckboxInput(),
-            'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
+            'comment': forms.Textarea(attrs={'placeholder': _('Comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
             'website': forms.URLInput(attrs={'placeholder': _('website')}),
             'email': forms.EmailInput(attrs={'placeholder': _('email')}),
@@ -230,7 +230,7 @@ class PartnerEntityForm(forms.ModelForm):
         exclude = ('partner', 'address', 'contact_in', 'contact_out')
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('name')}),
-            'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
+            'comment': forms.Textarea(attrs={'placeholder': _('Comment')}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -636,7 +636,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
     )
     comment = forms.CharField(
-        label=_('comment'),
+        label=_('Comment'),
         required=False,
     )
 

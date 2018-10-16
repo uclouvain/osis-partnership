@@ -80,7 +80,7 @@ class PartnerEntity(models.Model):
         blank=True,
         null=True,
     )
-    comment = models.TextField(_('comment'), default='', blank=True)
+    comment = models.TextField(_('Comment'), default='', blank=True)
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
@@ -211,7 +211,7 @@ class Partner(models.Model):
     )
 
     use_egracons = models.BooleanField(_('use_egracons'), default=False)
-    comment = models.TextField(_('comment'), default='', blank=True)
+    comment = models.TextField(_('Comment'), default='', blank=True)
     tags = models.ManyToManyField(
         PartnerTag,
         verbose_name=_('tags'),
@@ -340,7 +340,7 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    comment = models.TextField(_('comment'), default='', blank=True)
+    comment = models.TextField(_('Comment'), default='', blank=True)
     tags = models.ManyToManyField(
         PartnershipTag,
         verbose_name=_('tags'),
@@ -724,7 +724,7 @@ class PartnershipAgreement(models.Model):
     )
 
     comment = models.TextField(
-        _('comment'),
+        _('Comment'),
         blank=True,
         default='',
     )
@@ -971,7 +971,7 @@ class Contact(models.Model):
     mobile_phone = models.CharField(_('mobile_phone'), max_length=255, blank=True, null=True)
     fax = models.CharField(_('fax'), max_length=255, blank=True, null=True)
     email = models.EmailField(_('email'), blank=True, null=True)
-    comment = models.TextField(_('comment'), default='', blank=True)
+    comment = models.TextField(_('Comment'), default='', blank=True)
 
     def __str__(self):
         chunks = []
