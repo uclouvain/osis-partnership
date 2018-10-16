@@ -30,6 +30,7 @@
     $('select[name="ucl_university"]').change(function() {
         $('input[name="year-faculty"]').val($(this).val());
         $('select[name="year-entities"]').val([]).trigger('change');
+        $('select[name="year-offers"]').val([]).trigger('change');
     });
 
 })(jQuery);
