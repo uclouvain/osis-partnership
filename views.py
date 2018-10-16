@@ -985,7 +985,9 @@ class PartnershipFormMixin(object):
         kwargs['prefix'] = 'year'
         partnership = kwargs['instance']
         if partnership is not None:
-            kwargs['instance'] = partnership.current_year
+            configuration = PartnershipConfiguration.get_configuration()
+            current_academic_year = configuration.get_current_academic_year_for_creation_modification()
+            kwargs['instance'] = partnership.years.filter(academic_year=current_academic_year).first()
             if kwargs['instance'] is None:
                 # No current year for this partnership, get the last available
                 kwargs['instance'] = partnership.years.last()
