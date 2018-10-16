@@ -776,7 +776,7 @@ class PartnershipYearForm(forms.ModelForm):
     )
 
     offers = EducationGroupYearChoiceSelect(
-        queryset=EducationGroupYear.objects.all(),
+        queryset=EducationGroupYear.objects.filter(university_certificate=True),
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_offers',
         ),
