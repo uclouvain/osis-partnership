@@ -929,13 +929,11 @@ class UCLManagementEntityForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        if (self.instance.pk is not None and self.instance.faculty.partnerships.exists()) or (
-            self.user is not None and not user_is_adri(self.user)
-        ):
+        if (self.instance.pk is not None and self.instance.has_linked_partnerships()) or not user_is_adri(self.user):
             self.fields['entity'].disabled = True
             self.fields['faculty'].disabled = True
-        if self.user is not None and not user_is_adri(self.user):
+        if not user_is_adri(self.user):
             self.fields['academic_responsible'].disabled = True
             self.fields['administrative_responsible'].disabled = True
