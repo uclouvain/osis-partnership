@@ -23,8 +23,8 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
-        cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=other_faculty)
-        PartnershipFactory(ucl_university=other_faculty)
+        cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=other_faculty, entity=None)
+        PartnershipFactory(ucl_university=other_faculty, ucl_university_labo=None)
 
         # Users
         cls.lambda_user = UserFactory()

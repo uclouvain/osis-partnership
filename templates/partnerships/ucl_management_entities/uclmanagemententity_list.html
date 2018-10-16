@@ -1,9 +1,13 @@
 {% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% load bootstrap3 i18n partnerships static %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
   <li class="active">{% trans "ucl_management_entities" %}</li>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static "partnerships/modal_form.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -63,9 +67,32 @@
                     </ul>
                   </td>
                   <td>
-                    <a href="{% url "partnerships:ucl_management_entities:update" ucl_management_entity.pk %}" class="btn btn-default">
-                      <i class="fa fa-pencil"></i>
-                    </a>
+                    {% if user|can_change_management_entity:ucl_management_entity %}
+                      <div class="btn-group pull-right">
+                        <a href="{% url "partnerships:ucl_management_entities:update" ucl_management_entity.pk %}" class="btn btn-default">
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                        {% if user|can_delete_management_entity:ucl_management_entity %}
+                          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"
+                                  aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}"
+                                 class="modal-link"
+                                 data-modal-danger
+                                 data-modal-submit="{% trans "delete_ucl_management_entity" %}"
+                                 data-modal-title="{{ contact }}"
+                                 data-modal="modal-form">
+                                <i class="fa fa-times fa-fw"></i> {% trans 'delete_ucl_management_entity' %}
+                              </a>
+                            </li>
+                          </ul>
+                        {% endif %}
+                      </div>
+                    {% endif %}
                   </td>
                 </tr>
               {% endfor %}
@@ -87,4 +114,31 @@
       </div>
     </div>
   </div>
+
+
+<div class="modal fade" id="modal-form" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="" method="post" class="partner-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <h4 class="modal-title" id="myModalLabel">Title</h4>
+        </div>
+        <div class="modal-body">
+          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+        </div>
+        <div class="modal-footer">
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

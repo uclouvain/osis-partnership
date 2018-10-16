@@ -873,13 +873,9 @@ class UCLManagementEntity(models.Model):
     class Meta:
         unique_together = ("faculty", "entity")
 
-    def get_absolute_url(self):
-        return reverse(
-            'partnerships:ucl_management_entities:detail',
-            kwargs={'pk': self.pk}
-        )
-
     def __str__(self):
+        if self.entity is None:
+            return str(self.faculty)
         return ("{} {}".format(self.faculty, self.entity))
 
     @staticmethod
@@ -896,8 +892,15 @@ class UCLManagementEntity(models.Model):
     def user_can_change(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
 
+    def has_linked_partnerships(self):
+        partnerships = Partnership.objects.filter(ucl_university=self.faculty)
+        if self.entity is None:
+            return partnerships.filter(ucl_university_labo__isnull=True).exists()
+        else:
+            return partnerships.filter(ucl_university_labo=self.entity).exists()
+
     def user_can_delete(self, user):
-        return user_is_adri(user) and not self.faculty.partnerships.exists()
+        return user_is_adri(user) and not self.has_linked_partnerships()
 
     def validate_unique(self, exclude=None):
         if (self.entity is None):
