@@ -806,7 +806,8 @@ class PartnershipYearForm(forms.ModelForm):
                 self.fields['end_academic_year'].queryset = future_academic_years
         try:
             # Update
-            if current_academic_year.year > self.instance.partnership.end_academic_year.year:
+            if (current_academic_year is not None
+                    and current_academic_year.year > self.instance.partnership.end_academic_year.year):
                 self.fields['end_academic_year'].initial = current_academic_year
             else:
                 self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
