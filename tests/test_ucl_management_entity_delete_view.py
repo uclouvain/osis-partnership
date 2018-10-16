@@ -18,8 +18,10 @@ class UCLManagementEntityDeleteViewTest(TestCase):
     def setUpTestData(cls):
         faculty = EntityFactory()
         other_faculty = EntityFactory()
+        third_faculty = EntityFactory()
         EntityVersionFactory(entity_type="FACULTY", entity=faculty)
         EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
+        EntityVersionFactory(entity_type="FACULTY", entity=third_faculty)
 
         # Users
         cls.lambda_user = UserFactory()
@@ -32,8 +34,8 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
-        cls.ucl_management_entity_linked = UCLManagementEntityFactory()
-        PartnershipFactory(ucl_management_entity=cls.ucl_management_entity_linked)
+        cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=third_faculty)
+        PartnershipFactory(ucl_university=third_faculty)
 
         cls.url = reverse(
             'partnerships:ucl_management_entities:delete',
@@ -104,7 +106,8 @@ class UCLManagementEntityDeleteViewTest(TestCase):
     def test_get_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.linked_url)
-        self.assertTemplateUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        self.assertTemplateUsed('registration/login.html')
 
     def test_post_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)

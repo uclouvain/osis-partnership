@@ -26,9 +26,8 @@ class PartnershipContactCreateViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         # Misc
         cls.url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': cls.partnership.pk})
 
@@ -66,19 +65,6 @@ class PartnershipContactCreateViewTest(TestCase):
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_create.html')
 
-    def test_get_out_of_date_as_adri(self):
-        self.client.force_login(self.user_adri)
-        url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': self.partnership_out_of_date.pk})
-        response = self.client.get(url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_create.html')
-
-    def test_get_out_of_date_as_gf(self):
-        self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': self.partnership_out_of_date.pk})
-        response = self.client.get(url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
-
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
@@ -114,9 +100,8 @@ class PartnershipContactUpdateViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         # Misc
         cls.url = reverse('partnerships:contacts:update', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
@@ -160,23 +145,6 @@ class PartnershipContactUpdateViewTest(TestCase):
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_update.html')
 
-    def test_get_out_of_date_as_adri(self):
-        self.client.force_login(self.user_adri)
-        url = reverse('partnerships:contacts:update', kwargs={
-            'partnership_pk': self.partnership_out_of_date.pk, 'pk': self.partnership_out_of_date.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_update.html')
-
-    def test_get_out_of_date_as_gf(self):
-        self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:update', kwargs={
-            'partnership_pk': self.partnership_out_of_date.pk, 'pk': self.partnership_out_of_date.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
-
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
@@ -211,9 +179,8 @@ class PartnershipContactDeleteViewTest(TestCase):
         # Partnership creation
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory(start_date=date_ok)
-        cls.partnership_gf = PartnershipFactory(start_date=date_ok, author=cls.user_gf)
-        cls.partnership_out_of_date = PartnershipFactory(start_date=date_ko, author=cls.user_gf)
+        cls.partnership = PartnershipFactory()
+        cls.partnership_gf = PartnershipFactory(author=cls.user_gf, ucl_university=entity_manager.entity)
         # Misc
         cls.url = reverse('partnerships:contacts:delete', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
@@ -256,23 +223,6 @@ class PartnershipContactDeleteViewTest(TestCase):
         })
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-
-    def test_get_out_of_date_as_adri(self):
-        self.client.force_login(self.user_adri)
-        url = reverse('partnerships:contacts:delete', kwargs={
-            'partnership_pk': self.partnership_out_of_date.pk, 'pk': self.partnership_out_of_date.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-
-    def test_get_out_of_date_as_gf(self):
-        self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:delete', kwargs={
-            'partnership_pk': self.partnership_out_of_date.pk, 'pk': self.partnership_out_of_date.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)

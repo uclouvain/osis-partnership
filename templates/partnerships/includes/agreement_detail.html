@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n partnerships %}
 <div class="row">
   <div class="col-sm-12 col-md-5">
     <div>
@@ -22,8 +22,10 @@
           {% endif %}
         </dd>
 
+        {% if agreement.comment %}
         <dt>{% trans "comment" %}</dt>
         <dd>{{ agreement.comment|linebreaksbr }}</dd>
+        {% endif %}
 
         {% if show_partnership %}
         <dt>{% trans "ucl_university" %}</dt>
@@ -37,9 +39,9 @@
   </div>
   <div class="col-sm-12 col-md-2">
     {% if show_partnership %}<a href="{{ agreement.partnership.get_absolute_url }}">{% trans "partnership" %}</a>{% endif %}
-    {% if can_change %}
+    {% if user|can_change_agreement:agreement %}
     <div class="btn-group pull-right">
-      <a href="{% url "partnerships:agreements:update" partnership.id agreement.id %}"
+      <a href="{% url "partnerships:agreements:update" agreement.partnership.id agreement.id %}"
          class="btn btn-default">
         <i class="fa fa-pencil fa-fw"></i>
       </a>
@@ -48,7 +50,7 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="{% url "partnerships:agreements:delete" partnership.id agreement.id %}"
+        <li><a href="{% url "partnerships:agreements:delete" agreement.partnership.id agreement.id %}"
            class="modal-link"
            data-modal-danger
            data-modal-submit="{% trans "delete_partnership_agreement" %}"

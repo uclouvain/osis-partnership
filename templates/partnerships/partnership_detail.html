@@ -12,6 +12,11 @@
 
 {% block script %}
   <script src="{% static "partnerships/modal_form.js" %}"></script>
+  <script>
+    $('#show-all-years').click(function() {
+      $(this).remove();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -46,7 +51,7 @@
               <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
               {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity }}</strong>{% endif %}
               {% if not partnership.partner.is_valid %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "invalid_partner" %}</span>{% endif %}
-              {% if not partnership.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
+              {% if not partnership.partner.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
             </dd>
 
             <dt>{% trans "ucl_university" %}</dt>
@@ -55,7 +60,7 @@
             </dd>
 
             <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{{ partnership.supervisor|default_if_none:"" }}</dd>
+            <dd>{{ partnership.get_supervisor|default_if_none:"" }}</dd>
 
             <dt>{% trans "dates" %}</dt>
             <dd>
@@ -65,44 +70,54 @@
         </div>
       </div>
 
-      {% if partnership.has_missing_years %}
-      <div class="row">
-        <div class="col-sm-12">
-          <p class="text-warning">{% trans "partnership_has_missing_years" %}</p>
-        </div>
-      </div>
-      {% endif %}
       {% if partnership.years.all %}
       <table class="table table-striped">
         <thead>
           <tr>
             <th></th>
             <th>{% trans "partnership_type" %}</th>
-            <th>{% trans "education_field" %}</th>
-            <th>{% trans "education_level" %}</th>
-            <th>{% trans "is_sms" %}</th>
-            <th>{% trans "is_smp" %}</th>
-            <th>{% trans "is_sta" %}</th>
-            <th>{% trans "is_stt" %}</th>
+            <th>{% trans "education_fields" %}</th>
+            <th>{% trans "planned_activity" %}</th>
+            <th>{% trans "education_levels" %}</th>
+            <th>{% trans "partnership_year_entities" %}</th>
+            <th>{% trans "partnership_year_offers" %}</th>
             <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
         <tbody>
           {% for partnership_year in partnership.years.all %}
-          <tr>
+          <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+              {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}>
             <th>{{ partnership_year.academic_year }}</th>
             <td>{{ partnership_year.get_partnership_type_display }}</td>
-            <td>{{ partnership_year.get_education_field_display }}</td>
-            <td>{{ partnership_year.get_education_level_display|default_if_none:"" }}</td>
-            <td><i class="fa {{ partnership_year.is_sms|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_smp|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_sta|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-            <td><i class="fa {{ partnership_year.is_stt|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+            <td>
+              <ul class="list-unstyled">
+                {% for education_field in partnership_year.education_fields.all %}<li><strong>{{ education_field.code }}</strong> - {{ education_field.label }}</li>{% endfor %}
+              </ul>
+            </td>
+            <td>{{ partnership_year.planned_activity }}</td>
+            <td>
+              <ul class="list-unstyled">
+                {% for education_level in partnership_year.education_levels.all %}<li><strong>{{ education_level.code }}</strong> - {{ education_level.label }}</li>{% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul class="list-unstyled">
+                {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% empty %}<li>{% trans "all_entities" %}</li>{% endfor %}
+              </ul>
+            </td>
+            <td>
+              <ul class="list-unstyled">
+                {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% empty %}<li>{% trans "all_offers" %}</li>{% endfor %}
+              </ul>
+            </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
+
+      {% if show_more_year_link %}<a id="show-all-years" role="button" data-toggle="collapse" href=".years-collapse">{% trans "partnership_years_show_all_years" %}</a>{% endif %}
       {% endif %}
 
       {% if partnership.comment is not None %}
@@ -182,7 +197,7 @@
       </h2>
 
       {% for agreement in partnership.agreements.all %}
-        {% include "partnerships/includes/agreement_detail.html" with agreement=agreement can_change=can_change %}
+        {% include "partnerships/includes/agreement_detail.html" with agreement=agreement %}
         {% if not forloop.last %}<hr>{% endif %}
       {% empty %}
         <div class="row">
