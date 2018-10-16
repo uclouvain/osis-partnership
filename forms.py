@@ -856,9 +856,10 @@ class PartnershipAgreementForm(forms.ModelForm):
 
     def clean(self):
         super(PartnershipAgreementForm, self).clean()
-        if self.cleaned_data['start_academic_year'].year > self.cleaned_data['end_academic_year'].year:
-            self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
-            self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
+        if 'start_academic_year' in self.cleaned_data and 'end_academic_year' in self.cleaned_data:
+            if self.cleaned_data['start_academic_year'].year > self.cleaned_data['end_academic_year'].year:
+                self.add_error('start_academic_year', ValidationError(_('start_date_after_end_date')))
+                self.add_error('end_academic_year', ValidationError(_('start_date_after_end_date')))
         return self.cleaned_data
 
 
