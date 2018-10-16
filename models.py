@@ -458,8 +458,8 @@ class Partnership(models.Model):
         ranges = self.valid_agreements_dates_ranges
         return (
             len(ranges) > 1
-            or self.start_date.year < ranges[0]['start'].year
-            or self.end_date.year > ranges[-1]['end'].year + 1
+            or (self.start_date is not None and self.start_date.year < ranges[0]['start'].year)
+            or (self.end_date is not None and self.end_date.year > ranges[-1]['end'].year + 1)
         )
 
     @cached_property
