@@ -33,6 +33,12 @@ class CustomNullBooleanSelect(forms.NullBooleanSelect):
         super(forms.NullBooleanSelect, self).__init__(attrs, choices)
 
 
+class EducationGroupYearChoiceSelect(forms.ModelMultipleChoiceField):
+
+    def label_from_instance(self, obj):
+        return '{0} - {1}'.format(obj.acronym, obj.title)
+
+
 class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
@@ -760,6 +766,13 @@ class PartnershipYearForm(forms.ModelForm):
         required=True,
     )
 
+    offers = EducationGroupYearChoiceSelect(
+        queryset=EducationGroupYear.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:partnership_year_offers',
+        ),
+    )
+
     class Meta:
         model = PartnershipYear
         fields = (
@@ -778,9 +791,6 @@ class PartnershipYearForm(forms.ModelForm):
             'education_levels': autocomplete.ModelSelect2Multiple(),
             'entities': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:partnership_year_entities',
-            ),
-            'offers': autocomplete.ModelSelect2Multiple(
-                url='partnerships:autocomplete:partnership_year_offers',
             ),
         }
 
