@@ -875,7 +875,7 @@ class UCLManagementEntity(models.Model):
 
     def __str__(self):
         if self.entity is None:
-            return self.faculty
+            return str(self.faculty)
         return ("{} {}".format(self.faculty, self.entity))
 
     @staticmethod
