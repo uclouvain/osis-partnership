@@ -819,9 +819,9 @@ class PartnershipYearForm(forms.ModelForm):
             if not self.cleaned_data['education_levels']:
                 self.add_error('education_levels', ValidationError(_('education_levels_empty_errors')))
         else:
-            del self.cleaned_data['education_levels']
-            del self.cleaned_data['entities']
-            del self.cleaned_data['offers']
+            self.cleaned_data['education_levels'] = []
+            self.cleaned_data['entities'] = []
+            self.cleaned_data['offers'] = []
         start_academic_year = self.cleaned_data.get('start_academic_year', None)
         from_academic_year = self.cleaned_data.get('from_academic_year', None)
         end_academic_year = self.cleaned_data.get('end_academic_year', None)

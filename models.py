@@ -639,6 +639,10 @@ class PartnershipYear(models.Model):
     def __str__(self):
         return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
 
+    @property
+    def has_sm(self):
+        return self.is_sms or self.is_smp
+
     @cached_property
     def is_valid(self):
         ranges = self.partnership.valid_agreements_dates_ranges
