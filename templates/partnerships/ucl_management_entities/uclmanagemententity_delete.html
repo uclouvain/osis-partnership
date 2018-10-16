@@ -20,9 +20,9 @@
 
         <div class="col-sm-offset-3 col-sm-6">
 
-          <form method="post">{% csrf_token %}
+          <form method="post">
 
-            <p>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
+            {% include "partnerships/ucl_management_entities/includes/uclmanagemententity_delete_form.html" %}
 
             <div class="row button-row">
               <div class="col-sm-6">
