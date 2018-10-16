@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-11 15:39+0200\n"
+"POT-Creation-Date: 2018-10-16 18:17+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -859,8 +859,8 @@ msgstr "Invalid partner"
 msgid "inactive_partner"
 msgstr "Inactive partner"
 
-msgid "dates"
-msgstr "Dates"
+msgid "Validated_agreements"
+msgstr "Validated agreements"
 
 msgid "education_fields"
 msgstr "Education fields"
@@ -992,6 +992,19 @@ msgstr ""
 
 msgid "configuration_saved"
 msgstr "Configuration saved"
+
+#, fuzzy
+#| msgid "ucl_management_entities"
+msgid "ucl_management_entity_create_success"
+msgstr "UCL management entities"
+
+#, fuzzy
+#| msgid "ucl_management_entities"
+msgid "ucl_management_entity_change_success"
+msgstr "UCL management entities"
+
+#~ msgid "dates"
+#~ msgstr "Dates"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"

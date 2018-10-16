@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-11 15:39+0200\n"
+"POT-Creation-Date: 2018-10-16 18:17+0200\n"
 "PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -864,8 +864,8 @@ msgstr "Le partenaire est en cours de validation"
 msgid "inactive_partner"
 msgstr "Le partenaire est inactif"
 
-msgid "dates"
-msgstr "Dates"
+msgid "Validated_agreements"
+msgstr "Accords validés"
 
 msgid "education_fields"
 msgstr "Domaines d'étude"
@@ -987,6 +987,19 @@ msgstr "Accord sauvegardé avec succès."
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
+
+#, fuzzy
+#| msgid "ucl_management_entities"
+msgid "ucl_management_entity_create_success"
+msgstr "Entités de gestion UCL"
+
+#, fuzzy
+#| msgid "ucl_management_entities"
+msgid "ucl_management_entity_change_success"
+msgstr "Entités de gestion UCL"
+
+#~ msgid "dates"
+#~ msgstr "Dates"
 
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
