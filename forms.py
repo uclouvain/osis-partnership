@@ -759,6 +759,9 @@ class PartnershipForm(forms.ModelForm):
 
 class PartnershipYearForm(forms.ModelForm):
 
+    # Used for the dal forward
+    faculty = forms.CharField(widget=forms.HiddenInput())
+
     start_academic_year = forms.ModelChoiceField(
         label=_('start_academic_year'),
         queryset=AcademicYear.objects.all(),
@@ -800,6 +803,7 @@ class PartnershipYearForm(forms.ModelForm):
             'education_levels': autocomplete.ModelSelect2Multiple(),
             'entities': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:partnership_year_entities',
+                forward=['faculty'],
             ),
         }
 

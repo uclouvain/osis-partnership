@@ -1524,7 +1524,11 @@ class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
 class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Entity.objects.all()
+        faculty = self.forwarded.get('faculty', None)
+        if faculty is not None:
+            qs = Entity.objects.filter(entityversion__parent=faculty)
+        else:
+            return Entity.objects.none()
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs.distinct()
