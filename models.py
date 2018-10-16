@@ -403,7 +403,9 @@ class Partnership(models.Model):
 
     @cached_property
     def start_date(self):
-        return self.years.aggregate(start_date=Min('academic_year__start_date'))['start_date']
+        if not self.validated_agreements.exists():
+            return None
+        return self.validated_agreements.aggregate(start_date=Min('start_academic_year__start_date'))['start_date']
 
     @cached_property
     def end_date(self):
