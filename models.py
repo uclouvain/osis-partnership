@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Subquery, OuterRef
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -668,6 +668,22 @@ class PartnershipYear(models.Model):
         if self.is_stt:
             activities.append('STT')
         return ', '.join(activities)
+
+    def get_entities_with_titles(self):
+        return self.entities.annotate(
+            most_recent_acronym=Subquery(
+                EntityVersion.objects
+                    .filter(entity=OuterRef('pk'))
+                    .order_by('-start_date')
+                    .values('acronym')[:1]
+            ),
+            most_recent_title=Subquery(
+                EntityVersion.objects
+                    .filter(entity=OuterRef('pk'))
+                    .order_by('-start_date')
+                    .values('title')[:1]
+            ),
+        )
 
 
 class PartnershipAgreement(models.Model):
