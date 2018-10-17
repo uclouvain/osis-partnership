@@ -97,19 +97,25 @@
             </td>
             <td>{{ partnership_year.planned_activity }}</td>
             <td>
+              {% if partnership_year.has_sm %}
               <ul class="list-unstyled">
                 {% for education_level in partnership_year.education_levels.all %}<li><strong>{{ education_level.code }}</strong> - {{ education_level.label }}</li>{% endfor %}
               </ul>
+              {% endif %}
             </td>
             <td>
+              {% if partnership_year.has_sm %}
               <ul class="list-unstyled">
                 {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% empty %}<li>{% trans "all_entities" %}</li>{% endfor %}
               </ul>
+              {% endif %}
             </td>
             <td>
+              {% if partnership_year.has_sm %}
               <ul class="list-unstyled">
                 {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% empty %}<li>{% trans "all_offers" %}</li>{% endfor %}
               </ul>
+              {% endif %}
             </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
