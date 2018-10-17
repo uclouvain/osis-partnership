@@ -760,7 +760,7 @@ class PartnershipForm(forms.ModelForm):
 class PartnershipYearForm(forms.ModelForm):
 
     # Used for the dal forward
-    faculty = forms.CharField(widget=forms.HiddenInput())
+    faculty = forms.CharField(required=False, widget=forms.HiddenInput())
 
     start_academic_year = forms.ModelChoiceField(
         label=_('start_academic_year'),
