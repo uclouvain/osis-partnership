@@ -564,6 +564,11 @@ class PartnershipYearEducationField(models.Model):
 class PartnershipYearEducationLevel(models.Model):
     code = models.CharField(max_length=30, unique=True)
     label = models.CharField(max_length=255)
+    education_group_types = models.ManyToManyField(
+        'base.EducationGroupType',
+        verbose_name=_('education_group_types'),
+        related_name='partnership_education_levels',
+    )
 
     class Meta:
         ordering = ('code',)
