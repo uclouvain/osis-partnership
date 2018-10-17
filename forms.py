@@ -676,16 +676,19 @@ class PartnershipFilterForm(forms.Form):
 
 class PartnershipForm(forms.ModelForm):
 
-    ucl_university = EntityChoiceField(queryset=Entity.objects.filter(
-        entityversion__entity_type=FACULTY,
-        faculty_managements__isnull=False,
-    ), widget=autocomplete.ModelSelect2(
-        url='partnerships:autocomplete:ucl_university',
-        attrs={
-            'class': 'resetting',
-            'data-reset': '#id_ucl_university_labo',
-        },
-    ))
+    ucl_university = EntityChoiceField(
+        label=_('ucl_university'),
+        queryset=Entity.objects.filter(
+            entityversion__entity_type=FACULTY,
+            faculty_managements__isnull=False,
+        ),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university',
+            attrs={
+                'class': 'resetting',
+                'data-reset': '#id_ucl_university_labo',
+        }),
+    )
 
     class Meta:
         model = Partnership
