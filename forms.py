@@ -677,6 +677,7 @@ class PartnershipFilterForm(forms.Form):
 class PartnershipForm(forms.ModelForm):
 
     ucl_university = EntityChoiceField(
+        label=_('ucl_university'),
         queryset=Entity.objects.filter(
             entityversion__entity_type=FACULTY,
             faculty_managements__isnull=False,
