@@ -1544,16 +1544,24 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
 class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.all().select_related('academic_year')
+        qs = EducationGroupYear.objects.filter(university_certificate=True).select_related('academic_year')
+        # Education levels filter
+        education_levels = self.forwarded.get('education_levels', None)
+        if education_levels is not None:
+            qs = qs.filter(education_group_type__partnership_education_levels__in=education_levels)
+        else:
+            return EducationGroupYear.objects.none()
+        # Entities filter
         entities = self.forwarded.get('entities', None)
         if entities is not None:
             qs = qs.filter(Q(management_entity__in=entities) | Q(administration_entity__in=entities))
         else:
             faculty = self.forwarded.get('faculty', None)
             if faculty is not None:
-                qs = qs.filter(Q(management_entity__in=faculty) | Q(administration_entity__in=faculty))
+                qs = qs.filter(Q(management_entity=faculty) | Q(administration_entity=faculty))
             else:
                 return EducationGroupYear.objects.none()
+        # Query filter
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs.distinct()
