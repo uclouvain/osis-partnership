@@ -468,7 +468,7 @@ class PartnershipFilterForm(forms.Form):
 
     # UCL
 
-    ucl_university = forms.ModelChoiceField(
+    ucl_university = EntityChoiceField(
         label=_('ucl_university'),
         queryset=Entity.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('ucl_university'),
