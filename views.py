@@ -1658,10 +1658,16 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
 class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
         ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
         if ucl_university_labo:
-            qs = qs.filter(partnerships__ucl_university_labo=ucl_university_labo)
+            qs = qs.filter(partnerships__partnership__ucl_university_labo=ucl_university_labo)
         else:
-            return EducationGroupYear.objects.none()
-        return qs.filter(partnerships__isnull=False).distinct()
+            ucl_university = self.forwarded.get('ucl_university', None)
+            if ucl_university:
+                qs = qs.filter(partnerships__partnership__ucl_university=ucl_university)
+            else:
+                return EducationGroupYear.objects.none()
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
