@@ -75,18 +75,18 @@ def user_is_in_user_faculty(user, other_user):
         return False
 
 
-def merge_date_ranges(ranges):
+def merge_agreement_ranges(agreements=None):
     """
-    Returns an union of date ranges.
-    Expects a list of ranges as [{'start': start_date, 'end': end_date},]
+    Returns an union of agreements date ranges.
+    Expects a list of agreements as [{'start': start_date, 'end': end_date},]
     """
-    if not ranges:
+    if agreements is None or len(agreements) == 0:
         return []
-    sorted_ranges = sorted(ranges, key=lambda x: x['start'])
-    merged_ranges = [sorted_ranges.pop(0)]
-    for r in sorted_ranges:
-        if merged_ranges[-1]['end'] >= r['start']:
-            merged_ranges[-1]['end'] = r['end']
+    merged_agreements = [agreements.pop(0)]
+    for a in agreements:
+        if (merged_agreements[-1]['end'] + 1 >= a['start']
+            and merged_agreements[-1]['end'] < a['end']):
+            merged_agreements[-1]['end'] = a['end']
         else:
-            merged_ranges.append(r)
-    return merged_ranges
+            merged_agreements.append(a)
+    return merged_agreements

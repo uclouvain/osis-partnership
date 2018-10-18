@@ -43,9 +43,6 @@
       <div class="row">
         <div class="col-sm-12 col-md-12">
           <dl class="dl-horizontal">
-            <dt>{% trans "validity_end" %}</dt>
-            <dd>{% if partnership.has_missing_valid_years %}<span class="text-danger">{{ partnership.validity_end|default_if_none:"N/A" }} - {% trans "partnership_missing_valid_years" %}</span>{% else %}{{ partnership.validity_end|default_if_none:"N/A" }}{% endif %}
-            </dd>
             <dt>{% trans "partner" %}</dt>
             <dd>
               <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
@@ -65,6 +62,10 @@
             <dt>{% trans "Validated_agreements" %}</dt>
             <dd>
               {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
+            </dd>
+            <dt>{% trans "Years" %}</dt>
+            <dd>
+              {% if partnership.start_academic_year or partnership.end_academic_year %}{{ partnership.start_academic_year|default_if_none:"N/A" }} &gt; {{ partnership.end_academic_year|default_if_none:"N/A" }}{% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}{% endif %}
             </dd>
           </dl>
         </div>

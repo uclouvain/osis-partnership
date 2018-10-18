@@ -859,7 +859,7 @@ msgstr "Invalid partner"
 msgid "inactive_partner"
 msgstr "Inactive partner"
 
-msgid "Validated_agreements"
+msgid "validated_agreements"
 msgstr "Validated agreements"
 
 msgid "education_fields"
