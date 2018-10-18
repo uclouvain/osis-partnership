@@ -173,22 +173,6 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
-        # with extra agreements after :
-        PartnershipYearFactory(
-            partnership=cls.partnership_with_extra_agreements_after,
-            academic_year__year = 2015,
-        )
-        PartnershipYearFactory(
-            partnership=cls.partnership_with_extra_agreements_after,
-            academic_year__year = 2018,
-        )
-        PartnershipAgreementFactory(
-            partnership=cls.partnership_with_extra_agreements_after,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_19,
-            status=PartnershipAgreement.STATUS_VALIDATED,
-        )
-
     def test_no_agreement(self):
         self.assertTrue(self.partnership_no_agreement.has_missing_valid_years)
 
@@ -212,6 +196,3 @@ class PartnershipHasMissingValidYearsTest(TestCase):
 
     def test_with_extra_agreements_before(self):
         self.assertFalse(self.partnership_with_extra_agreements_before.has_missing_valid_years)
-
-    def test_with_extra_agreements_after(self):
-        self.assertFalse(self.partnership_with_extra_agreements_after.has_missing_valid_years)
