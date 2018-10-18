@@ -10,7 +10,7 @@ from partnership.tests.factories import (
 from base.tests.factories.academic_year import AcademicYearFactory
 
 
-class PartnershipHasMissingYearsTest(TestCase):
+class PartnershipHasMissingValidYearsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -157,22 +157,22 @@ class PartnershipHasMissingYearsTest(TestCase):
 
 
     def test_no_agreement(self):
-        self.assertTrue(self.partnership_no_agreement.has_missing_years)
+        self.assertTrue(self.partnership_no_agreement.has_missing_valid_years)
 
     def test_full(self):
-        self.assertFalse(self.partnership_full.has_missing_years)
+        self.assertFalse(self.partnership_full.has_missing_valid_years)
 
     def test_missing_before(self):
-        self.assertTrue(self.partnership_missing_before.has_missing_years)
+        self.assertTrue(self.partnership_missing_before.has_missing_valid_years)
 
     def test_missing_after(self):
-        self.assertTrue(self.partnership_missing_after.has_missing_years)
+        self.assertTrue(self.partnership_missing_after.has_missing_valid_years)
 
     def test_missing_middle(self):
-        self.assertTrue(self.partnership_missing_middle.has_missing_years)
+        self.assertTrue(self.partnership_missing_middle.has_missing_valid_years)
 
     def test_missing_before_middle_after(self):
-        self.assertTrue(self.partnership_missing_before_middle_after.has_missing_years)
+        self.assertTrue(self.partnership_missing_before_middle_after.has_missing_valid_years)
 
     def test_with_adjacent(self):
-        self.assertFalse(self.partnership_with_adjacent.has_missing_years)
+        self.assertFalse(self.partnership_with_adjacent.has_missing_valid_years)
