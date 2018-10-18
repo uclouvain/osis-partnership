@@ -504,7 +504,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:university_offers_filter',
-            forward=['ucl_university_labo'],
+            forward=['ucl_university', 'ucl_university_labo'],
             attrs={'data-width': '100%'},
         ),
     )
