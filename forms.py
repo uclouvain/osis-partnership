@@ -664,6 +664,7 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
+        # Cities
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
@@ -672,6 +673,19 @@ class PartnershipFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+        # Partnership types
+        partnership_types = (
+            PartnershipYear.objects
+                .values_list('partnership_type', flat=True)
+                .order_by('partnership_type')
+                .distinct('partnership_type')
+        )
+        types_dict = dict(PartnershipYear.TYPE_CHOICES)
+        choices = sorted([
+            (partnership_type, types_dict.get(partnership_type, partnership_type))
+            for partnership_type in partnership_types
+        ], key=lambda x: x[1])
+        self.fields['partnership_type'].choices = ((None, _('partnership_type')),) + tuple(choices)
 
 
 class PartnershipForm(forms.ModelForm):
