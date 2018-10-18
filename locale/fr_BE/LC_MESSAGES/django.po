@@ -184,11 +184,16 @@ msgstr ""
 msgid "partnership_ending_in"
 msgstr "Partenariats arrivant à échéance en"
 
+msgid "parnership_ending_in_help_text"
+msgstr ""
+"Partenariats dont le dernier accord (quel que soit son statut) se termine "
+"cette année académique."
+
 msgid "partnership_valid_in"
 msgstr "Partenariats ayant un accord validé en"
 
 msgid "partnership_not_valid_in"
-msgstr "Partenariats n’ayant pas d’accord validé en"
+msgstr "Partenariats dont les accords ne sont pas validés en"
 
 msgid "same_supervisor_than_management_entity"
 msgstr "Idem répondant mobilité facultaire"

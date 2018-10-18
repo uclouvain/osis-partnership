@@ -182,6 +182,11 @@ msgstr ""
 msgid "partnership_ending_in"
 msgstr ""
 
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "parnership_ending_in_help_text"
+msgstr "Partnership year entities"
+
 msgid "partnership_valid_in"
 msgstr ""
 
