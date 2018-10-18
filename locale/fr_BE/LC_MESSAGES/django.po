@@ -964,6 +964,9 @@ msgstr "Contact créé avec succès."
 msgid "contact_update_success"
 msgstr "Contact modifié avec succès."
 
+msgid "contact_delete_success"
+msgstr "Contact supprimé avec succès."
+
 msgid "supervisor"
 msgstr "Superviseur"
 
