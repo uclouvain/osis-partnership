@@ -188,6 +188,34 @@
       {% endfor %}
       </div>
 
+      {% if partnership.ucl_management_entity is not None %}
+        <h3>{% trans "ucl_management_entity_contacts" %}</h3>
+        <div class="row">
+          <div class="col-sm-6">
+            <h4>{% trans "contact_in" %}</h4>
+            <dl class="dl-horizontal">
+              <dt>{% trans 'Name' %}</dt>
+              <dd>{{ partnership.ucl_management_entity.contact_in_person|default_if_none:"" }}</dd>
+              <dt>{% trans 'email' %}</dt>
+              <dd>{% if partnership.ucl_management_entity.contact_in_url is not None %}<a href="mailto:{{ partnership.ucl_management_entity.contact_out_url }}">{{ partnership.ucl_management_entity.contact_out_email }}</a>{% endif %}</dd>
+              <dt>{% trans 'portal' %}</dt>
+              <dd>{% if partnership.ucl_management_entity.contact_in_url is not None %}<a href="{{ partnership.ucl_management_entity.contact_in_url }}" target="_blank">{{ partnership.ucl_management_entity.contact_in_url}}</a>{% endif %}</dd>
+            </dl>
+          </div>
+          <div class="col-sm-6">
+            <h4>{% trans "contact_out" %}</h4>
+            <dl class="dl-horizontal">
+              <dt>{% trans 'Name' %}</dt>
+              <dd>{{ partnership.ucl_management_entity.contact_out_person|default_if_none:"" }}</dd>
+              <dt>{% trans 'email' %}</dt>
+              <dd>{% if partnership.ucl_management_entity.contact_out_url is not None %}<a href="mailto:{{ partnership.ucl_management_entity.contact_out_url }}">{{ partnership.ucl_management_entity.contact_out_email }}</a>{% endif %}</dd>
+              <dt>{% trans 'portal' %}</dt>
+              <dd>{% if partnership.ucl_management_entity.contact_out_url is not None %}<a href="{{ partnership.ucl_management_entity.contact_out_url }}" target="_blank">{{ partnership.ucl_management_entity.contact_out_url}}</a>{% endif %}</dd>
+            </dl>
+          </div>
+        </div>
+      {% endif %}
+
       <!-- Accords -->
       <h2>{% trans "agreements" %}
       {% if can_change %}

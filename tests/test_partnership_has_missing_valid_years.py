@@ -29,6 +29,8 @@ class PartnershipHasMissingValidYearsTest(TestCase):
         cls.partnership_missing_before_middle_after = PartnershipFactory()
         cls.partnership_full = PartnershipFactory()
         cls.partnership_with_adjacent = PartnershipFactory()
+        cls.partnership_with_extra_agreements_before = PartnershipFactory()
+        cls.partnership_with_extra_agreements_after = PartnershipFactory()
 
         # PartnershipYears :
         # No agreement :
@@ -155,6 +157,37 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
+        # with extra agreements before :
+        PartnershipYearFactory(
+            partnership=cls.partnership_with_extra_agreements_before,
+            academic_year__year = 2016,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership_with_extra_agreements_before,
+            academic_year__year = 2019,
+        )
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_with_extra_agreements_before,
+            start_academic_year=cls.academic_year_15,
+            end_academic_year=cls.academic_year_19,
+            status=PartnershipAgreement.STATUS_VALIDATED,
+        )
+
+        # with extra agreements after :
+        PartnershipYearFactory(
+            partnership=cls.partnership_with_extra_agreements_after,
+            academic_year__year = 2015,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership_with_extra_agreements_after,
+            academic_year__year = 2018,
+        )
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_with_extra_agreements_after,
+            start_academic_year=cls.academic_year_15,
+            end_academic_year=cls.academic_year_19,
+            status=PartnershipAgreement.STATUS_VALIDATED,
+        )
 
     def test_no_agreement(self):
         self.assertTrue(self.partnership_no_agreement.has_missing_valid_years)
@@ -176,3 +209,9 @@ class PartnershipHasMissingValidYearsTest(TestCase):
 
     def test_with_adjacent(self):
         self.assertFalse(self.partnership_with_adjacent.has_missing_valid_years)
+
+    def test_with_extra_agreements_before(self):
+        self.assertFalse(self.partnership_with_extra_agreements_before.has_missing_valid_years)
+
+    def test_with_extra_agreements_after(self):
+        self.assertFalse(self.partnership_with_extra_agreements_after.has_missing_valid_years)
