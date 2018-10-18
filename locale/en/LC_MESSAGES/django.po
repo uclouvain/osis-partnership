@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-16 18:17+0200\n"
+"POT-Creation-Date: 2018-10-18 16:51+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -860,9 +860,6 @@ msgstr "Create partnership"
 msgid "edit_partnership"
 msgstr "Edit partnership"
 
-msgid "partnership_missing_valid_years"
-msgstr "This partnership is missing valid years"
-
 msgid "invalid_partner"
 msgstr "Invalid partner"
 
@@ -871,6 +868,12 @@ msgstr "Inactive partner"
 
 msgid "validated_agreements"
 msgstr "Validated agreements"
+
+msgid "years"
+msgstr "Years"
+
+msgid "partnership_missing_valid_years"
+msgstr "This partnership is missing valid years"
 
 msgid "education_fields"
 msgstr "Education fields"
@@ -900,6 +903,9 @@ msgstr "Delete contact"
 
 msgid "no_partnership_contact_yet"
 msgstr "No partnership contact yet"
+
+msgid "ucl_management_entity_contacts"
+msgstr "UCL management entity contacts"
 
 msgid "change_configuration"
 msgstr "Change configuration"
@@ -989,10 +995,8 @@ msgstr ""
 msgid "partnership_success"
 msgstr ""
 
-#, fuzzy
-#| msgid "partnership_create"
 msgid "partnership_created"
-msgstr "Create partnership"
+msgstr "partnership created"
 
 #| msgid "partnership_agreement_delete_warning"
 msgid "partnership_agreement_warning_before"
@@ -1012,10 +1016,10 @@ msgid "configuration_saved"
 msgstr "Configuration saved"
 
 msgid "ucl_management_entity_create_success"
-msgstr "UCL management entity successfully created."
+msgstr "UCL management entity was created successfully"
 
 msgid "ucl_management_entity_change_success"
-msgstr "UCL management entity successfully changed."
+msgstr "UCL management entity was edited successfully"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"
