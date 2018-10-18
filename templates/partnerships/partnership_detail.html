@@ -59,11 +59,11 @@
             <dt>{% trans "partnership_supervisor" %}</dt>
             <dd>{{ partnership.get_supervisor|default_if_none:"" }}</dd>
 
-            <dt>{% trans "Validated_agreements" %}</dt>
+            <dt>{% trans "validated_agreements" %}</dt>
             <dd>
               {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
             </dd>
-            <dt>{% trans "Years" %}</dt>
+            <dt>{% trans "years" %}</dt>
             <dd>
               {% if partnership.start_academic_year or partnership.end_academic_year %}{{ partnership.start_academic_year|default_if_none:"N/A" }} &gt; {{ partnership.end_academic_year|default_if_none:"N/A" }}{% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}{% endif %}
             </dd>
