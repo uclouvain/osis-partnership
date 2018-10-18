@@ -876,12 +876,32 @@ class UCLManagementEntity(models.Model):
             return str(self.faculty)
         return ("{} {}".format(self.faculty, self.entity))
 
+    def is_contact_in_defined(self):
+        return (
+            self.contact_in_person is not None
+            or self.contact_in_email is not None
+            or self.contact_in_url is not None
+        )
+
+    def is_contact_out_defined(self):
+        return (
+            self.contact_out_person is not None
+            or self.contact_out_email is not None
+            or self.contact_out_url is not None
+        )
+
+    def are_contacts_defined(self):
+        return (
+            self.is_contact_in_defined() or self.is_contact_out_defined()
+        )
+
     @staticmethod
     def user_can_list(user):
         return user_is_adri(user) or user_is_gf(user)
 
     def user_can_read(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
+
 
     @staticmethod
     def user_can_create(user):
