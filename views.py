@@ -1568,7 +1568,11 @@ class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
         else:
             faculty = self.forwarded.get('faculty', None)
             if faculty is not None:
-                qs = qs.filter(Q(management_entity=faculty) | Q(administration_entity=faculty))
+                qs = qs.filter(
+                    Q(management_entity=faculty) | Q(administration_entity=faculty)
+                    | Q(management_entity__entityversion__parent=faculty)
+                    | Q(administration_entity__entityversion__parent=faculty)
+                )
             else:
                 return EducationGroupYear.objects.none()
         # Query filter
