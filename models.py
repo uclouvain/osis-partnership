@@ -16,7 +16,7 @@ from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
-from partnership.utils import (merge_date_ranges, user_is_adri, user_is_gf,
+from partnership.utils import (merge_agreement_ranges, user_is_adri, user_is_gf,
                                user_is_gf_of_faculty, user_is_in_user_faculty)
 
 
@@ -403,7 +403,9 @@ class Partnership(models.Model):
 
     @cached_property
     def start_date(self):
-        return self.years.aggregate(start_date=Min('academic_year__start_date'))['start_date']
+        if not self.validated_agreements.exists():
+            return None
+        return self.validated_agreements.aggregate(start_date=Min('start_academic_year__start_date'))['start_date']
 
     @cached_property
     def end_date(self):
@@ -430,37 +432,33 @@ class Partnership(models.Model):
 
     @cached_property
     def valid_agreements_dates_ranges(self):
-        ranges = self.validated_agreements.values('start_academic_year__start_date', 'end_academic_year__end_date')
-        ranges = [{
-            'start': range['start_academic_year__start_date'], 'end': range['end_academic_year__end_date']
-        } for range in ranges]
-        return merge_date_ranges(ranges)
-
-    @cached_property
-    def has_missing_years(self):
-        """ Test if we have PartnershipYear for all of the partnership duration """
-        if self.end_date is None:
-            return False
-        years = self.years.values_list('academic_year__start_date', flat=True).order_by('academic_year__start_date')
-        ranges = [{'start': year, 'end': year + timedelta(days=366)} for year in years]
-        ranges = merge_date_ranges(ranges)
-        return (
-            len(ranges) != 1
-            or self.start_date.year < ranges[0]['start'].year
-            or self.end_date.year > ranges[-1]['end'].year + 1
-        )
+        agreements = self.validated_agreements.prefetch_related(
+            'start_academic_year', 'end_academic_year'
+        ).values(
+            'start_academic_year__year', 'end_academic_year__year'
+        ).order_by('start_academic_year__year')
+        agreements = [{
+            'start': agreement['start_academic_year__year'],
+            'end': agreement['end_academic_year__year'],
+        } for agreement in agreements]
+        return merge_agreement_ranges(list(agreements))
 
     @cached_property
     def has_missing_valid_years(self):
-        """ Test if we have valid agreements for all of the partnership duration """
-        if self.end_date is None:
+        """ Test if we have PartnershipYear for all of the partnership duration """
+        if (self.end_academic_year is not None and self.start_academic_year is not None):
+            if len(self.valid_agreements_dates_ranges) == 0:
+                return True
+            elif len(self.valid_agreements_dates_ranges) > 1:
+                return True
+            else:
+                return (
+                    len(self.valid_agreements_dates_ranges) > 1
+                    or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
+                    or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
+                )
+        else:
             return False
-        ranges = self.valid_agreements_dates_ranges
-        return (
-            len(ranges) > 1
-            or self.start_date.year < ranges[0]['start'].year
-            or self.end_date.year > ranges[-1]['end'].year + 1
-        )
 
     @cached_property
     def current_year(self):
@@ -652,7 +650,7 @@ class PartnershipYear(models.Model):
     def is_valid(self):
         ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
-            if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
+            if self.academic_year.start_date.year >= range['start'] and self.academic_year.end_date.year <= range['end']:
                 return True
         return False
 
