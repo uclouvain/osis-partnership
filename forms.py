@@ -638,6 +638,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partnership_ending_in = forms.ModelChoiceField(
         label=_('partnership_ending_in'),
+        help_text=_('parnership_ending_in_help_text'),
         queryset=AcademicYear.objects.all(),
         required=False,
     )

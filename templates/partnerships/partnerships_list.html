@@ -150,7 +150,11 @@
                       {% bootstrap_field form.partnership_in show_label=False show_help=False %}
                     </div>
                     <div class="col-sm-12 col-md-3">
-                      {% bootstrap_field form.partnership_ending_in %}
+                      <label class="control-label" for="{{ form.partnership_ending_in.id_for_label  }}">
+                        {{ form.partnership_ending_in.label }}
+                        <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_ending_in.help_text }}"></i>
+                      </label>
+                      {% bootstrap_field form.partnership_ending_in show_label=False show_help=False %}
                     </div>
                     <div class="col-sm-12 col-md-3">
                       {% bootstrap_field form.partnership_valid_in %}
