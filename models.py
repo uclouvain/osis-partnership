@@ -444,7 +444,7 @@ class Partnership(models.Model):
         return merge_agreement_ranges(list(agreements))
 
     @cached_property
-    def has_missing_years(self):
+    def has_missing_valid_years(self):
         """ Test if we have PartnershipYear for all of the partnership duration """
         if (self.end_academic_year is not None and self.start_academic_year is not None):
             if len(self.valid_agreements_dates_ranges) == 0:
@@ -459,18 +459,6 @@ class Partnership(models.Model):
                 )
         else:
             return False
-
-    @cached_property
-    def has_missing_valid_years(self):
-        """ Test if we have valid agreements for all of the partnership duration """
-        if self.end_date is None:
-            return False
-        ranges = self.valid_agreements_dates_ranges
-        return (
-            len(ranges) > 1
-            or (self.start_date is not None and self.start_date.year < ranges[0]['start'].year)
-            or (self.end_date is not None and self.end_date.year > ranges[-1]['end'].year + 1)
-        )
 
     @cached_property
     def current_year(self):
