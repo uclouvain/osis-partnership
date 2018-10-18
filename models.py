@@ -454,8 +454,8 @@ class Partnership(models.Model):
             else:
                 return (
                     len(self.valid_agreements_dates_ranges) > 1
-                    or self.valid_agreements_dates_ranges[0]['start'] != self.start_academic_year.year
-                    or self.valid_agreements_dates_ranges[0]['end'] != self.end_academic_year.year
+                    or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
+                    or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
                 )
         else:
             return False
@@ -641,7 +641,7 @@ class PartnershipYear(models.Model):
     def is_valid(self):
         ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
-            if self.academic_year.start_date >= range['start'] and self.academic_year.end_date <= range['end']:
+            if self.academic_year.start_date.year >= range['start'] and self.academic_year.end_date.year <= range['end']:
                 return True
         return False
 
