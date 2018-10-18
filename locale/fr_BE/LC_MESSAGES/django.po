@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 11:15+0200\n"
-"PO-Revision-Date: 2018-10-18 11:16+0200\n"
+"POT-Creation-Date: 2018-10-18 15:39+0200\n"
+"PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -218,6 +218,9 @@ msgstr ""
 msgid "end_academic_year"
 msgstr "Année académique de fin"
 
+msgid "partnership_year_offers"
+msgstr "Offres principalement concernées"
+
 msgid "education_levels_empty_errors"
 msgstr "Ce champ est obligatoire."
 
@@ -388,6 +391,9 @@ msgstr "Peux accéder aux partenariats"
 msgid "partnership_with_{partner}"
 msgstr "Partenariat avec {partner}"
 
+msgid "education_group_types"
+msgstr "Types de groupe d'éducation"
+
 msgid "Déclaration d’intention"
 msgstr ""
 
@@ -429,9 +435,6 @@ msgstr "Entités concernées"
 
 msgid "partnership_year_entities_help_text"
 msgstr "Si non précisé alors toutes les entités seront concernées."
-
-msgid "partnership_year_offers"
-msgstr "Offres principalement concernées"
 
 msgid "partnership_year_offers_help_text"
 msgstr "Si non précisé alors toutes les offres seront concernées."
