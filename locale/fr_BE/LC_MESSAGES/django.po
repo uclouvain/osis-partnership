@@ -864,7 +864,7 @@ msgstr "Le partenaire est en cours de validation"
 msgid "inactive_partner"
 msgstr "Le partenaire est inactif"
 
-msgid "Validated_agreements"
+msgid "validated_agreements"
 msgstr "Accords validés"
 
 msgid "education_fields"
