@@ -1324,6 +1324,11 @@ class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, Cre
         result = UCLManagementEntity.user_can_create(self.request.user)
         return result
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         messages.success(self.request, _('ucl_management_entity_create_success'))
         return super().form_valid(form)
@@ -1357,32 +1362,14 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
 
-    def dispatch(self, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object.faculty is not None and self.object.faculty.partnerships.all():
-            raise PermissionDenied
-        return super().dispatch(*args, **kwargs)
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/ucl_management_entities/includes/uclmanagemententity_delete_form.html'
+        return self.template_name
 
     def test_func(self):
-        result = self.object.user_can_delete(self.request.user)
-        return result
+        return self.get_object().user_can_delete(self.request.user)
 
-
-class UCLManagementEntityDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    model = UCLManagementEntity
-    template_name = "partnerships/ucl_management_entities/uclmanagemententity_detail.html"
-    context_object_name = "ucl_management_entity"
-
-    def test_func(self):
-        self.object = self.get_object()
-        result = self.object.user_can_read(self.request.user)
-        return result
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['can_change_ucl_management_entity'] = self.object.user_can_change(self.request.user)
-        context['can_delete_ucl_management_entity'] = self.object.user_can_delete(self.request.user)
-        return context
 
 # Autocompletes
 
