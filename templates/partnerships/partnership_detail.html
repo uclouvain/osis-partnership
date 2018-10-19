@@ -107,7 +107,7 @@
             <td>
               {% if partnership_year.has_sm %}
               <ul class="list-unstyled">
-                {% for entity in partnership_year.entities.all %}<li><strong>{{ entity }}</strong></li>{% empty %}<li>{% trans "all_entities" %}</li>{% endfor %}
+                {% for entity in partnership_year.get_entities_with_titles %}<li><strong>{{ entity.most_recent_acronym }}</strong> - {{ entity.most_recent_title }}</li>{% empty %}<li>{% trans "all_entities" %}</li>{% endfor %}
               </ul>
               {% endif %}
             </td>
