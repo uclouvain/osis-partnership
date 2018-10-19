@@ -858,17 +858,20 @@ msgstr "Créer le partenariat"
 msgid "edit_partnership"
 msgstr "Mettre à jour le partenariat"
 
-msgid "partnership_missing_valid_years"
-msgstr "Il manque des accords validés pour ce partenariat."
-
 msgid "invalid_partner"
 msgstr "Le partenaire est en cours de validation"
 
 msgid "inactive_partner"
 msgstr "Le partenaire est inactif"
 
-msgid "dates"
-msgstr "Dates"
+msgid "validated_agreements"
+msgstr "Accords validés"
+
+msgid "years"
+msgstr "Années"
+
+msgid "partnership_missing_valid_years"
+msgstr "Il manque des accords validés pour ce partenariat."
 
 msgid "education_fields"
 msgstr "Domaines d'étude"
@@ -896,6 +899,9 @@ msgstr "Supprimer le contact"
 
 msgid "no_partnership_contact_yet"
 msgstr "Il n'y a pas encore de contact."
+
+msgid "ucl_management_entity_contacts"
+msgstr "Contacts de l'entité de gestion UCL"
 
 msgid "change_configuration"
 msgstr "Modifier la configuration"
@@ -1035,9 +1041,6 @@ msgstr "Entités de gestion UCL éditée."
 
 #~ msgid "partnership_update_max_date_month"
 #~ msgstr "Mois maximum pour la mise à jour d'un partenariat."
-
-#~ msgid "years"
-#~ msgstr "Années"
 
 #~ msgid "partnership_has_missing_years"
 #~ msgstr "Il manque des années académiques vis à vis des accords saisis."
