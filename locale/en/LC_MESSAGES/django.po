@@ -962,10 +962,11 @@ msgstr ""
 msgid "contact_creation_success"
 msgstr "Contact successfully created"
 
-#, fuzzy
-#| msgid "contact_creation_success"
 msgid "contact_update_success"
-msgstr "Contact successfully created"
+msgstr "Contact successfully edited"
+
+msgid "contact_delete_success"
+msgstr "Contact successfully deleted"
 
 msgid "supervisor"
 msgstr "Supervisor"
