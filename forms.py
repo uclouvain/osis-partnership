@@ -468,7 +468,7 @@ class PartnershipFilterForm(forms.Form):
 
     # UCL
 
-    ucl_university = forms.ModelChoiceField(
+    ucl_university = EntityChoiceField(
         label=_('ucl_university'),
         queryset=Entity.objects.filter(partnerships__isnull=False).distinct(),
         empty_label=_('ucl_university'),
@@ -504,7 +504,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:university_offers_filter',
-            forward=['ucl_university_labo'],
+            forward=['ucl_university', 'ucl_university_labo'],
             attrs={'data-width': '100%'},
         ),
     )
@@ -644,6 +644,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partnership_ending_in = forms.ModelChoiceField(
         label=_('partnership_ending_in'),
+        help_text=_('parnership_ending_in_help_text'),
         queryset=AcademicYear.objects.all(),
         required=False,
     )
@@ -664,6 +665,7 @@ class PartnershipFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(PartnershipFilterForm, self).__init__(*args, **kwargs)
+        # Cities
         cities = (
             Address.objects
             .filter(partners__partnerships__isnull=False, city__isnull=False)
@@ -672,6 +674,19 @@ class PartnershipFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+        # Partnership types
+        partnership_types = (
+            PartnershipYear.objects
+                .values_list('partnership_type', flat=True)
+                .order_by('partnership_type')
+                .distinct('partnership_type')
+        )
+        types_dict = dict(PartnershipYear.TYPE_CHOICES)
+        choices = sorted([
+            (partnership_type, types_dict.get(partnership_type, partnership_type))
+            for partnership_type in partnership_types
+        ], key=lambda x: x[1])
+        self.fields['partnership_type'].choices = ((None, _('partnership_type')),) + tuple(choices)
 
 
 class PartnershipForm(forms.ModelForm):

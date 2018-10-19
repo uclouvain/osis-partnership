@@ -1589,23 +1589,6 @@ class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
         return '{0.acronym} - {0.title}'.format(result)
 
 
-class UniversityOffersAutocompleteView(autocomplete.Select2QuerySetView):
-
-    def get_queryset(self):
-        qs = EducationGroupYear.objects.all().select_related('academic_year')
-        ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
-        if ucl_university_labo:
-            qs = qs.filter(Q(management_entity=ucl_university_labo) | Q(administration_entity=ucl_university_labo))
-        else:
-            return EducationGroupYear.objects.none()
-        if self.q:
-            qs = qs.filter(title__icontains=self.q)
-        return qs.distinct()
-
-    def get_result_label(self, result):
-        return '{0.acronym} - {0.title}'.format(result)
-
-
 # Partnership filters autocompletes
 
 class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
@@ -1664,13 +1647,22 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
         return qs.distinct()
 
 
-class UniversityOffersAutocompleteFilterView(UniversityOffersAutocompleteView):
+class UniversityOffersAutocompleteFilterView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
         ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
         if ucl_university_labo:
-            qs = qs.filter(partnerships__ucl_university_labo=ucl_university_labo)
+            qs = qs.filter(partnerships__partnership__ucl_university_labo=ucl_university_labo)
         else:
-            return EducationGroupYear.objects.none()
-        return qs.filter(partnerships__isnull=False).distinct()
+            ucl_university = self.forwarded.get('ucl_university', None)
+            if ucl_university:
+                qs = qs.filter(partnerships__partnership__ucl_university=ucl_university)
+            else:
+                return EducationGroupYear.objects.none()
+        if self.q:
+            qs = qs.filter(title__icontains=self.q)
+        return qs.distinct()
+
+    def get_result_label(self, result):
+        return '{0.acronym} - {0.title}'.format(result)
