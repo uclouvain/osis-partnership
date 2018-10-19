@@ -3,10 +3,11 @@ from datetime import date
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from base.models.entity_version import EntityVersion
 
 from base.models.person import Person
-
+from base.models.academic_year import AcademicYear
 
 def user_is_adri(user):
     # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
@@ -98,3 +99,7 @@ def merge_agreement_ranges(agreements=None):
         elif merged_agreements[-1]['end'] + 1 < a['start']:
             merged_agreements.append(a)
     return merged_agreements
+
+def current_academic_year():
+    year = timezone.now().year
+    return AcademicYear.objects.get(year=year)
