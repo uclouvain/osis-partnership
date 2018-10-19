@@ -53,6 +53,12 @@ class EntityChoiceField(forms.ModelChoiceField):
             return str(obj)
 
 
+class PersonChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, person):
+        return '{0} - {1}'.format(person, person.email)
+
+
 ##### Forms
 
 class PartnerForm(forms.ModelForm):
@@ -705,6 +711,16 @@ class PartnershipForm(forms.ModelForm):
         }),
     )
 
+    supervisor = PersonChoiceField(
+        label=_('partnership_supervisor'),
+        required=False,
+        queryset=Person.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:person',
+            attrs={'data-placeholder': _('same_supervisor_than_management_entity')},
+        ),
+    )
+
     class Meta:
         model = Partnership
         fields = (
@@ -731,10 +747,6 @@ class PartnershipForm(forms.ModelForm):
             'ucl_university_labo': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
                 forward=['ucl_university'],
-            ),
-            'supervisor': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:person',
-                attrs={'data-placeholder': _('same_supervisor_than_management_entity')},
             ),
             'tags': autocomplete.Select2Multiple(),
         }
@@ -959,6 +971,41 @@ class PartnershipConfigurationForm(forms.ModelForm):
 
 
 class UCLManagementEntityForm(forms.ModelForm):
+
+    administrative_responsible = PersonChoiceField(
+        label=_('administrative_responsible'),
+        queryset=Person.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:person',
+        ),
+    )
+
+    academic_responsible = PersonChoiceField(
+        label=_('academic_responsible'),
+        queryset=Person.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:person',
+        ),
+    )
+
+    contact_in_person = PersonChoiceField(
+        label=_('contact_in_name'),
+        queryset=Person.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:person',
+        ),
+    )
+
+    contact_out_person = PersonChoiceField(
+        label=_('contact_out_name'),
+        queryset=Person.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:person',
+        ),
+    )
+
     class Meta:
         model = UCLManagementEntity
         fields = [
@@ -984,12 +1031,6 @@ class UCLManagementEntityForm(forms.ModelForm):
             'entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:faculty_entity',
                 forward=(forward.Field('faculty', 'ucl_university'),),
-            ),
-            'administrative_responsible': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:person',
-            ),
-            'academic_responsible': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:person',
             ),
             'contact_in_person': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',

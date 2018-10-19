@@ -56,8 +56,10 @@
               {{ partnership.entities_acronyms }}
             </dd>
 
+            {% with partnership.get_supervisor as supervisor %}
             <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{{ partnership.get_supervisor|default_if_none:"" }}</dd>
+            <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %}{% endif %}</dd>
+            {% endwith %}
 
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>
