@@ -38,7 +38,7 @@ def get_user_faculties(user):
 
 
 def get_adri_emails():
-    return get_adri_users().values('email')
+    return get_adri_users().values_list('email', flat=True)
 
 
 def user_is_gf(user):
