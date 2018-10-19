@@ -9,6 +9,8 @@ from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.entity_version import EntityVersion, get_last_version
+from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
@@ -21,6 +23,8 @@ from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
 
+
+##### Custom Fields
 
 class CustomNullBooleanSelect(forms.NullBooleanSelect):
 
@@ -38,6 +42,18 @@ class EducationGroupYearChoiceSelect(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return '{0} - {1}'.format(obj.acronym, obj.title)
 
+
+class EntityChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        try:
+            entity_version = get_last_version(obj)
+            return '{0} - {1}'.format(entity_version.acronym, entity_version.title)
+        except EntityVersion.DoesNotExist:
+            return str(obj)
+
+
+##### Forms
 
 class PartnerForm(forms.ModelForm):
     class Meta:
@@ -660,6 +676,20 @@ class PartnershipFilterForm(forms.Form):
 
 class PartnershipForm(forms.ModelForm):
 
+    ucl_university = EntityChoiceField(
+        label=_('ucl_university'),
+        queryset=Entity.objects.filter(
+            entityversion__entity_type=FACULTY,
+            faculty_managements__isnull=False,
+        ),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university',
+            attrs={
+                'class': 'resetting',
+                'data-reset': '#id_ucl_university_labo',
+        }),
+    )
+
     class Meta:
         model = Partnership
         fields = (
@@ -682,13 +712,6 @@ class PartnershipForm(forms.ModelForm):
             'partner_entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:partner_entity',
                 forward=['partner'],
-            ),
-            'ucl_university': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:ucl_university',
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_ucl_university_labo',
-                },
             ),
             'ucl_university_labo': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:ucl_university_labo',
