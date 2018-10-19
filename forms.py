@@ -1117,3 +1117,25 @@ class FinancingForm(forms.ModelForm):
     class Meta:
         model = Financing
         fields = '__all__'
+
+class FinancingExportForm(forms.Form):
+
+    export_academic_year = forms.ModelChoiceField(
+        label=_('academic_year'),
+        queryset=AcademicYear.objects.all(),
+        empty_label=_('all_academic_years'),
+        required=False,
+    )
+
+class FinancingImportForm(forms.Form):
+
+    csv_file = forms.FileField(
+        required=True,
+    )
+
+    import_academic_year = forms.ModelChoiceField(
+        label=_('academic_year'),
+        queryset=AcademicYear.objects.all(),
+        empty_label=_('academic_years'),
+        required=True,
+    )

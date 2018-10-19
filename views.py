@@ -1,6 +1,8 @@
 from copy import copy
 
+from io import StringIO
 from dal import autocomplete
+import csv
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,7 +13,7 @@ from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
 from django.db.models.functions import Now, ExtractYear
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -21,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
-                                       UpdateView)
+                                       UpdateView, ProcessFormView)
 from django.views.generic.list import MultipleObjectMixin
 
 from base.models.academic_year import (current_academic_year,
@@ -31,17 +33,19 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
+from reference.models.country import Country
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm, UCLManagementEntityForm, FinancingForm)
+                               PartnershipYearForm, UCLManagementEntityForm, FinancingForm,
+                               FinancingExportForm, FinancingImportForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity, Financing)
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails, current_academic_year
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -1482,7 +1486,84 @@ class FinancingListView(LoginRequiredMixin, ListView):
         context['can_add_financing'] = Financing.user_can_add(self.request.user)
         context['can_import_financing'] = Financing.user_can_import(self.request.user)
         context['can_export_financing'] = Financing.user_can_export(self.request.user)
+        context['export_form'] = FinancingExportForm(self.request.POST)
+        context['import_form'] = FinancingImportForm(self.request.POST, self.request.FILES)
         return context
+
+    def post(self, *args, **kwargs):
+        self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
+        self.export_form = FinancingExportForm(self.request.POST)
+        if self.import_form.is_valid():
+            print('import')
+            self.export_form = FinancingExportForm()
+            return self.import_form_valid(self.import_form)
+        elif self.export_form.is_valid():
+            print('export')
+            self.import_form = FinancingImportForm()
+            return self.export_form_valid(self.export_form)
+        else:
+            return self.form_invalid(self.export_form, self.import_form)
+
+    def get_success_url(self):
+        return reverse_lazy('partnerships:financings:list')
+
+    # Import
+    def import_form_valid(self, form):
+        print('import_form_valid')
+        academic_year = form.cleaned_data.get('import_academic_year')
+
+        reader = csv.DictReader(
+            self.request.FILES['csv_file'].read().decode('utf-8').splitlines(),
+            delimiter=';',
+            fieldnames=['name', 'url', 'countries']
+        )
+        for row in reader:
+            countries = Country.objects.filter(iso_code=row['countries'].split('-'))
+            financing = Financing.objects.create(
+                name=row['name'],
+                url=row['url'],
+                academic_year=academic_year,
+            )
+            for country in countries:
+                financing.countries.add(country)
+        return redirect(self.get_success_url())
+
+
+    # Export
+    def get_csv_data(self, academic_year=None):
+        financings = Financing.objects.all().prefetch_related('countries')
+        if academic_year is not None:
+            financings = financings.filter(academic_year=academic_year)
+        for financing in financings:
+            row = {
+                'name': financing.name,
+                'url': financing.url,
+                'countries': '-'.join(financing.countries.order_by('iso_code').values_list('iso_code', flat=True))
+            }
+            yield row
+
+    def export_form_valid(self, form):
+        print('export_form_valid')
+        academic_year = form.cleaned_data.get('export_academic_year', None)
+
+        # Filename :
+        if academic_year is None:
+            filename = "financings"
+        else:
+            filename = "financings_{}".format(academic_year)
+
+        data = self.get_csv_data()
+
+        buffer = StringIO()
+        fieldnames = ['name', 'url', 'countries']
+        wr = csv.DictWriter(buffer, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
+        for row in self.get_csv_data(academic_year):
+            wr.writerow(row)
+
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
+        return response
 
 
 # Autocompletes
