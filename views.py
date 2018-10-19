@@ -1133,7 +1133,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             except PartnershipYear.DoesNotExist:
                 partnership_year.pk = None
                 partnership_year.partnership = partnership
-                partnership_year.academic_year = academic_year
+            partnership_year.academic_year = academic_year
             partnership_year.save()
             form_year.save_m2m()
 
@@ -1145,9 +1145,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
-
-    def post(self, request, *args, **kwargs):
-        return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
 class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):

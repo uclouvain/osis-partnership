@@ -152,29 +152,25 @@ class PartnershipUpdateViewTest(TestCase):
             str(partnership.ucl_university_labo.pk),
             str(data['ucl_university_labo']),
         )
-        # self.assertEqual(
-        #     partnership.start_partnership_year.education_fields.values_list('pk', flat=True),
-        #     data['year-education_fields'],
-        # )
-        # self.assertEqual(
-        #     partnership.years.education_levels.values_list('pk', flat=True),
-        #     data['year-education_levels'],
-        # )
-        # self.assertEqual(
-        #     partnership.years.entities.values_list('pk', flat=True),
-        #     data['year-entities'],
-        # )
-        # self.assertEqual(
-        #     partnership.years.offers.values_list('pk', flat=True),
-        #     data['year-offers'],
-        # )
+        self.assertEqual(
+            [pk for pk in partnership.end_partnership_year.education_fields.values_list('pk', flat=True)],
+            data['year-education_fields'],
+        )
+        self.assertEqual(
+            [pk for pk in partnership.end_partnership_year.education_levels.values_list('pk', flat=True)],
+            data['year-education_levels'],
+        )
+        self.assertEqual(
+            list(partnership.end_partnership_year.entities.values_list('pk', flat=True)),
+            data['year-entities'],
+        )
+        self.assertEqual(
+            list(partnership.end_partnership_year.offers.values_list('pk', flat=True)),
+            data['year-offers'],
+        )
         self.assertEqual(
             str(partnership.start_academic_year.pk),
             str(data['year-start_academic_year']),
-        )
-        self.assertEqual(
-            str(partnership.from_academic_year.pk),
-            str(data['year-from_academic_year']),
         )
         self.assertEqual(
             str(partnership.end_academic_year.pk),
