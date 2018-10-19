@@ -613,7 +613,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if user_is_gf(self.request.user):
             university = self.request.user.person.entitymanager_set.first().entity
             if Partnership.objects.filter(ucl_university=university).exists():
-                initial['ucl_university'] = self.request.user.person.entitymanager_set.first().entity
+                initial['ucl_university'] = university
         return initial
 
     def get_form_kwargs(self):
