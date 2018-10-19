@@ -96,6 +96,12 @@ class UCLManagementEntityCreateViewTest(TestCase):
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
 
+    def test_post_adri_no_value(self):
+        self.client.force_login(self.adri_user)
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_create.html')
+
     def test_post_adri_duplicate_faculty_null_entity(self):
         self.client.force_login(self.adri_user)
         data = self.data

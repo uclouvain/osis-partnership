@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-11 15:39+0200\n"
+"POT-Creation-Date: 2018-10-15 10:09+0200\n"
 "PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -987,6 +987,12 @@ msgstr "Accord sauvegardé avec succès."
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
+
+msgid "ucl_management_entity_create_success"
+msgstr "Entité de gestion UCL créée."
+
+msgid "ucl_management_entity_change_success"
+msgstr "Entités de gestion UCL éditée."
 
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
