@@ -1182,6 +1182,12 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
             kwargs['form_media'] = self.get_form_media()
         return super(PartnershipAgreementsFormMixin, self).get_context_data(**kwargs)
 
+    def check_dates(self, agreement):
+        if agreement.start_academic_year.year < self.partnership.start_academic_year.year:
+            messages.warning(self.request, _('partnership_agreement_warning_before'))
+        if agreement.end_academic_year.year > self.partnership.end_academic_year.year:
+            messages.warning(self.request, _('partnership_agreement_warning_after'))
+
     def form_invalid(self, form, form_media):
         messages.error(self.request, _('partnership_agreement_error'))
         return self.render_to_response(self.get_context_data(form=form, form_media=form_media))
@@ -1214,6 +1220,7 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
         agreement.media = media
         agreement.save()
         form.save_m2m()
+        self.check_dates(agreement)
         messages.success(self.request, _('partnership_agreement_success'))
         return redirect(self.partnership)
 
@@ -1234,7 +1241,8 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     @transaction.atomic
     def form_valid(self, form, form_media):
         form_media.save()
-        form.save()
+        agreement = form.save()
+        self.check_dates(agreement)
         messages.success(self.request, _('partnership_agreement_success'))
         return redirect(self.partnership)
 

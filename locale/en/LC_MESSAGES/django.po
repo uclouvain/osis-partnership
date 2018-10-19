@@ -984,6 +984,14 @@ msgstr ""
 msgid "partnership_created"
 msgstr "Create partnership"
 
+#| msgid "partnership_agreement_delete_warning"
+msgid "partnership_agreement_warning_before"
+msgstr "Agreement begins before the partnership start."
+
+#| msgid "partnership_agreement_delete_warning"
+msgid "partnership_agreement_warning_after"
+msgstr "Agreement finishes after the partnership end."
+
 msgid "partnership_agreement_error"
 msgstr ""
 
