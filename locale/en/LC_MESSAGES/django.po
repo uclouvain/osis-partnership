@@ -211,6 +211,9 @@ msgstr ""
 msgid "end_academic_year"
 msgstr "End academic year"
 
+msgid "partnership_year_offers"
+msgstr "Offers"
+
 msgid "education_levels_empty_errors"
 msgstr ""
 
@@ -380,6 +383,9 @@ msgstr "Can access partnerships"
 msgid "partnership_with_{partner}"
 msgstr "Partnership with {partner}"
 
+msgid "education_group_types"
+msgstr "Education group types"
+
 msgid "Déclaration d’intention"
 msgstr ""
 
@@ -423,9 +429,6 @@ msgstr "Partnership year entities"
 #| msgid "partnership_year_entities"
 msgid "partnership_year_entities_help_text"
 msgstr "Partnership year entities"
-
-msgid "partnership_year_offers"
-msgstr "Partnership year offers"
 
 #, fuzzy
 #| msgid "partnership_year_offers"

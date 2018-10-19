@@ -33,6 +33,12 @@ class CustomNullBooleanSelect(forms.NullBooleanSelect):
         super(forms.NullBooleanSelect, self).__init__(attrs, choices)
 
 
+class EducationGroupYearChoiceSelect(forms.ModelMultipleChoiceField):
+
+    def label_from_instance(self, obj):
+        return '{0} - {1}'.format(obj.acronym, obj.title)
+
+
 class PartnerForm(forms.ModelForm):
     class Meta:
         model = Partner
@@ -753,6 +759,9 @@ class PartnershipForm(forms.ModelForm):
 
 class PartnershipYearForm(forms.ModelForm):
 
+    # Used for the dal forward
+    faculty = forms.CharField(required=False, widget=forms.HiddenInput())
+
     start_academic_year = forms.ModelChoiceField(
         label=_('start_academic_year'),
         queryset=AcademicYear.objects.all(),
@@ -767,6 +776,16 @@ class PartnershipYearForm(forms.ModelForm):
         label=_('end_academic_year'),
         queryset=AcademicYear.objects.all(),
         required=True,
+    )
+
+    offers = EducationGroupYearChoiceSelect(
+        label=_('partnership_year_offers'),
+        queryset=EducationGroupYear.objects.filter(university_certificate=True),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:partnership_year_offers',
+            forward=['faculty', 'entities', 'education_levels'],
+        ),
     )
 
     class Meta:
@@ -787,9 +806,7 @@ class PartnershipYearForm(forms.ModelForm):
             'education_levels': autocomplete.ModelSelect2Multiple(),
             'entities': autocomplete.ModelSelect2Multiple(
                 url='partnerships:autocomplete:partnership_year_entities',
-            ),
-            'offers': autocomplete.ModelSelect2Multiple(
-                url='partnerships:autocomplete:partnership_year_offers',
+                forward=['faculty'],
             ),
         }
 
@@ -832,9 +849,9 @@ class PartnershipYearForm(forms.ModelForm):
             if not self.cleaned_data['education_levels']:
                 self.add_error('education_levels', ValidationError(_('education_levels_empty_errors')))
         else:
-            del self.cleaned_data['education_levels']
-            del self.cleaned_data['entities']
-            del self.cleaned_data['offers']
+            self.cleaned_data['education_levels'] = []
+            self.cleaned_data['entities'] = []
+            self.cleaned_data['offers'] = []
         start_academic_year = self.cleaned_data.get('start_academic_year', None)
         from_academic_year = self.cleaned_data.get('from_academic_year', None)
         end_academic_year = self.cleaned_data.get('end_academic_year', None)
