@@ -806,7 +806,7 @@ class PartnershipConfiguration(models.Model):
             self.partnership_creation_update_max_date_month,
             self.partnership_creation_update_max_date_day,
         )
-        if date.today() < limit_date:
+        if date.today() <= limit_date:
             return AcademicYear.objects.filter(year=date.today().year + 1).first()
         else:
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
