@@ -22,6 +22,11 @@
                  href="{% url "partnerships:financings:create" %}">
                 <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "add_financing" %}</span></a>
             {% endif %}
+            <form action="#" method="GET">
+              {% csrf_token %}
+              {{ filter_form.as_p }}
+              <input type="submit" value="filter" class="btn btn-default">
+            </form>
             {% if can_import_financing %}
               <form action="#" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
