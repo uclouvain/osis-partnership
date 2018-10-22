@@ -41,7 +41,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
                                PartnershipYearForm, UCLManagementEntityForm, FinancingForm,
-                               FinancingExportForm, FinancingImportForm)
+                               FinancingFilterForm, FinancingExportForm, FinancingImportForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity, Financing)
@@ -1481,18 +1481,37 @@ class FinancingListView(LoginRequiredMixin, ListView):
     template_name = "partnerships/financings/financing_list.html"
     context_object_name = "financings"
 
+    def dispatch(self, *args, **kwargs):
+        self.get_forms()
+        if self.filter_form.is_valid():
+            self.academic_year = self.filter_form.cleaned_data.get('year', None)
+        else:
+            self.academic_year = None
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['can_add_financing'] = Financing.user_can_add(self.request.user)
         context['can_import_financing'] = Financing.user_can_import(self.request.user)
         context['can_export_financing'] = Financing.user_can_export(self.request.user)
-        context['export_form'] = FinancingExportForm(self.request.POST)
-        context['import_form'] = FinancingImportForm(self.request.POST, self.request.FILES)
+        context['export_form'] = self.export_form #FinancingExportForm(self.request.POST)
+        context['import_form'] = self.import_form #FinancingImportForm(self.request.POST, self.request.FILES)
+        context['filter_form'] = self.filter_form #FinancingFilterForm(self.request.GET)
         return context
 
-    def post(self, *args, **kwargs):
+    def get_forms(self):
         self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
         self.export_form = FinancingExportForm(self.request.POST)
+        self.filter_form = FinancingFilterForm(self.request.GET)
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        if self.academic_year is not None:
+            queryset = queryset.filter(academic_year=self.academic_year)
+        return queryset
+
+    def post(self, *args, **kwargs):
+        self.get_forms()
         if self.import_form.is_valid():
             print('import')
             self.export_form = FinancingExportForm()
