@@ -1528,8 +1528,12 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             self.academic_year = current_academic_year()
         else:
             self.academic_year = get_object_or_404(AcademicYear, year=year)
-        self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
-        self.filter_form = FinancingFilterForm(self.request.POST)
+        if self.request.method == "POST":
+            self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
+            self.filter_form = FinancingFilterForm(self.request.POST)
+        else:
+            self.import_form = FinancingImportForm(initial={'import_academic_year':self.academic_year})
+            self.filter_form = FinancingFilterForm(initial={'year':self.academic_year})
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
