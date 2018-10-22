@@ -1538,7 +1538,6 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     # Import
     def import_post(self, *args, **kwargs):
-        print("import is valid?")
         if self.import_form.is_valid():
             return self.import_form_valid(self.import_form)
         else:
