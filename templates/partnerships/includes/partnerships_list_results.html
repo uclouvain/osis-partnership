@@ -6,7 +6,7 @@
         <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
         <td>{% trans "country" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="country" default=True %}</td>
         <td>{% trans "city" %}</td>
-        <td>{% trans "partnership_supervisor" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="supervisor__last_name" %}</td>
+        <td>{% trans "partnership_supervisor" %}</td>
         <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
         <td>{% trans "financing" %}</td>
         <td>{% trans "validity_end" %}</td>
@@ -19,7 +19,7 @@
           <td>{{ partnership.partner|truncatechars:30 }}</td>
           <td>{{ partnership.partner.contact_address.country|default_if_none:"" }}</td>
           <td>{{ partnership.partner.contact_address.city|default_if_none:"" }}</td>
-          <td>{{ partnership.supervisor|default_if_none:"" }}</td>
+          <td>{{ partnership.get_supervisor|default_if_none:"" }}</td>
           <td>{{ partnership.entities_acronyms }}</td>
           <td></td>
           <td>{{ partnership.validity_end|default_if_none:"" }}</td>

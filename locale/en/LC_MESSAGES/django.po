@@ -871,6 +871,11 @@ msgstr "Invalid partner"
 msgid "inactive_partner"
 msgstr "Inactive partner"
 
+#, fuzzy
+#| msgid "partnership_supervisor"
+msgid "partnership_supervisor_from_entity_management"
+msgstr "Partnership supervisor"
+
 msgid "validated_agreements"
 msgstr "Validated agreements"
 

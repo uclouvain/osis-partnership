@@ -58,7 +58,7 @@
 
             {% with partnership.get_supervisor as supervisor %}
             <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %}{% endif %}</dd>
+            <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %} {% if partnership.supervisor is None %}({% trans "partnership_supervisor_from_entity_management" %}){% endif %}{% endif %}</dd>
             {% endwith %}
 
             <dt>{% trans "validated_agreements" %}</dt>

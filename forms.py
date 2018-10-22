@@ -632,7 +632,10 @@ class PartnershipFilterForm(forms.Form):
     )
     supervisor = forms.ModelChoiceField(
         label=_('partnership_supervisor'),
-        queryset=Person.objects.filter(partnerships_supervisor__isnull=False).distinct(),
+        queryset=Person.objects
+            .filter(Q(partnerships_supervisor__isnull=False) | Q(management_entities__isnull=False))
+            .order_by('last_name')
+            .distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )

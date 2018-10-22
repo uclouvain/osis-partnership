@@ -866,7 +866,7 @@ class UCLManagementEntity(models.Model):
     )
     academic_responsible = models.ForeignKey(
         'base.Person',
-        related_name='+',
+        related_name='management_entities',
         verbose_name=_("academic_responsible"),
     )
     administrative_responsible = models.ForeignKey(
