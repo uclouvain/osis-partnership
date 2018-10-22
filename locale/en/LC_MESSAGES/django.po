@@ -510,6 +510,11 @@ msgstr ""
 msgid "partnership_creation_update_max_date_month"
 msgstr ""
 
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "partnership_email_notification_to"
+msgstr "Partnership year entities"
+
 msgid "faculty"
 msgstr "Faculty"
 
@@ -919,6 +924,10 @@ msgstr "Add partnership"
 msgid "search_partnership"
 msgstr "Search partnership"
 
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Are you sure you want to delete \"%(object)s\"?"
+
 msgid "create_ucl_management_entity"
 msgstr "Create UCL management entities"
 
@@ -927,19 +936,6 @@ msgstr "List of UCL management entities"
 
 msgid "delete_ucl_management_entity"
 msgstr "Delete UCL management entity"
-
-#, python-format
-msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Are you sure you want to delete \"%(object)s\"?"
-
-msgid "update"
-msgstr "Update"
-
-msgid "delete"
-msgstr "Delete"
-
-msgid "ucl_management_entity"
-msgstr "UCL management entity"
 
 #, fuzzy
 #| msgid "ucl_management_entities"
@@ -999,11 +995,9 @@ msgstr ""
 msgid "partnership_created"
 msgstr "partnership created"
 
-#| msgid "partnership_agreement_delete_warning"
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
-#| msgid "partnership_agreement_delete_warning"
 msgid "partnership_agreement_warning_after"
 msgstr "Agreement finishes after the partnership end."
 
@@ -1021,6 +1015,15 @@ msgstr "UCL management entity successfully created."
 
 msgid "ucl_management_entity_change_success"
 msgstr "UCL management entity successfully changed."
+
+#~ msgid "update"
+#~ msgstr "Update"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "UCL management entity"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"
