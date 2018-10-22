@@ -940,6 +940,7 @@ class PartnershipConfigurationForm(forms.ModelForm):
         fields = [
             'partnership_creation_update_max_date_day',
             'partnership_creation_update_max_date_month',
+            'email_notification_to',
         ]
 
     def clean(self):
