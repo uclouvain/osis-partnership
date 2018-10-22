@@ -1140,17 +1140,7 @@ class FinancingFilterForm(forms.Form):
     year = forms.ModelChoiceField(
         label=_('academic_year'),
         queryset=AcademicYear.objects.all(),
-        empty_label=_('all_countries'),
-        required=False,
-    )
-
-
-class FinancingExportForm(forms.Form):
-
-    export_academic_year = forms.ModelChoiceField(
-        label=_('academic_year'),
-        queryset=AcademicYear.objects.all(),
-        empty_label=_('all_academic_years'),
+        empty_label=_('current_year'),
         required=False,
     )
 

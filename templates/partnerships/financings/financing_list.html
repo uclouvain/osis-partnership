@@ -17,28 +17,16 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="pull-right">
-            {% if can_add_financing %}
-              <a class="btn btn-default" type="button"
-                 href="{% url "partnerships:financings:create" %}">
-                <i class="fa fa-fw fa-plus"></i><span class="hidden-xs">{% trans "add_financing" %}</span></a>
-            {% endif %}
-            <form action="#" method="GET">
+            <form action="#" method="POST">
               {% csrf_token %}
               {{ filter_form.as_p }}
               <input type="submit" value="filter" class="btn btn-default">
             </form>
             {% if can_import_financing %}
-              <form action="#" method="POST" enctype="multipart/form-data">
+              <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ import_form.as_p }}
                 <input type="submit" value="import" name="submit" class="btn btn-default">
-              </form>
-            {% endif %}
-            {% if can_export_financing %}
-              <form action="#" method="POST">
-                {% csrf_token %}
-                {{ export_form.as_p }}
-                <input type="submit" value="Export" name="submit" class="btn btn-default">
               </form>
             {% endif %}
           </div>
@@ -47,37 +35,36 @@
       <div id="results">
         <div class="table-responsive">
           <table class="table table-stripped table-hover">
+
             <thead>
               <tr>
+                <td>{% trans 'countries' %}</td>
                 <td>{% trans 'name' %}</td>
                 <td>{% trans 'url' %}</td>
-                <td>{% trans 'countries' %}</td>
-                <td>{% trans 'academic_year' %}</td>
-                <td></td>
               </tr>
             </thead>
+
             <tbody>
-              {% for financing in financings %}
-                <tr>
-                  <td>{{ financing.name }}</td>
-                  <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
-                  <td>
-                    {% for country in financing.countries.all %}
-                      {{ country.iso_code }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                      {% trans "no_country_yet" %}
-                    {% endfor %}
-                  </td>
-                  <td>{{ financing.academic_year }}</td>
-                  <td>
-                    <a href="{{ financing.get_absolute_url }}" class="btn btn-default">
-                      <i class="fa fa-eye"></i>
-                    </a>
-                  </td>
-                </tr>
+              {% for country in countries %}
+                {% for financing in country.financing_set.all %}
+                  <tr>
+                    <td>{% if forloop.first %}{{ country }}{% endif %}</td>
+                    <td>{{ financing.name }}</td>
+                    <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
+                  </tr>
+                {% endfor %}
               {% endfor %}
             </tbody>
           </table>
+          {% if can_export_financing %}
+            <a class="btn btn-default"
+               href="{% url 'partnerships:financings:export' year=year %}">
+              {% trans "export" %}
+            </a>
+          {% endif %}
+          {% if is_paginated %}
+            {% bootstrap_pagination paginator.page %}
+          {% endif %}
         </div>
       </div>
     </div>
