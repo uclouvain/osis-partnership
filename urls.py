@@ -31,7 +31,6 @@ from partnership.views import (EntityAutocompleteView,
                                UCLManagementEntityUpdateView,
                                FinancingListView,
                                FinancingExportView,
-                               FinancingImportView,
                                UclUniversityAutocompleteFilterView,
                                UclUniversityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
@@ -83,7 +82,6 @@ urlpatterns = [
     url(r'^financings/', include([
         url(r'^(?:(?P<year>\d{4})/)?$', FinancingListView.as_view(), name='list'),
         url(r'^(?:(?P<year>\d{4})/)?export/$', FinancingExportView.as_view(), name='export'),
-        url(r'^import/$', FinancingImportView.as_view(), name='import'),
     ], namespace='financings')),
     url(r'^autocomplete/', include([
         url('^person/$', PersonAutocompleteView.as_view(), name='person'),

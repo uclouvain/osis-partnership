@@ -20,13 +20,13 @@
             <form action="#" method="POST">
               {% csrf_token %}
               {{ filter_form.as_p }}
-              <input type="submit" value="filter" class="btn btn-default">
+              <input type="submit" value="filter" name="filter" class="btn btn-default">
             </form>
             {% if can_import_financing %}
-              <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
+              <form action="#" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ import_form.as_p }}
-                <input type="submit" value="import" name="submit" class="btn btn-default">
+                <input type="submit" value="import" name="import" class="btn btn-default">
               </form>
             {% endif %}
           </div>
