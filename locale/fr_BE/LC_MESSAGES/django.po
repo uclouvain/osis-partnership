@@ -981,7 +981,7 @@ msgid "ucl_management_entities_empty"
 msgstr "Il n'y a pas encore d'entités de gestion UCLouvain"
 
 msgid "update_ucl_management_entity"
-msgstr "Mettre à jour l'entité de gestion UCLouvainUCLouvain"
+msgstr "Mettre à jour l'entité de gestion UCLouvain"
 
 msgid "id"
 msgstr "ID"
