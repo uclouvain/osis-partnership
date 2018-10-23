@@ -1490,6 +1490,9 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Country
     template_name = "partnerships/financings/financing_list.html"
     context_object_name = "countries"
+    paginate_by = 10
+    paginate_orphans = 4
+    paginate_neighbours = 4
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1499,6 +1502,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             self.academic_year = current_academic_year()
         else:
             self.academic_year = get_object_or_404(AcademicYear, year=year)
+
         if self.request.method == "POST":
             self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
             self.filter_form = FinancingFilterForm(self.request.POST)
@@ -1528,7 +1532,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return reverse_lazy('partnerships:financings:list', kwargs={'year': self.academic_year.year})
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
+        queryset = super().get_queryset(*args, **kwargs).order_by('name')
         if self.academic_year is None:
             queryset = queryset.prefetch_related('financing_set',)
         else:

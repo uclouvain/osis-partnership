@@ -71,14 +71,22 @@
             </thead>
 
             <tbody>
-              {% for country in countries %}
+              {% for country in object_list %}
                 {% for financing in country.financing_set.all %}
                   <tr>
                     <td>{% if forloop.first %}{{ country }}{% endif %}</td>
                     <td>{{ financing.name }}</td>
                     <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
                   </tr>
+                {% empty %}
+                  <tr>
+                    <td>{{ country }}</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 {% endfor %}
+              {% empty %}
+                <tr><td>{% trans "empty" %}</td></tr>
               {% endfor %}
             </tbody>
           </table>
@@ -89,7 +97,9 @@
             </a>
           {% endif %}
           {% if is_paginated %}
-            {% bootstrap_pagination paginator.page %}
+            <div class="col-sm-12 col-md-8">
+              {% include "partnerships/includes/pagination.html" %}
+            </div>
           {% endif %}
         </div>
       </div>
