@@ -45,7 +45,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity, Financing)
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails, current_academic_year
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -1377,11 +1377,6 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
             )
         return queryset.distinct()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['can_add_ucl_management_entity'] = self.object.user_can_add(self.request.user)
-        return context
-
 
 class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = UCLManagementEntity
@@ -1444,19 +1439,20 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 # Financing views :
 
 
-class FinancingExportView(LoginRequiredMixin, View):
+class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
     def get_csv_data(self, academic_year=None):
-        if academic_year is None:
-            countries = Country.objects.all().prefetch_related('financing_set',)
-        else:
-            countries = Country.objects.all().prefetch_related(
-                Prefetch(
-                    'financing_set',
-                    queryset=Financing.objects.prefetch_related(
-                        'academic_year'
-                    ).filter(academic_year=academic_year)
-                )
+        countries = Country.objects.all().prefetch_related(
+            Prefetch(
+                'financing_set',
+                queryset=Financing.objects.prefetch_related(
+                    'academic_year'
+                ).filter(academic_year=academic_year)
             )
+        )
         for country in countries:
             for financing in country.financing_set.all():
                 row = {
@@ -1477,7 +1473,7 @@ class FinancingExportView(LoginRequiredMixin, View):
         buffer = StringIO()
         fieldnames = ['country', 'name', 'url']
         wr = csv.DictWriter(buffer, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
-        for row in self.get_csv_data(self.academic_year):
+        for row in self.get_csv_data(academic_year=self.academic_year):
             wr.writerow(row)
 
         buffer.seek(0)
@@ -1490,7 +1486,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Country
     template_name = "partnerships/financings/financing_list.html"
     context_object_name = "countries"
-    paginate_by = 10
+    paginate_by = 25
     paginate_orphans = 4
     paginate_neighbours = 4
 
@@ -1507,8 +1503,8 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
             self.filter_form = FinancingFilterForm(self.request.POST)
         else:
-            self.import_form = FinancingImportForm(initial={'import_academic_year':self.academic_year})
-            self.filter_form = FinancingFilterForm(initial={'year':self.academic_year})
+            self.import_form = FinancingImportForm(initial={'import_academic_year': self.academic_year})
+            self.filter_form = FinancingFilterForm(initial={'year': self.academic_year})
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
@@ -1523,12 +1519,10 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['filter_form'] = self.filter_form
         context['can_import_financing'] = Financing.user_can_import(self.request.user)
         context['can_export_financing'] = Financing.user_can_export(self.request.user)
-        context['year'] = self.academic_year.year
+        context['academic_year'] = self.academic_year
         return context
 
     def get_success_url(self):
-        if self.academic_year.year == current_academic_year().year:
-            return reverse_lazy('partnerships:financings:list')
         return reverse_lazy('partnerships:financings:list', kwargs={'year': self.academic_year.year})
 
     def get_queryset(self, *args, **kwargs):

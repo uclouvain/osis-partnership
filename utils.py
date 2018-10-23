@@ -97,7 +97,3 @@ def merge_agreement_ranges(agreements=None):
         else:
             merged_agreements.append(a)
     return merged_agreements
-
-def current_academic_year():
-    year = timezone.now().year
-    return AcademicYear.objects.get(year=year)
