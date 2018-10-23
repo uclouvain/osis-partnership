@@ -56,7 +56,10 @@ def user_is_gf(user):
 
 def user_is_gf_of_faculty(user, faculty):
     if user_is_gf(user):
-        return User.objects.filter(pk=user.pk, person__entitymanager__entity=faculty).exists()
+        return User.objects.filter(
+            Q(person__entitymanager__entity=faculty) | Q(person__entitymanager__entity__parent_of__entity=faculty),
+            pk=user.pk,
+        ).exists()
     else:
         return False
 
@@ -68,7 +71,10 @@ def user_is_in_user_faculty(user, other_user):
             user
             .person
             .entitymanager_set
-            .filter(entity__entitymanager__person__user=other_user)
+            .filter(
+                Q(entity__entitymanager__person__user=other_user)
+                | Q(entity__parent_of__entity__entitymanager__person__user=other_user)
+            )
             .exists()
         )
     except Person.DoesNotExist:

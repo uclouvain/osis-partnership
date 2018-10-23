@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.enums.entity_type import SECTOR, FACULTY
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_manager import EntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -16,7 +17,9 @@ class UCLManagementEntitiesListViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        sector = EntityFactory()
         faculty = EntityFactory()
+        EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
         EntityVersionFactory(entity_type="FACULTY", entity=faculty)
         EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
@@ -26,6 +29,8 @@ class UCLManagementEntitiesListViewTest(TestCase):
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
+        cls.gs_user = UserFactory()
+        EntityManagerFactory(person__user=cls.gs_user, entity=sector)
         cls.gf_user = UserFactory()
         EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
@@ -66,3 +71,9 @@ class UCLManagementEntitiesListViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
         self.assertEqual(len(response.context['ucl_management_entities']), OTHER_GF_UME_NUMBER + GF_UME_NUMBER)
+
+    def test_get_list_gs(self):
+        self.client.force_login(self.gs_user)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertEqual(len(response.context['ucl_management_entities']), GF_UME_NUMBER)

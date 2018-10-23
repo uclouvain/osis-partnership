@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
@@ -27,27 +27,16 @@ class PartnershipUpdateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Dates :
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
-        cls.partner_gf = PartnerFactory(author=cls.user_gf)
-        cls.partnership = PartnershipFactory(
-            partner=cls.partner,
-            partner_entity=cls.partner_entity,
-            author=cls.user_gf,
-            years=[],
-            ucl_university = entity_manager.entity,
-        )
-        cls.url = reverse('partnerships:update',
-                          kwargs={'pk': cls.partnership.pk})
-
         # Years
+        cls.academic_year_2000 = AcademicYearFactory(year=2000)
         cls.academic_year_2149 = AcademicYearFactory(year=2149)
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.from_academic_year = AcademicYearFactory(year=2151)
@@ -57,15 +46,10 @@ class PartnershipUpdateViewTest(TestCase):
         cls.education_field = PartnershipYearEducationFieldFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
 
-        cls.partnership.years = [
-            PartnershipYearFactory(academic_year=cls.start_academic_year),
-            PartnershipYearFactory(academic_year=cls.from_academic_year),
-            PartnershipYearFactory(academic_year=cls.end_academic_year),
-        ]
-
         # Ucl
+        sector = EntityFactory()
         cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
@@ -74,6 +58,24 @@ class PartnershipUpdateViewTest(TestCase):
         cls.ucl_university_labo_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
+
+        EntityManagerFactory(person__user=cls.user_gs, entity=sector)
+        entity_manager = EntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
+        EntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
+
+        cls.partner_gf = PartnerFactory(author=cls.user_gf)
+        cls.partnership = PartnershipFactory(
+            partner=cls.partner,
+            partner_entity=cls.partner_entity,
+            author=cls.user_gf,
+            years=[
+                PartnershipYearFactory(academic_year=cls.start_academic_year),
+                PartnershipYearFactory(academic_year=cls.from_academic_year),
+                PartnershipYearFactory(academic_year=cls.end_academic_year),
+            ],
+            ucl_university=cls.ucl_university,
+        )
+        cls.url = reverse('partnerships:update', kwargs={'pk': cls.partnership.pk})
 
         cls.data = {
             'comment': '',
@@ -117,6 +119,12 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
         self.assertNotIn('start_academic_year', response.context_data['form_year'].fields)
 
+    def test_get_own_partnership_as_gs(self):
+        self.client.force_login(self.user_gs)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
+        self.assertNotIn('start_academic_year', response.context_data['form_year'].fields)
+
     def test_get_other_partnership_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
@@ -144,14 +152,6 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertFalse(year.education_levels.exists())
         self.assertFalse(year.entities.exists())
         self.assertFalse(year.offers.exists())
-
-    def test_post_past_from_date_as_gf(self):
-        self.client.force_login(self.user_gf)
-        data = self.data.copy()
-        data['year-from_academic_year'] = str(self.academic_year_2149.pk)
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership_update.html')
 
     def test_post_past_start_date(self):
         self.client.force_login(self.user_adri)

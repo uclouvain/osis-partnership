@@ -3,7 +3,7 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
@@ -27,6 +27,7 @@ class PartnershipCreateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.country = CountryFactory()
         cls.user_other_gf = UserFactory()
@@ -47,8 +48,9 @@ class PartnershipCreateViewTest(TestCase):
         cls.url = reverse('partnerships:create')
 
         # Ucl
+        sector = EntityFactory()
         cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
@@ -58,6 +60,7 @@ class PartnershipCreateViewTest(TestCase):
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
+        EntityManagerFactory(person__user=cls.user_gs, entity=sector)
         EntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         EntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
@@ -99,6 +102,11 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_get_view_as_gf(self):
         self.client.force_login(self.user_gf)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+
+    def test_get_view_as_gs(self):
+        self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
 
@@ -147,6 +155,12 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)
+        data = self.data
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+
+    def test_post_post_start_date_as_gs(self):
+        self.client.force_login(self.user_gs)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
