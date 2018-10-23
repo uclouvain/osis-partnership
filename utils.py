@@ -99,7 +99,3 @@ def merge_agreement_ranges(agreements=None):
         elif merged_agreements[-1]['end'] + 1 < a['start']:
             merged_agreements.append(a)
     return merged_agreements
-
-def current_academic_year():
-    year = timezone.now().year
-    return AcademicYear.objects.get(year=year)

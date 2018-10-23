@@ -8,13 +8,12 @@
 {% block content %}
   <div class="page-header">
     <h1>
-      {% trans 'financings' %}
+      {% trans 'financings' %} : {{ academic_year }}
     </h1>
   </div>
 
   <div class="panel panel-default">
     <div class="panel-body">
-
       <div class="row">
         <div class="panel-group" id="financing-btn-group" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default">
@@ -23,7 +22,7 @@
                       data-toggle="collapse" data-target="#financing-filter-form"
                       aria-expanded="false" aria-controls="financing-filter-form"
                       data-parent="#financing-btn-group">
-                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_financings" %}</span>
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "change_year" %}</span>
               </button>
               <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#financing-import-form"
@@ -39,7 +38,7 @@
                 <form action="#" method="POST">
                   {% csrf_token %}
                   {% bootstrap_form filter_form %}
-                  <input type="submit" value="filter" name="filter" class="btn btn-primary">
+                  <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
                 </form>
               </div>
             </div>
@@ -49,7 +48,7 @@
                   <form action="#" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% bootstrap_form import_form %}
-                    <input type="submit" value="import" name="import" class="btn btn-primary">
+                    <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
                   </form>
                 {% endif %}
               </div>
@@ -65,7 +64,7 @@
             <thead>
               <tr>
                 <td>{% trans 'countries' %}</td>
-                <td>{% trans 'name' %}</td>
+                <td>{% trans 'Name' %}</td>
                 <td>{% trans 'url' %}</td>
               </tr>
             </thead>
@@ -81,19 +80,17 @@
                 {% empty %}
                   <tr>
                     <td>{{ country }}</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
+                    <td colspan="2"><i>{% trans "no_financing" %}</i></td>
                 {% endfor %}
               {% empty %}
-                <tr><td>{% trans "empty" %}</td></tr>
+                <tr><td colspan="3">{% trans "no_country" %}</td></tr>
               {% endfor %}
             </tbody>
           </table>
           {% if can_export_financing %}
             <a class="btn btn-default"
-               href="{% url 'partnerships:financings:export' year=year %}">
-              {% trans "export" %}
+               href="{% url 'partnerships:financings:export' year=academic_year.year %}">
+              {% blocktrans %}export_financings_for_year_{{ academic_year }}{% endblocktrans %}
             </a>
           {% endif %}
           {% if is_paginated %}

@@ -1148,6 +1148,7 @@ class FinancingFilterForm(forms.Form):
 class FinancingImportForm(forms.Form):
 
     csv_file = forms.FileField(
+        label=_('csv_file'),
         required=True,
     )
 
