@@ -14,44 +14,50 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="row" id="financing-btn-group">
-        <div class="col-sm-12">
-          <div class="pull-right">
-            <button class="btn btn-default" type="button"
-                    data-toggle="collapse" data-target="#financing-filter"
-                    aria-expanded="false" aria-controls="financing-filter"
-                    data-parent="#financing-btn-group">
-              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_financing" %}</span>
-            </button>
-            <button class="btn btn-default" type="button"
-                    data-toggle="collapse" data-target="#financing-import"
-                    aria-expanded="false" aria-controls="financing-import"
-                    data-parent="#financing-btn-group">
-              <i class="glyphicon glyphicon-import"></i> <span class="hidden-xs">{% trans "import_financing" %}</span>
-            </button>
+
+      <div class="row">
+        <div class="panel-group" id="financing-btn-group" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+              <button class="btn btn-default" type="button"
+                      data-toggle="collapse" data-target="#financing-filter-form"
+                      aria-expanded="false" aria-controls="financing-filter-form"
+                      data-parent="#financing-btn-group">
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "filter_financings" %}</span>
+              </button>
+              <button class="btn btn-default" type="button"
+                      data-toggle="collapse" data-target="#financing-import-form"
+                      aria-expanded="false" aria-controls="financing-import-form"
+                      data-parent="#financing-btn-group">
+                <i class="glyphicon glyphicon-import`"></i> <span class="hidden-xs">{% trans "import_financings" %}</span>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="panel">
-          <div class="collapse" id="financing-filter">
-            <form action="#" method="POST">
-              {% csrf_token %}
-              {% bootstrap_form filter_form %}
-              <input type="submit" value="filter" name="filter" class="btn btn-primary">
-            </form>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="collapse" id="financing-import">
-            {% if can_import_financing %}
-              <form action="#" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% bootstrap_form import_form %}
-                <input type="submit" value="import" name="import" class="btn btn-primary">
-              </form>
-            {% endif %}
+          <div class="panel panel-default">
+            <div id="financing-filter-form" class="panel-collapse collapse" role="tabpanel">
+              <div class="panel-body">
+                <form action="#" method="POST">
+                  {% csrf_token %}
+                  {% bootstrap_form filter_form %}
+                  <input type="submit" value="filter" name="filter" class="btn btn-primary">
+                </form>
+              </div>
+            </div>
+            <div id="financing-import-form" class="panel-collapse collapse" role="tabpanel">
+              <div class="panel-body">
+                {% if can_import_financing %}
+                  <form action="#" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% bootstrap_form import_form %}
+                    <input type="submit" value="import" name="import" class="btn btn-primary">
+                  </form>
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
       <div id="results">
         <div class="table-responsive">
           <table class="table table-stripped table-hover">
