@@ -156,10 +156,10 @@ msgid "education_level"
 msgstr "Niveau d'étude"
 
 msgid "is_sms"
-msgstr "Studient mobility for study (SMS)"
+msgstr "Student mobility for study (SMS)"
 
 msgid "is_smp"
-msgstr "Studient mobility for placement (SMP)"
+msgstr "Student mobility for placement (SMP)"
 
 msgid "is_sta"
 msgstr "Teacher mobility assignment (STA)"

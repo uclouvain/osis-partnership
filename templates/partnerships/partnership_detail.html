@@ -195,7 +195,7 @@
       </div>
 
       {% if partnership.ucl_management_entity is not None and partnership.ucl_management_entity.are_contacts_defined %}
-        <h3>{% trans "ucl_management_entity_contacts" %}</h3>
+        <h2>{% trans "ucl_management_entity_contacts" %}</h2>
         <div class="row">
           {% if partnership.ucl_management_entity.is_contact_in_defined %}
             <div class="{% if partnership.ucl_management_entity.is_contact_out_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
@@ -207,7 +207,7 @@
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_in_email is not None %}
                   <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_out_url }}">{{ partnership.ucl_management_entity.contact_out_email }}</a></dd>
+                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_in_email }}">{{ partnership.ucl_management_entity.contact_in_email }}</a></dd>
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_in_url is not None %}
                   <dt>{% trans 'portal' %}</dt>
@@ -226,7 +226,7 @@
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_out_email is not None %}
                   <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_out_url }}">{{ partnership.ucl_management_entity.contact_out_email }}</a></dd>
+                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_out_email }}">{{ partnership.ucl_management_entity.contact_out_email }}</a></dd>
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_out_url is not None %}
                   <dt>{% trans 'portal' %}</dt>
