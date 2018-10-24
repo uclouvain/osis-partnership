@@ -19,6 +19,11 @@ def can_change_agreement(user, agreement):
 
 
 @register.filter
+def can_delete_agreement(user, agreement):
+    return agreement.user_can_delete(user)
+
+
+@register.filter
 def can_change_management_entity(user, management_entity):
     return management_entity.user_can_change(user)
 

@@ -276,7 +276,8 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         self.client.force_login(self.user_adri)
         self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
         response = self.client.post(self.url, data={}, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_post_validated_as_gf(self):
         self.client.force_login(self.user_gf)
