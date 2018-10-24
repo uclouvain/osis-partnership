@@ -128,16 +128,35 @@ msgstr "File or URL only"
 msgid "file_or_url_required"
 msgstr "File or URL required"
 
+#, fuzzy
+#| msgid "faculty"
+msgid "faculty_filter"
+msgstr "Faculty"
+
 msgid "ucl_university"
 msgstr "UCLouvain university"
 
-msgid "ucl_university_labo"
-msgstr "School / Laboratory"
+#, fuzzy
+#| msgid "edit_partnership"
+msgid "faculty_entity_filter"
+msgstr "Edit partnership"
 
 msgid "ucl_university_labo_filter"
 msgstr "School / Laboratory"
 
-msgid "university_offers"
+#, fuzzy
+#| msgid "education_level"
+msgid "education_level_filter"
+msgstr "Education level"
+
+#, fuzzy
+#| msgid "entities"
+msgid "entity_filter"
+msgstr "Entities"
+
+#, fuzzy
+#| msgid "university_offers"
+msgid "university_offers_filter"
 msgstr "University offers"
 
 msgid "partner"
@@ -151,9 +170,6 @@ msgstr "Partner tags"
 
 msgid "education_field"
 msgstr "Education field"
-
-msgid "education_level"
-msgstr "Education level"
 
 msgid "is_sms"
 msgstr "Is SMS"
@@ -375,6 +391,9 @@ msgstr "Medias"
 
 msgid "can_access_partners"
 msgstr "Can access partners"
+
+msgid "ucl_university_labo"
+msgstr "School / Laboratory"
 
 msgid "contacts"
 msgstr "Contacts"
@@ -937,19 +956,6 @@ msgstr "List of UCLouvain management entities"
 
 msgid "delete_ucl_management_entity"
 msgstr "Delete UCLouvain management entity"
-
-#, python-format
-msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Are you sure you want to delete \"%(object)s\"?"
-
-msgid "update"
-msgstr "Update"
-
-msgid "delete"
-msgstr "Delete"
-
-msgid "ucl_management_entity"
-msgstr "UCLouvain management entity"
 
 msgid "ucl_management_entities_empty"
 msgstr "UCLouvain management entities"
