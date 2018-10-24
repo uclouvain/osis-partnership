@@ -61,6 +61,9 @@
             <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %} {% if partnership.supervisor is None %}({% trans "partnership_supervisor_from_entity_management" %}){% endif %}{% endif %}</dd>
             {% endwith %}
 
+            <dt>{% trans "administrative_responsible" %}</dt>
+            <dd>{{ partnership.administrative_responsible|default_if_none:"" }}</dd>
+
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>
               {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
