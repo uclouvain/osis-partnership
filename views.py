@@ -17,7 +17,7 @@ from django.db.models.functions import Now, ExtractYear
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.timezone import now
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
@@ -26,6 +26,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView, ProcessFormView)
 from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.base import TemplateResponseMixin
 
 from base.models.academic_year import (current_academic_year,
                                        find_academic_years, AcademicYear)
@@ -1473,7 +1474,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         return user_is_adri(self.request.user)
 
-    def get_csv_data(self, academic_year=None):
+    def get_csv_data(self, academic_year):
         countries = Country.objects.all().prefetch_related(
             Prefetch(
                 'financing_set',
@@ -1511,13 +1512,56 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
         return response
 
 
-class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateResponseMixin, FormMixin, ProcessFormView):
+    form_class = FinancingImportForm
+    template_name = "partnerships/financings/financing_import.html"
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def get_success_url(self, academic_year=None):
+        if academic_year is None:
+            academic_year = current_academic_year()
+        return reverse('partnerships:financings:list', kwargs={'year': academic_year.year})
+
+    def form_valid(self, form):
+        self.academic_year = form.cleaned_data.get('import_academic_year')
+
+        reader = csv.DictReader(
+            self.request.FILES['csv_file'].read().decode('utf-8').splitlines(),
+            delimiter=';',
+            fieldnames=['country', 'name', 'url']
+        )
+        for row in reader:
+            financing = Financing.objects.filter(
+                name=row['name'],
+                academic_year=self.academic_year,
+            ).first()
+            country = Country.objects.get(iso_code=row['country'])
+            if financing is None:
+                financing = Financing(
+                    name=row['name'],
+                    url=row['url'],
+                    academic_year=self.academic_year,
+                )
+
+            else:
+                financing.url = row['url']
+            financing.save()
+            if country is not None and country not in financing.countries.all():
+                financing.countries.add(country)
+        messages.success(self.request, _('financings_imported'))
+        return redirect(self.get_success_url(self.academic_year))
+
+
+class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, ListView):
     model = Country
     template_name = "partnerships/financings/financing_list.html"
+    form_class = FinancingFilterForm
     context_object_name = "countries"
     paginate_by = 25
-    paginate_orphans = 4
-    paginate_neighbours = 4
+    paginate_orphans = 2
+    paginate_neighbours = 3
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1530,29 +1574,28 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         if self.request.method == "POST":
             self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
-            self.filter_form = FinancingFilterForm(self.request.POST)
+            self.form = FinancingFilterForm(self.request.POST)
         else:
             self.import_form = FinancingImportForm(initial={'import_academic_year': self.academic_year})
-            self.filter_form = FinancingFilterForm(initial={'year': self.academic_year})
+            self.form = FinancingFilterForm(initial={'year': self.academic_year})
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        if "import" in self.request.POST:
-            return self.import_post(*args, **kwargs)
-        elif "filter" in self.request.POST:
-            return self.filter_post(*args, **kwargs)
+        if self.form.is_valid():
+            return self.form_valid(self.form)
+        return self.form_invalid(self.form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['import_form'] = self.import_form
-        context['filter_form'] = self.filter_form
+        context['paginate_neighbours'] = self.paginate_neighbours
         context['can_import_financing'] = Financing.user_can_import(self.request.user)
         context['can_export_financing'] = Financing.user_can_export(self.request.user)
         context['academic_year'] = self.academic_year
         return context
 
     def get_success_url(self):
-        return reverse_lazy('partnerships:financings:list', kwargs={'year': self.academic_year.year})
+        return reverse('partnerships:financings:list', kwargs={'year': self.academic_year.year})
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs).order_by('name')
@@ -1567,41 +1610,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             )
         return queryset
 
-    # Import
-    def import_post(self, *args, **kwargs):
-        if self.import_form.is_valid():
-            return self.import_form_valid(self.import_form)
-        else:
-            return self.form_invalid(self.import_form)
-
-    def import_form_valid(self, form):
-        self.academic_year = form.cleaned_data.get('import_academic_year')
-
-        reader = csv.DictReader(
-            self.request.FILES['csv_file'].read().decode('utf-8').splitlines(),
-            delimiter=';',
-            fieldnames=['name', 'url', 'countries']
-        )
-        for row in reader:
-            countries = Country.objects.filter(iso_code__in=row['countries'].split('-'))
-            financing = Financing.objects.create(
-                name=row['name'],
-                url=row['url'],
-                academic_year=self.academic_year,
-            )
-            for country in countries:
-                financing.countries.add(country)
-        messages.success(self.request, _('financings_imported'))
-        return redirect(self.get_success_url())
-
-    # Filter
-    def filter_post(self, *args, **kwargs):
-        if self.filter_form.is_valid():
-            return self.filter_form_valid(self.filter_form)
-        else:
-            return self.form_invalid(self.filter_form)
-
-    def filter_form_valid(self, form):
+    def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('year', current_academic_year())
         if self.academic_year is None:
             self.academic_year =current_academic_year()

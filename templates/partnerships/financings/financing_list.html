@@ -2,6 +2,7 @@
 {% load bootstrap3 i18n static %}
 
 {% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
   <li class="active">{% trans "financings" %}</li>
 {% endblock %}
 
@@ -37,7 +38,7 @@
               <div class="panel-body">
                 <form action="#" method="POST">
                   {% csrf_token %}
-                  {% bootstrap_form filter_form %}
+                  {% bootstrap_form form %}
                   <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
                 </form>
               </div>
@@ -45,7 +46,7 @@
             <div id="financing-import-form" class="panel-collapse collapse" role="tabpanel">
               <div class="panel-body">
                 {% if can_import_financing %}
-                  <form action="#" method="POST" enctype="multipart/form-data">
+                  <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% bootstrap_form import_form %}
                     <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
@@ -73,14 +74,15 @@
               {% for country in object_list %}
                 {% for financing in country.financing_set.all %}
                   <tr>
-                    <td>{% if forloop.first %}{{ country }}{% endif %}</td>
+                    <td>{% if forloop.first %}{{ country }} ({{ country.iso_code }}){% endif %}</td>
                     <td>{{ financing.name }}</td>
                     <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
                   </tr>
                 {% empty %}
                   <tr>
-                    <td>{{ country }}</td>
+                    <td>{{ country }} ({{ country.iso_code }})</td>
                     <td colspan="2"><i>{% trans "no_financing" %}</i></td>
+                  </tr>
                 {% endfor %}
               {% empty %}
                 <tr><td colspan="3">{% trans "no_country" %}</td></tr>

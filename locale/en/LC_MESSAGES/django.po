@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 10:57+0200\n"
+"POT-Creation-Date: 2018-10-25 16:12+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -238,6 +238,18 @@ msgstr ""
 msgid "invalid_partnership_creation_max_date"
 msgstr ""
 
+msgid "academic_year"
+msgstr "Academic year"
+
+msgid "current_year"
+msgstr "Current year"
+
+msgid "csv_file"
+msgstr "CSV file"
+
+msgid "academic_years"
+msgstr "Academic years"
+
 msgid "contact_in"
 msgstr "In mobility contact"
 
@@ -424,9 +436,6 @@ msgstr "Other"
 
 msgid "partnership"
 msgstr "Partnership"
-
-msgid "academic_year"
-msgstr "Academic year"
 
 msgid "partnership_year_education_fields"
 msgstr "Partnership year education fields"
@@ -645,8 +654,24 @@ msgstr "Update partnership contact"
 msgid "update_contact"
 msgstr "update contact"
 
-msgid "academic_years"
-msgstr "Academic years"
+msgid "financings"
+msgstr "Financings"
+
+msgid "import_financings"
+msgstr "Import financings"
+
+msgid "change_year"
+msgstr "Change year"
+
+msgid "no_financing"
+msgstr "No financing"
+
+msgid "no_country"
+msgstr "No country"
+
+#, python-format
+msgid "export_financings_for_year_%(academic_year)s"
+msgstr "Export financings for year %(academic_year)s"
 
 msgid "media_delete_warning"
 msgstr "Are you sure you want to delete this media?"
@@ -1026,6 +1051,18 @@ msgstr "UCLouvain management entity successfully created."
 
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
+
+msgid "financings_imported"
+msgstr "Financings successfully imported."
+
+#~ msgid "update"
+#~ msgstr "Update"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "UCL management entity"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"

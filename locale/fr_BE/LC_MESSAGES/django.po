@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-15 10:09+0200\n"
-"PO-Revision-Date: 2018-10-22 15:15+0200\n"
+"POT-Creation-Date: 2018-10-25 16:12+0200\n"
+"PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -242,6 +242,18 @@ msgstr "La date de début se situe après la date de fin."
 msgid "invalid_partnership_creation_max_date"
 msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
+msgid "academic_year"
+msgstr "Année académique"
+
+msgid "current_year"
+msgstr "Année en cours"
+
+msgid "csv_file"
+msgstr "Fichier CSV"
+
+msgid "academic_years"
+msgstr "Années académiques"
+
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
 
@@ -429,9 +441,6 @@ msgstr ""
 
 msgid "partnership"
 msgstr "Partenariat"
-
-msgid "academic_year"
-msgstr "Année académique"
 
 msgid "partnership_year_education_fields"
 msgstr "Domaines d'études"
@@ -650,8 +659,24 @@ msgstr "Mettre à jour le contact"
 msgid "update_contact"
 msgstr "Mettre le contact à jour"
 
-msgid "academic_years"
-msgstr "Années académiques"
+msgid "financings"
+msgstr "Financements"
+
+msgid "import_financings"
+msgstr "Importer des financements"
+
+msgid "change_year"
+msgstr "Changer d'année"
+
+msgid "no_financing"
+msgstr "Pas de financement"
+
+msgid "no_country"
+msgstr "Pas de pays"
+
+#, python-format
+msgid "export_financings_for_year_%(academic_year)s"
+msgstr "Exporter les financements pour l'année %(academic_year)s"
 
 msgid "media_delete_warning"
 msgstr ""
@@ -1067,6 +1092,18 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
+msgid "financings_imported"
+msgstr "Financements importés avec succès"
+
+#~ msgid "update"
+#~ msgstr "Mettre à jour"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "Entité de gestion UCL"
+
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
@@ -1086,10 +1123,6 @@ msgstr "Entités de gestion UCLouvain éditée."
 
 #~ msgid "partnership_start_date_gf_too_late"
 #~ msgstr "La date limite pour créer ce partenariat est passée."
-
-#~ msgid "partnership_year_academic_year_error"
-#~ msgstr ""
-#~ "L’année académique est antérieure à l’année de début du partenariat."
 
 #~ msgid "partnership_update_max_date_day"
 #~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
