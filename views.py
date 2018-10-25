@@ -506,18 +506,7 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
 
     def get_filename(self, filename):
         extension = filename.split('.')[-1]
-        last_media = self.partner.medias.exclude(file="").order_by('pk').last()
-        if last_media is None:
-            media_id = 1
-        else:
-            try:
-                filename = last_media.file.name
-                filename = filename.split('_')[-1]
-                filename = filename.split('.')[0]
-                media_id = int(filename) + 1
-            except (IndexError, ValueError):
-                media_id = last_media.pk + 1
-        return 'partner_media_{}_{}.{}'.format(self.partner.pk, media_id, extension)
+        return 'partner_media_{}.{}'.format(self.partner.pk, extension)
 
     @transaction.atomic
     def form_valid(self, form):
@@ -1214,19 +1203,7 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
 
     def get_filename(self, filename):
         extension = filename.split('.')[-1]
-        last_agreement = self.partnership.agreements.order_by('pk').exclude(media__file="").last()
-        last_media = getattr(last_agreement, 'media', None)
-        if last_media is None:
-            media_id = 1
-        else:
-            try:
-                filename = last_media.file.name
-                filename = filename.split('_')[-1]
-                filename = filename.split('.')[0]
-                media_id = int(filename) + 1
-            except (IndexError, ValueError):
-                media_id = last_media.pk + 1
-        return 'partnership_agreement_{}_{}.{}'.format(self.partnership.pk, media_id, extension)
+        return 'partnership_agreement_{}_{}.{}'.format(self.partnership.pk, self.partnership.partner.pk, extension)
 
     def form_invalid(self, form, form_media):
         messages.error(self.request, _('partnership_agreement_error'))
