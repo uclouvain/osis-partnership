@@ -202,7 +202,7 @@ class Partner(models.Model):
     is_nonprofit = models.NullBooleanField(_('is_nonprofit'), blank=True)
     is_public = models.NullBooleanField(_('is_public'), blank=True)
     contact_type = models.CharField(
-        _('contact_type'),
+        _('partner_contact_type'),
         max_length=255,
         help_text=_('mandatory_if_not_pic_ies'),
         choices=CONTACT_TYPE_CHOICES,

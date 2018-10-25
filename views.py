@@ -152,7 +152,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             ugettext('phone'),
             ugettext('website'),
             ugettext('email'),
-            ugettext('contact_type'),
+            ugettext('partner_contact_type'),
             ugettext('comment'),
             ugettext('tags'),
         ]

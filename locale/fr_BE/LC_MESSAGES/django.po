@@ -369,8 +369,8 @@ msgstr "Organisation à but non lucratif ?"
 msgid "is_public"
 msgstr "Organisme public ?"
 
-msgid "contact_type"
-msgstr "Type de contact"
+msgid "partner_contact_type"
+msgstr "Type d’organisme"
 
 msgid "use_egracons"
 msgstr "Utilise le système de conversion de note Égracons ?"
@@ -544,6 +544,9 @@ msgstr "Monsieur"
 
 msgid "madame"
 msgstr "Madame"
+
+msgid "contact_type"
+msgstr "Type de contact"
 
 msgid "society"
 msgstr "Société"
