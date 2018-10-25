@@ -99,6 +99,9 @@ class PartnerForm(forms.ModelForm):
             del self.fields['is_valid']
             del self.fields['partner_code']
         self.fields['is_ies'].initial = None
+        self.fields['is_ies'].required = True
+        self.fields['is_nonprofit'].required = True
+        self.fields['is_public'].required = True
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
