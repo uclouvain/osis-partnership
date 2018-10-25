@@ -513,7 +513,7 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
         media = form.save(commit=False)
         if media.pk is None:
             media.author = self.request.user
-        if media.file:
+        if media.file and not hasattr(form.cleaned_data['file'], 'path'):
             media.file.name = self.get_filename(media.file.name)
         media.save()
         form.save_m2m()
@@ -1260,7 +1260,7 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     @transaction.atomic
     def form_valid(self, form, form_media):
         media = form_media.save(commit=False)
-        if media.file:
+        if media.file and not hasattr(form_media.cleaned_data['file'], 'path'):
             media.file.name = self.get_filename(media.file.name)
         media.save()
         form_media.save_m2m()
