@@ -328,7 +328,7 @@ class PartnerFormMixin(object):
         """ Return True if the conditional mandatory form are ok """
         if not form_address.is_valid():
             return False
-        if form.cleaned_data['pic_code'] or form.cleaned_data['is_ies']:
+        if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
             return True
         cleaned_data = form_address.cleaned_data
         if not cleaned_data['name']:
