@@ -430,7 +430,8 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         # We need to set the partner
         #  because the one on the entity is not saved yet
         entity.partner = self.partner
-        entity.author = self.request.user
+        if entity.pk is None:
+            entity.author = self.request.user
         entity.address.save()
         entity.address_id = entity.address.id
         entity.contact_in.save()
