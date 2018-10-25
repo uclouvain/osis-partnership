@@ -668,7 +668,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('education_level', None):
             queryset = queryset.filter(years__education_levels=data['education_level'])
         if data.get('years_entity', None):
-            queryset = queryset.filter(Q(years__entity=data['years_entity']) | Q(years__entity__isnull=True))
+            queryset = queryset.filter(Q(years__entities=data['years_entity']) | Q(years__entities__isnull=True))
         if data.get('university_offer', None):
             queryset = queryset.filter(Q(years__offers=data['university_offer']) | Q(years__offers__isnull=True))
         if data.get('partner', None):
