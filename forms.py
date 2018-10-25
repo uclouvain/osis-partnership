@@ -485,7 +485,7 @@ class PartnershipFilterForm(forms.Form):
             attrs={
                 'data-width': '100%',
                 'class': 'resetting',
-                'data-reset': '#id_ucl_university_labo',
+                'data-reset': '#id_ucl_university_labo,#id_years_entity,#id_university_offer',
             },
         ),
     )
@@ -507,7 +507,13 @@ class PartnershipFilterForm(forms.Form):
     education_level = forms.ModelChoiceField(
         label=_('education_level_filter'),
         queryset=PartnershipYearEducationLevel.objects.filter(partnerships_years__isnull=False).distinct(),
-        widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
+        widget=autocomplete.ModelSelect2(
+            attrs={
+                'data-width': '100%',
+                'class': 'resetting',
+                'data-reset': '#id_university_offer',
+            }
+        ),
         required=False,
     )
 
@@ -520,6 +526,8 @@ class PartnershipFilterForm(forms.Form):
             forward=['ucl_university'],
             attrs={
                 'data-width': '100%',
+                'class': 'resetting',
+                'data-reset': '#id_university_offer',
             },
         ),
     )
