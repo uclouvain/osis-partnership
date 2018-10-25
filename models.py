@@ -361,7 +361,7 @@ class Partnership(models.Model):
     class Meta:
         ordering = ('-created',)
         permissions = (
-            ('can_access_partners', _('can_access_partnerships')),
+            ('can_access_partnerships', _('can_access_partnerships')),
         )
 
     def __str__(self):
@@ -992,6 +992,7 @@ class Financing(models.Model):
     academic_year = models.ForeignKey('base.AcademicYear', verbose_name=_('academic_year'))
 
     class Meta:
+        unique_together = (('name', 'academic_year'),)
         ordering = ('academic_year__year',)
 
     def __str__(self):
