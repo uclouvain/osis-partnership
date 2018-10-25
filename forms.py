@@ -80,9 +80,9 @@ class PartnerForm(forms.ModelForm):
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
             'erasmus_code': forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
-            'is_ies': forms.CheckboxInput(),
-            'is_nonprofit': forms.CheckboxInput(),
-            'is_public': forms.CheckboxInput(),
+            'is_ies': CustomNullBooleanSelect(),
+            'is_nonprofit': CustomNullBooleanSelect(),
+            'is_public': CustomNullBooleanSelect(),
             'use_egracons': forms.CheckboxInput(),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
@@ -98,6 +98,7 @@ class PartnerForm(forms.ModelForm):
         if not user_is_adri(user):
             del self.fields['is_valid']
             del self.fields['partner_code']
+        self.fields['is_ies'].initial = None
         if self.instance.pk is not None:
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')

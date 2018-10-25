@@ -273,8 +273,8 @@ class PartnerFormMixin(object):
             kwargs['instance'] = self.object.contact_address
         form = AddressForm(**kwargs)
         form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['city'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['country'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['city'].required = True
+        form.fields['country'].required = True
         return form
 
     def get_context_data(self, **kwargs):
