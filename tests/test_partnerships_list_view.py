@@ -68,6 +68,7 @@ class PartnershipsListViewTest(TestCase):
         partnership_year = PartnershipYearFactory(academic_year__year=2120)
         partnership_year.education_fields.add(cls.education_field)
         cls.partnership_education_field = PartnershipFactory(years=[partnership_year])
+        partnership_year.offers.add(EducationGroupYearFactory())
         # education_level
         cls.education_level = PartnershipYearEducationLevelFactory()
         partnership_year = PartnershipYearFactory(academic_year__year=2120)
@@ -213,11 +214,10 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_university_offers(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?university_offers=' + str(self.university_offer.pk))
+        response = self.client.get(self.url + '?university_offer=' + str(self.university_offer.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_university_offer)
+        self.assertEqual(context['paginator'].count, 41)  # Include partnerships with offers at None
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
