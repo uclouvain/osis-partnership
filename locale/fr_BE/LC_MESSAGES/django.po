@@ -913,6 +913,9 @@ msgstr "Le partenaire est en cours de validation"
 msgid "inactive_partner"
 msgstr "Le partenaire est inactif"
 
+msgid "partnership_supervisor_from_entity_management"
+msgstr "Idem répondant mobilité facultaire"
+
 msgid "validated_agreements"
 msgstr "Accords validés"
 

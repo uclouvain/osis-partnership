@@ -548,6 +548,12 @@ class Partnership(models.Model):
             entity=self.ucl_university_labo,
         ).first()
 
+    @cached_property
+    def administrative_responsible(self):
+        if self.ucl_management_entity is not None:
+            return self.ucl_management_entity.administrative_responsible
+        return None
+
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
@@ -866,7 +872,7 @@ class UCLManagementEntity(models.Model):
     )
     academic_responsible = models.ForeignKey(
         'base.Person',
-        related_name='+',
+        related_name='management_entities',
         verbose_name=_("academic_responsible"),
     )
     administrative_responsible = models.ForeignKey(

@@ -696,7 +696,29 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if data.get('partnership_type', None):
             queryset = queryset.filter(years__partnership_type=data['partnership_type'])
         if data.get('supervisor', None):
-            queryset = queryset.filter(supervisor=data['supervisor'])
+            queryset = (
+                queryset
+                .annotate(has_supervisor_with_entity=Exists(UCLManagementEntity.objects
+                    .filter(
+                        entity__isnull=False,
+                        entity=OuterRef('ucl_university_labo'),
+                        faculty=OuterRef('ucl_university'),
+                        academic_responsible=data['supervisor'],
+                    )
+                ), has_supervisor_without_entity=Exists(UCLManagementEntity.objects
+                    .filter(
+                        entity__isnull=True,
+                        faculty=OuterRef('ucl_university'),
+                        academic_responsible=data['supervisor'],
+                    )
+                ))
+                .filter(Q(supervisor=data['supervisor'])
+                        | Q(supervisor__isnull=True,
+                            has_supervisor_with_entity=True)
+                        | Q(supervisor__isnull=True,
+                            ucl_university_labo__isnull=True,
+                            has_supervisor_without_entity=True))
+            )
         if data.get('education_field', None):
             queryset = queryset.filter(years__education_fields=data['education_field'])
         if data.get('education_level', None):
