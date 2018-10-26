@@ -1404,6 +1404,9 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
             )
         return qs.distinct()
 
+    def get_result_label(self, person):
+        return '{0} - {1}'.format(person, person.email)
+
 
 class EntityAutocompleteView(autocomplete.Select2QuerySetView):
 

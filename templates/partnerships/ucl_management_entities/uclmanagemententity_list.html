@@ -50,18 +50,18 @@
                 <tr>
                   <td>{{ ucl_management_entity.faculty_most_recent_acronym|default_if_none:"" }}</td>
                   <td>{{ ucl_management_entity.entity_most_recent_acronym|default_if_none:"" }}</td>
-                  <td>{{ ucl_management_entity.academic_responsible|default_if_none:"" }}</td>
-                  <td>{{ ucl_management_entity.administrative_responsible|default_if_none:"" }}</td>
+                  <td>{{ ucl_management_entity.academic_responsible|default_if_none:"" }}{% if ucl_management_entity.academic_responsible.email %} - {{ ucl_management_entity.academic_responsible.email }}{% endif %}</td>
+                  <td>{{ ucl_management_entity.administrative_responsible|default_if_none:"" }}{% if ucl_management_entity.administrative_responsible.email  %} - {{ ucl_management_entity.administrative_responsible.email }}{% endif %}</td>
                   <td>
                     <ul class="list-unstyled">
-                      {% if ucl_management_entity.contact_in_person %}<li>{{ ucl_management_entity.contact_in_person|default_if_none:"" }}</li>{% endif %}
+                      {% if ucl_management_entity.contact_in_person %}<li>{{ ucl_management_entity.contact_in_person }}{% if ucl_management_entity.contact_in_person %} - {{ ucl_management_entity.contact_in_person.email }}{% endif %}</li>{% endif %}
                       {% if ucl_management_entity.contact_in_email %}<li><a href="mailto:{{ ucl_management_entity.contact_in_email }}">{{ ucl_management_entity.contact_in_email }}</a></li>{% endif %}
                       {% if ucl_management_entity.contact_in_url %}<li><a href="{{ ucl_management_entity.contact_in_url }}" target="_blank">{{ ucl_management_entity.contact_in_url }}</a></li>{% endif %}
                     </ul>
                   </td>
                   <td>
                     <ul class="list-unstyled">
-                      {% if ucl_management_entity.contact_out_person %}<li>{{ ucl_management_entity.contact_out_person|default_if_none:"" }}</li>{% endif %}
+                      {% if ucl_management_entity.contact_out_person %}<li>{{ ucl_management_entity.contact_out_person }}{% if ucl_management_entity.contact_out_person.email %} - {{ ucl_management_entity.contact_out_person.email }}{% endif %}</li>{% endif %}
                       {% if ucl_management_entity.contact_out_email %}<li><a href="mailto:{{ ucl_management_entity.contact_out_email }}">{{ ucl_management_entity.contact_out_email }}</a></li>{% endif %}
                       {% if ucl_management_entity.contact_out_url %}<li><a href="{{ ucl_management_entity.contact_out_url }}" target="_blank">{{ ucl_management_entity.contact_out_url }}</a></li>{% endif %}
                     </ul>
