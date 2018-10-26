@@ -428,7 +428,7 @@ msgid "partnership_year_education_fields"
 msgstr "Domaines d'études"
 
 msgid "partnership_year_education_levels"
-msgstr "Niveaux d’études UCL concernés"
+msgstr "Niveaux d’études UCLouvain concernés"
 
 msgid "partnership_year_entities"
 msgstr "Entités concernées"
@@ -677,7 +677,7 @@ msgid "partner_entity_inside_partner"
 msgstr "Entité au sein de l'université/l'organisme partenaire"
 
 msgid "ucl_entity_partner"
-msgstr "Entité UCL partenaire"
+msgstr "Entité UCLouvain partenaire"
 
 msgid "partnership_subject"
 msgstr "Objet du partenariat"
@@ -692,7 +692,7 @@ msgid "current_academic_year"
 msgstr "Année académique en cours"
 
 msgid "ucl"
-msgstr "UCL"
+msgstr "UCLouvain"
 
 msgid "validity_end"
 msgstr "Fin de validité"
@@ -929,7 +929,7 @@ msgid "education_fields"
 msgstr "Domaines d'étude"
 
 msgid "education_levels"
-msgstr "Niveaux d’études UCL concernés"
+msgstr "Niveaux d’études UCLouvain concernés"
 
 msgid "all_entities"
 msgstr "Toutes les entités"
@@ -953,13 +953,13 @@ msgid "no_partnership_contact_yet"
 msgstr "Il n'y a pas encore de contact."
 
 msgid "ucl_management_entity_contacts"
-msgstr "Contacts de l'entité de gestion UCL"
+msgstr "Contacts de l'entité de gestion UCLouvain"
 
 msgid "change_configuration"
 msgstr "Modifier la configuration"
 
 msgid "ucl_management_entities"
-msgstr "Entités de gestion UCL"
+msgstr "Entités de gestion UCLouvain"
 
 msgid "add_partnership"
 msgstr "Ajouter un partenariat"
@@ -972,19 +972,19 @@ msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
 
 msgid "create_ucl_management_entity"
-msgstr "Créer une entité de gestion UCL"
+msgstr "Créer une entité de gestion UCLouvain"
 
 msgid "ucl_management_entities_list"
-msgstr "Liste des entités de gestion UCL"
+msgstr "Liste des entités de gestion UCLouvain"
 
 msgid "delete_ucl_management_entity"
-msgstr "Supprimer l'entité de gestion UCL"
+msgstr "Supprimer l'entité de gestion UCLouvain"
 
 msgid "ucl_management_entities_empty"
-msgstr "Il n'y a pas encore d'entités de gestion UCL"
+msgstr "Il n'y a pas encore d'entités de gestion UCLouvain"
 
 msgid "update_ucl_management_entity"
-msgstr "Mettre à jour l'entité de gestion UCL"
+msgstr "Mettre à jour l'entité de gestion UCLouvain"
 
 msgid "id"
 msgstr "ID"
@@ -1050,10 +1050,10 @@ msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
 
 msgid "ucl_management_entity_create_success"
-msgstr "Entité de gestion UCL créée."
+msgstr "Entité de gestion UCLouvain créée."
 
 msgid "ucl_management_entity_change_success"
-msgstr "Entités de gestion UCL éditée."
+msgstr "Entités de gestion UCLouvain éditée."
 
 #~ msgid "update"
 #~ msgstr "Mettre à jour"

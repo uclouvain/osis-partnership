@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.6\n"
 
 msgid "Yes"
 msgstr "Yes"
@@ -129,7 +129,7 @@ msgid "file_or_url_required"
 msgstr "File or URL required"
 
 msgid "ucl_university"
-msgstr "UCL university"
+msgstr "UCLouvain university"
 
 msgid "ucl_university_labo"
 msgstr "School / Laboratory"
@@ -193,10 +193,8 @@ msgstr ""
 msgid "partnership_not_valid_in"
 msgstr ""
 
-#, fuzzy
-#| msgid "create_ucl_management_entity"
 msgid "same_supervisor_than_management_entity"
-msgstr "Create UCL management entities"
+msgstr "Create UCLouvain management entities"
 
 msgid "partnership_inactif_partner_error"
 msgstr ""
@@ -536,10 +534,8 @@ msgstr "Portal"
 msgid "contact_out_name"
 msgstr "Out mobility contact name"
 
-#, fuzzy
-#| msgid "update_ucl_management_entity"
 msgid "duplicate_ucl_management_entity_error_with_faculty"
-msgstr "Update UCL management entity"
+msgstr "Update UCLouvain management entity"
 
 msgid "countries"
 msgstr "Countries"
@@ -915,13 +911,13 @@ msgid "no_partnership_contact_yet"
 msgstr "No partnership contact yet"
 
 msgid "ucl_management_entity_contacts"
-msgstr "UCL management entity contacts"
+msgstr "UCLouvain management entity contacts"
 
 msgid "change_configuration"
 msgstr "Change configuration"
 
 msgid "ucl_management_entities"
-msgstr "UCL management entities"
+msgstr "UCLouvain management entities"
 
 msgid "add_partnership"
 msgstr "Add partnership"
@@ -934,21 +930,32 @@ msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "Are you sure you want to delete \"%(object)s\"?"
 
 msgid "create_ucl_management_entity"
-msgstr "Create UCL management entities"
+msgstr "Create UCLouvain management entities"
 
 msgid "ucl_management_entities_list"
-msgstr "List of UCL management entities"
+msgstr "List of UCLouvain management entities"
 
 msgid "delete_ucl_management_entity"
-msgstr "Delete UCL management entity"
+msgstr "Delete UCLouvain management entity"
 
-#, fuzzy
-#| msgid "ucl_management_entities"
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Are you sure you want to delete \"%(object)s\"?"
+
+msgid "update"
+msgstr "Update"
+
+msgid "delete"
+msgstr "Delete"
+
+msgid "ucl_management_entity"
+msgstr "UCLouvain management entity"
+
 msgid "ucl_management_entities_empty"
-msgstr "UCL management entities"
+msgstr "UCLouvain management entities"
 
 msgid "update_ucl_management_entity"
-msgstr "Update UCL management entity"
+msgstr "Update UCLouvain management entity"
 
 msgid "id"
 msgstr "ID"
@@ -1016,10 +1023,10 @@ msgid "configuration_saved"
 msgstr "Configuration saved"
 
 msgid "ucl_management_entity_create_success"
-msgstr "UCL management entity successfully created."
+msgstr "UCLouvain management entity successfully created."
 
 msgid "ucl_management_entity_change_success"
-msgstr "UCL management entity successfully changed."
+msgstr "UCLouvain management entity successfully changed."
 
 #~ msgid "update"
 #~ msgstr "Update"
