@@ -664,7 +664,8 @@ class PartnershipYear(models.Model):
     def is_valid(self):
         ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
-            if self.academic_year.start_date.year >= range['start'] and self.academic_year.end_date.year <= range['end']:
+            if (self.academic_year.start_date.year >= range['start']
+                    and self.academic_year.end_date.year <= range['end'] + 1):
                 return True
         return False
 
