@@ -388,15 +388,23 @@ class Partnership(models.Model):
         return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
 
     @cached_property
+    def start_partnership_year(self):
+        return self.years.order_by('academic_year__year').first()
+
+    @cached_property
+    def end_partnership_year(self):
+        return self.years.order_by('academic_year__year').last()
+
+    @cached_property
     def start_academic_year(self):
-        partnership_year = self.years.order_by('academic_year__year').first()
+        partnership_year = self.start_partnership_year
         if partnership_year is None:
             return None
         return partnership_year.academic_year
 
     @cached_property
     def end_academic_year(self):
-        partnership_year = self.years.order_by('academic_year__year').last()
+        partnership_year = self.end_partnership_year
         if partnership_year is None:
             return None
         return partnership_year.academic_year

@@ -17,6 +17,7 @@ from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipYearEducationLevelFactory,
                                          PartnershipYearFactory,
                                          UCLManagementEntityFactory)
+from partnership.models import Partnership
 
 
 class PartnershipUpdateViewTest(TestCase):
@@ -82,7 +83,6 @@ class PartnershipUpdateViewTest(TestCase):
             'supervisor': '',
             'ucl_university': cls.ucl_university.pk,
             'ucl_university_labo': cls.ucl_university_labo.pk,
-            'university_offers': [cls.university_offer.pk],
             'year-is_sms': True,
             'year-is_smp': False,
             'year-is_sta': True,
@@ -127,6 +127,55 @@ class PartnershipUpdateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        partnership = Partnership.objects.get(pk=self.partnership.pk)
+        self.assertEqual(
+            partnership.comment,
+            data['comment'],
+        )
+        self.assertEqual(
+            str(partnership.partner.pk),
+            str(data['partner']),
+        )
+        self.assertEqual(
+            str(partnership.partner_entity.pk),
+            str(data['partner_entity']),
+        )
+        self.assertEqual(
+            str(partnership.supervisor.pk if partnership.supervisor is not None else None),
+            str(data['supervisor'] if data['supervisor'] is not '' else None),
+        )
+        self.assertEqual(
+            str(partnership.ucl_university.pk),
+            str(data['ucl_university']),
+        )
+        self.assertEqual(
+            str(partnership.ucl_university_labo.pk),
+            str(data['ucl_university_labo']),
+        )
+        self.assertEqual(
+            [pk for pk in partnership.end_partnership_year.education_fields.values_list('pk', flat=True)],
+            data['year-education_fields'],
+        )
+        self.assertEqual(
+            [pk for pk in partnership.end_partnership_year.education_levels.values_list('pk', flat=True)],
+            data['year-education_levels'],
+        )
+        self.assertEqual(
+            list(partnership.end_partnership_year.entities.values_list('pk', flat=True)),
+            data['year-entities'],
+        )
+        self.assertEqual(
+            list(partnership.end_partnership_year.offers.values_list('pk', flat=True)),
+            data['year-offers'],
+        )
+        self.assertEqual(
+            str(partnership.start_academic_year.pk),
+            str(data['year-start_academic_year']),
+        )
+        self.assertEqual(
+            str(partnership.end_academic_year.pk),
+            str(data['year-end_academic_year']),
+        )
 
     def test_post_empty(self):
         self.client.force_login(self.user_adri)

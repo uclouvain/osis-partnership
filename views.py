@@ -1096,26 +1096,31 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         partnership = form.save()
 
         start_academic_year = form_year.cleaned_data.get('start_academic_year', None)
-        from_year = form_year.cleaned_data['from_academic_year'].year
-        end_year = form_year.cleaned_data['end_academic_year'].year
+        from_year = form_year.cleaned_data.get('from_academic_year', None)
+        end_year = form_year.cleaned_data.get('end_academic_year', None).year
+        if from_year is None:
+            from_year = start_academic_year.year
+        else:
+            from_year = from_year.year
 
         # Create missing start year if needed
         if start_academic_year is not None:
             start_year = start_academic_year.year
             first_year = partnership.years.order_by('academic_year__year').select_related('academic_year').first()
-            first_year_education_fields = first_year.education_fields.all()
-            first_year_education_levels = first_year.education_levels.all()
-            first_year_entities = first_year.entities.all()
-            first_year_offers = first_year.offers.all()
-            academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
-            for academic_year in academic_years:
-                first_year.id = None
-                first_year.academic_year = academic_year
-                first_year.save()
-                first_year.education_fields = first_year_education_fields
-                first_year.education_levels = first_year_education_levels
-                first_year.entities = first_year_entities
-                first_year.offers = first_year_offers
+            if first_year is not None:
+                first_year_education_fields = first_year.education_fields.all()
+                first_year_education_levels = first_year.education_levels.all()
+                first_year_entities = first_year.entities.all()
+                first_year_offers = first_year.offers.all()
+                academic_years = find_academic_years(start_year=start_year, end_year=first_year.academic_year.year - 1)
+                for academic_year in academic_years:
+                    first_year.id = None
+                    first_year.academic_year = academic_year
+                    first_year.save()
+                    first_year.education_fields = first_year_education_fields
+                    first_year.education_levels = first_year_education_levels
+                    first_year.entities = first_year_entities
+                    first_year.offers = first_year_offers
 
         # Update years
         academic_years = find_academic_years(start_year=from_year, end_year=end_year)
@@ -1127,6 +1132,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                 ).pk
             except PartnershipYear.DoesNotExist:
                 partnership_year.pk = None
+                partnership_year.partnership = partnership
             partnership_year.academic_year = academic_year
             partnership_year.save()
             form_year.save_m2m()
@@ -1139,9 +1145,6 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
-
-    def post(self, request, *args, **kwargs):
-        return super(PartnershipUpdateView, self).post(request, *args, **kwargs)
 
 
 class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
