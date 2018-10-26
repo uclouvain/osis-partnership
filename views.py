@@ -295,7 +295,7 @@ class PartnerFormMixin(object):
         messages.success(self.request, _('partner_saved'))
         if not user_is_adri(self.request.user):
             send_mail(
-                _('partner_created'),
+                'OSIS-Partenariats : {}'.format(_('partner_created')),
                 render_to_string(
                     'partnerships/mails/plain_partner_creation.html',
                     context={
@@ -305,7 +305,7 @@ class PartnerFormMixin(object):
                     request=self.request,
                 ),
                 settings.DEFAULT_FROM_EMAIL,
-                get_adri_emails(),
+                [PartnershipConfiguration.get_configuration().email_notification_to],
                 html_message=render_to_string(
                     'partnerships/mails/partner_creation.html',
                     context={
@@ -1051,7 +1051,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         messages.success(self.request, _('partnership_success'))
         if not user_is_adri(self.request.user):
             send_mail(
-                _('partnership_created'),
+                'OSIS-Partenariats : {}'.format(_('partnership_created')),
                 render_to_string(
                     'partnerships/mails/plain_partnership_creation.html',
                     context={
@@ -1061,7 +1061,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                     request=self.request,
                 ),
                 settings.DEFAULT_FROM_EMAIL,
-                get_adri_emails(),
+                [PartnershipConfiguration.get_configuration().email_notification_to],
                 html_message=render_to_string(
                     'partnerships/mails/partnership_creation.html',
                     context={

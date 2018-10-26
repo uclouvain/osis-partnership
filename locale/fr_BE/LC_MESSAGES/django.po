@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 10:09+0200\n"
-"PO-Revision-Date: 2018-10-11 15:39+0200\n"
+"PO-Revision-Date: 2018-10-22 15:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -509,6 +509,9 @@ msgstr "Jour maximum pour la création ou la modification"
 msgid "partnership_creation_update_max_date_month"
 msgstr "Mois maximum pour la création ou la modification"
 
+msgid "partnership_email_notification_to"
+msgstr "Email destinataire des notifications de créations"
+
 msgid "faculty"
 msgstr "Faculté"
 
@@ -730,8 +733,8 @@ msgid ""
 msgstr ""
 "Bonjour,\n"
 "\n"
-"Le partenariat <a href=\"%(url)s\">%(partnership)s</a> vient d'être créé "
-"par %(person)s (%(username)s).\n"
+"Le partenariat <a href=\"%(url)s\">%(partnership)s</a> vient d'être créé par "
+"%(person)s (%(username)s).\n"
 "\n"
 "Cordialement,\n"
 "\n"
@@ -752,10 +755,9 @@ msgid ""
 "\n"
 "Osis team"
 msgstr ""
-"Hello,\n"
+"Bonjour,\n"
 "\n"
-"Le partenaire %(partner)s vient d'être créé par %(person)s "
-"(%(username)s).\n"
+"Le partenaire %(partner)s vient d'être créé par %(person)s (%(username)s).\n"
 "\n"
 "Vous pouvez y accéder à cette URL :\n"
 "\n"
@@ -780,7 +782,7 @@ msgid ""
 "\n"
 "Osis team"
 msgstr ""
-"Hello,\n"
+"Bonjour,\n"
 "\n"
 "Le partenariat %(partnership)s vient d'être créé par %(person)s "
 "(%(username)s).\n"
@@ -962,6 +964,10 @@ msgstr "Ajouter un partenariat"
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
+
 msgid "create_ucl_management_entity"
 msgstr "Créer une entité de gestion UCL"
 
@@ -970,19 +976,6 @@ msgstr "Liste des entités de gestion UCL"
 
 msgid "delete_ucl_management_entity"
 msgstr "Supprimer l'entité de gestion UCL"
-
-#, python-format
-msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
-
-msgid "update"
-msgstr "Mettre à jour"
-
-msgid "delete"
-msgstr "Delete"
-
-msgid "ucl_management_entity"
-msgstr "Entité de gestion UCL"
 
 msgid "ucl_management_entities_empty"
 msgstr "Il n'y a pas encore d'entités de gestion UCL"
@@ -1058,6 +1051,15 @@ msgstr "Entité de gestion UCL créée."
 
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCL éditée."
+
+#~ msgid "update"
+#~ msgstr "Mettre à jour"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "Entité de gestion UCL"
 
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."

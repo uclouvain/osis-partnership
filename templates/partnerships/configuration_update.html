@@ -47,6 +47,12 @@
           </div>
         </div>
 
+      <div class="row">
+        <div class="col-sm-12">
+          {% bootstrap_field form.email_notification_to %}
+        </div>
+      </div>
+
         <div class="row">
           <div class="col-sm-6">
             <a href="{% url "partnerships:list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>

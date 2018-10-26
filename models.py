@@ -824,6 +824,11 @@ class PartnershipConfiguration(models.Model):
         default=12,
     )
 
+    email_notification_to = models.EmailField(
+        _('partnership_email_notification_to'),
+        default='programmes.mobilite@uclouvain.be',
+    )
+
     @staticmethod
     def get_configuration():
         try:
