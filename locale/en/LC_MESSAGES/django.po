@@ -1027,3 +1027,7 @@ msgstr "UCL management entity successfully changed."
 
 #~ msgid "UCL"
 #~ msgstr "UCL"
+
+# Menu translations :
+msgid "general_configuration"
+msgstr "General configuration"
