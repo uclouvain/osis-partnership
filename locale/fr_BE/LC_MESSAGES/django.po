@@ -128,17 +128,26 @@ msgstr "Veuillez uniquement mettre un fichier ou une URL."
 msgid "file_or_url_required"
 msgstr "Un fichier ou une URL est requis."
 
+msgid "faculty_filter"
+msgstr "Faculté responsable"
+
 msgid "ucl_university"
 msgstr "Faculté"
 
-msgid "ucl_university_labo"
-msgstr "Entité"
+msgid "faculty_entity_filter"
+msgstr "Entité responsable"
 
 msgid "ucl_university_labo_filter"
 msgstr "Entité"
 
-msgid "university_offers"
-msgstr "Offres"
+msgid "education_level_filter"
+msgstr "Niveaux d’études UCLouvain concernés"
+
+msgid "entity_filter"
+msgstr "Entité concernée"
+
+msgid "university_offers_filter"
+msgstr "Offre concernée"
 
 msgid "partner"
 msgstr "Partenaire"
@@ -151,9 +160,6 @@ msgstr "Tags"
 
 msgid "education_field"
 msgstr "Domaine d'étude"
-
-msgid "education_level"
-msgstr "Niveau d'étude"
 
 msgid "is_sms"
 msgstr "Student mobility for study (SMS)"
@@ -380,6 +386,9 @@ msgstr "Médias"
 
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
+
+msgid "ucl_university_labo"
+msgstr "Entité"
 
 msgid "contacts"
 msgstr "Contacts"
@@ -1054,15 +1063,6 @@ msgstr "Entité de gestion UCLouvain créée."
 
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
-
-#~ msgid "update"
-#~ msgstr "Mettre à jour"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "Entité de gestion UCL"
 
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."

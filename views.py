@@ -665,8 +665,12 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = queryset.filter(ucl_university=data['ucl_university'])
         if data.get('ucl_university_labo', None):
             queryset = queryset.filter(ucl_university_labo=data['ucl_university_labo'])
-        if data.get('university_offers', None):
-            queryset = queryset.filter(years__offers__in=data['university_offers'])
+        if data.get('education_level', None):
+            queryset = queryset.filter(years__education_levels=data['education_level'])
+        if data.get('years_entity', None):
+            queryset = queryset.filter(Q(years__entities=data['years_entity']) | Q(years__entities__isnull=True))
+        if data.get('university_offer', None):
+            queryset = queryset.filter(Q(years__offers=data['university_offer']) | Q(years__offers__isnull=True))
         if data.get('partner', None):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
@@ -721,8 +725,6 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             )
         if data.get('education_field', None):
             queryset = queryset.filter(years__education_fields=data['education_field'])
-        if data.get('education_level', None):
-            queryset = queryset.filter(years__education_levels=data['education_level'])
         if data.get('tags', None):
             queryset = queryset.filter(tags__in=data['tags'])
         if data.get('partnership_in', None):
@@ -1696,19 +1698,28 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
         return qs.distinct()
 
 
+class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
+
+    def get_queryset(self):
+        qs = super(YearsEntityAutocompleteFilterView, self).get_queryset()
+        qs = qs.filter(partnerships_years__isnull=False)
+        return qs
+
+
 class UniversityOffersAutocompleteFilterView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         qs = EducationGroupYear.objects.all().select_related('academic_year')
-        ucl_university_labo = self.forwarded.get('ucl_university_labo', None)
-        if ucl_university_labo:
-            qs = qs.filter(partnerships__partnership__ucl_university_labo=ucl_university_labo)
+        ucl_university = self.forwarded.get('ucl_university', None)
+        education_level = self.forwarded.get('education_level', None)
+        entity = self.forwarded.get('years_entity', None)
+        if not ucl_university or not education_level:
+            return EducationGroupYear.objects.none()
+        if entity:
+            qs = qs.filter(partnerships__entities=entity)
         else:
-            ucl_university = self.forwarded.get('ucl_university', None)
-            if ucl_university:
-                qs = qs.filter(partnerships__partnership__ucl_university=ucl_university)
-            else:
-                return EducationGroupYear.objects.none()
+            qs = qs.filter(partnerships__partnership__ucl_university=ucl_university)
+        qs = qs.filter(education_group_type__partnership_education_levels=education_level)
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs.distinct()

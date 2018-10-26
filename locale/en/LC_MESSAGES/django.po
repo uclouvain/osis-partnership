@@ -128,17 +128,26 @@ msgstr "File or URL only"
 msgid "file_or_url_required"
 msgstr "File or URL required"
 
+msgid "faculty_filter"
+msgstr "Faculty"
+
 msgid "ucl_university"
 msgstr "UCLouvain university"
 
-msgid "ucl_university_labo"
-msgstr "School / Laboratory"
+msgid "faculty_entity_filter"
+msgstr "Entity"
 
 msgid "ucl_university_labo_filter"
 msgstr "School / Laboratory"
 
-msgid "university_offers"
-msgstr "University offers"
+msgid "education_level_filter"
+msgstr "Education level"
+
+msgid "entity_filter"
+msgstr "Entity"
+
+msgid "university_offers_filter"
+msgstr "University offer"
 
 msgid "partner"
 msgstr "Partner"
@@ -151,9 +160,6 @@ msgstr "Partner tags"
 
 msgid "education_field"
 msgstr "Education field"
-
-msgid "education_level"
-msgstr "Education level"
 
 msgid "is_sms"
 msgstr "Is SMS"
@@ -375,6 +381,9 @@ msgstr "Medias"
 
 msgid "can_access_partners"
 msgstr "Can access partners"
+
+msgid "ucl_university_labo"
+msgstr "School / Laboratory"
 
 msgid "contacts"
 msgstr "Contacts"
@@ -938,19 +947,6 @@ msgstr "List of UCLouvain management entities"
 msgid "delete_ucl_management_entity"
 msgstr "Delete UCLouvain management entity"
 
-#, python-format
-msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Are you sure you want to delete \"%(object)s\"?"
-
-msgid "update"
-msgstr "Update"
-
-msgid "delete"
-msgstr "Delete"
-
-msgid "ucl_management_entity"
-msgstr "UCLouvain management entity"
-
 msgid "ucl_management_entities_empty"
 msgstr "UCLouvain management entities"
 
@@ -1027,15 +1023,6 @@ msgstr "UCLouvain management entity successfully created."
 
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
-
-#~ msgid "update"
-#~ msgstr "Update"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "UCL management entity"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"
