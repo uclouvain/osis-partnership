@@ -1327,9 +1327,10 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
         )
         if not user_is_adri(self.request.user):
             queryset = queryset.filter(
-                faculty__entitymanager__person__user=self.request.user
+                Q(faculty__entitymanager__person__user=self.request.user)
+                | Q(faculty__entityversion__parent__entitymanager__person__user=self.request.user)
             )
-        return queryset
+        return queryset.distinct()
 
 
 class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -1486,7 +1487,10 @@ class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
                 .filter(entityversion__entity_type=FACULTY)
         )
         if not user_is_adri(self.request.user):
-            qs = qs.filter(entitymanager__person__user=self.request.user)
+            qs = qs.filter(
+                Q(entitymanager__person__user=self.request.user)
+                | Q(entityversion__parent__entitymanager__person__user=self.request.user)
+            )
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
         qs = qs.order_by('most_recent_acronym')

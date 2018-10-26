@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_manager import EntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -17,12 +17,15 @@ class UCLManagementEntityUpdateViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        sector = EntityFactory()
         faculty = EntityFactory()
+        EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
         EntityVersionFactory(entity_type="FACULTY", entity=faculty)
         EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
+        cls.other_ucl_management_entity = UCLManagementEntityFactory(faculty=other_faculty)
         cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=other_faculty, entity=None)
         PartnershipFactory(ucl_university=other_faculty, ucl_university_labo=None)
 
@@ -31,6 +34,8 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
+        cls.gs_user = UserFactory()
+        EntityManagerFactory(person__user=cls.gs_user, entity=sector)
         cls.gf_user = UserFactory()
         entity_manager = EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
@@ -39,6 +44,10 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         cls.url = reverse(
             "partnerships:ucl_management_entities:update",
             kwargs={'pk': cls.ucl_management_entity.pk},
+        )
+        cls.other_url = reverse(
+            "partnerships:ucl_management_entities:update",
+            kwargs={'pk': cls.other_ucl_management_entity.pk},
         )
         cls.linked_url = reverse(
             "partnerships:ucl_management_entities:update",
@@ -80,6 +89,11 @@ class UCLManagementEntityUpdateViewTest(TestCase):
 
     def test_get_view_gf_user(self):
         self.client.force_login(self.gf_user)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
+
+    def test_get_view_gs_user(self):
+        self.client.force_login(self.gs_user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
 
@@ -159,9 +173,69 @@ class UCLManagementEntityUpdateViewTest(TestCase):
             data['contact_out_url']
         )
 
+    def test_post_view_gs_user(self):
+        self.client.force_login(self.gs_user)
+        data = self.data.copy()
+        data['academic_responsible'] = self.ucl_management_entity.academic_responsible.pk
+        data['administrative_responsible'] = self.ucl_management_entity.administrative_responsible.pk
+        data['entity'] = self.ucl_management_entity.entity.pk
+        data['faculty'] = self.ucl_management_entity.faculty.pk
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(
+            response,
+            'partnerships/ucl_management_entities/uclmanagemententity_list.html'
+        )
+        ucl_management_entity = UCLManagementEntity.objects.get(pk=self.ucl_management_entity.pk)
+        self.assertEqual(
+            ucl_management_entity.academic_responsible.pk,
+            data['academic_responsible'],
+        )
+        self.assertEqual(
+            ucl_management_entity.administrative_responsible.pk,
+            data['administrative_responsible']
+        )
+        self.assertEqual(
+            ucl_management_entity.entity.pk,
+            data['entity'],
+        )
+        self.assertEqual(
+            ucl_management_entity.faculty.pk,
+            data['faculty'],
+        )
+        self.assertEqual(
+            ucl_management_entity.contact_in_email,
+            data['contact_in_email']
+        )
+        self.assertEqual(
+            str(ucl_management_entity.contact_in_person.pk),
+            data['contact_in_person'],
+        )
+        self.assertEqual(
+            ucl_management_entity.contact_in_url,
+            data['contact_in_url']
+        )
+        self.assertEqual(
+            ucl_management_entity.contact_out_email,
+            data['contact_out_email']
+        )
+        self.assertEqual(
+            str(ucl_management_entity.contact_out_person.pk),
+            data['contact_out_person']
+        )
+        self.assertEqual(
+            ucl_management_entity.contact_out_url,
+            data['contact_out_url']
+        )
+
+
     def test_post_view_other_gf_user(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+
+    def test_post_view_other_gf_as_gs_user(self):
+        self.client.force_login(self.gs_user)
+        response = self.client.post(self.other_url, data=self.data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
 
     def test_post_adri_no_value(self):

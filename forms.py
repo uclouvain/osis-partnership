@@ -3,6 +3,7 @@ from datetime import date
 from dal import autocomplete, forward
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
@@ -759,9 +760,15 @@ class PartnershipForm(forms.ModelForm):
 
                 # Restrict fields for GF
                 self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.filter(
-                    entitymanager__person__user=self.user,
-                    faculty_managements__isnull=False,
+                    Q(entitymanager__person__user=self.user)
+                    | Q(entityversion__parent__entitymanager__person__user=self.user),
                 ).distinct()
+
+                if self.fields['ucl_university'].queryset.count() == 1:
+                    faculty = self.fields['ucl_university'].queryset.first()
+                    if faculty is not None:
+                        self.fields['ucl_university'].initial = faculty.pk
+                    self.fields['ucl_university'].disabled = True
 
                 if self.instance.pk is not None:
                     self.fields['partner'].disabled = True
@@ -769,11 +776,7 @@ class PartnershipForm(forms.ModelForm):
                     self.fields['supervisor'].disabled = True
                     self.fields['comment'].disabled = True
                     self.fields['tags'].disabled = True
-                else:
-                    faculty = self.fields['ucl_university'].queryset.first()
-                    if faculty is not None:
-                        self.fields['ucl_university'].initial = faculty.pk
-                self.fields['ucl_university'].disabled = True
+                    self.fields['ucl_university'].disabled = True
             else:
                 self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         try:
