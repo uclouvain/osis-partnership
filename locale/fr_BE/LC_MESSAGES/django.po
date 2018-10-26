@@ -1221,3 +1221,7 @@ msgstr "Entités de gestion UCLouvain éditée."
 
 #~ msgid "new_entity"
 #~ msgstr "Nouvelle entité"
+
+# Menu translations :
+msgid "general_configuration"
+msgstr "Configuration générale"
