@@ -774,6 +774,9 @@ class PartnershipAgreement(models.Model):
             return True
         return self.status == self.STATUS_WAITING and user_is_gf_of_faculty(user, self.partnership.ucl_university)
 
+    def user_can_delete(self, user):
+        return self.status != self.STATUS_VALIDATED and self.user_can_change(user)
+
     @property
     def is_valid(self):
         return self.status == self.STATUS_VALIDATED
