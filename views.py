@@ -504,11 +504,17 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
             return 'partnerships/includes/media_form.html'
         return self.template_name
 
+    def get_filename(self, filename):
+        extension = filename.split('.')[-1]
+        return 'partner_media_{}.{}'.format(self.partner.pk, extension)
+
     @transaction.atomic
     def form_valid(self, form):
         media = form.save(commit=False)
         if media.pk is None:
             media.author = self.request.user
+        if media.file and not hasattr(form.cleaned_data['file'], 'path'):
+            media.file.name = self.get_filename(media.file.name)
         media.save()
         form.save_m2m()
         self.partner.medias.add(media)
@@ -1198,6 +1204,10 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
         if agreement.end_academic_year.year > self.partnership.end_academic_year.year:
             messages.warning(self.request, _('partnership_agreement_warning_after'))
 
+    def get_filename(self, filename):
+        extension = filename.split('.')[-1]
+        return 'partnership_agreement_{}_{}.{}'.format(self.partnership.pk, self.partnership.partner.pk, extension)
+
     def form_invalid(self, form, form_media):
         messages.error(self.request, _('partnership_agreement_error'))
         return self.render_to_response(self.get_context_data(form=form, form_media=form_media))
@@ -1223,6 +1233,8 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
     def form_valid(self, form, form_media):
         media = form_media.save(commit=False)
         media.author = self.request.user
+        if media.file:
+            media.file.name = self.get_filename(media.file.name)
         media.save()
         form_media.save_m2m()
         agreement = form.save(commit=False)
@@ -1250,7 +1262,11 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 
     @transaction.atomic
     def form_valid(self, form, form_media):
-        form_media.save()
+        media = form_media.save(commit=False)
+        if media.file and not hasattr(form_media.cleaned_data['file'], 'path'):
+            media.file.name = self.get_filename(media.file.name)
+        media.save()
+        form_media.save_m2m()
         agreement = form.save()
         self.check_dates(agreement)
         messages.success(self.request, _('partnership_agreement_success'))
