@@ -152,7 +152,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             ugettext('phone'),
             ugettext('website'),
             ugettext('email'),
-            ugettext('contact_type'),
+            ugettext('partner_contact_type'),
             ugettext('comment'),
             ugettext('tags'),
         ]
@@ -273,8 +273,8 @@ class PartnerFormMixin(object):
             kwargs['instance'] = self.object.contact_address
         form = AddressForm(**kwargs)
         form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['city'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['country'].help_text = _('mandatory_if_not_pic_ies')
+        form.fields['city'].required = True
+        form.fields['country'].required = True
         return form
 
     def get_context_data(self, **kwargs):
@@ -328,7 +328,7 @@ class PartnerFormMixin(object):
         """ Return True if the conditional mandatory form are ok """
         if not form_address.is_valid():
             return False
-        if form.cleaned_data['pic_code'] or form.cleaned_data['is_ies']:
+        if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
             return True
         cleaned_data = form_address.cleaned_data
         if not cleaned_data['name']:

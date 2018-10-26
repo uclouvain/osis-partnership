@@ -63,6 +63,38 @@ class PersonChoiceField(forms.ModelChoiceField):
 ##### Forms
 
 class PartnerForm(forms.ModelForm):
+
+    is_ies = forms.ChoiceField(
+        label=_('is_ies'),
+        initial=None,
+        required=True,
+        choices=(
+            (None, '---------'),
+            (True, _('Yes')),
+            (False, _('No')),
+        ),
+    )
+
+    is_nonprofit = forms.ChoiceField(
+        label=_('is_nonprofit'),
+        required=True,
+        choices=(
+            (None, '---------'),
+            (True, _('Yes')),
+            (False, _('No')),
+        ),
+    )
+
+    is_public = forms.ChoiceField(
+        label=_('is_public'),
+        required=True,
+        choices=(
+            (None, '---------'),
+            (True, _('Yes')),
+            (False, _('No')),
+        ),
+    )
+
     class Meta:
         model = Partner
         exclude = ['contact_address', 'medias']
@@ -80,9 +112,6 @@ class PartnerForm(forms.ModelForm):
             'partner_code': forms.TextInput(attrs={'placeholder': _('partner_code')}),
             'pic_code': forms.TextInput(attrs={'placeholder': _('pic_code')}),
             'erasmus_code': forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
-            'is_ies': forms.CheckboxInput(),
-            'is_nonprofit': forms.CheckboxInput(),
-            'is_public': forms.CheckboxInput(),
             'use_egracons': forms.CheckboxInput(),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
@@ -107,8 +136,7 @@ class PartnerForm(forms.ModelForm):
         if self.cleaned_data['start_date'] and self.cleaned_data['end_date']:
             if self.cleaned_data['start_date'] > self.cleaned_data['end_date']:
                 self.add_error('start_date', ValidationError(_('start_date_gt_end_date_error')))
-
-        if not self.cleaned_data['pic_code'] and not self.cleaned_data['is_ies']:
+        if not self.cleaned_data['pic_code'] and not self.cleaned_data.get('is_ies', None):
             if not self.cleaned_data['email']:
                 self.add_error('email', ValidationError(_('required')))
             if not self.cleaned_data['phone']:
