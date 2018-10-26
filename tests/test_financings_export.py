@@ -6,41 +6,45 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person_entity import PersonEntityFactory
 from reference.tests.factories.country import CountryFactory
 from partnership.tests.factories import FinancingFactory
-from reference.models.country import Country
+from partnership.models import Financing
 
 
-class FinancingsListViewTest(TestCase):
+class FinancingsExportViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        for i in range(50):
-            CountryFactory()
-        cls.selected_countries_1 = Country.objects.all()[:20]
-        cls.selected_countries_2 = Country.objects.all()[20:30]
-        cls.academic_year_1 = AcademicYearFactory()
+        cls.country_1 = CountryFactory()
+        cls.country_2 = CountryFactory()
+        cls.country_3 = CountryFactory()
+        cls.academic_year_1 = AcademicYearFactory(year=2040)
         cls.academic_year_2 = AcademicYearFactory()
+        cls.academic_year_3 = AcademicYearFactory(year=2041)
         cls.financing_1 = FinancingFactory(academic_year=cls.academic_year_1)
-        cls.financing_1.countries.set(cls.selected_countries_1)
-        cls.financing_2 = FinancingFactory(academic_year=cls.academic_year_2)
-        cls.financing_2.countries.set(cls.selected_countries_2)
-
+        cls.financing_2 = FinancingFactory(academic_year=cls.academic_year_1)
+        cls.financing_3 = FinancingFactory(academic_year=cls.academic_year_3)
+        cls.financing_1.countries.set([cls.country_1, cls.country_2])
+        cls.financing_2.countries.set([cls.country_3])
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
-        cls.url = reverse('partnerships:financings:list', kwargs={'year': cls.academic_year_1.year})
+        cls.url = reverse('partnerships:financings:export', kwargs={'year': cls.academic_year_1.year})
+        cls.url_empty = reverse('partnerships:financings:export', kwargs={'year': cls.academic_year_2.year})
 
-    def test_list_as_anonymous(self):
+    def test_export_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/financings/financing_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
-    def test_list_as_user(self):
+    def test_export_as_user(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/financings/financing_list.html')
         self.assertTemplateUsed(response, 'registration/login.html')
 
-    def test_list_as_adri(self):
+    def test_export_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
+        self.assertEqual(len(response.content.split(b'\n')), 3 + 1)
+
+    def test_export_as_adri_empty(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url_empty, follow=True)
+        self.assertEqual(len(response.content.split(b'\n')), 0 + 1)
