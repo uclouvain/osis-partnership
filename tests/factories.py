@@ -10,7 +10,8 @@ from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnershipAgreement, PartnershipTag,
                                 PartnershipYear, PartnershipYearEducationField,
                                 PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity, PartnershipEntityManager)
+                                PartnerType, UCLManagementEntity,
+                                PartnershipEntityManager, Financing)
 
 
 class PartnershipEntityManagerFactory(factory.DjangoModelFactory):
@@ -229,3 +230,8 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
     contact_out_person = factory.SubFactory(
         'base.tests.factories.person.PersonFactory',
     )
+
+
+class FinancingFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Financing
