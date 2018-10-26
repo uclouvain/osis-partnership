@@ -1038,7 +1038,7 @@ msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
 msgid "partnership_agreement_warning_after"
-msgstr "L'accord finis après le partenariat."
+msgstr "L'accord finit après le partenariat."
 
 msgid "partnership_agreement_error"
 msgstr "Erreur lors de la sauvegarde de l'accord."
