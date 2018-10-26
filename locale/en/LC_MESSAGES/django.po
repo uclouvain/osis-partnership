@@ -128,36 +128,26 @@ msgstr "File or URL only"
 msgid "file_or_url_required"
 msgstr "File or URL required"
 
-#, fuzzy
-#| msgid "faculty"
 msgid "faculty_filter"
 msgstr "Faculty"
 
 msgid "ucl_university"
 msgstr "UCLouvain university"
 
-#, fuzzy
-#| msgid "edit_partnership"
 msgid "faculty_entity_filter"
-msgstr "Edit partnership"
+msgstr "Entity"
 
 msgid "ucl_university_labo_filter"
 msgstr "School / Laboratory"
 
-#, fuzzy
-#| msgid "education_level"
 msgid "education_level_filter"
 msgstr "Education level"
 
-#, fuzzy
-#| msgid "entities"
 msgid "entity_filter"
-msgstr "Entities"
+msgstr "Entity"
 
-#, fuzzy
-#| msgid "university_offers"
 msgid "university_offers_filter"
-msgstr "University offers"
+msgstr "University offer"
 
 msgid "partner"
 msgstr "Partner"
@@ -1033,15 +1023,6 @@ msgstr "UCLouvain management entity successfully created."
 
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
-
-#~ msgid "update"
-#~ msgstr "Update"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "UCL management entity"
 
 #~ msgid "Partner"
 #~ msgstr "Partner"

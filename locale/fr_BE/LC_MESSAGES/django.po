@@ -1064,15 +1064,6 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
-#~ msgid "update"
-#~ msgstr "Mettre à jour"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "Entité de gestion UCL"
-
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
