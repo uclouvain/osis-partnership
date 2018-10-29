@@ -1445,7 +1445,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
         return user_is_adri(self.request.user)
 
     def get_csv_data(self, academic_year):
-        countries = Country.objects.all().prefetch_related(
+        countries = Country.objects.all().order_by('name').prefetch_related(
             Prefetch(
                 'financing_set',
                 queryset=Financing.objects.prefetch_related(
@@ -1454,24 +1454,35 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
             )
         )
         for country in countries:
-            for financing in country.financing_set.all():
+            if country.financing_set.all():
+                for financing in country.financing_set.all():
+                    row = {
+                        'country': country.iso_code,
+                        'name': financing.name,
+                        'url': financing.url,
+                        'country_name': country.name,
+                    }
+                    yield row
+            else:
                 row = {
                     'country': country.iso_code,
-                    'name': financing.name,
-                    'url': financing.url,
+                    'name': '',
+                    'url': '',
+                    'country_name': country.name,
                 }
                 yield row
 
     def get(self, *args, year=None, **kwargs):
         if year is None:
-            self.academic_year = current_academic_year()
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
         else:
             self.academic_year = get_object_or_404(AcademicYear, year=year)
 
         filename = "financings_{}".format(self.academic_year)
 
         buffer = StringIO()
-        fieldnames = ['country', 'name', 'url']
+        fieldnames = ['country_name', 'country', 'name', 'url']
         wr = csv.DictWriter(buffer, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
         for row in self.get_csv_data(academic_year=self.academic_year):
             wr.writerow(row)
@@ -1491,7 +1502,8 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
 
     def get_success_url(self, academic_year=None):
         if academic_year is None:
-            academic_year = current_academic_year()
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
         return reverse('partnerships:financings:list', kwargs={'year': academic_year.year})
 
     def form_valid(self, form):
@@ -1500,9 +1512,11 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
         reader = csv.DictReader(
             self.request.FILES['csv_file'].read().decode('utf-8').splitlines(),
             delimiter=';',
-            fieldnames=['country', 'name', 'url']
+            fieldnames=['country_name', 'country', 'name', 'url']
         )
         for row in reader:
+            if not row['name']:
+                continue
             financing = Financing.objects.filter(
                 name=row['name'],
                 academic_year=self.academic_year,
@@ -1538,7 +1552,8 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
 
     def dispatch(self, *args, year=None, **kwargs):
         if year is None:
-            self.academic_year = current_academic_year()
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
         else:
             self.academic_year = get_object_or_404(AcademicYear, year=year)
 
