@@ -1465,7 +1465,6 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
         return self.get_object().user_can_delete(self.request.user)
 
 
-
 # Financing views :
 
 
@@ -1613,7 +1612,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
     def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('year', current_academic_year())
         if self.academic_year is None:
-            self.academic_year =current_academic_year()
+            self.academic_year = current_academic_year()
         return redirect(self.get_success_url())
 
 
