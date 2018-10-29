@@ -7,14 +7,15 @@ from base.tests.factories.person_entity import PersonEntityFactory
 from reference.tests.factories.country import CountryFactory
 from partnership.tests.factories import FinancingFactory
 from partnership.models import Financing
+from reference.models.country import Country
 
 
 class FinancingsExportViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.country_1 = CountryFactory()
-        cls.country_2 = CountryFactory()
-        cls.country_3 = CountryFactory()
+        cls.country_1 = CountryFactory(name="country_1", iso_code="C1")
+        cls.country_2 = CountryFactory(name="country_2", iso_code="C2")
+        cls.country_3 = CountryFactory(name="country_3", iso_code="C3")
         cls.academic_year_1 = AcademicYearFactory(year=2040)
         cls.academic_year_2 = AcademicYearFactory()
         cls.academic_year_3 = AcademicYearFactory(year=2041)
@@ -42,9 +43,15 @@ class FinancingsExportViewTest(TestCase):
     def test_export_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertEqual(len(response.content.split(b'\n')), 3 + 1)
+        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1)
+        self.assertEqual(response.content.count(b'financing_1'), 2)
+        self.assertEqual(response.content.count(b'financing_2'), 1)
+        self.assertEqual(response.content.count(b'financing_3'), 0)
 
     def test_export_as_adri_empty(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url_empty, follow=True)
-        self.assertEqual(len(response.content.split(b'\n')), 0 + 1)
+        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1)
+        self.assertEqual(response.content.count(b'financing_1'), 0)
+        self.assertEqual(response.content.count(b'financing_2'), 0)
+        self.assertEqual(response.content.count(b'financing_3'), 0)
