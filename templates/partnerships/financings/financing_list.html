@@ -58,7 +58,7 @@
 
       <div id="results">
         <div class="table-responsive">
-          <table class="table table-stripped table-hover">
+          <table class="table table-striped table-hover">
 
             <thead>
               <tr>
@@ -79,7 +79,7 @@
                 {% empty %}
                   <tr>
                     <td>{{ country }} ({{ country.iso_code }})</td>
-                    <td colspan="2"><i>{% trans "no_financing" %}</i></td>
+                    <td colspan="2"></td>
                   </tr>
                 {% endfor %}
               {% empty %}
