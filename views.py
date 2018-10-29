@@ -137,28 +137,16 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
             ugettext('partner_end_date'),
             ugettext('now_known_as'),
             ugettext('partner_type'),
-            ugettext('partner_code'),
             ugettext('pic_code'),
             ugettext('erasmus_code'),
             ugettext('is_ies'),
-            ugettext('is_nonprofit'),
-            ugettext('is_public'),
             ugettext('use_egracons'),
-            ugettext('Name'),
-            ugettext('address'),
-            ugettext('postal_code'),
             ugettext('city'),
             ugettext('country'),
-            ugettext('phone'),
-            ugettext('website'),
-            ugettext('email'),
-            ugettext('partner_contact_type'),
-            ugettext('comment'),
             ugettext('tags'),
         ]
 
     def get_xls_data(self):
-        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
         queryset = self.get_queryset()
         queryset = (
             queryset
@@ -175,30 +163,16 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
                 'end_date',
                 'now_known_as__name',
                 'partner_type__value',
-                'partner_code',
                 'pic_code',
                 'erasmus_code',
                 'is_ies',
-                'is_nonprofit',
-                'is_public',
                 'use_egracons',
-                'contact_address__name',
-                'contact_address__address',
-                'contact_address__postal_code',
                 'contact_address__city',
                 'contact_address__country__name',
-                'phone',
-                'website',
-                'email',
-                'contact_type',
-                'comment',
                 'tags_list',
             )
         )
-        for partner in queryset:
-            partner = list(partner)
-            partner[26] = contact_types.get(partner[26], partner[26])
-            yield partner
+        return queryset
 
     def get_xls_filters(self):
         form = self.get_form()
@@ -951,11 +925,11 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
     def generate_xls(self):
         working_sheets_data = self.get_xls_data()
         parameters = {
-            xls_build.DESCRIPTION: _('partners'),
+            xls_build.DESCRIPTION: _('partnerships'),
             xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%m-%S'),
+            xls_build.FILENAME: now().strftime('partnerships-%Y-%m-%d-%H-%m-%S'),
             xls_build.HEADER_TITLES: self.get_xls_headers(),
-            xls_build.WS_TITLE: _('partners')
+            xls_build.WS_TITLE: _('partnerships')
         }
         filters = self.get_xls_filters()
         response = xls_build.generate_xls(
