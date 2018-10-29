@@ -222,6 +222,7 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
         'base.tests.factories.person.PersonFactory',
     )
 
+
 class FinancingFactory(factory.DjangoModelFactory):
     class Meta:
         model = Financing
