@@ -15,44 +15,42 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="row">
-        <div class="panel-group" id="financing-btn-group" role="tablist" aria-multiselectable="true">
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab">
-              <button class="btn btn-default" type="button"
-                      data-toggle="collapse" data-target="#financing-filter-form"
-                      aria-expanded="false" aria-controls="financing-filter-form"
-                      data-parent="#financing-btn-group">
-                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "change_year" %}</span>
-              </button>
-              <button class="btn btn-default" type="button"
-                      data-toggle="collapse" data-target="#financing-import-form"
-                      aria-expanded="false" aria-controls="financing-import-form"
-                      data-parent="#financing-btn-group">
-                <i class="glyphicon glyphicon-import`"></i> <span class="hidden-xs">{% trans "import_financings" %}</span>
-              </button>
+      <div class="panel-group" id="financing-btn-group" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab">
+            <button class="btn btn-default" type="button"
+                    data-toggle="collapse" data-target="#financing-filter-form"
+                    aria-expanded="false" aria-controls="financing-filter-form"
+                    data-parent="#financing-btn-group">
+              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "change_year" %}</span>
+            </button>
+            <button class="btn btn-default" type="button"
+                    data-toggle="collapse" data-target="#financing-import-form"
+                    aria-expanded="false" aria-controls="financing-import-form"
+                    data-parent="#financing-btn-group">
+              <i class="glyphicon glyphicon-import`"></i> <span class="hidden-xs">{% trans "import_financings" %}</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div id="financing-filter-form" class="panel-collapse collapse" role="tabpanel">
+            <div class="panel-body">
+              <form action="#" method="POST">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
+              </form>
             </div>
           </div>
-          <div class="panel panel-default">
-            <div id="financing-filter-form" class="panel-collapse collapse" role="tabpanel">
-              <div class="panel-body">
-                <form action="#" method="POST">
+          <div id="financing-import-form" class="panel-collapse collapse" role="tabpanel">
+            <div class="panel-body">
+              {% if can_import_financing %}
+                <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
                   {% csrf_token %}
-                  {% bootstrap_form form %}
-                  <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
+                  {% bootstrap_form import_form %}
+                  <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
                 </form>
-              </div>
-            </div>
-            <div id="financing-import-form" class="panel-collapse collapse" role="tabpanel">
-              <div class="panel-body">
-                {% if can_import_financing %}
-                  <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% bootstrap_form import_form %}
-                    <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
-                  </form>
-                {% endif %}
-              </div>
+              {% endif %}
             </div>
           </div>
         </div>
