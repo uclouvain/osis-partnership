@@ -62,7 +62,7 @@
             {% endwith %}
 
             <dt>{% trans "administrative_responsible" %}</dt>
-            <dd>{{ partnership.administrative_responsible|default_if_none:"" }}</dd>
+            <dd>{{ partnership.administrative_responsible|default_if_none:"" }}{% if partnership.administrative_responsible %} - {{ partnership.administrative_responsible.email }}{% endif %}</dd>
 
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>
@@ -208,7 +208,7 @@
               <dl class="dl-horizontal">
                 {% if partnership.ucl_management_entity.contact_in_person is not None %}
                   <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ partnership.ucl_management_entity.contact_in_person }}</dd>
+                  <dd>{{ partnership.ucl_management_entity.contact_in_person }}{% if partnership.ucl_management_entity.contact_in_person %} - {{ partnership.ucl_management_entity.contact_in_person.email }}{% endif %}</dd>
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_in_email is not None %}
                   <dt>{% trans 'email' %}</dt>
@@ -227,7 +227,7 @@
               <dl class="dl-horizontal">
                 {% if partnership.ucl_management_entity.contact_out_person is not None %}
                   <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ partnership.ucl_management_entity.contact_out_person }}</dd>
+                  <dd>{{ partnership.ucl_management_entity.contact_out_person }}{% if partnership.ucl_management_entity.contact_out_person %} - {{ partnership.ucl_management_entity.contact_out_person.email }}{% endif %}</dd>
                 {% endif %}
                 {% if partnership.ucl_management_entity.contact_out_email is not None %}
                   <dt>{% trans 'email' %}</dt>
