@@ -71,7 +71,7 @@ ul.tags-list li {
   color: #a94442;
 }
 
-#filter-form .tab-pane {
+#filter-form .tab-pane, #financing-forms .tab-pane {
   margin-top: 20px;
 }
 
