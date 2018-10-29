@@ -44,7 +44,7 @@ class EducationGroupYearChoiceSelect(forms.ModelMultipleChoiceField):
         return '{0} - {1}'.format(obj.acronym, obj.title)
 
 
-class EntityChoiceField(forms.ModelChoiceField):
+class EntityChoiceFieldMixin(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
         try:
@@ -52,6 +52,14 @@ class EntityChoiceField(forms.ModelChoiceField):
             return '{0} - {1}'.format(entity_version.acronym, entity_version.title)
         except EntityVersion.DoesNotExist:
             return str(obj)
+
+
+class EntityChoiceField(EntityChoiceFieldMixin, forms.ModelChoiceField):
+    pass
+
+
+class EntityChoiceMultipleField(EntityChoiceFieldMixin, forms.ModelMultipleChoiceField):
+    pass
 
 
 class PersonChoiceField(forms.ModelChoiceField):
@@ -888,6 +896,17 @@ class PartnershipYearForm(forms.ModelForm):
         required=True,
     )
 
+    entities = EntityChoiceMultipleField(
+        label=_('partnership_year_entities'),
+        help_text=_('partnership_year_entities_help_text'),
+        queryset=Entity.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url='partnerships:autocomplete:partnership_year_entities',
+            forward=['faculty'],
+        ),
+    )
+
     offers = EducationGroupYearChoiceSelect(
         label=_('partnership_year_offers'),
         queryset=EducationGroupYear.objects.filter(university_certificate=True),
@@ -914,10 +933,6 @@ class PartnershipYearForm(forms.ModelForm):
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
             'education_levels': autocomplete.ModelSelect2Multiple(),
-            'entities': autocomplete.ModelSelect2Multiple(
-                url='partnerships:autocomplete:partnership_year_entities',
-                forward=['faculty'],
-            ),
         }
 
     def __init__(self, *args, **kwargs):
