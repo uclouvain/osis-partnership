@@ -192,7 +192,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
         parameters = {
             xls_build.DESCRIPTION: _('partners'),
             xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%m-%S'),
+            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%M-%S'),
             xls_build.HEADER_TITLES: self.get_xls_headers(),
             xls_build.WS_TITLE: _('partners')
         }
@@ -842,77 +842,111 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
         return [
             ugettext('id'),
             ugettext('partner'),
+            ugettext('partner_code'),
+            ugettext('erasmus_code'),
+            ugettext('pic_code'),
             ugettext('partner_entity'),
             ugettext('ucl_university'),
             ugettext('ucl_university_labo'),
             ugettext('supervisor'),
-            ugettext('start_date'),
-            ugettext('comment'),
+            ugettext('partnership_year_entities'),
+            ugettext('partnership_year_education_levels'),
             ugettext('tags'),
             ugettext('created'),
             ugettext('modified'),
             ugettext('author'),
+            ugettext('is_sms'),
+            ugettext('is_smp'),
+            ugettext('is_sta'),
+            ugettext('is_stt'),
+            ugettext('start_academic_year'),
+            ugettext('end_academic_year'),
+            ugettext('is_valid'),
+            ugettext('external_id'),
         ]
 
-    def get_xls_data(self):
-        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
+    def get_xls_data(self, academic_year):
         queryset = self.get_queryset()
         queryset = (
             queryset
             .annotate(
                 tags_list=StringAgg('tags__value', ', '),
-                start_date=Subquery(
-                    PartnershipYear.objects
-                    .filter(partnership=OuterRef('pk'))
-                    .order_by('academic_year__year')
-                    .values('academic_year__start_date')[:1]
+                is_valid=Exists(
+                    PartnershipAgreement.objects
+                        .filter(status=PartnershipAgreement.STATUS_VALIDATED,
+                                partnership=OuterRef('pk'))
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects
+                        .select_related('academic_year')
+                        .prefetch_related(
+                            Prefetch(
+                                'entities',
+                                queryset=Entity.objects.annotate(
+                                    most_recent_acronym=Subquery(
+                                        EntityVersion.objects
+                                            .filter(entity=OuterRef('pk'))
+                                            .order_by('-start_date')
+                                            .values('acronym')[:1]
+                                    ),
+                                )
+                            ),
+                            'education_levels',
+                        )
                 ),
             )
             .select_related('author')
-            .prefetch_related(
-                Prefetch(
-                    'ucl_university__entityversion_set',
-                    queryset=EntityVersion.objects.order_by('-start_date')
-                ),
-                Prefetch(
-                    'ucl_university_labo__entityversion_set',
-                    queryset=EntityVersion.objects.order_by('-start_date')
-                ),
-            )
         )
         for partnership in queryset:
-            # We use prefetch to get the entities
-            try:
-                ucl_university = partnership.ucl_university.entityversion_set.all()[0]
-            except IndexError:
-                ucl_university = ''
-            if partnership.ucl_university_labo:
-                try:
-                    ucl_university_labo = partnership.ucl_university_labo.entityversion_set.all()[0]
-                except IndexError:
-                    ucl_university_labo = ''
-            else:
-                ucl_university_labo = ''
+
+            first_year = None
+            current_year = None
+            end_year = None
+            years = partnership.years.all()
+            if years:
+                first_year = years[0]
+            for year in years:
+                end_year = year
+                if year.academic_year == academic_year:
+                    current_year = year
 
             yield [
                 partnership.pk,
                 str(partnership.partner),
+                str(partnership.partner.partner_code) if partnership.partner.partner_code is not None else '',
+                str(partnership.partner.erasmus_code) if partnership.partner.erasmus_code is not None else '',
+                str(partnership.partner.pic_code) if partnership.partner.pic_code is not None else '',
                 str(partnership.partner_entity) if partnership.partner_entity else None,
-                str(ucl_university),
-                str(ucl_university_labo),
+                str(partnership.ucl_university_most_recent_acronym),
+                str(partnership.ucl_university_labo_most_recent_acronym)
+                    if partnership.ucl_university_labo_most_recent_acronym is not None else '',
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
-                partnership.start_date,
-                partnership.comment,
+                ', '.join(map(lambda x: x.most_recent_acronym, current_year.entities.all()))
+                    if current_year is not None else '',
+                ', '.join(map(str, current_year.education_levels.all())) if current_year is not None else '',
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
                 str(partnership.author),
+                current_year.is_sms if current_year is not None else '',
+                current_year.is_smp if current_year is not None else '',
+                current_year.is_sta if current_year is not None else '',
+                current_year.is_stt if current_year is not None else '',
+                first_year.academic_year if first_year is not None else '',
+                end_year.academic_year if end_year is not None else '',
+                partnership.is_valid,
+                partnership.external_id,
             ]
 
-    def get_xls_filters(self):
+    def get_xls_filters(self, academic_year):
         form = self.get_form()
+        filters = {
+            _('academic_year'): str(academic_year),
+        }
         if form.is_valid():
-            filters = {}
             for key, value in form.cleaned_data.items():
                 if not value:
                     continue
@@ -920,18 +954,19 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                     value = ', '.join(map(str, list(value)))
                 filters[key] = str(value)
             return filters
-        return None
+        return filters
 
     def generate_xls(self):
-        working_sheets_data = self.get_xls_data()
+        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
+        working_sheets_data = self.get_xls_data(academic_year)
         parameters = {
             xls_build.DESCRIPTION: _('partnerships'),
             xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partnerships-%Y-%m-%d-%H-%m-%S'),
+            xls_build.FILENAME: now().strftime('partnerships-%Y-%m-%d-%H-%M-%S'),
             xls_build.HEADER_TITLES: self.get_xls_headers(),
             xls_build.WS_TITLE: _('partnerships')
         }
-        filters = self.get_xls_filters()
+        filters = self.get_xls_filters(academic_year)
         response = xls_build.generate_xls(
             xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
             filters,
