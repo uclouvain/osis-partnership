@@ -6,6 +6,10 @@
   <li class="active">{% trans "financings" %}</li>
 {% endblock %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
 {% block content %}
   <div class="page-header">
     <h1>
@@ -15,44 +19,38 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="panel-group" id="financing-btn-group" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab">
-            <button class="btn btn-default" type="button"
-                    data-toggle="collapse" data-target="#financing-filter-form"
-                    aria-expanded="false" aria-controls="financing-filter-form"
-                    data-parent="#financing-btn-group">
-              <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "change_year" %}</span>
-            </button>
-            <button class="btn btn-default" type="button"
-                    data-toggle="collapse" data-target="#financing-import-form"
-                    aria-expanded="false" aria-controls="financing-import-form"
-                    data-parent="#financing-btn-group">
-              <i class="glyphicon glyphicon-import`"></i> <span class="hidden-xs">{% trans "import_financings" %}</span>
-            </button>
+      <div class="well">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#filter-financings" aria-controls="filter-financings" role="tab" data-toggle="tab">{% trans "change_year" %}</a></li>
+          {% if can_import_financing %}
+            <li role="presentation"><a href="#import-financings" aria-controls="import-financings" role="tab" data-toggle="tab">{% trans "import_financings" %}</a></li>
+          {% endif %}
+        </ul>
+
+        <div class="tab-content" id="financing-forms">
+          <div role="tabpanel" class="tab-pane fade in active" id="filter-financings">
+            <form action="#" method="POST">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+              <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
+            </form>
           </div>
-        </div>
-        <div class="panel panel-default">
-          <div id="financing-filter-form" class="panel-collapse collapse" role="tabpanel">
-            <div class="panel-body">
-              <form action="#" method="POST">
+          {% if can_import_financing %}
+            <div role="tabpanel" class="tab-pane fade in" id="import-financings">
+              <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% bootstrap_form form %}
-                <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
+                <div class="row">
+                  <div class="col-sm-6">
+                    {% bootstrap_field import_form.import_academic_year %}
+                  </div>
+                  <div class="col-sm-6">
+                    {% bootstrap_field import_form.csv_file %}
+                  </div>
+                </div>
+                <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
               </form>
             </div>
-          </div>
-          <div id="financing-import-form" class="panel-collapse collapse" role="tabpanel">
-            <div class="panel-body">
-              {% if can_import_financing %}
-                <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  {% bootstrap_form import_form %}
-                  <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
-                </form>
-              {% endif %}
-            </div>
-          </div>
+          {% endif %}
         </div>
       </div>
 
