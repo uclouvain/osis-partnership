@@ -1513,6 +1513,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
         buffer = StringIO()
         fieldnames = ['country_name', 'country', 'name', 'url']
         wr = csv.DictWriter(buffer, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
+        wr.writeheader()
         for row in self.get_csv_data(academic_year=self.academic_year):
             wr.writerow(row)
 
@@ -1543,6 +1544,7 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
             delimiter=';',
             fieldnames=['country_name', 'country', 'name', 'url']
         )
+        next(reader, None)
         for row in reader:
             if not row['name']:
                 continue
