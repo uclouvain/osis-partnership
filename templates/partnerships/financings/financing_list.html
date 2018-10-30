@@ -60,9 +60,9 @@
 
             <thead>
               <tr>
-                <td>{% trans 'countries' %}</td>
-                <td>{% trans 'Name' %}</td>
-                <td>{% trans 'url' %}</td>
+                <td>{% trans 'countries' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="name" %}</td>
+                <td>{% trans 'Name' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing__name" %}</td>
+                <td>{% trans 'url' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing__url" %}</td>
               </tr>
             </thead>
 

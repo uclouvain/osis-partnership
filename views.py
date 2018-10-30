@@ -1596,6 +1596,39 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
             self.form = FinancingFilterForm(initial={'year': self.academic_year})
         return super().dispatch(*args, **kwargs)
 
+    def get_ordering(self):
+        ordering = self.request.GET.get('ordering', None)
+        if ordering == 'financing__name':
+            return [
+                'financing__name',
+                'name',
+            ]
+        elif ordering == '-financing__name':
+            return [
+                '-financing__name',
+                'name',
+            ]
+        elif ordering == 'financing__url':
+            return [
+                'financing__url',
+                'name',
+            ]
+        elif ordering == '-financing__url':
+            return [
+                '-financing__url',
+                'name',
+            ]
+        elif ordering == '-name':
+            return [
+                '-name',
+                'iso_code',
+            ]
+        else:
+            return [
+                'name',
+                'iso_code'
+            ]
+
     def post(self, *args, **kwargs):
         if self.form.is_valid():
             return self.form_valid(self.form)
@@ -1614,17 +1647,17 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
         return reverse('partnerships:financings:list', kwargs={'year': self.academic_year.year})
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs).order_by('name')
-        if self.academic_year is None:
-            queryset = queryset.prefetch_related('financing_set',)
-        else:
-            queryset = queryset.prefetch_related(
-                Prefetch(
-                    'financing_set',
-                    queryset=Financing.objects.filter(academic_year=self.academic_year)
-                )
+        ordering = self.get_ordering()
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'financing_set',
+                queryset=Financing.objects.filter(academic_year=self.academic_year)
             )
-        return queryset
+        ).filter(
+            Q(financing__academic_year=self.academic_year) | Q(financing__isnull=True)
+        )
+        return queryset.distinct().order_by(*ordering)
 
     def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('year', current_academic_year())
