@@ -43,7 +43,7 @@ class FinancingsExportViewTest(TestCase):
     def test_export_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1)
+        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1 + 1)
         self.assertEqual(response.content.count(b'financing_1'), 2)
         self.assertEqual(response.content.count(b'financing_2'), 1)
         self.assertEqual(response.content.count(b'financing_3'), 0)
@@ -51,7 +51,7 @@ class FinancingsExportViewTest(TestCase):
     def test_export_as_adri_empty(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url_empty, follow=True)
-        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1)
+        self.assertEqual(len(response.content.split(b'\n')), Country.objects.count() + 1 + 1)
         self.assertEqual(response.content.count(b'financing_1'), 0)
         self.assertEqual(response.content.count(b'financing_2'), 0)
         self.assertEqual(response.content.count(b'financing_3'), 0)

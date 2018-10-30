@@ -20,10 +20,12 @@ class FinancingsImportViewTest(TestCase):
         cls.country_3 = CountryFactory(name='country_3', iso_code='C3')
         cls.country_4 = CountryFactory(name='country_4', iso_code='C4')
         with open(cls.filename_1, 'w') as f:
+            f.write('country_name;country;name;url\n')
             f.write('{};{};foo;http://foo.com\n'.format(cls.country_1.name, cls.country_1.iso_code))
             f.write('{};{};bar;http://bar.com\n'.format(cls.country_2.name, cls.country_2.iso_code))
             f.write('{};{};foo;http://foo.com\n'.format(cls.country_3.name, cls.country_3.iso_code))
         with open(cls.filename_2, 'w') as f:
+            f.write('country_name;country;name;url\n')
             f.write('{};{};foo;http://foobis.com\n'.format(cls.country_4.name, cls.country_4.iso_code))
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
