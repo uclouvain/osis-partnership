@@ -24,6 +24,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.timezone import now
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
@@ -658,6 +659,12 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 )
         return super(PartnershipListFilterMixin, self).get(*args, **kwargs)
 
+
+    def get_context_object_name(self, object_list):
+        if self.is_agreements:
+            return 'agreements'
+        return super().get_context_object_name(object_list)
+
     def get_form_kwargs(self):
         kwargs = super(PartnershipListFilterMixin, self).get_form_kwargs()
         if self.request.GET:
@@ -868,7 +875,27 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = self.filter_queryset(queryset, form.cleaned_data)
         ordering = self.get_ordering()
         queryset = queryset.order_by(*ordering)
+        if self.is_agreements:
+            return PartnershipAgreement.objects.filter(
+                partnership__in=queryset.distinct()
+            )
         return queryset.distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_agreements'] = self.is_agreements
+        return context
+
+    @cached_property
+    def is_agreements(self):
+        import pdb; pdb.set_trace()
+        if self.request.method == "GET":
+            if "search_partnership" in self.request.GET:
+                return False
+            if "search_agreement" in self.request.GET:
+                return True
+            return self.request.GET.get('agreements', False)
+        return False
 
 
 class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListView):
@@ -879,10 +906,16 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
     paginate_neighbours = 4
 
     def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partnerships_list_results.html'
+        if self.is_agreements:
+            if self.request.is_ajax():
+                return 'partnerships/agreements/includes/agreements_list_results.html'
+            else:
+                return 'partnerships/partnerships_list.html'
         else:
-            return 'partnerships/partnerships_list.html'
+            if self.request.is_ajax():
+                return 'partnerships/includes/partnerships_list_results.html'
+            else:
+                return 'partnerships/partnerships_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(PartnershipsListView, self).get_context_data(**kwargs)

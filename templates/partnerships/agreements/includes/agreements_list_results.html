@@ -1,0 +1,48 @@
+{% load i18n %}
+<div class="table-responsive">
+  <table class="table table-stripped table-hover">
+    <thead>
+      <tr>
+        <td>{% trans "partner" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="partner__name" %}</td>
+        <td>{% trans "country" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="country" default=True %}</td>
+        <td>{% trans "city" %}</td>
+        <td>{% trans "partnership_supervisor" %}</td>
+        <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
+        <td>{% trans "academic_years" %}</td>
+        <td>{% trans "status" %}</td>
+        <td>{% trans "eligible" %}</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for agreement in agreements %}
+        <tr>
+          <td>{{ agreement.partnership.partner|truncatechars:30 }}</td>
+          <td>{{ agreement.partnership.partner.contact_address.country|default_if_none:"" }}</td>
+          <td>{{ agreement.partnership.partner.contact_address.city|default_if_none:"" }}</td>
+          <td>{{ agreement.partnership.get_supervisor|default_if_none:"" }}</td>
+          <td>{{ agreement.partnership.entities_acronyms }}</td>
+          <td>{% if agreement.start_academic_year or agreement.end_academic_year %}{{ agreement.start_academic_year|default_if_none:"N/A" }} &gt; {{ agreement.end_academic_year|default_if_none:"N/A" }}{% if agreement.has_missing_valid_years %}<span class="text\
+-danger"> - {% trans "agreement_missing_valid_years" %}</span>{% endif %}{% endif %}</td>
+          <td>{{ agreement.status|default_if_none:"" }}</td>
+          <td>{{ agreement.eligible }}</td>
+          <td>
+            <a href="{% url 'partnerships:detail' pk=agreement.id %}" class="btn btn-default">
+              <i class="fa fa-eye"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-8">
+    {% include "partnerships/includes/pagination.html" %}
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <a href="{% url "partnerships:export" %}?{{ request.GET.urlencode }}" class="btn btn-default btn-export pull-right">{% trans "agreements_export" %}</a>
+  </div>
+</div>
