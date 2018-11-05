@@ -25,31 +25,14 @@
 
     // Filter form submit in AJAX
 
-    $(document).on('click', 'form .submit-button', function(event){
-
+    $(document).on('click', 'button.submit-button', function(event){
         event.preventDefault();
         event.stopPropagation();
 
-        var $form = $(this).parents('form')[0];
-        var url = $form.attr('action') + ? + $form.serialize()
-            + '&' + encodeURI(button.attr('name'))
-            + '=' + encodeURI(button.attr('value'));
-        showLoader();
-        $.get(url, function(data) {
-            $('#results').html(data);
-            hideLoader();
-        }).fail(function(error) {
-            console.error(error);
-            hideLoader();
-        });
-    });
-
-    $(document).on('submit', 'form#filter-form', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        var $form = $(this);
-
-        var url = $form.attr('action') + '?' + $form.serialize();
+        var form = $(this).parents('form')[0];
+        var url = $(form).attr('action') + '?' + $(form).serialize()
+            + '&' + encodeURI($(this).attr('name'))
+            + '=' + encodeURI($(this).attr('value'));
         showLoader();
         $.get(url, function(data) {
             $('#results').html(data);
