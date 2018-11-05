@@ -88,11 +88,12 @@ def merge_agreement_ranges(agreements=None):
     """
     if agreements is None or len(agreements) == 0:
         return []
+    agreements = agreements.copy()
     merged_agreements = [agreements.pop(0)]
     for a in agreements:
         if (merged_agreements[-1]['end'] + 1 >= a['start']
             and merged_agreements[-1]['end'] < a['end']):
             merged_agreements[-1]['end'] = a['end']
-        else:
+        elif merged_agreements[-1]['end'] + 1 < a['start']:
             merged_agreements.append(a)
     return merged_agreements
