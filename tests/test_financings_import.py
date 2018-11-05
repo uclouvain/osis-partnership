@@ -13,8 +13,8 @@ from reference.models.country import Country
 class FinancingsImportViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.filename_1 = tempfile.mkstemp()[1]
-        cls.filename_2 = tempfile.mkstemp()[1]
+        cls.filename_1 = tempfile.mkstemp(suffix='.csv')[1]
+        cls.filename_2 = tempfile.mkstemp(suffix='.csv')[1]
         cls.country_1 = CountryFactory(name='country_1', iso_code='C1')
         cls.country_2 = CountryFactory(name='country_2', iso_code='C2')
         cls.country_3 = CountryFactory(name='country_3', iso_code='C3')
