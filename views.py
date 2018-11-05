@@ -924,7 +924,78 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
         return context
 
 
-class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+    def get_xls_headers(self):
+        return [
+            ugettext('id'),
+            ugettext('partner'),
+            ugettext('country'),
+            ugettext('city'),
+            ugettext('partnership_supervisor'),
+            ugettext('ucl'),
+            ugettext('academic_years'),
+            ugettext('status'),
+            ugettext('eligible'),
+        ]
+
+    def get_xls_filters(self):
+        form = self.get_form()
+        if form.is_valid():
+            filters = {}
+            for key, value in form.cleaned_data.items():
+                if not value:
+                    continue
+                if isinstance(value, QuerySet):
+                    value = ', '.join(map(str, list(value)))
+                filters[key] = str(value)
+            return filters
+        return None
+
+    def get_xls_data(self):
+        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
+        queryset = self.get_queryset()
+        for agreement in queryset:
+            try:
+                ucl_university = agreement.partnership.ucl_university.entityversion_set.all()[0]
+            except IndexError:
+                ucl_university = ''
+            years = ' > '.join([
+                str(agreement.start_academic_year.year) or 'N/a',
+                str(agreement.end_academic_year.year) or 'N/a',
+            ])
+            yield [
+                agreement.pk,
+                str(agreement.partnership.partner),
+                str(agreement.partnership.partner.contact_address.country),
+                str(agreement.partnership.partner.contact_address.city),
+                str(agreement.partnership.get_supervisor()),
+                str(ucl_university),
+                years,
+                agreement.status,
+                agreement.eligible,
+            ]
+
+    def generate_xls(self):
+        working_sheets_data = self.get_xls_data()
+        parameters = {
+            xls_build.DESCRIPTION: _('agreements'),
+            xls_build.USER: str(self.request.user),
+            xls_build.FILENAME: now().strftime('agreements-%Y-%m-%d-%H-%m-%S'),
+            xls_build.HEADER_TITLES: self.get_xls_headers(),
+            xls_build.WS_TITLE: _('agreements')
+        }
+        filters = self.get_xls_filters()
+        response = xls_build.generate_xls(
+            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
+            filters,
+        )
+        return response
+
+    def get(self, request, *args, **kwargs):
+        return self.generate_xls()
+
+
+class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
 
     def get_xls_headers(self):
         return [
