@@ -1658,9 +1658,10 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
         return queryset.distinct().order_by(*ordering)
 
     def form_valid(self, form):
-        self.academic_year = form.cleaned_data.get('year', current_academic_year())
+        self.academic_year = form.cleaned_data.get('year', None)
         if self.academic_year is None:
-            self.academic_year = current_academic_year()
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
         return redirect(self.get_success_url())
 
 
