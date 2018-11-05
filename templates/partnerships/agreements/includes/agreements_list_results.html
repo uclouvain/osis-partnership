@@ -22,11 +22,11 @@
           <td>{{ agreement.partnership.partner.contact_address.city|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.get_supervisor|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.entities_acronyms }}</td>
-          <td>{% years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}{% if agreement.has_missing_valid_years %}<span class="text--danger"> - {% trans "agreement_missing_valid_years" %}</span>{% endif %}</td>
+          <td>{% years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</td>
           <td>{{ agreement.status|default_if_none:"" }}</td>
-          <td>{{ agreement.eligible }}</td>
+          <td>{{ agreement.eligible|yesno:"eligible,not eligible" }}</td>
           <td>
-            <a href="{% url 'partnerships:detail' pk=agreement.id %}" class="btn btn-default">
+            <a href="{% url 'partnerships:detail' pk=agreement.partnership.id %}" class="btn btn-default">
               <i class="fa fa-eye"></i>
             </a>
           </td>

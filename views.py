@@ -663,7 +663,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     def get_context_object_name(self, object_list):
         if self.is_agreements:
             return 'agreements'
-        return super().get_context_object_name(object_list)
+        return 'partnerships'
 
     def get_form_kwargs(self):
         kwargs = super(PartnershipListFilterMixin, self).get_form_kwargs()
