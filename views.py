@@ -1510,16 +1510,14 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         filename = "financings_{}".format(self.academic_year)
 
-        buffer = StringIO()
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
+
         fieldnames = ['country_name', 'country', 'name', 'url']
-        wr = csv.DictWriter(buffer, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
+        wr = csv.DictWriter(response, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
         wr.writeheader()
         for row in self.get_csv_data(academic_year=self.academic_year):
             wr.writerow(row)
-
-        buffer.seek(0)
-        response = HttpResponse(buffer, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
         return response
 
 
