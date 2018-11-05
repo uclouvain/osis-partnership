@@ -8,7 +8,6 @@
         <td>{% trans "city" %}</td>
         <td>{% trans "partnership_supervisor" %}</td>
         <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
-        <td>{% trans "financing" %}</td>
         <td>{% trans "validity_end" %}</td>
         <td></td>
       </tr>
@@ -21,7 +20,6 @@
           <td>{{ partnership.partner.contact_address.city|default_if_none:"" }}</td>
           <td>{{ partnership.get_supervisor|default_if_none:"" }}</td>
           <td>{{ partnership.entities_acronyms }}</td>
-          <td></td>
           <td>{{ partnership.validity_end|default_if_none:"" }}</td>
           <td>
             <a href="{% url 'partnerships:detail' pk=partnership.id %}" class="btn btn-default">
