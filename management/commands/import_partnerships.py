@@ -324,6 +324,7 @@ class Command(BaseCommand):
         partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
+        partner.external_id = line[1] if line[1] else None
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
         partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
