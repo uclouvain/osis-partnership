@@ -83,6 +83,15 @@ def user_is_in_user_faculty(user, other_user):
         return False
 
 
+def academic_years(start_academic_year, end_academic_year):
+    if start_academic_year is not None or end_academic_year is not None:
+        return '>'.join([
+            str(start_academic_year.year) or "N/A",
+            str(end_academic_year.year + 1) or "N/A",
+        ])
+    return "N/A"
+
+
 def merge_agreement_ranges(agreements=None):
     """
     Returns an union of agreements date ranges.

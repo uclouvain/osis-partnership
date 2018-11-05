@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n years %}
 <div class="table-responsive">
   <table class="table table-stripped table-hover">
     <thead>
@@ -22,8 +22,7 @@
           <td>{{ agreement.partnership.partner.contact_address.city|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.get_supervisor|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.entities_acronyms }}</td>
-          <td>{% if agreement.start_academic_year or agreement.end_academic_year %}{{ agreement.start_academic_year|default_if_none:"N/A" }} &gt; {{ agreement.end_academic_year|default_if_none:"N/A" }}{% if agreement.has_missing_valid_years %}<span class="text\
--danger"> - {% trans "agreement_missing_valid_years" %}</span>{% endif %}{% endif %}</td>
+          <td>{% years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}{% if agreement.has_missing_valid_years %}<span class="text--danger"> - {% trans "agreement_missing_valid_years" %}</span>{% endif %}</td>
           <td>{{ agreement.status|default_if_none:"" }}</td>
           <td>{{ agreement.eligible }}</td>
           <td>

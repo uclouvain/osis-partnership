@@ -52,7 +52,7 @@ from partnership.forms import (AddressForm, ContactForm, MediaForm,
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity, Financing)
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
+from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails, academic_years
 
 
 class ExportView(FormMixin, View):
@@ -959,10 +959,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 ucl_university = agreement.partnership.ucl_university.entityversion_set.all()[0]
             except IndexError:
                 ucl_university = ''
-            years = ' > '.join([
-                str(agreement.start_academic_year.year) or 'N/a',
-                str(agreement.end_academic_year.year) or 'N/a',
-            ])
+            years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
                 agreement.pk,
                 str(agreement.partnership.partner),
