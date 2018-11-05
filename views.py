@@ -888,7 +888,6 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
 
     @cached_property
     def is_agreements(self):
-        import pdb; pdb.set_trace()
         if self.request.method == "GET":
             if "search_partnership" in self.request.GET:
                 return False
