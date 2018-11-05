@@ -9,7 +9,7 @@
     <div class="form-group required_field">
       <label class="control-label" for="{{ form.partner.id_for_label }}">{% trans "Name" %}</label>
       {{ form.partner }}
-      <a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>
+      {% if form.instance.pk is None %}<a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>{% endif %}
     </div>
   </div>
   <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code">{% if partnership %}{{ partnership.partner.pic_code|default_if_none:"" }}{% endif %}</dd></dl></div>
