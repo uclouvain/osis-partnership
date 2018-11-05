@@ -1158,3 +1158,9 @@ class FinancingImportForm(forms.Form):
         empty_label=_('academic_years'),
         required=True,
     )
+
+    def clean_csv_file(self):
+        csv_file = self.cleaned_data['csv_file']
+        if not csv_file.name.endswith('.csv'):
+            raise ValidationError(_('financing_csv_file_invalid_extension'))
+        return csv_file

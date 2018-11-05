@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import codecs
 from copy import copy
 
 from io import StringIO
@@ -1067,6 +1068,7 @@ class PartnershipFormMixin(object):
         if 'form_year' not in kwargs:
             kwargs['form_year'] = self.get_form_year()
         kwargs['current_academic_year'] = current_academic_year()
+
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
     def form_invalid(self, form, form_year):
@@ -1534,35 +1536,40 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
             self.academic_year = configuration.get_current_academic_year_for_creation_modification()
         return reverse('partnerships:financings:list', kwargs={'year': academic_year.year})
 
+    @transaction.atomic
     def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('import_academic_year')
 
         reader = csv.DictReader(
-            self.request.FILES['csv_file'].read().decode('utf-8').splitlines(),
+            codecs.iterdecode(self.request.FILES['csv_file'], 'utf-8'),
             delimiter=';',
             fieldnames=['country_name', 'country', 'name', 'url']
         )
-        next(reader, None)
-        for row in reader:
-            if not row['name']:
-                continue
-            financing = Financing.objects.filter(
-                name=row['name'],
-                academic_year=self.academic_year,
-            ).first()
-            country = Country.objects.get(iso_code=row['country'])
-            if financing is None:
-                financing = Financing(
+        try:
+            next(reader, None)
+            for row in reader:
+                if not row['name']:
+                    continue
+                financing = Financing.objects.filter(
                     name=row['name'],
-                    url=row['url'],
                     academic_year=self.academic_year,
-                )
+                ).first()
+                country = Country.objects.get(iso_code=row['country'])
+                if financing is None:
+                    financing = Financing(
+                        name=row['name'],
+                        url=row['url'],
+                        academic_year=self.academic_year,
+                    )
 
-            else:
-                financing.url = row['url']
-            financing.save()
-            if country is not None and country not in financing.countries.all():
-                financing.countries.add(country)
+                else:
+                    financing.url = row['url']
+                financing.save()
+                if country is not None and country not in financing.countries.all():
+                    financing.countries.add(country)
+        except ValueError:
+            messages.error(self.request, _('financings_imported_error'))
+            return redirect(self.get_success_url(self.academic_year))
         messages.success(self.request, _('financings_imported'))
         return redirect(self.get_success_url(self.academic_year))
 

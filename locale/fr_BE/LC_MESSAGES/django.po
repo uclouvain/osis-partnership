@@ -23,6 +23,15 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
+msgid "is_ies"
+msgstr "Institution d’enseignement supérieur ?"
+
+msgid "is_nonprofit"
+msgstr "Organisation à but non lucratif ?"
+
+msgid "is_public"
+msgstr "Organisme public ?"
+
 msgid "partner_name"
 msgstr "Nom du partenaire"
 
@@ -103,9 +112,6 @@ msgstr "Type du partenaire"
 
 msgid "continent"
 msgstr "Continent"
-
-msgid "is_ies"
-msgstr "Institution d’enseignement supérieur ?"
 
 msgid "is_valid"
 msgstr "Validé"
@@ -242,6 +248,18 @@ msgstr "La date de début se situe après la date de fin."
 msgid "invalid_partnership_creation_max_date"
 msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
+msgid "administrative_responsible"
+msgstr "Responsable administratif"
+
+msgid "academic_responsible"
+msgstr "Responsable académique"
+
+msgid "contact_in_name"
+msgstr "Nom du contact de type mobilité in"
+
+msgid "contact_out_name"
+msgstr "Nom du contact de type mobilité out"
+
 msgid "academic_year"
 msgstr "Année académique"
 
@@ -253,6 +271,9 @@ msgstr "Fichier CSV"
 
 msgid "academic_years"
 msgstr "Années académiques"
+
+msgid "financing_csv_file_invalid_extension"
+msgstr "Merci d'importer un fichier CSV."
 
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
@@ -380,12 +401,6 @@ msgstr "Est devenu / Fait partie de"
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
 "Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
-
-msgid "is_nonprofit"
-msgstr "Organisation à but non lucratif ?"
-
-msgid "is_public"
-msgstr "Organisme public ?"
 
 msgid "partner_contact_type"
 msgstr "Type d’organisme"
@@ -536,20 +551,8 @@ msgstr "Faculté"
 msgid "entity"
 msgstr "Entité"
 
-msgid "academic_responsible"
-msgstr "Responsable académique"
-
-msgid "administrative_responsible"
-msgstr "Responsable administratif"
-
-msgid "contact_in_name"
-msgstr "Nom du contact de type mobilité in"
-
 msgid "portal"
 msgstr "Portail"
-
-msgid "contact_out_name"
-msgstr "Nom du contact de type mobilité out"
 
 msgid "duplicate_ucl_management_entity_error_with_faculty"
 msgstr "Une entité de gestion avec cette faculté existe déjà."
@@ -667,9 +670,6 @@ msgstr "Importer des financements"
 
 msgid "change_year"
 msgstr "Changer d'année"
-
-msgid "no_financing"
-msgstr "Pas de financement"
 
 msgid "no_country"
 msgstr "Pas de pays"
@@ -1092,8 +1092,14 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
+msgid "financings_imported_error"
+msgstr "Les financements n'ont pas pu être importés."
+
 msgid "financings_imported"
 msgstr "Financements importés avec succès"
+
+#~ msgid "no_financing"
+#~ msgstr "Pas de financement"
 
 #~ msgid "update"
 #~ msgstr "Mettre à jour"
@@ -1259,5 +1265,5 @@ msgstr "Financements importés avec succès"
 #~ msgstr "Nouvelle entité"
 
 # Menu translations :
-msgid "general_configuration"
-msgstr "Configuration générale"
+#~ msgid "general_configuration"
+#~ msgstr "Configuration générale"
