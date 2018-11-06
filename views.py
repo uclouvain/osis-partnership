@@ -1540,10 +1540,14 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
     def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('import_academic_year')
 
+        csv_file = self.request.FILES['csv_file']
+        sample = csv_file.read(1024).decode('utf8')
+        dialect = csv.Sniffer().sniff(sample)
+        csv_file.seek(0)
         reader = csv.DictReader(
-            codecs.iterdecode(self.request.FILES['csv_file'], 'utf-8'),
-            delimiter=';',
-            fieldnames=['country_name', 'country', 'name', 'url']
+            codecs.iterdecode(csv_file, 'utf8'),
+            fieldnames=['country_name', 'country', 'name', 'url'],
+            dialect=dialect,
         )
         try:
             next(reader, None)
