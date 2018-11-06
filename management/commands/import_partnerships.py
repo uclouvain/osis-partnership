@@ -207,6 +207,7 @@ class Command(BaseCommand):
         self.filename = 'partenariats.csv'
         total_lines_number = len(partnerships_lines)
         self.print_progress_bar(0, total_lines_number)
+        self.partnerships_external_ids = set()
         for (index, line) in enumerate(partnerships_lines, 1):
             self.line = index + 1
             self.import_partnership(line)
@@ -444,6 +445,15 @@ class Command(BaseCommand):
                 self.academic_years[year] = None
         return self.academic_years[year]
 
+    def get_partnership_external_id(self, base_external_id):
+        external_id = base_external_id
+        i = 1
+        while external_id in self.partnerships_external_ids:
+            external_id = '{}-{}'.format(base_external_id, i)
+            i += 1
+        self.partnerships_external_ids.add(external_id)
+        return external_id
+
     @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
@@ -451,7 +461,7 @@ class Command(BaseCommand):
                 line[0], line[1],
             ))
             return
-        external_id = line[1]
+        external_id = self.get_partnership_external_id(line[1])
         default_values = self.get_default_value()
         try:
             partnership = Partnership.objects.get(external_id=external_id)
@@ -510,6 +520,8 @@ class Command(BaseCommand):
             partnership_year.is_sta = bool(line[14])
             partnership_year.save()
             partnership_year.education_fields = educations_fields
+            if partnership.ucl_university_labo is not None:
+                partnership_year.entities = [partnership.ucl_university_labo]
 
         self.partnerships_for_agreements['{0}-{1}'.format(line[5], line[11])] = partnership
 
