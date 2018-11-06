@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2018-11-07 17:02+0100\n"
+=======
+"POT-Creation-Date: 2018-11-06 17:05+0100\n"
+>>>>>>> i18n messages updated
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -623,9 +627,6 @@ msgstr "UCLouvain"
 
 msgid "academic_years"
 msgstr "Academic years"
-
-msgid "agreement_missing_valid_years"
-msgstr "This agreement is missing valid years"
 
 msgid "agreements_export"
 msgstr "Agreements export"
