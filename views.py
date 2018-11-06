@@ -878,6 +878,12 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         if self.is_agreements:
             return PartnershipAgreement.objects.filter(
                 partnership__in=queryset.distinct()
+            ).select_related(
+                'partnership__partner__contact_address__country',
+                'partnership__supervisor',
+                'partnership__ucl_university',
+                'start_academic_year',
+                'end_academic_year',
             )
         return queryset.distinct()
 
@@ -952,8 +958,9 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
         return None
 
     def get_xls_data(self):
-        contact_types = dict(Partner.CONTACT_TYPE_CHOICES)
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().prefetch_related(
+            'partnership__ucl_university__entityversion_set',
+        )
         for agreement in queryset:
             try:
                 ucl_university = agreement.partnership.ucl_university.entityversion_set.all()[0]
