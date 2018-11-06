@@ -22,7 +22,7 @@
           <td>{{ agreement.partnership.partner.contact_address.city|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.get_supervisor|default_if_none:"" }}</td>
           <td>{{ agreement.partnership.entities_acronyms }}</td>
-          <td>{% years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</td>
+          <td>{% academic_years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</td>
           <td>{{ agreement.status|default_if_none:"" }}</td>
           <td>{{ agreement.eligible|yesno:"eligible,not eligible" }}</td>
           <td>

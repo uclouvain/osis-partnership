@@ -92,6 +92,15 @@ def academic_years(start_academic_year, end_academic_year):
     return "N/A"
 
 
+def academic_dates(start_academic_date, end_academic_date):
+    if start_academic_date is not None or end_academic_date is not None:
+        return ' > '.join([
+            str(start_academic_date) or "N/A",
+            str(end_academic_date) or "N/A",
+        ])
+    return "N/A"
+
+
 def merge_agreement_ranges(agreements=None):
     """
     Returns an union of agreements date ranges.
