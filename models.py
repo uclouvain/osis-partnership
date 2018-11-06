@@ -1,23 +1,23 @@
 from datetime import date, timedelta
 
+from base.models.academic_year import AcademicYear
+from base.models.education_group_year import EducationGroupYear
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
+from base.models.person import Person
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min, Subquery, OuterRef
+from django.db.models import Max, Min, OuterRef, Subquery
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
-from base.models.academic_year import AcademicYear
-from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.models.person import Person
-from partnership.utils import (merge_agreement_ranges, user_is_adri, user_is_gf,
-                               user_is_gf_of_faculty, user_is_in_user_faculty)
+from partnership.utils import (merge_agreement_ranges, user_is_adri,
+                               user_is_gf, user_is_gf_of_faculty,
+                               user_is_in_user_faculty)
 
 
 class PartnershipEntityManager(models.Model):
@@ -500,7 +500,6 @@ class Partnership(models.Model):
             return self._get_entities_acronyms_by_annotation()
         except AttributeError:
             return self._get_entities_acronyms()
-
 
     def _get_entities_acronyms_by_annotation(self):
         entities = []

@@ -1,37 +1,39 @@
-from collections import OrderedDict
 import codecs
+import csv
 import os
+from collections import OrderedDict
 from copy import copy
 
-from io import StringIO
 from dal import autocomplete
-import csv
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import URLValidator
-from django.db import transaction, models
+from django.db import transaction
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
-from django.db.models.functions import Now, ExtractYear
-from django.http import HttpResponseRedirect, HttpResponse, FileResponse, Http404
+from django.db.models.functions import Now
+from django.http import FileResponse, Http404
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
-from django.utils.functional import cached_property
 from django.views import View
 from django.views.generic import DetailView, ListView
+from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView, ProcessFormView)
 from django.views.generic.list import MultipleObjectMixin
-from django.views.generic.base import TemplateResponseMixin
 
 from base.models.academic_year import (current_academic_year,
                                        find_academic_years, AcademicYear)
@@ -40,19 +42,18 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
-from reference.models.country import Country
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm, UCLManagementEntityForm, FinancingForm,
-                               FinancingFilterForm, FinancingImportForm)
+                               PartnershipYearForm, UCLManagementEntityForm, FinancingFilterForm, FinancingImportForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity, Financing)
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails, academic_years
+from partnership.utils import user_is_adri, user_is_gf, academic_years
+from reference.models.country import Country
 
 
 class ExportView(FormMixin, View):
@@ -659,7 +660,6 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 )
         return super(PartnershipListFilterMixin, self).get(*args, **kwargs)
 
-
     def get_context_object_name(self, object_list):
         if self.is_agreements:
             return 'agreements'
@@ -857,7 +857,10 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             .annotate(
                 validity_end_year=Subquery(
                     AcademicYear.objects
-                        .filter(partnership_agreements_end__partnership=OuterRef('pk'), partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED)
+                        .filter(
+                            partnership_agreements_end__partnership=OuterRef('pk'),
+                            partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
+                        )
                         .order_by('-end_date')
                         .values('year')[:1]
                 ),
