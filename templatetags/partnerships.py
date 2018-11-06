@@ -1,6 +1,12 @@
 from django import template
+from django.urls import reverse
 
 register = template.Library()
+
+
+@register.filter
+def partner_media_download_url(partner, media):
+    return reverse('partnerships:partners:medias:download', kwargs={'partner_pk': partner.pk, 'pk': media.pk})
 
 
 @register.filter

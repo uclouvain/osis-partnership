@@ -20,7 +20,7 @@
       {% if media.url %}
       <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
       {% else %}
-      <a href="{{ media.file.url }}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+      <a href="{% if file_url %}{{ file_url }}{% else %}{{ media.file.url }}{% endif %}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
       {% endif %}
       {% if can_update_partner and not hide_actions %}
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

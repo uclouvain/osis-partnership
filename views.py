@@ -1,5 +1,6 @@
 from collections import OrderedDict
 import codecs
+import os
 from copy import copy
 
 from io import StringIO
@@ -16,7 +17,7 @@ from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
 from django.db.models.functions import Now, ExtractYear
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
@@ -25,6 +26,7 @@ from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
                                        UpdateView, ProcessFormView)
 from django.views.generic.list import MultipleObjectMixin
@@ -556,6 +558,17 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
         if self.request.is_ajax():
             return 'partnerships/includes/media_delete.html'
         return self.template_name
+
+
+class PartnerMediaDownloadView(PartnerMediaMixin, SingleObjectMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        media = self.get_object()
+        if media.file is None:
+            raise Http404
+        response = FileResponse(media.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(media.file.name))
+        return response
 
 
 class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -1349,6 +1362,21 @@ class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
         if self.request.is_ajax():
             return 'partnerships/agreements/includes/delete.html'
         return self.template_name
+
+
+class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleObjectMixin, View):
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        agreement = self.get_object()
+        media = agreement.media
+        if media.file is None:
+            raise Http404
+        response = FileResponse(media.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(media.file.name))
+        return response
 
 
 class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

@@ -37,7 +37,8 @@ from partnership.views import (EntityAutocompleteView,
                                UclUniversityLaboAutocompleteFilterView,
                                UclUniversityLaboAutocompleteView, UniversityOffersAutocompleteFilterView,
                                FacultyAutocompleteView, FacultyEntityAutocompleteView,
-                               YearsEntityAutocompleteFilterView)
+                               YearsEntityAutocompleteFilterView, PartnerMediaDownloadView,
+                               PartnershipAgreementMediaDownloadView)
 
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
@@ -54,6 +55,7 @@ urlpatterns = [
     url(r'^(?P<partnership_pk>\d+)/agreements/', include([
         url(r'^(?P<pk>\d+)/delete/$', PartneshipAgreementDeleteView.as_view(), name="delete"),
         url(r'^(?P<pk>\d+)/update/$', PartneshipAgreementUpdateView.as_view(), name="update"),
+        url(r'^(?P<pk>\d+)/download_media/$', PartnershipAgreementMediaDownloadView.as_view(), name="download_media"),
         url(r'^new/$', PartneshipAgreementCreateView.as_view(), name="create"),
     ], namespace='agreements')),
     url(r'^partners/', include([
@@ -66,6 +68,7 @@ urlpatterns = [
             url(r'^new/$', PartnerMediaCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerMediaUpdateView.as_view(), name="update"),
             url(r'^(?P<pk>\d+)/delete/$', PartnerMediaDeleteView.as_view(), name="delete"),
+            url(r'^(?P<pk>\d+)/download/$', PartnerMediaDownloadView.as_view(), name="download"),
         ], namespace='medias')),
         url(r'^(?P<partner_pk>\d+)/entities/', include([
             url(r'^new/$', PartnerEntityCreateView.as_view(), name="create"),
