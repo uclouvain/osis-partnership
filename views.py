@@ -678,24 +678,55 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
 
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
-        if ordering == 'country':
-            return ['partner__contact_address__country__name', 'partner__contact_address__city', 'partner__name']
-        elif ordering == '-country':
-            return ['-partner__contact_address__country__name', '-partner__contact_address__city', '-partner__name']
-        elif ordering == 'ucl':
-            return [
-                'ucl_university__entityversion__parent__entityversion__acronym',
-                'ucl_university__entityversion__acronym',
-                'ucl_university_labo__entityversion__acronym',
-            ]
-        elif ordering == '-ucl':
-            return [
-                '-ucl_university__entityversion__parent__entityversion__acronym',
-                '-ucl_university__entityversion__acronym',
-                '-ucl_university_labo__entityversion__acronym',
-            ]
-        else:
+        if self.is_agreements:
+            if ordering == 'partner':
+                return ['partnership__partner__name']
+            elif ordering == '-partner':
+                return ['-partnership__partner__name']
+            if ordering == 'country':
+                return [
+                    'partnership__partner__contact_address__country__name',
+                    'partnership__partner__contact_address__city',
+                    'partnership__partner__name',
+                ]
+            elif ordering == '-country':
+                return [
+                    '-partnership__partner__contact_address__country__name',
+                    '-partnership__partner__contact_address__city',
+                    '-partnership__partner__name'
+                ]
+            elif ordering == 'ucl':
+                return [
+                    'partnership__ucl_university__entityversion__parent__entityversion__acronym',
+                    'partnership__ucl_university__entityversion__acronym',
+                    'partnership__ucl_university_labo__entityversion__acronym',
+                ]
+            elif ordering == '-ucl':
+                return [
+                    '-partnership__ucl_university__entityversion__parent__entityversion__acronym',
+                    '-partnership__ucl_university__entityversion__acronym',
+                    '-partnership__ucl_university_labo__entityversion__acronym',
+                ]
             return [ordering]
+        else:
+            if ordering == 'country':
+                return ['partner__contact_address__country__name', 'partner__contact_address__city', 'partner__name']
+            elif ordering == '-country':
+                return ['-partner__contact_address__country__name', '-partner__contact_address__city', '-partner__name']
+            elif ordering == 'ucl':
+                return [
+                    'ucl_university__entityversion__parent__entityversion__acronym',
+                    'ucl_university__entityversion__acronym',
+                    'ucl_university_labo__entityversion__acronym',
+                ]
+            elif ordering == '-ucl':
+                return [
+                    '-ucl_university__entityversion__parent__entityversion__acronym',
+                    '-ucl_university__entityversion__acronym',
+                    '-ucl_university_labo__entityversion__acronym',
+                ]
+            else:
+                return [ordering]
 
     def filter_queryset(self, queryset, data):
         if data.get('ucl_university', None):
@@ -874,9 +905,8 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         elif form.is_valid():
             queryset = self.filter_queryset(queryset, form.cleaned_data)
         ordering = self.get_ordering()
-        queryset = queryset.order_by(*ordering)
         if self.is_agreements:
-            return PartnershipAgreement.objects.filter(
+            queryset = PartnershipAgreement.objects.filter(
                 partnership__in=queryset.distinct()
             ).select_related(
                 'partnership__partner__contact_address__country',
@@ -884,7 +914,9 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'partnership__ucl_university',
                 'start_academic_year',
                 'end_academic_year',
-            )
+            ).order_by(*ordering)
+        else:
+            queryset = queryset.order_by(*ordering)
         return queryset.distinct()
 
     def get_context_data(self, **kwargs):
