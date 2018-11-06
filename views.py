@@ -1533,14 +1533,10 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
     def get_success_url(self, academic_year=None):
         if academic_year is None:
             configuration = PartnershipConfiguration.get_configuration()
-            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
+            academic_year = configuration.get_current_academic_year_for_creation_modification()
         return reverse('partnerships:financings:list', kwargs={'year': academic_year.year})
 
-    @transaction.atomic
-    def form_valid(self, form):
-        self.academic_year = form.cleaned_data.get('import_academic_year')
-
-        csv_file = self.request.FILES['csv_file']
+    def get_reader(self, csv_file):
         sample = csv_file.read(1024).decode('utf8')
         dialect = csv.Sniffer().sniff(sample)
         csv_file.seek(0)
@@ -1549,33 +1545,49 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
             fieldnames=['country_name', 'country', 'name', 'url'],
             dialect=dialect,
         )
-        try:
-            next(reader, None)
-            for row in reader:
-                if not row['name']:
-                    continue
-                financing = Financing.objects.filter(
-                    name=row['name'],
-                    academic_year=self.academic_year,
-                ).first()
-                country = Country.objects.get(iso_code=row['country'])
-                if financing is None:
-                    financing = Financing(
-                        name=row['name'],
-                        url=row['url'],
-                        academic_year=self.academic_year,
-                    )
+        return reader
 
-                else:
-                    financing.url = row['url']
-                financing.save()
-                if country is not None and country not in financing.countries.all():
-                    financing.countries.add(country)
+    def handle_csv(self, reader):
+        financings_countries = {}
+        financings_url = {}
+        next(reader, None)
+        for row in reader:
+            if not row['name']:
+                continue
+            financings_url[row['name']] = row['url']
+            financings_countries.setdefault(row['name'], []).append(Country.objects.get(iso_code=row['country']))
+        return financings_countries, financings_url
+
+    @transaction.atomic
+    def update_financings(self, academic_year, financings_countries, financings_url):
+        Financing.objects.filter(academic_year=academic_year).delete()
+        financings = []
+        for name in financings_countries.keys():
+            financings.append(
+                Financing(
+                    academic_year=academic_year,
+                    name=name,
+                    url=financings_url.get(name, None)
+                )
+            )
+        financings = Financing.objects.bulk_create(financings)
+        for financing in financings:
+            financing.countries = financings_countries.get(financing.name, [])
+
+    def form_valid(self, form):
+        academic_year = form.cleaned_data.get('import_academic_year')
+
+        reader = self.get_reader(self.request.FILES['csv_file'])
+        try:
+            financings_countries, financings_url = self.handle_csv(reader)
         except ValueError:
             messages.error(self.request, _('financings_imported_error'))
-            return redirect(self.get_success_url(self.academic_year))
+            return redirect(self.get_success_url(academic_year))
+
+        self.update_financings(academic_year, financings_countries, financings_url)
+
         messages.success(self.request, _('financings_imported'))
-        return redirect(self.get_success_url(self.academic_year))
+        return redirect(self.get_success_url(academic_year))
 
 
 class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, ListView):
