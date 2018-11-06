@@ -64,6 +64,11 @@ class FinancingsImportViewTest(TestCase):
             }
             response = self.client.post(self.url, data, follow=True)
         self.assertEqual(Financing.objects.filter(academic_year=self.academic_year).count(), 2)
+        financing = Financing.objects.get(name='foo')
+        self.assertEqual(financing.url, 'http://foo.com')
+        self.assertIn(self.country_1, financing.countries.all())
+        self.assertNotIn(self.country_2, financing.countries.all())
+        self.assertIn(self.country_3, financing.countries.all())
         with open(self.filename_2, 'r') as f:
             data = {
                 'csv_file': f,
@@ -72,9 +77,7 @@ class FinancingsImportViewTest(TestCase):
             response = self.client.post(self.url, data, follow=True)
         financing = Financing.objects.get(name='foo')
         self.assertEqual(financing.url, 'http://foobis.com')
-        self.assertIn(self.country_1, financing.countries.all())
-        self.assertNotIn(self.country_2, financing.countries.all())
-        self.assertIn(self.country_3, financing.countries.all())
+        self.assertNotIn(self.country_1, financing.countries.all())
         self.assertIn(self.country_4, financing.countries.all())
         self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
 
