@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 16:12+0200\n"
+"POT-Creation-Date: 2018-11-07 17:02+0100\n"
 "PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,6 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
+
+msgid "partnerships_general_configuration"
+msgstr "Configuration générale"
+
+msgid "partnerships_financing_configuration"
+msgstr "Configuration des financements"
 
 msgid "Yes"
 msgstr "Oui"
@@ -1263,7 +1269,3 @@ msgstr "Financements importés avec succès"
 
 #~ msgid "new_entity"
 #~ msgstr "Nouvelle entité"
-
-# Menu translations :
-#~ msgid "general_configuration"
-#~ msgstr "Configuration générale"
