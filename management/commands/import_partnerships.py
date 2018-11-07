@@ -151,6 +151,9 @@ class Command(BaseCommand):
     partners_by_csv_id = {}
     partnerships_for_agreements = {}
 
+    partners_external_ids = set()
+    partnerships_external_ids = set()
+
     def add_arguments(self, parser):
         parser.add_argument(
             'csv_folder', type=str, help='folder containing partenaires.csv, partenariats.csv and accords.csv',
@@ -207,7 +210,6 @@ class Command(BaseCommand):
         self.filename = 'partenariats.csv'
         total_lines_number = len(partnerships_lines)
         self.print_progress_bar(0, total_lines_number)
-        self.partnerships_external_ids = set()
         for (index, line) in enumerate(partnerships_lines, 1):
             self.line = index + 1
             self.import_partnership(line)
@@ -307,6 +309,17 @@ class Command(BaseCommand):
             }
         return self.default_values
 
+    def get_partner_external_id(self, base_external_id):
+        if not base_external_id:
+            return None
+        external_id = base_external_id
+        i = 1
+        while external_id in self.partners_external_ids:
+            external_id = '{}-{}'.format(base_external_id, i)
+            i += 1
+        self.partners_external_ids.add(external_id)
+        return external_id
+
     @transaction.atomic
     def import_partner(self, line):
         if not line[2]:
@@ -325,7 +338,7 @@ class Command(BaseCommand):
         partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
-        partner.external_id = line[1] if line[1] else None
+        partner.external_id = self.get_partner_external_id(line[1])
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
         partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
@@ -446,6 +459,8 @@ class Command(BaseCommand):
         return self.academic_years[year]
 
     def get_partnership_external_id(self, base_external_id):
+        if not base_external_id:
+            return None
         external_id = base_external_id
         i = 1
         while external_id in self.partnerships_external_ids:
