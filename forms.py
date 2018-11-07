@@ -85,7 +85,8 @@ class PartnerForm(forms.ModelForm):
 
     is_nonprofit = forms.ChoiceField(
         label=_('is_nonprofit'),
-        required=True,
+        help_text=_('mandatory_if_not_pic_ies'),
+        required=False,
         choices=(
             (None, '---------'),
             (True, _('Yes')),
@@ -95,7 +96,8 @@ class PartnerForm(forms.ModelForm):
 
     is_public = forms.ChoiceField(
         label=_('is_public'),
-        required=True,
+        help_text=_('mandatory_if_not_pic_ies'),
+        required=False,
         choices=(
             (None, '---------'),
             (True, _('Yes')),
@@ -139,12 +141,33 @@ class PartnerForm(forms.ModelForm):
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('name')
 
+    def _clean_choice_boolean(self, value):
+        values = {
+            '': None,
+            'True': True,
+            'False': False,
+        }
+        return values.get(value, value)
+
+    def clean_is_ies(self):
+        return self._clean_choice_boolean(self.cleaned_data.get('is_ies', None))
+
+    def clean_is_nonprofit(self):
+        return self._clean_choice_boolean(self.cleaned_data.get('is_nonprofit', None))
+
+    def clean_is_public(self):
+        return self._clean_choice_boolean(self.cleaned_data.get('is_public', None))
+
     def clean(self):
         super(PartnerForm, self).clean()
         if self.cleaned_data['start_date'] and self.cleaned_data['end_date']:
             if self.cleaned_data['start_date'] > self.cleaned_data['end_date']:
                 self.add_error('start_date', ValidationError(_('start_date_gt_end_date_error')))
-        if not self.cleaned_data['pic_code'] and not self.cleaned_data.get('is_ies', None):
+        if not self.cleaned_data['pic_code'] or not self.cleaned_data.get('is_ies', None):
+            if self.cleaned_data['is_nonprofit'] is None:
+                self.add_error('is_nonprofit', ValidationError(_('required')))
+            if self.cleaned_data['is_public'] is None:
+                self.add_error('is_public', ValidationError(_('required')))
             if not self.cleaned_data['email']:
                 self.add_error('email', ValidationError(_('required')))
             if not self.cleaned_data['phone']:
