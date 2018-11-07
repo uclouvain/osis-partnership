@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from copy import copy
 
 from dal import autocomplete
@@ -42,6 +43,57 @@ from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
                                 PartnershipYear, UCLManagementEntity)
 from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
+
+
+class ExportView(FormMixin, View):
+
+    def get_xls_headers(self):
+        raise NotImplemented
+
+    def get_xls_data(self):
+        raise NotImplemented
+
+    def get_description(self):
+        raise NotImplemented
+
+    def get_filename(self):
+        raise NotImplemented
+
+    def get_title(self):
+        raise NotImplemented
+
+    def get_xls_filters(self):
+        form = self.get_form()
+        if form.is_valid():
+            filters = {}
+            for key, value in form.cleaned_data.items():
+                if not value and not isinstance(value, bool):
+                    continue
+                if isinstance(value, QuerySet):
+                    value = ', '.join(map(str, list(value)))
+                filters[key] = str(value)
+            filters = OrderedDict(sorted(filters.items(), key= lambda x: x[0]))
+            return filters
+        return {}
+
+    def generate_xls(self):
+        working_sheets_data = self.get_xls_data()
+        parameters = {
+            xls_build.DESCRIPTION: self.get_title(),
+            xls_build.USER: str(self.request.user),
+            xls_build.FILENAME: self.get_filename(),
+            xls_build.HEADER_TITLES: self.get_xls_headers(),
+            xls_build.WS_TITLE: self.get_title(),
+        }
+        filters = self.get_xls_filters()
+        response = xls_build.generate_xls(
+            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
+            filters,
+        )
+        return response
+
+    def get(self, request, *args, **kwargs):
+        return self.generate_xls()
 
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
@@ -122,7 +174,7 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
         return context
 
 
-class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
+class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView):
 
     def get_xls_headers(self):
         return [
@@ -174,37 +226,14 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, View):
         )
         return queryset
 
-    def get_xls_filters(self):
-        form = self.get_form()
-        if form.is_valid():
-            filters = {}
-            for key, value in form.cleaned_data.items():
-                if not value:
-                    continue
-                if isinstance(value, QuerySet):
-                    value = ', '.join(map(str, list(value)))
-                filters[key] = str(value)
-            return filters
-        return None
+    def get_description(self):
+        return _('partners')
 
-    def generate_xls(self):
-        working_sheets_data = self.get_xls_data()
-        parameters = {
-            xls_build.DESCRIPTION: _('partners'),
-            xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partners-%Y-%m-%d-%H-%M-%S'),
-            xls_build.HEADER_TITLES: self.get_xls_headers(),
-            xls_build.WS_TITLE: _('partners')
-        }
-        filters = self.get_xls_filters()
-        response = xls_build.generate_xls(
-            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
-            filters,
-        )
-        return response
+    def get_filename(self):
+        return now().strftime('partners-%Y-%m-%d-%H-%M-%S')
 
-    def get(self, request, *args, **kwargs):
-        return self.generate_xls()
+    def get_title(self):
+        return _('partners')
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):
@@ -836,7 +865,7 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
         return context
 
 
-class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
 
     def get_xls_headers(self):
         return [
@@ -865,7 +894,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
             ugettext('external_id'),
         ]
 
-    def get_xls_data(self, academic_year):
+    def get_xls_data(self):
         queryset = self.get_queryset()
         queryset = (
             queryset
@@ -910,7 +939,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                 first_year = years[0]
             for year in years:
                 end_year = year
-                if year.academic_year == academic_year:
+                if year.academic_year == self.academic_year:
                     current_year = year
 
             yield [
@@ -941,40 +970,25 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View
                 partnership.external_id,
             ]
 
-    def get_xls_filters(self, academic_year):
-        form = self.get_form()
-        filters = {
-            _('academic_year'): str(academic_year),
-        }
-        if form.is_valid():
-            for key, value in form.cleaned_data.items():
-                if not value:
-                    continue
-                if isinstance(value, QuerySet):
-                    value = ', '.join(map(str, list(value)))
-                filters[key] = str(value)
-            return filters
+    def get_description(self):
+        return _('partnerships')
+
+    def get_filename(self):
+        return now().strftime('partnerships-%Y-%m-%d-%H-%M-%S')
+
+    def get_title(self):
+        return _('partnerships')
+
+    def get_xls_filters(self):
+        filters = super(PartnershipExportView, self).get_xls_filters()
+        filters[_('academic_year')] = str(self.academic_year)
+        filters.move_to_end(_('academic_year'), last=False)
         return filters
 
-    def generate_xls(self):
-        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        working_sheets_data = self.get_xls_data(academic_year)
-        parameters = {
-            xls_build.DESCRIPTION: _('partnerships'),
-            xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('partnerships-%Y-%m-%d-%H-%M-%S'),
-            xls_build.HEADER_TITLES: self.get_xls_headers(),
-            xls_build.WS_TITLE: _('partnerships')
-        }
-        filters = self.get_xls_filters(academic_year)
-        response = xls_build.generate_xls(
-            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
-            filters,
-        )
-        return response
-
-    def get(self, request, *args, **kwargs):
-        return self.generate_xls()
+    def get(self, *args, **kwargs):
+        configuration = PartnershipConfiguration.get_configuration()
+        self.academic_year = configuration.get_current_academic_year_for_creation_modification()
+        return super(PartnershipExportView, self).get(*args, **kwargs)
 
 
 class PartnershipDetailView(LoginRequiredMixin, DetailView):
