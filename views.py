@@ -71,6 +71,8 @@ class ExportView(FormMixin, View):
                     continue
                 if isinstance(value, QuerySet):
                     value = ', '.join(map(str, list(value)))
+                elif isinstance(value, EducationGroupYear):
+                    value = '{0} - {1}'.format(value.acronym, value.title)
                 filters[key] = str(value)
             filters = OrderedDict(sorted(filters.items(), key= lambda x: x[0]))
             return filters
