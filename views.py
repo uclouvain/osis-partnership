@@ -74,7 +74,7 @@ class ExportView(FormMixin, View):
                 filters[key] = str(value)
             filters = OrderedDict(sorted(filters.items(), key= lambda x: x[0]))
             return filters
-        return {}
+        return OrderedDict()
 
     def generate_xls(self):
         working_sheets_data = self.get_xls_data()
