@@ -61,25 +61,18 @@
             <thead>
               <tr>
                 <td>{% trans 'countries' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="name" %}</td>
-                <td>{% trans 'Name' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing__name" %}</td>
-                <td>{% trans 'url' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing__url" %}</td>
+                <td>{% trans 'Name' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing_name" %}</td>
+                <td>{% trans 'url' %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="financing_url" %}</td>
               </tr>
             </thead>
 
             <tbody>
               {% for country in object_list %}
-                {% for financing in country.financing_set.all %}
-                  <tr>
-                    <td>{% if forloop.first %}{{ country }} ({{ country.iso_code }}){% endif %}</td>
-                    <td>{{ financing.name }}</td>
-                    <td><a href="{{ financing.url }}">{{ financing.url }}</a></td>
-                  </tr>
-                {% empty %}
                   <tr>
                     <td>{{ country }} ({{ country.iso_code }})</td>
-                    <td colspan="2"></td>
+                    <td>{{ country.financing_name|default_if_none:"" }}</td>
+                    <td>{% if country.financing_url %}<a href="{{ country.financing_url }}">{{ country.financing_url }}</a>{% endif %}</td>
                   </tr>
-                {% endfor %}
               {% empty %}
                 <tr><td colspan="3">{% trans "no_country" %}</td></tr>
               {% endfor %}

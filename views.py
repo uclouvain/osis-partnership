@@ -1565,7 +1565,8 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
             if row['name'] not in financings_url:
                 url = row['url']
                 try:
-                    url_validator(url)
+                    if url:
+                        url_validator(url)
                     financings_url[row['name']] = url
                 except ValidationError:
                     financings_url[row['name']] = ''
@@ -1635,24 +1636,24 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
 
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', None)
-        if ordering == 'financing__name':
+        if ordering == 'financing_name':
             return [
-                'financing__name',
+                'financing_name',
                 'name',
             ]
-        elif ordering == '-financing__name':
+        elif ordering == '-financing_name':
             return [
-                '-financing__name',
+                '-financing_name',
                 'name',
             ]
-        elif ordering == 'financing__url':
+        elif ordering == 'financing_url':
             return [
-                'financing__url',
+                'financing_url',
                 'name',
             ]
-        elif ordering == '-financing__url':
+        elif ordering == '-financing_url':
             return [
-                '-financing__url',
+                '-financing_url',
                 'name',
             ]
         elif ordering == '-name':
@@ -1683,18 +1684,25 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
     def get_success_url(self):
         return reverse('partnerships:financings:list', kwargs={'year': self.academic_year.year})
 
-    def get_queryset(self, *args, **kwargs):
-        ordering = self.get_ordering()
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related(
-            Prefetch(
-                'financing_set',
-                queryset=Financing.objects.filter(academic_year=self.academic_year)
+    def get_queryset(self):
+        queryset = (
+            Country.objects
+            .annotate(
+                financing_name=Subquery(
+                    Financing.objects
+                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
+                        .values('name')[:1]
+                ),
+                financing_url=Subquery(
+                    Financing.objects
+                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
+                        .values('url')[:1]
+                ),
             )
-        ).filter(
-            Q(financing__academic_year=self.academic_year) | Q(financing__isnull=True)
+            .order_by(*self.get_ordering())
+            .distinct()
         )
-        return queryset.distinct().order_by(*ordering)
+        return queryset
 
     def form_valid(self, form):
         self.academic_year = form.cleaned_data.get('year', None)
