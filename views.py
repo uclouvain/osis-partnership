@@ -676,6 +676,13 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             kwargs['data'] = data
         return kwargs
 
+    def get_form(self):
+        try:
+            return self.form
+        except AttributeError:
+            self.form = super().get_form()
+            return self.form
+
     def get_ordering(self):
         ordering = self.request.GET.get('ordering', 'country')
         if self.is_agreements:
