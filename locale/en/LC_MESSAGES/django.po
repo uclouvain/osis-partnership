@@ -1058,6 +1058,16 @@ msgstr "UCLouvain management entity successfully created."
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
 
+#, fuzzy, python-brace-format
+#| msgid "financings_imported_error"
+msgid "financing_country_not_imported_{country}"
+msgstr "Financings could not be imported."
+
+#, fuzzy, python-brace-format
+#| msgid "financing_csv_file_invalid_extension"
+msgid "financing_url_invalid_{country}_{url}"
+msgstr "Please import a csv file."
+
 msgid "financings_imported_error"
 msgstr "Financings could not be imported."
 

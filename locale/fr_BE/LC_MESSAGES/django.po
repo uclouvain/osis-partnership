@@ -1098,6 +1098,12 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
+msgid "financing_country_not_imported_{country}"
+msgstr "Pays {country} non importé (code inconnu)"
+
+msgid "financing_url_invalid_{country}_{url}"
+msgstr "Pays {country} : URL “{url}” invalide."
+
 msgid "financings_imported_error"
 msgstr "Les financements n'ont pas pu être importés."
 

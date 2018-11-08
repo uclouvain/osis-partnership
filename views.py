@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
+from django.core.validators import URLValidator
 from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
@@ -1548,14 +1549,29 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
         return reader
 
     def handle_csv(self, reader):
+        url_validator = URLValidator()
         financings_countries = {}
         financings_url = {}
         next(reader, None)
         for row in reader:
             if not row['name']:
                 continue
-            financings_url[row['name']] = row['url']
-            financings_countries.setdefault(row['name'], []).append(Country.objects.get(iso_code=row['country']))
+            try:
+                country = Country.objects.get(iso_code=row['country'])
+            except Country.DoesNotExist:
+                messages.warning(
+                    self.request, _('financing_country_not_imported_{country}').format(country=row['country']))
+                continue
+            if row['name'] not in financings_url:
+                url = row['url']
+                try:
+                    url_validator(url)
+                    financings_url[row['name']] = url
+                except ValidationError:
+                    financings_url[row['name']] = ''
+                    messages.warning(
+                        self.request, _('financing_url_invalid_{country}_{url}').format(country=country, url=url))
+            financings_countries.setdefault(row['name'], []).append(country)
         return financings_countries, financings_url
 
     @transaction.atomic
