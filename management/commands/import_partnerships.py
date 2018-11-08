@@ -151,9 +151,6 @@ class Command(BaseCommand):
     partners_by_csv_id = {}
     partnerships_for_agreements = {}
 
-    partners_external_ids = set()
-    partnerships_external_ids = set()
-
     def add_arguments(self, parser):
         parser.add_argument(
             'csv_folder', type=str, help='folder containing partenaires.csv, partenariats.csv and accords.csv',
@@ -309,15 +306,18 @@ class Command(BaseCommand):
             }
         return self.default_values
 
-    def get_partner_external_id(self, base_external_id):
+    def get_partner_external_id(self, base_external_id, partner_id):
         if not base_external_id:
             return None
         external_id = base_external_id
         i = 1
-        while external_id in self.partners_external_ids:
+        if partner_id is not None:
+            queryset = Partner.objects.exclude(pk=partner_id)
+        else:
+            queryset = Partner.objects
+        while queryset.filter(external_id=external_id).exists():
             external_id = '{}-{}'.format(base_external_id, i)
             i += 1
-        self.partners_external_ids.add(external_id)
         return external_id
 
     @transaction.atomic
@@ -338,7 +338,7 @@ class Command(BaseCommand):
         partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
-        partner.external_id = self.get_partner_external_id(line[1])
+        partner.external_id = self.get_partner_external_id(line[1], partner.pk)
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
         partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
@@ -458,17 +458,6 @@ class Command(BaseCommand):
                 self.academic_years[year] = None
         return self.academic_years[year]
 
-    def get_partnership_external_id(self, base_external_id):
-        if not base_external_id:
-            return None
-        external_id = base_external_id
-        i = 1
-        while external_id in self.partnerships_external_ids:
-            external_id = '{}-{}'.format(base_external_id, i)
-            i += 1
-        self.partnerships_external_ids.add(external_id)
-        return external_id
-
     @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
@@ -476,7 +465,7 @@ class Command(BaseCommand):
                 line[0], line[1],
             ))
             return
-        external_id = self.get_partnership_external_id(line[1])
+        external_id = line[1]
         default_values = self.get_default_value()
         try:
             partnership = Partnership.objects.get(external_id=external_id)
