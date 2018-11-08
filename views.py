@@ -965,7 +965,7 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
         return context
 
 
-class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
 
     @cached_property
     def is_agreements(self):
@@ -985,19 +985,6 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             ugettext('status'),
             ugettext('eligible'),
         ]
-
-    def get_xls_filters(self):
-        form = self.get_form()
-        if form.is_valid():
-            filters = {}
-            for key, value in form.cleaned_data.items():
-                if not value:
-                    continue
-                if isinstance(value, QuerySet):
-                    value = ', '.join(map(str, list(value)))
-                filters[key] = str(value)
-            return filters
-        return None
 
     def get_xls_data(self):
         queryset = self.get_queryset().prefetch_related(
@@ -1021,27 +1008,21 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 agreement.eligible,
             ]
 
-    def generate_xls(self):
-        working_sheets_data = self.get_xls_data()
-        parameters = {
-            xls_build.DESCRIPTION: _('agreements'),
-            xls_build.USER: str(self.request.user),
-            xls_build.FILENAME: now().strftime('agreements-%Y-%m-%d-%H-%m-%S'),
-            xls_build.HEADER_TITLES: self.get_xls_headers(),
-            xls_build.WS_TITLE: _('agreements')
-        }
-        filters = self.get_xls_filters()
-        response = xls_build.generate_xls(
-            xls_build.prepare_xls_parameters_list(working_sheets_data, parameters),
-            filters,
-        )
-        return response
+    def get_description(self):
+        return _('agreements')
 
-    def get(self, request, *args, **kwargs):
-        return self.generate_xls()
+    def get_filename(self):
+        return now().strftime('agreements-%Y-%m-%d-%H-%M-%S')
+
+    def get_title(self):
+        return _('agreements')
 
 
 class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+
+    @cached_property
+    def is_agreements(self):
+        return False
 
     def get_xls_headers(self):
         return [
