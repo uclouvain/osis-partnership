@@ -350,8 +350,8 @@ class Command(BaseCommand):
             partner.contact_address = Address()
         partner.contact_address.address = line[12]
         partner.email = line[13] if line[13] else None
-        partner.is_nonprofit = line[14] == 'YES'
-        partner.is_public = line[15] == 'YES'
+        partner.is_nonprofit = None if not line[14] else line[14] == 'YES'
+        partner.is_public = None if not line[15] else line[15] == 'YES'
         partner.phone = line[16] if line[16] else None
         partner.contact_type = line[17] if line[17] else None
         partner.website = line[18] if line[18] else default_values['website']
