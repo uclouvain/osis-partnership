@@ -48,19 +48,19 @@ from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, g
 class ExportView(FormMixin, View):
 
     def get_xls_headers(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_xls_data(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_description(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_filename(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_title(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_xls_filters(self):
         form = self.get_form()
