@@ -966,6 +966,11 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
 
 
 class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+
+    @cached_property
+    def is_agreements(self):
+        return True
+
     def get_xls_headers(self):
         return [
             ugettext('id'),
@@ -973,7 +978,8 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             ugettext('country'),
             ugettext('city'),
             ugettext('partnership_supervisor'),
-            ugettext('ucl'),
+            ugettext('faculty'),
+            ugettext('entity'),
             ugettext('start_academic_year'),
             ugettext('end_academic_year'),
             ugettext('status'),
@@ -998,7 +1004,8 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             'partnership__ucl_university__entityversion_set',
         )
         for agreement in queryset:
-            ucl = agreement.partnership.ucl_university.entity_version_set.latest('-start_date').values('acronym')
+            faculty = agreement.partnership.ucl_university.entityversion_set.latest('start_date')
+            entity = agreement.partnership.ucl_university_labo
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
                 agreement.pk,
@@ -1006,10 +1013,11 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 str(agreement.partnership.partner.contact_address.country),
                 str(agreement.partnership.partner.contact_address.city),
                 str(agreement.partnership.get_supervisor()),
-                ucl,
+                faculty.acronym,
+                entity.most_recent_acronym if entity is not None else '',
                 agreement.start_academic_year.year,
                 agreement.end_academic_year.year + 1,
-                agreement.status,
+                agreement.get_status_display(),
                 agreement.eligible,
             ]
 
