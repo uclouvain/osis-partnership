@@ -1041,7 +1041,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
         return self.generate_xls()
 
 
-class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, View):
+class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
 
     def get_xls_headers(self):
         return [
