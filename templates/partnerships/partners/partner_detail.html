@@ -54,10 +54,10 @@
           <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_nonprofit" %}</dt>
-          <dd><i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+          <dd>{% if partner.is_nonprofit is None %}{% trans "not_filled_in" %}{% else %}<i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
 
           <dt>{% trans "is_public" %}</dt>
-          <dd><i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+          <dd>{% if partner.is_public is None %}{% trans "not_filled_in" %}{% else %}<i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
 
           <dt title="{% trans "use_egracons" %}">{% trans "use_egracons" %}</dt>
           <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>

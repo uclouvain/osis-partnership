@@ -232,8 +232,21 @@ msgstr ""
 msgid "end_academic_year"
 msgstr "End academic year"
 
+msgid "partnership_year_entities"
+msgstr "Partnership year entities"
+
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "partnership_year_entities_help_text"
+msgstr "Partnership year entities"
+
 msgid "partnership_year_offers"
 msgstr "Offers"
+
+#, fuzzy
+#| msgid "partnership_year_offers"
+msgid "partnership_year_offers_help_text"
+msgstr "Partnership year offers"
 
 msgid "education_levels_empty_errors"
 msgstr ""
@@ -463,19 +476,6 @@ msgstr "Partnership year education fields"
 
 msgid "partnership_year_education_levels"
 msgstr "Partnership year education levels"
-
-msgid "partnership_year_entities"
-msgstr "Partnership year entities"
-
-#, fuzzy
-#| msgid "partnership_year_entities"
-msgid "partnership_year_entities_help_text"
-msgstr "Partnership year entities"
-
-#, fuzzy
-#| msgid "partnership_year_offers"
-msgid "partnership_year_offers_help_text"
-msgstr "Partnership year offers"
 
 msgid "partnership_year"
 msgstr "Partnership year"
@@ -856,6 +856,9 @@ msgstr "Update partner"
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
 msgstr ""
 
+msgid "not_filled_in"
+msgstr "Not filled in"
+
 msgid "contact_address"
 msgstr "Contact address"
 
@@ -1024,9 +1027,6 @@ msgstr "Contact successfully deleted"
 
 msgid "supervisor"
 msgstr "Supervisor"
-
-msgid "start_date"
-msgstr "Start date"
 
 msgid "partnership_error"
 msgstr ""
