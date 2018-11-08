@@ -974,7 +974,8 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             ugettext('city'),
             ugettext('partnership_supervisor'),
             ugettext('ucl'),
-            ugettext('academic_years'),
+            ugettext('start_academic_year'),
+            ugettext('end_academic_year'),
             ugettext('status'),
             ugettext('eligible'),
         ]
@@ -997,10 +998,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             'partnership__ucl_university__entityversion_set',
         )
         for agreement in queryset:
-            try:
-                ucl_university = agreement.partnership.ucl_university.entityversion_set.all()[0]
-            except IndexError:
-                ucl_university = ''
+            ucl = agreement.partnership.ucl_university.entity_version_set.latest('-start_date').values('acronym')
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
                 agreement.pk,
@@ -1008,8 +1006,9 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 str(agreement.partnership.partner.contact_address.country),
                 str(agreement.partnership.partner.contact_address.city),
                 str(agreement.partnership.get_supervisor()),
-                str(ucl_university),
-                years,
+                ucl,
+                agreement.start_academic_year.year,
+                agreement.end_academic_year.year + 1,
                 agreement.status,
                 agreement.eligible,
             ]
