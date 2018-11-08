@@ -67,13 +67,14 @@ class ExportView(FormMixin, View):
         if form.is_valid():
             filters = {}
             for key, value in form.cleaned_data.items():
+                label = form.fields[key].label
                 if not value and not isinstance(value, bool):
                     continue
                 if isinstance(value, QuerySet):
                     value = ', '.join(map(str, list(value)))
                 elif isinstance(value, EducationGroupYear):
                     value = '{0} - {1}'.format(value.acronym, value.title)
-                filters[key] = str(value)
+                filters[label] = str(value)
             filters = OrderedDict(sorted(filters.items(), key= lambda x: x[0]))
             return filters
         return OrderedDict()
