@@ -306,6 +306,20 @@ class Command(BaseCommand):
             }
         return self.default_values
 
+    def get_partner_external_id(self, base_external_id, partner_id):
+        if not base_external_id:
+            return None
+        external_id = base_external_id
+        i = 1
+        if partner_id is not None:
+            queryset = Partner.objects.exclude(pk=partner_id)
+        else:
+            queryset = Partner.objects
+        while queryset.filter(external_id=external_id).exists():
+            external_id = '{}-{}'.format(base_external_id, i)
+            i += 1
+        return external_id
+
     @transaction.atomic
     def import_partner(self, line):
         if not line[2]:
@@ -324,7 +338,7 @@ class Command(BaseCommand):
         partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
-        partner.external_id = line[1] if line[1] else None
+        partner.external_id = self.get_partner_external_id(line[1], partner.pk)
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
         partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
@@ -336,8 +350,8 @@ class Command(BaseCommand):
             partner.contact_address = Address()
         partner.contact_address.address = line[12]
         partner.email = line[13] if line[13] else None
-        partner.is_nonprofit = line[14] == 'YES'
-        partner.is_public = line[15] == 'YES'
+        partner.is_nonprofit = None if not line[14] else line[14] == 'YES'
+        partner.is_public = None if not line[15] else line[15] == 'YES'
         partner.phone = line[16] if line[16] else None
         partner.contact_type = line[17] if line[17] else None
         partner.website = line[18] if line[18] else default_values['website']
@@ -510,6 +524,8 @@ class Command(BaseCommand):
             partnership_year.is_sta = bool(line[14])
             partnership_year.save()
             partnership_year.education_fields = educations_fields
+            if partnership.ucl_university_labo is not None:
+                partnership_year.entities = [partnership.ucl_university_labo]
 
         self.partnerships_for_agreements['{0}-{1}'.format(line[5], line[11])] = partnership
 
