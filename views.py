@@ -922,6 +922,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'partnership__partner__contact_address__country',
                 'partnership__supervisor',
                 'partnership__ucl_university',
+                'partnership__ucl_university_labo',
                 'start_academic_year',
                 'end_academic_year',
             ).order_by(*ordering)
@@ -996,10 +997,14 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
 
     def get_xls_data(self):
         queryset = self.get_queryset().prefetch_related(
-            'partnership__ucl_university__entityversion_set',
+            Prefetch(
+                'partnership__ucl_university__entityversion_set',
+                queryset=EntityVersion.objects.order_by('start_date'),
+                to_attr='faculties',
+            ),
         )
         for agreement in queryset:
-            faculty = agreement.partnership.ucl_university.entityversion_set.latest('start_date')
+            faculty = agreement.partnership.ucl_university.faculties[0]
             entity = agreement.partnership.ucl_university_labo
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
@@ -1025,7 +1030,6 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
 
     def get_title(self):
         return _('agreements')
-
 
 class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
 
