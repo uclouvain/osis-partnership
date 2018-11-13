@@ -14,7 +14,7 @@ def user_is_adri(user):
         return (
             user
             .person
-            .personentity_set
+            .partnershipentitymanager_set
             .filter(Q(entity__entityversion__end_date__gte=date.today())
                     | Q(entity__entityversion__end_date__isnull=True),
                     entity__entityversion__start_date__lte=date.today())
@@ -27,13 +27,13 @@ def user_is_adri(user):
 
 def get_adri_users():
     return get_user_model().objects.filter(
-        person__personentity__entity__entityversion__acronym='ADRI'
+        person__partnershipentitymanager__entity__entityversion__acronym='ADRI'
     )
 
 
 def get_user_faculties(user):
     return EntityVersion.objects.filter(
-        entity_type="FACULTY", entity__entitymanager__person__user=user
+        entity_type="FACULTY", entity__partnershipentitymanager__person__user=user
     )
 
 
@@ -47,7 +47,7 @@ def user_is_gf(user):
         return (
             user
             .person
-            .entitymanager_set.all()
+            .partnershipentitymanager_set.all()
             .exists()
         )
     except Person.DoesNotExist:
@@ -57,7 +57,8 @@ def user_is_gf(user):
 def user_is_gf_of_faculty(user, faculty):
     if user_is_gf(user):
         return User.objects.filter(
-            Q(person__entitymanager__entity=faculty) | Q(person__entitymanager__entity__parent_of__entity=faculty),
+            Q(person__partnershipentitymanager__entity=faculty)
+            | Q(person__partnershipentitymanager__entity__parent_of__entity=faculty),
             pk=user.pk,
         ).exists()
     else:
@@ -70,10 +71,10 @@ def user_is_in_user_faculty(user, other_user):
         return (
             user
             .person
-            .entitymanager_set
+            .partnershipentitymanager_set
             .filter(
-                Q(entity__entitymanager__person__user=other_user)
-                | Q(entity__parent_of__entity__entitymanager__person__user=other_user)
+                Q(entity__partnershipentitymanager__person__user=other_user)
+                | Q(entity__parent_of__entity__partnershipentitymanager__person__user=other_user)
             )
             .exists()
         )

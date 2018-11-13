@@ -1,9 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType, Media
 from partnership.tests.factories import MediaFactory, PartnerFactory
@@ -18,11 +17,11 @@ class PartnerEntityCreateViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -94,11 +93,11 @@ class PartnerEntityUpdateViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -187,11 +186,11 @@ class PartnerEntityDeleteViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)

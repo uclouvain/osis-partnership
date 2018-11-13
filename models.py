@@ -20,6 +20,14 @@ from partnership.utils import (merge_agreement_ranges, user_is_adri, user_is_gf,
                                user_is_gf_of_faculty, user_is_in_user_faculty)
 
 
+class PartnershipEntityManager(models.Model):
+    person = models.ForeignKey('base.Person')
+    entity = models.ForeignKey('base.Entity')
+
+    def __str__(self):
+        return '{} {}'.format(self.person, self.entity)
+
+
 class PartnerType(models.Model):
     value = models.CharField(max_length=255, unique=True)
 

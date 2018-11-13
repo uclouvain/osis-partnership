@@ -3,13 +3,12 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY, SECTOR
+from base.models.enums.entity_type import FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipFactory,
@@ -27,7 +26,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
@@ -60,9 +59,9 @@ class PartnershipUpdateViewTest(TestCase):
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
-        EntityManagerFactory(person__user=cls.user_gs, entity=sector)
-        entity_manager = EntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
-        EntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
+        PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
         cls.partnership = PartnershipFactory(

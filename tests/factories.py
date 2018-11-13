@@ -10,7 +10,15 @@ from partnership.models import (Address, Contact, ContactType, Media, Partner,
                                 PartnershipAgreement, PartnershipTag,
                                 PartnershipYear, PartnershipYearEducationField,
                                 PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+                                PartnerType, UCLManagementEntity, PartnershipEntityManager)
+
+
+class PartnershipEntityManagerFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipEntityManager
+
+    person = factory.SubFactory('base.tests.factories.person.PersonFactory')
+    entity = factory.SubFactory('base.tests.factories.entity.EntityFactory')
 
 
 class PartnerTypeFactory(factory.DjangoModelFactory):

@@ -2,10 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.entity import EntityFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person import PersonFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import UCLManagementEntity
 from partnership.tests.factories import (PartnershipFactory,
@@ -27,11 +25,11 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         cls.lambda_user = UserFactory()
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gf_user = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
-        EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
+        PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
         cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=third_faculty)

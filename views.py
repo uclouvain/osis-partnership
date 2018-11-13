@@ -597,9 +597,12 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
 
     def get(self, *args, **kwargs):
         if not self.request.GET and user_is_gf(self.request.user):
-            university = self.request.user.person.entitymanager_set.first().entity
+            university = self.request.user.person.partnershipentitymanager_set.first().entity
             if Partnership.objects.filter(ucl_university=university).exists():
-                return HttpResponseRedirect('?ucl_university={0}'.format(self.request.user.person.entitymanager_set.first().entity.pk))
+                return HttpResponseRedirect(
+                    '?ucl_university={0}'
+                        .format(self.request.user.person.partnershipentitymanager_set.first().entity.pk)
+                )
         return super(PartnershipListFilterMixin, self).get(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -1377,8 +1380,8 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
         )
         if not user_is_adri(self.request.user):
             queryset = queryset.filter(
-                Q(faculty__entitymanager__person__user=self.request.user)
-                | Q(faculty__entityversion__parent__entitymanager__person__user=self.request.user)
+                Q(faculty__partnershipentitymanager__person__user=self.request.user)
+                | Q(faculty__entityversion__parent__partnershipentitymanager__person__user=self.request.user)
             )
         return queryset.distinct()
 
@@ -1538,8 +1541,8 @@ class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
         )
         if not user_is_adri(self.request.user):
             qs = qs.filter(
-                Q(entitymanager__person__user=self.request.user)
-                | Q(entityversion__parent__entitymanager__person__user=self.request.user)
+                Q(partnershipentitymanager__person__user=self.request.user)
+                | Q(entityversion__parent__partnershipentitymanager__person__user=self.request.user)
             )
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
