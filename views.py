@@ -302,15 +302,16 @@ class PartnerFormMixin(object):
     def form_valid(self, form, form_address):
         contact_address = form_address.save()
         partner = form.save(commit=False)
-        if partner.pk is None:
+        is_create = partner.pk is None
+        if is_create:
             partner.author = self.request.user
         partner.contact_address = contact_address
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if not user_is_adri(self.request.user):
+        if is_create and not user_is_adri(self.request.user):
             send_mail(
-                'OSIS-Partenariats : {}'.format(_('partner_created')),
+                'OSIS-Partenariats : {} - {}'.format(_('partner_created'), partner.name),
                 render_to_string(
                     'partnerships/mails/plain_partner_creation.html',
                     context={
@@ -1132,7 +1133,8 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         messages.success(self.request, _('partnership_success'))
         if not user_is_adri(self.request.user):
             send_mail(
-                'OSIS-Partenariats : {}'.format(_('partnership_created')),
+                'OSIS-Partenariats : {} - {}'.format(
+                    _('partnership_created'), partnership.ucl_university.most_recent_acronym),
                 render_to_string(
                     'partnerships/mails/plain_partnership_creation.html',
                     context={
@@ -1175,6 +1177,34 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save()
+
+        if (form_year.cleaned_data['end_academic_year'] != self.object.end_academic_year
+                and not user_is_adri(self.request.user)):
+            send_mail(
+                'OSIS-Partenariats : {}'.format(
+                    _('partnership_end_year_updated_{partner}_{faculty}').format(
+                        partner=partnership.partner, faculty=partnership.ucl_university.most_recent_acronym
+                    )
+                ),
+                render_to_string(
+                    'partnerships/mails/plain_partnership_update.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [PartnershipConfiguration.get_configuration().email_notification_to],
+                html_message=render_to_string(
+                    'partnerships/mails/partnership_update.html',
+                    context={
+                        'user': self.request.user,
+                        'partnership': partnership,
+                    },
+                    request=self.request,
+                ),
+            )
 
         start_academic_year = form_year.cleaned_data.get('start_academic_year', None)
         from_year = form_year.cleaned_data.get('from_academic_year', None)

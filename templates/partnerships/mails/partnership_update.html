@@ -1,0 +1,10 @@
+{% extends "partnerships/mails/base.html" %}
+{% load i18n url_utils %}
+
+{% block content %}{% full_uri url=partnership.get_absolute_url as full_url %}{% blocktrans with url=full_url person=user.person username=user.username %}Hello,
+
+The end academic year of partnership  <a href="{{ url }}">{{ partnership }}</a> has been changed by {{ person }} ({{ username }}).
+
+Regards,
+
+Osis team{% endblocktrans %}{% endblock %}

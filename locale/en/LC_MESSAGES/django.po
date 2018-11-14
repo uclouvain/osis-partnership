@@ -232,8 +232,21 @@ msgstr ""
 msgid "end_academic_year"
 msgstr "End academic year"
 
+msgid "partnership_year_entities"
+msgstr "Partnership year entities"
+
+#, fuzzy
+#| msgid "partnership_year_entities"
+msgid "partnership_year_entities_help_text"
+msgstr "Partnership year entities"
+
 msgid "partnership_year_offers"
 msgstr "Offers"
+
+#, fuzzy
+#| msgid "partnership_year_offers"
+msgid "partnership_year_offers_help_text"
+msgstr "Partnership year offers"
 
 msgid "education_levels_empty_errors"
 msgstr ""
@@ -463,19 +476,6 @@ msgstr "Partnership year education fields"
 
 msgid "partnership_year_education_levels"
 msgstr "Partnership year education levels"
-
-msgid "partnership_year_entities"
-msgstr "Partnership year entities"
-
-#, fuzzy
-#| msgid "partnership_year_entities"
-msgid "partnership_year_entities_help_text"
-msgstr "Partnership year entities"
-
-#, fuzzy
-#| msgid "partnership_year_offers"
-msgid "partnership_year_offers_help_text"
-msgstr "Partnership year offers"
 
 msgid "partnership_year"
 msgstr "Partnership year"
@@ -770,6 +770,18 @@ msgstr ""
 msgid ""
 "Hello,\n"
 "\n"
+"The end academic year of partnership  <a href=\"%(url)s\">%(partnership)s</"
+"a> has been changed by %(person)s (%(username)s).\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
 "Partner %(partner)s has been successfully created by %(person)s "
 "(%(username)s).\n"
 "\n"
@@ -788,6 +800,22 @@ msgid ""
 "\n"
 "partnership %(partnership)s has been successfully created by %(person)s "
 "(%(username)s).\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
+msgstr ""
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"The end academic year of partnership %(partnership)s has been changed by "
+"%(person)s (%(username)s).\n"
 "\n"
 "You can access it at this url :\n"
 "\n"
@@ -1025,9 +1053,6 @@ msgstr "Contact successfully deleted"
 msgid "supervisor"
 msgstr "Supervisor"
 
-msgid "start_date"
-msgstr "Start date"
-
 msgid "partnership_error"
 msgstr ""
 
@@ -1036,6 +1061,10 @@ msgstr ""
 
 msgid "partnership_created"
 msgstr "partnership created"
+
+msgid "partnership_end_year_updated_{partner}_{faculty}"
+msgstr ""
+"End academic year has been changed for partnership with {partner} ({faculty})"
 
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
