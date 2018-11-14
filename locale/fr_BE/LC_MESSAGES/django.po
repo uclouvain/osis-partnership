@@ -35,6 +35,10 @@ msgstr "Institution d’enseignement supérieur ?"
 msgid "is_nonprofit"
 msgstr "Organisation à but non lucratif ?"
 
+msgid "mandatory_if_not_pic_ies"
+msgstr ""
+"Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
+
 msgid "is_public"
 msgstr "Organisme public ?"
 
@@ -412,10 +416,6 @@ msgstr "Modifié"
 
 msgid "now_known_as"
 msgstr "Est devenu / Fait partie de"
-
-msgid "mandatory_if_not_pic_ies"
-msgstr ""
-"Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
 
 msgid "partner_contact_type"
 msgstr "Type d’organisme"
@@ -947,6 +947,9 @@ msgstr "Mettre à jour le partenaire"
 msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
 msgstr ""
 "Crée le %(created)s par %(author)s, dernière mise à jour le %(modified)s"
+
+msgid "not_filled_in"
+msgstr "Non renseigné"
 
 msgid "contact_address"
 msgstr "Adresse"
