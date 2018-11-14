@@ -18,7 +18,7 @@ def remove_unused_permissions(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('partnership', '0034_partnershipconfiguration_email_notification_to'),
+        ('partnership', '0036_auto_20181029_1008'),
     ]
 
     operations = [
