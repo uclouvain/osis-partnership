@@ -6,7 +6,13 @@ from partnership.models import (Address, Contact, ContactType, Financing,
                                 PartnershipYear, PartnerTag, PartnerType,
                                 UCLManagementEntity,
                                 PartnershipYearEducationField,
-                                PartnershipYearEducationLevel)
+                                PartnershipYearEducationLevel, PartnershipEntityManager)
+
+
+class PartnershipEntityManagerAdmin(admin.ModelAdmin):
+    list_display = ('person', 'entity')
+    search_fields = ['person__first_name', 'person__last_name', 'entity__entityversion__acronym']
+    raw_id_fields = ('person', 'entity',)
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -89,6 +95,7 @@ class FinancingAdmin(admin.ModelAdmin):
     list_filter = ('name', 'academic_year')
 
 
+admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
 admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)

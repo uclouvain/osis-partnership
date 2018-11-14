@@ -1,11 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import SECTOR, FACULTY
+from base.models.enums.entity_type import FACULTY
 from base.tests.factories.entity import EntityFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import UCLManagementEntityFactory
 
@@ -28,13 +27,13 @@ class UCLManagementEntitiesListViewTest(TestCase):
         cls.lambda_user = UserFactory()
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gs_user = UserFactory()
-        EntityManagerFactory(person__user=cls.gs_user, entity=sector)
+        PartnershipEntityManagerFactory(person__user=cls.gs_user, entity=sector)
         cls.gf_user = UserFactory()
-        EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
-        EntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
+        PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         for i in range(GF_UME_NUMBER):
             UCLManagementEntityFactory(faculty=faculty)

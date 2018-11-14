@@ -1,9 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
 from partnership.tests.factories import PartnerTagFactory, PartnerTypeFactory
@@ -17,9 +16,9 @@ class PartnerCreateViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
-        EntityManagerFactory(person__user=cls.user_gf)
+        PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.url = reverse('partnerships:partners:create')

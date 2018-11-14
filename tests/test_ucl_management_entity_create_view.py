@@ -3,10 +3,9 @@ from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY
 from base.tests.factories.entity import EntityFactory
-from base.tests.factories.entity_manager import EntityManagerFactory
+from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import UCLManagementEntityFactory
 
@@ -21,9 +20,9 @@ class UCLManagementEntityCreateViewTest(TestCase):
         cls.lambda_user = UserFactory()
         cls.adri_user = UserFactory()
         entity_version = EntityVersionFactory(acronym="ADRI")
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.adri_user)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gf_user = UserFactory()
-        entity_manager = EntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
 
         cls.url = reverse("partnerships:ucl_management_entities:create")
 

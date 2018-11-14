@@ -825,8 +825,8 @@ class PartnershipForm(forms.ModelForm):
 
                 # Restrict fields for GF
                 self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.filter(
-                    Q(entitymanager__person__user=self.user)
-                    | Q(entityversion__parent__entitymanager__person__user=self.user),
+                    Q(partnershipentitymanager__person__user=self.user)
+                    | Q(entityversion__parent__partnershipentitymanager__person__user=self.user),
                 ).distinct()
 
                 if self.fields['ucl_university'].queryset.count() == 1:
