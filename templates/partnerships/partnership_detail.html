@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n static %}
+{% load i18n static years %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
@@ -65,12 +65,11 @@
             <dd>{{ partnership.administrative_responsible|default_if_none:"" }}{% if partnership.administrative_responsible %} - {{ partnership.administrative_responsible.email }}{% endif %}</dd>
 
             <dt>{% trans "validated_agreements" %}</dt>
-            <dd>
-              {% if partnership.start_date or partnership.end_date %}{{ partnership.start_date|default_if_none:"N/A" }} &gt; {{ partnership.end_date|default_if_none:"N/A" }}{% endif %}
-            </dd>
+            <dd>{% academic_dates start_date=partnership.start_date end_date=partnership.end_date %}</dd>
             <dt>{% trans "years" %}</dt>
             <dd>
-              {% if partnership.start_academic_year or partnership.end_academic_year %}{{ partnership.start_academic_year|default_if_none:"N/A" }} &gt; {{ partnership.end_academic_year|default_if_none:"N/A" }}{% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}{% endif %}
+              {% academic_years start_year=partnership.start_academic_year end_year=partnership.end_academic_year %}
+              {% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}
             </dd>
           </dl>
         </div>

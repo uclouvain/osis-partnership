@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load partnerships i18n static %}
+{% load partnerships i18n static years %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
@@ -71,10 +71,7 @@
           <dt>{% trans "is_actif" %}</dt>
           <dd>
             <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
-            {% if partner.start_date or partner.end_date %}
-            {% if partner.start_date is None %}N/A{% else %}{{ partner.start_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
-            > {% if partner.end_date is None %}N/A{% else %}{{ partner.end_date|date:"SHORT_DATE_FORMAT" }}{% endif %}
-            {% endif %}
+            {% academic_dates start_date=partner.start_date end_date=partner.end_date %}
           </dd>
 
           <dt>{% trans "contact_address" %}</dt>

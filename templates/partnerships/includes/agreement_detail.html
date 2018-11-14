@@ -1,11 +1,10 @@
-{% load i18n partnerships %}
+{% load i18n partnerships years%}
 <div class="row">
   <div class="col-sm-12 col-md-5">
     <div>
       <dl class="dl-horizontal">
         <dt>{% trans "academic_years" %}</dt>
-        <dd>{{ agreement.start_academic_year }} > {{ agreement.end_academic_year }}</dd>
-
+        <dd>{% academic_years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</dd>
         <dt>{% trans "status" %}</dt>
         <dd>{{ agreement.get_status_display }}</dd>
 

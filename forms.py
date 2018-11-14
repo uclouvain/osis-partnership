@@ -1,11 +1,5 @@
 from datetime import date
 
-from dal import autocomplete, forward
-from django import forms
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
@@ -13,6 +7,11 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion, get_last_version
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
+from dal import autocomplete, forward
+from django import forms
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 from partnership.models import (Address, Contact, Media, Partner,
                                 PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
@@ -23,7 +22,6 @@ from partnership.models import (Address, Contact, Media, Partner,
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
-
 
 ##### Custom Fields
 

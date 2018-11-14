@@ -46,7 +46,7 @@
               <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
-                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "search_partnership" %}</span>
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "search_partnership_or_agreement" %}</span>
               </button>
             </div>
           </div>
@@ -182,7 +182,8 @@
                 <div class="col-md-12">
                   <div class="pull-right">
                     <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
-                    <button type="submit" class="btn btn-primary">{% trans "search" %}</button>
+                    <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">{% trans "search_partnership" %}</button>
+                    <button type="submit" class="submit-button btn btn-primary" name="search_agreement" value="search_agreement">{% trans "search_agreement" %}</button>
                   </div>
                 </div>
               </div>
@@ -192,7 +193,11 @@
         </div>
       </div>
       <div id="results">
-        {% include "partnerships/includes/partnerships_list_results.html" %}
+        {% if is_agreements %}
+          {% include "partnerships/agreements/includes/agreements_list_results.html" %}
+        {% else %}
+          {% include "partnerships/includes/partnerships_list_results.html" %}
+        {% endif %}
       </div>
     </div>
   </div>

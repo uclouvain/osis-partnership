@@ -1,13 +1,12 @@
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from base.models.entity_version import EntityVersion
 
+from base.models.entity_version import EntityVersion
 from base.models.person import Person
-from base.models.academic_year import AcademicYear
+
 
 def user_is_adri(user):
     # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
@@ -81,6 +80,24 @@ def user_is_in_user_faculty(user, other_user):
         )
     except Person.DoesNotExist:
         return False
+
+
+def academic_years(start_academic_year, end_academic_year):
+    if start_academic_year is not None or end_academic_year is not None:
+        return ' > '.join([
+            str(start_academic_year.year) or "N/A",
+            str(end_academic_year.year + 1) or "N/A",
+        ])
+    return "N/A"
+
+
+def academic_dates(start_academic_date, end_academic_date):
+    if start_academic_date is not None or end_academic_date is not None:
+        return ' > '.join([
+            str(start_academic_date) or "N/A",
+            str(end_academic_date) or "N/A",
+        ])
+    return "N/A"
 
 
 def merge_agreement_ranges(agreements=None):

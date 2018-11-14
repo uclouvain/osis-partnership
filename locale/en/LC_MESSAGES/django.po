@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2018-11-07 17:02+0100\n"
+=======
+"POT-Creation-Date: 2018-11-06 17:05+0100\n"
+>>>>>>> i18n messages updated
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -618,6 +622,15 @@ msgstr "Cancel"
 msgid "delete_partnership_agreement"
 msgstr "Delete partnership agreement"
 
+msgid "ucl"
+msgstr "UCLouvain"
+
+msgid "academic_years"
+msgstr "Academic years"
+
+msgid "agreements_export"
+msgstr "Agreements export"
+
 msgid "partnership_agreement_delete_warning"
 msgstr "Are you sure you want to delete this partnership agreement?"
 
@@ -732,9 +745,6 @@ msgstr ""
 
 msgid "current_academic_year"
 msgstr "Current academic year"
-
-msgid "ucl"
-msgstr ""
 
 msgid "validity_end"
 msgstr "Validity end"
@@ -996,8 +1006,14 @@ msgstr "UCLouvain management entities"
 msgid "add_partnership"
 msgstr "Add partnership"
 
+msgid "search_partnership_or_agreement"
+msgstr "Search for partnerships or agreements"
+
 msgid "search_partnership"
 msgstr "Search partnership"
+
+msgid "search_agreement"
+msgstr "Search for agreements"
 
 #, python-format
 msgid "Are you sure you want to delete \"%(object)s\"?"
