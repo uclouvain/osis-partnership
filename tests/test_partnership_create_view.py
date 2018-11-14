@@ -7,10 +7,10 @@ from base.models.enums.entity_type import FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
-from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
+                                         PartnershipEntityManagerFactory,
                                          PartnershipYearEducationFieldFactory,
                                          PartnershipYearEducationLevelFactory,
                                          UCLManagementEntityFactory)

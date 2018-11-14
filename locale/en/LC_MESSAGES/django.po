@@ -7,11 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2018-11-07 17:02+0100\n"
-=======
-"POT-Creation-Date: 2018-11-06 17:05+0100\n"
->>>>>>> i18n messages updated
+"POT-Creation-Date: 2018-11-14 17:05+0100\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,6 +34,9 @@ msgstr "Is IES"
 
 msgid "is_nonprofit"
 msgstr "Is non-profit"
+
+msgid "mandatory_if_not_pic_ies"
+msgstr ""
 
 msgid "is_public"
 msgstr "Is public"
@@ -417,9 +416,6 @@ msgstr "Changed"
 msgid "now_known_as"
 msgstr "Now known as"
 
-msgid "mandatory_if_not_pic_ies"
-msgstr ""
-
 msgid "partner_contact_type"
 msgstr "Organization type"
 
@@ -610,9 +606,6 @@ msgstr "Visibility"
 msgid "partnerships"
 msgstr "Partnerships"
 
-msgid "add_partner_entity"
-msgstr "Add partner entity"
-
 msgid "add_partnership_agreements"
 msgstr "Add partnership agreements"
 
@@ -624,9 +617,6 @@ msgstr "Delete partnership agreement"
 
 msgid "ucl"
 msgstr "UCLouvain"
-
-msgid "academic_years"
-msgstr "Academic years"
 
 msgid "agreements_export"
 msgstr "Agreements export"
@@ -728,6 +718,9 @@ msgstr "Add partner"
 #| msgid "partner_entity_saved"
 msgid "partner_entity_inside_partner"
 msgstr "Partner entity successfully saved"
+
+msgid "add_partner_entity"
+msgstr "Add partner entity"
 
 #, fuzzy
 #| msgid "edit_partnership"
@@ -1081,6 +1074,7 @@ msgstr ""
 msgid "partnership_created"
 msgstr "partnership created"
 
+#, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
 msgstr ""
 "End academic year has been changed for partnership with {partner} ({faculty})"
@@ -1106,36 +1100,14 @@ msgstr "UCLouvain management entity successfully created."
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
 
-#, fuzzy, python-brace-format
-#| msgid "financings_imported_error"
 msgid "financing_country_not_imported_{country}"
-msgstr "Financings could not be imported."
+msgstr "Unknown country {country}."
 
-#, fuzzy, python-brace-format
-#| msgid "financing_csv_file_invalid_extension"
 msgid "financing_url_invalid_{country}_{url}"
-msgstr "Please import a csv file."
+msgstr "Invalid url {url} for country {country}."
 
 msgid "financings_imported_error"
 msgstr "Financings could not be imported."
 
 msgid "financings_imported"
 msgstr "Financings successfully imported."
-
-#~ msgid "no_financing"
-#~ msgstr "No financing"
-
-#~ msgid "update"
-#~ msgstr "Update"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "UCL management entity"
-
-#~ msgid "Partner"
-#~ msgstr "Partner"
-
-#~ msgid "UCL"
-#~ msgstr "UCL"

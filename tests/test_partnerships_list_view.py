@@ -12,10 +12,10 @@ from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
                                          PartnershipAgreementFactory,
                                          PartnershipFactory,
                                          PartnershipTagFactory,
-                                         PartnershipYearFactory,
-                                         PartnerTagFactory, PartnerTypeFactory,
                                          PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory)
+                                         PartnershipYearEducationLevelFactory,
+                                         PartnershipYearFactory,
+                                         PartnerTagFactory, PartnerTypeFactory)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 

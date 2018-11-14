@@ -3,11 +3,12 @@ from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY
 from base.tests.factories.entity import EntityFactory
-from partnership.tests.factories import PartnershipEntityManagerFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import UCLManagementEntityFactory
+from partnership.tests.factories import (PartnershipEntityManagerFactory,
+                                         UCLManagementEntityFactory)
+
 
 class UCLManagementEntityCreateViewTest(TestCase):
 

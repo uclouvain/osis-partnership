@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-06 17:05+0100\n"
+"POT-Creation-Date: 2018-11-14 17:05+0100\n"
 "PO-Revision-Date: 2018-10-22 15:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -605,9 +605,6 @@ msgstr "Visibilité"
 msgid "partnerships"
 msgstr "Partenariats"
 
-msgid "add_partner_entity"
-msgstr "Ajouter une entité partenaire"
-
 msgid "add_partnership_agreements"
 msgstr "Ajouter un accord"
 
@@ -619,9 +616,6 @@ msgstr "Supprimer l'accord"
 
 msgid "ucl"
 msgstr "UCLouvain"
-
-msgid "academic_years"
-msgstr "Années académiques"
 
 msgid "agreements_export"
 msgstr "Export des accords"
@@ -728,6 +722,9 @@ msgstr "Ajouter un partenaire"
 msgid "partner_entity_inside_partner"
 msgstr "Entité au sein de l'université/l'organisme partenaire"
 
+msgid "add_partner_entity"
+msgstr "Ajouter une entité partenaire"
+
 msgid "ucl_entity_partner"
 msgstr "Entité UCLouvain partenaire"
 
@@ -789,6 +786,7 @@ msgstr ""
 "\n"
 "L'équipe Osis"
 
+#, python-format
 msgid ""
 "Hello,\n"
 "\n"
@@ -801,8 +799,8 @@ msgid ""
 msgstr ""
 "Bonjour,\n"
 "\n"
-"L’année académique de fin du partenariat <a href=\"%(url)s\">%(partnership)s</a> vient d'être modifiée par "
-"%(person)s (%(username)s).\n"
+"L’année académique de fin du partenariat <a href=\"%(url)s\">"
+"%(partnership)s</a> vient d'être modifiée par %(person)s (%(username)s).\n"
 "\n"
 "Cordialement,\n"
 "\n"
@@ -863,6 +861,7 @@ msgstr ""
 "\n"
 "L'équipe Osis"
 
+#, python-format
 msgid ""
 "Hello,\n"
 "\n"
@@ -879,8 +878,8 @@ msgid ""
 msgstr ""
 "Bonjour,\n"
 "\n"
-"L’année académique de fin du partenariat %(partnership)s vient d'être modifié par %(person)s "
-"(%(username)s).\n"
+"L’année académique de fin du partenariat %(partnership)s vient d'être "
+"modifié par %(person)s (%(username)s).\n"
 "\n"
 "Vous pouvez y accéder à cette URL :\n"
 "\n"
@@ -1135,8 +1134,11 @@ msgstr "Partenariat sauvegardé avec succès."
 msgid "partnership_created"
 msgstr "Partenariat créé"
 
+#, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
-msgstr "Année académique de fin modifiée pour le partenariat avec {partner} ({faculty})"
+msgstr ""
+"Année académique de fin modifiée pour le partenariat avec {partner} "
+"({faculty})"
 
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
@@ -1159,9 +1161,11 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
+#, python-brace-format
 msgid "financing_country_not_imported_{country}"
 msgstr "Pays {country} non importé (code inconnu)"
 
+#, python-brace-format
 msgid "financing_url_invalid_{country}_{url}"
 msgstr "Pays {country} : URL “{url}” invalide."
 
@@ -1170,169 +1174,3 @@ msgstr "Les financements n'ont pas pu être importés."
 
 msgid "financings_imported"
 msgstr "Financements importés avec succès"
-
-#~ msgid "no_financing"
-#~ msgstr "Pas de financement"
-
-#~ msgid "update"
-#~ msgstr "Mettre à jour"
-
-#~ msgid "delete"
-#~ msgstr "Delete"
-
-#~ msgid "ucl_management_entity"
-#~ msgstr "Entité de gestion UCL"
-
-#~ msgid "invalid_partnership_update_max_date"
-#~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
-
-#~ msgid "partnership_configuration_update_max_date_%(min_year)s_%(max_year)s"
-#~ msgstr ""
-#~ "Date maximum pour la mise à jour d'un partenariat de l'année %(min_year)s-"
-#~ "%(max_year)s."
-
-#~ msgid "Partner"
-#~ msgstr "Partenaire"
-
-#~ msgid "UCL"
-#~ msgstr "UCL"
-
-#~ msgid "partnership_start_date_after_agreement_error"
-#~ msgstr "La date de début se situe après le début d'un accord."
-
-#~ msgid "partnership_start_date_gf_too_late"
-#~ msgstr "La date limite pour créer ce partenariat est passée."
-
-#~ msgid "partnership_update_max_date_day"
-#~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
-
-#~ msgid "partnership_update_max_date_month"
-#~ msgstr "Mois maximum pour la mise à jour d'un partenariat."
-
-#~ msgid "partnership_has_missing_years"
-#~ msgstr "Il manque des années académiques vis à vis des accords saisis."
-
-#~ msgid "partnership_agreement_start_date_before_partnership_error"
-#~ msgstr ""
-#~ "L'année académique de début se situe avant la date de début du "
-#~ "partenariat."
-
-#~ msgid "title"
-#~ msgstr "Titre"
-
-#~ msgid "validity"
-#~ msgstr "Validity"
-
-#~ msgid "note"
-#~ msgstr "Note"
-
-#~ msgid "role"
-#~ msgstr "Rôle"
-
-#~ msgid "partnership_creation_max_date_day_help_text"
-#~ msgstr "Jour du mois maximum pour la création d'un partenariat."
-
-#~ msgid "partnership_update_max_date_day_help_text"
-#~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
-
-#~ msgid "partnership_update_max_date_month_help_text"
-#~ msgstr "Mois maximum pour la mise à jour d'un partenariat (de l'année N)."
-
-#~ msgid "new_contact"
-#~ msgstr "Nouveau contact"
-
-#~ msgid "update_partnership_entity"
-#~ msgstr "Mettre à jour l'entité partenaire"
-
-#~ msgid "delete_partnership_agreements"
-#~ msgstr "Supprimer les accords"
-
-#~ msgid "back_to_list"
-#~ msgstr "Retour à la liste"
-
-#~ msgid "not_valid"
-#~ msgstr "Non valide"
-
-#~ msgid "mobility_type"
-#~ msgstr "Type de mobilité"
-
-#~ msgid "filter"
-#~ msgstr "Filtrer"
-
-#~ msgid "mobility_type_sms"
-#~ msgstr "SMS"
-
-#~ msgid "mobility_type_smp"
-#~ msgstr "SMP"
-
-#~ msgid "mobility_type_sta"
-#~ msgstr "STA"
-
-#~ msgid "mobility_type_stt"
-#~ msgstr "STT"
-
-#~ msgid "mobility_type_na"
-#~ msgstr "N/A"
-
-#~ msgid "Unknown"
-#~ msgstr "Inconnu"
-
-#~ msgid "organisation_type"
-#~ msgstr "Type d'organisation"
-
-#~ msgid "partnership type"
-#~ msgstr "Type de partenariat"
-
-#~ msgid "Start date"
-#~ msgstr "Date de début"
-
-#~ msgid "End date"
-#~ msgstr "Date de fin"
-
-#~ msgid "Validated"
-#~ msgstr "Validé"
-
-#~ msgid "Signed"
-#~ msgstr "Signé"
-
-#~ msgid "yes"
-#~ msgstr "Oui"
-
-#~ msgid "no"
-#~ msgstr "Non"
-
-#~ msgid "Created by"
-#~ msgstr "Créé par"
-
-#~ msgid "the"
-#~ msgstr "le"
-
-#~ msgid "Last update the"
-#~ msgstr "Dernière modification le"
-
-#~ msgid "Not validated"
-#~ msgstr "Non validé"
-
-#~ msgid "Mobility type"
-#~ msgstr "Type de mobilité"
-
-#~ msgid "Partnership type"
-#~ msgstr "Type de partenariat"
-
-#~ msgid "Contacts"
-#~ msgstr "Contacts"
-
-#~ msgid "Tags"
-#~ msgstr "Tags"
-
-#~ msgid "No tag yet"
-#~ msgstr "Pas encore de tag"
-
-#~ msgid "Partnership"
-#~ msgstr "Partenariat"
-
-#~ msgid "document"
-#~ msgstr "Document"
-
-#~ msgid "new_entity"
-#~ msgstr "Nouvelle entité"

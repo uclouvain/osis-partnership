@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from partnership.models import UCLManagementEntity, Partnership
+from partnership.models import Partnership, UCLManagementEntity
 
 
 class Command(BaseCommand):
