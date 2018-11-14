@@ -1466,7 +1466,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Person.objects.all()
+        qs = Person.objects.filter(employee=True)
         if self.q:
             qs = qs.filter(
                 Q(first_name__icontains=self.q) |
