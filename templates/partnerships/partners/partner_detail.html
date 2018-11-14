@@ -135,7 +135,7 @@
     <div class="row">
       {% for media in partner.medias.all %}
       <div class="col-sm-12 col-md-6 partner-media">
-        {% include "partnerships/includes/media_detail.html" with media=media %}
+        {% include "partnerships/includes/media_detail.html" with media=media file_url=partner|partner_media_download_url:media %}
       </div>
       {% empty %}
       <div class="col-sm-12">{% trans "no_media_yet" %}</div>
