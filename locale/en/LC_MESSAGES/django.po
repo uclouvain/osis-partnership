@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 10:57+0200\n"
+"POT-Creation-Date: 2018-11-07 17:02+0100\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,11 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "partnerships_general_configuration"
+msgstr "General configuration"
+
+msgid "partnerships_financing_configuration"
+msgstr "Financings configuration"
+
 msgid "Yes"
 msgstr "Yes"
 
 msgid "No"
 msgstr "No"
+
+msgid "is_ies"
+msgstr "Is IES"
+
+msgid "is_nonprofit"
+msgstr "Is non-profit"
+
+msgid "is_public"
+msgstr "Is public"
 
 msgid "partner_name"
 msgstr "Partner name"
@@ -103,9 +118,6 @@ msgstr "Partner type"
 
 msgid "continent"
 msgstr "Continent"
-
-msgid "is_ies"
-msgstr "Is IES"
 
 msgid "is_valid"
 msgstr "Is valid"
@@ -238,6 +250,33 @@ msgstr ""
 msgid "invalid_partnership_creation_max_date"
 msgstr ""
 
+msgid "administrative_responsible"
+msgstr "Administrative responsible"
+
+msgid "academic_responsible"
+msgstr "Academic responsible"
+
+msgid "contact_in_name"
+msgstr "In mobility contact name"
+
+msgid "contact_out_name"
+msgstr "Out mobility contact name"
+
+msgid "academic_year"
+msgstr "Academic year"
+
+msgid "current_year"
+msgstr "Current year"
+
+msgid "csv_file"
+msgstr "CSV file"
+
+msgid "academic_years"
+msgstr "Academic years"
+
+msgid "financing_csv_file_invalid_extension"
+msgstr "Please import a csv file."
+
 msgid "contact_in"
 msgstr "In mobility contact"
 
@@ -364,12 +403,6 @@ msgstr "Now known as"
 msgid "mandatory_if_not_pic_ies"
 msgstr ""
 
-msgid "is_nonprofit"
-msgstr "Is non-profit"
-
-msgid "is_public"
-msgstr "Is public"
-
 msgid "partner_contact_type"
 msgstr "Organization type"
 
@@ -424,9 +457,6 @@ msgstr "Other"
 
 msgid "partnership"
 msgstr "Partnership"
-
-msgid "academic_year"
-msgstr "Academic year"
 
 msgid "partnership_year_education_fields"
 msgstr "Partnership year education fields"
@@ -528,20 +558,8 @@ msgstr "Faculty"
 msgid "entity"
 msgstr "Entity"
 
-msgid "academic_responsible"
-msgstr "Academic responsible"
-
-msgid "administrative_responsible"
-msgstr "Administrative responsible"
-
-msgid "contact_in_name"
-msgstr "In mobility contact name"
-
 msgid "portal"
 msgstr "Portal"
-
-msgid "contact_out_name"
-msgstr "Out mobility contact name"
 
 msgid "duplicate_ucl_management_entity_error_with_faculty"
 msgstr "Update UCLouvain management entity"
@@ -645,8 +663,21 @@ msgstr "Update partnership contact"
 msgid "update_contact"
 msgstr "update contact"
 
-msgid "academic_years"
-msgstr "Academic years"
+msgid "financings"
+msgstr "Financings"
+
+msgid "import_financings"
+msgstr "Import financings"
+
+msgid "change_year"
+msgstr "Change year"
+
+msgid "no_country"
+msgstr "No country"
+
+#, python-format
+msgid "export_financings_for_year_%(academic_year)s"
+msgstr "Export financings for year %(academic_year)s"
 
 msgid "media_delete_warning"
 msgstr "Are you sure you want to delete this media?"
@@ -1027,12 +1058,36 @@ msgstr "UCLouvain management entity successfully created."
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
 
+#, fuzzy, python-brace-format
+#| msgid "financings_imported_error"
+msgid "financing_country_not_imported_{country}"
+msgstr "Financings could not be imported."
+
+#, fuzzy, python-brace-format
+#| msgid "financing_csv_file_invalid_extension"
+msgid "financing_url_invalid_{country}_{url}"
+msgstr "Please import a csv file."
+
+msgid "financings_imported_error"
+msgstr "Financings could not be imported."
+
+msgid "financings_imported"
+msgstr "Financings successfully imported."
+
+#~ msgid "no_financing"
+#~ msgstr "No financing"
+
+#~ msgid "update"
+#~ msgstr "Update"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "UCL management entity"
+
 #~ msgid "Partner"
 #~ msgstr "Partner"
 
 #~ msgid "UCL"
 #~ msgstr "UCL"
-
-# Menu translations :
-msgid "general_configuration"
-msgstr "General configuration"

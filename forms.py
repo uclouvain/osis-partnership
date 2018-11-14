@@ -19,7 +19,7 @@ from partnership.models import (Address, Contact, Media, Partner,
                                 PartnershipTag, PartnershipYear,
                                 PartnershipYearEducationField,
                                 PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+                                PartnerType, UCLManagementEntity, Financing)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -1126,3 +1126,41 @@ class UCLManagementEntityForm(forms.ModelForm):
         if not user_is_adri(self.user):
             self.fields['academic_responsible'].disabled = True
             self.fields['administrative_responsible'].disabled = True
+
+
+class FinancingForm(forms.ModelForm):
+
+    class Meta:
+        model = Financing
+        fields = '__all__'
+
+
+class FinancingFilterForm(forms.Form):
+
+    year = forms.ModelChoiceField(
+        label=_('academic_year'),
+        queryset=AcademicYear.objects.all(),
+        empty_label=_('current_year'),
+        required=False,
+    )
+
+
+class FinancingImportForm(forms.Form):
+
+    csv_file = forms.FileField(
+        label=_('csv_file'),
+        required=True,
+    )
+
+    import_academic_year = forms.ModelChoiceField(
+        label=_('academic_year'),
+        queryset=AcademicYear.objects.all(),
+        empty_label=_('academic_years'),
+        required=True,
+    )
+
+    def clean_csv_file(self):
+        csv_file = self.cleaned_data['csv_file']
+        if not csv_file.name.endswith('.csv'):
+            raise ValidationError(_('financing_csv_file_invalid_extension'))
+        return csv_file

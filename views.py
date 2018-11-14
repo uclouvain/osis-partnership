@@ -1,29 +1,34 @@
 from collections import OrderedDict
+import codecs
 from copy import copy
 
+from io import StringIO
 from dal import autocomplete
+import csv
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
+from django.core.validators import URLValidator
 from django.db import transaction, models
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
 from django.db.models.functions import Now, ExtractYear
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.timezone import now
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
-                                       UpdateView)
+                                       UpdateView, ProcessFormView)
 from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.base import TemplateResponseMixin
 
 from base.models.academic_year import (current_academic_year,
                                        find_academic_years, AcademicYear)
@@ -32,16 +37,18 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
+from reference.models.country import Country
 from osis_common.document import xls_build
 from partnership.forms import (AddressForm, ContactForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm, UCLManagementEntityForm)
+                               PartnershipYearForm, UCLManagementEntityForm, FinancingForm,
+                               FinancingFilterForm, FinancingImportForm)
 from partnership.models import (Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear, UCLManagementEntity)
+                                PartnershipYear, UCLManagementEntity, Financing)
 from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty, get_adri_emails
 
 
@@ -1062,6 +1069,7 @@ class PartnershipFormMixin(object):
         if 'form_year' not in kwargs:
             kwargs['form_year'] = self.get_form_year()
         kwargs['current_academic_year'] = current_academic_year()
+
         return super(PartnershipFormMixin, self).get_context_data(**kwargs)
 
     def form_invalid(self, form, form_year):
@@ -1458,6 +1466,250 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
+
+
+# Financing views :
+
+
+class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def get_csv_data(self, academic_year):
+        countries = Country.objects.all().order_by('name').prefetch_related(
+            Prefetch(
+                'financing_set',
+                queryset=Financing.objects.prefetch_related(
+                    'academic_year'
+                ).filter(academic_year=academic_year)
+            )
+        )
+        for country in countries:
+            if country.financing_set.all():
+                for financing in country.financing_set.all():
+                    row = {
+                        'country': country.iso_code,
+                        'name': financing.name,
+                        'url': financing.url,
+                        'country_name': country.name,
+                    }
+                    yield row
+            else:
+                row = {
+                    'country': country.iso_code,
+                    'name': '',
+                    'url': '',
+                    'country_name': country.name,
+                }
+                yield row
+
+    def get(self, *args, year=None, **kwargs):
+        if year is None:
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
+        else:
+            self.academic_year = get_object_or_404(AcademicYear, year=year)
+
+        filename = "financings_{}".format(self.academic_year)
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
+
+        fieldnames = ['country_name', 'country', 'name', 'url']
+        wr = csv.DictWriter(response, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
+        wr.writeheader()
+        for row in self.get_csv_data(academic_year=self.academic_year):
+            wr.writerow(row)
+        return response
+
+
+class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateResponseMixin, FormMixin, ProcessFormView):
+    form_class = FinancingImportForm
+    template_name = "partnerships/financings/financing_import.html"
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def get_success_url(self, academic_year=None):
+        if academic_year is None:
+            configuration = PartnershipConfiguration.get_configuration()
+            academic_year = configuration.get_current_academic_year_for_creation_modification()
+        return reverse('partnerships:financings:list', kwargs={'year': academic_year.year})
+
+    def get_reader(self, csv_file):
+        sample = csv_file.read(1024).decode('utf8')
+        dialect = csv.Sniffer().sniff(sample)
+        csv_file.seek(0)
+        reader = csv.DictReader(
+            codecs.iterdecode(csv_file, 'utf8'),
+            fieldnames=['country_name', 'country', 'name', 'url'],
+            dialect=dialect,
+        )
+        return reader
+
+    def handle_csv(self, reader):
+        url_validator = URLValidator()
+        financings_countries = {}
+        financings_url = {}
+        next(reader, None)
+        for row in reader:
+            if not row['name']:
+                continue
+            try:
+                country = Country.objects.get(iso_code=row['country'])
+            except Country.DoesNotExist:
+                messages.warning(
+                    self.request, _('financing_country_not_imported_{country}').format(country=row['country']))
+                continue
+            if row['name'] not in financings_url:
+                url = row['url']
+                try:
+                    if url:
+                        url_validator(url)
+                    financings_url[row['name']] = url
+                except ValidationError:
+                    financings_url[row['name']] = ''
+                    messages.warning(
+                        self.request, _('financing_url_invalid_{country}_{url}').format(country=country, url=url))
+            financings_countries.setdefault(row['name'], []).append(country)
+        return financings_countries, financings_url
+
+    @transaction.atomic
+    def update_financings(self, academic_year, financings_countries, financings_url):
+        Financing.objects.filter(academic_year=academic_year).delete()
+        financings = []
+        for name in financings_countries.keys():
+            financings.append(
+                Financing(
+                    academic_year=academic_year,
+                    name=name,
+                    url=financings_url.get(name, None)
+                )
+            )
+        financings = Financing.objects.bulk_create(financings)
+        for financing in financings:
+            financing.countries = financings_countries.get(financing.name, [])
+
+    def form_valid(self, form):
+        academic_year = form.cleaned_data.get('import_academic_year')
+
+        reader = self.get_reader(self.request.FILES['csv_file'])
+        try:
+            financings_countries, financings_url = self.handle_csv(reader)
+        except ValueError:
+            messages.error(self.request, _('financings_imported_error'))
+            return redirect(self.get_success_url(academic_year))
+
+        self.update_financings(academic_year, financings_countries, financings_url)
+
+        messages.success(self.request, _('financings_imported'))
+        return redirect(self.get_success_url(academic_year))
+
+
+class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, ListView):
+    model = Country
+    template_name = "partnerships/financings/financing_list.html"
+    form_class = FinancingFilterForm
+    context_object_name = "countries"
+    paginate_by = 25
+    paginate_orphans = 2
+    paginate_neighbours = 3
+
+    def test_func(self):
+        return user_is_adri(self.request.user)
+
+    def dispatch(self, *args, year=None, **kwargs):
+        if year is None:
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
+        else:
+            self.academic_year = get_object_or_404(AcademicYear, year=year)
+
+        if self.request.method == "POST":
+            self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
+            self.form = FinancingFilterForm(self.request.POST)
+        else:
+            self.import_form = FinancingImportForm(initial={'import_academic_year': self.academic_year})
+            self.form = FinancingFilterForm(initial={'year': self.academic_year})
+        return super().dispatch(*args, **kwargs)
+
+    def get_ordering(self):
+        ordering = self.request.GET.get('ordering', None)
+        if ordering == 'financing_name':
+            return [
+                'financing_name',
+                'name',
+            ]
+        elif ordering == '-financing_name':
+            return [
+                '-financing_name',
+                'name',
+            ]
+        elif ordering == 'financing_url':
+            return [
+                'financing_url',
+                'name',
+            ]
+        elif ordering == '-financing_url':
+            return [
+                '-financing_url',
+                'name',
+            ]
+        elif ordering == '-name':
+            return [
+                '-name',
+                'iso_code',
+            ]
+        else:
+            return [
+                'name',
+                'iso_code'
+            ]
+
+    def post(self, *args, **kwargs):
+        if self.form.is_valid():
+            return self.form_valid(self.form)
+        return self.form_invalid(self.form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['import_form'] = self.import_form
+        context['paginate_neighbours'] = self.paginate_neighbours
+        context['can_import_financing'] = Financing.user_can_import(self.request.user)
+        context['can_export_financing'] = Financing.user_can_export(self.request.user)
+        context['academic_year'] = self.academic_year
+        return context
+
+    def get_success_url(self):
+        return reverse('partnerships:financings:list', kwargs={'year': self.academic_year.year})
+
+    def get_queryset(self):
+        queryset = (
+            Country.objects
+            .annotate(
+                financing_name=Subquery(
+                    Financing.objects
+                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
+                        .values('name')[:1]
+                ),
+                financing_url=Subquery(
+                    Financing.objects
+                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
+                        .values('url')[:1]
+                ),
+            )
+            .order_by(*self.get_ordering())
+            .distinct()
+        )
+        return queryset
+
+    def form_valid(self, form):
+        self.academic_year = form.cleaned_data.get('year', None)
+        if self.academic_year is None:
+            configuration = PartnershipConfiguration.get_configuration()
+            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
+        return redirect(self.get_success_url())
 
 
 # Autocompletes

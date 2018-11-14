@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-15 10:09+0200\n"
-"PO-Revision-Date: 2018-10-22 15:15+0200\n"
+"POT-Creation-Date: 2018-11-07 17:02+0100\n"
+"PO-Revision-Date: 2018-10-11 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_BE\n"
@@ -17,11 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "partnerships_general_configuration"
+msgstr "Configuration générale"
+
+msgid "partnerships_financing_configuration"
+msgstr "Configuration des financements"
+
 msgid "Yes"
 msgstr "Oui"
 
 msgid "No"
 msgstr "Non"
+
+msgid "is_ies"
+msgstr "Institution d’enseignement supérieur ?"
+
+msgid "is_nonprofit"
+msgstr "Organisation à but non lucratif ?"
+
+msgid "is_public"
+msgstr "Organisme public ?"
 
 msgid "partner_name"
 msgstr "Nom du partenaire"
@@ -103,9 +118,6 @@ msgstr "Type du partenaire"
 
 msgid "continent"
 msgstr "Continent"
-
-msgid "is_ies"
-msgstr "Institution d’enseignement supérieur ?"
 
 msgid "is_valid"
 msgstr "Validé"
@@ -242,6 +254,33 @@ msgstr "La date de début se situe après la date de fin."
 msgid "invalid_partnership_creation_max_date"
 msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
+msgid "administrative_responsible"
+msgstr "Responsable administratif"
+
+msgid "academic_responsible"
+msgstr "Responsable académique"
+
+msgid "contact_in_name"
+msgstr "Nom du contact de type mobilité in"
+
+msgid "contact_out_name"
+msgstr "Nom du contact de type mobilité out"
+
+msgid "academic_year"
+msgstr "Année académique"
+
+msgid "current_year"
+msgstr "Année en cours"
+
+msgid "csv_file"
+msgstr "Fichier CSV"
+
+msgid "academic_years"
+msgstr "Années académiques"
+
+msgid "financing_csv_file_invalid_extension"
+msgstr "Merci d'importer un fichier CSV."
+
 msgid "contact_in"
 msgstr "Contact de type mobilité in"
 
@@ -369,12 +408,6 @@ msgid "mandatory_if_not_pic_ies"
 msgstr ""
 "Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES."
 
-msgid "is_nonprofit"
-msgstr "Organisation à but non lucratif ?"
-
-msgid "is_public"
-msgstr "Organisme public ?"
-
 msgid "partner_contact_type"
 msgstr "Type d’organisme"
 
@@ -429,9 +462,6 @@ msgstr ""
 
 msgid "partnership"
 msgstr "Partenariat"
-
-msgid "academic_year"
-msgstr "Année académique"
 
 msgid "partnership_year_education_fields"
 msgstr "Domaines d'études"
@@ -527,20 +557,8 @@ msgstr "Faculté"
 msgid "entity"
 msgstr "Entité"
 
-msgid "academic_responsible"
-msgstr "Responsable académique"
-
-msgid "administrative_responsible"
-msgstr "Responsable administratif"
-
-msgid "contact_in_name"
-msgstr "Nom du contact de type mobilité in"
-
 msgid "portal"
 msgstr "Portail"
-
-msgid "contact_out_name"
-msgstr "Nom du contact de type mobilité out"
 
 msgid "duplicate_ucl_management_entity_error_with_faculty"
 msgstr "Une entité de gestion avec cette faculté existe déjà."
@@ -650,8 +668,21 @@ msgstr "Mettre à jour le contact"
 msgid "update_contact"
 msgstr "Mettre le contact à jour"
 
-msgid "academic_years"
-msgstr "Années académiques"
+msgid "financings"
+msgstr "Financements"
+
+msgid "import_financings"
+msgstr "Importer des financements"
+
+msgid "change_year"
+msgstr "Changer d'année"
+
+msgid "no_country"
+msgstr "Pas de pays"
+
+#, python-format
+msgid "export_financings_for_year_%(academic_year)s"
+msgstr "Exporter les financements pour l'année %(academic_year)s"
 
 msgid "media_delete_warning"
 msgstr ""
@@ -1067,6 +1098,30 @@ msgstr "Entité de gestion UCLouvain créée."
 msgid "ucl_management_entity_change_success"
 msgstr "Entités de gestion UCLouvain éditée."
 
+msgid "financing_country_not_imported_{country}"
+msgstr "Pays {country} non importé (code inconnu)"
+
+msgid "financing_url_invalid_{country}_{url}"
+msgstr "Pays {country} : URL “{url}” invalide."
+
+msgid "financings_imported_error"
+msgstr "Les financements n'ont pas pu être importés."
+
+msgid "financings_imported"
+msgstr "Financements importés avec succès"
+
+#~ msgid "no_financing"
+#~ msgstr "Pas de financement"
+
+#~ msgid "update"
+#~ msgstr "Mettre à jour"
+
+#~ msgid "delete"
+#~ msgstr "Delete"
+
+#~ msgid "ucl_management_entity"
+#~ msgstr "Entité de gestion UCL"
+
 #~ msgid "invalid_partnership_update_max_date"
 #~ msgstr "Date invalide (le 29 février n'est pas autorisé)."
 
@@ -1086,10 +1141,6 @@ msgstr "Entités de gestion UCLouvain éditée."
 
 #~ msgid "partnership_start_date_gf_too_late"
 #~ msgstr "La date limite pour créer ce partenariat est passée."
-
-#~ msgid "partnership_year_academic_year_error"
-#~ msgstr ""
-#~ "L’année académique est antérieure à l’année de début du partenariat."
 
 #~ msgid "partnership_update_max_date_day"
 #~ msgstr "Jour du mois maximum pour la mise à jour d'un partenariat."
@@ -1224,7 +1275,3 @@ msgstr "Entités de gestion UCLouvain éditée."
 
 #~ msgid "new_entity"
 #~ msgstr "Nouvelle entité"
-
-# Menu translations :
-msgid "general_configuration"
-msgstr "Configuration générale"
