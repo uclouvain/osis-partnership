@@ -3,9 +3,8 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.user import UserFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person_entity import PersonEntityFactory
 from reference.tests.factories.country import CountryFactory
-from partnership.tests.factories import FinancingFactory
+from partnership.tests.factories import FinancingFactory, PartnershipEntityManagerFactory
 from partnership.models import Financing
 from reference.models.country import Country
 
@@ -27,7 +26,7 @@ class FinancingsExportViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PersonEntityFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.url = reverse('partnerships:financings:export', kwargs={'year': cls.academic_year_1.year})
         cls.url_empty = reverse('partnerships:financings:export', kwargs={'year': cls.academic_year_2.year})
 

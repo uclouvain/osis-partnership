@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('base', '0376_auto_20181022_1510'),
-        ('partnership', '0034_partnershipconfiguration_email_notification_to'),
+        ('partnership', '0035_auto_20181113_1013'),
     ]
 
     operations = [
