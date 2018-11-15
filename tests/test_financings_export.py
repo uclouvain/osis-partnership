@@ -1,12 +1,14 @@
 from django.test import TestCase
 from django.urls import reverse
+
 from base.tests.factories.academic_year import AcademicYearFactory
-from base.tests.factories.user import UserFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from reference.tests.factories.country import CountryFactory
-from partnership.tests.factories import FinancingFactory, PartnershipEntityManagerFactory
+from base.tests.factories.user import UserFactory
 from partnership.models import Financing
+from partnership.tests.factories import (FinancingFactory,
+                                         PartnershipEntityManagerFactory)
 from reference.models.country import Country
+from reference.tests.factories.country import CountryFactory
 
 
 class FinancingsExportViewTest(TestCase):

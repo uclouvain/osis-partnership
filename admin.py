@@ -1,11 +1,12 @@
 from django.contrib import admin
+
 from partnership.models import (Address, Contact, ContactType, Financing,
                                 Media, Partner, PartnerEntity, Partnership,
-                                PartnershipAgreement, PartnershipTag,
-                                PartnershipYear, PartnerTag, PartnerType,
-                                UCLManagementEntity,
+                                PartnershipAgreement, PartnershipEntityManager,
+                                PartnershipTag, PartnershipYear,
                                 PartnershipYearEducationField,
-                                PartnershipYearEducationLevel, PartnershipEntityManager)
+                                PartnershipYearEducationLevel, PartnerTag,
+                                PartnerType, UCLManagementEntity)
 
 
 class PartnershipEntityManagerAdmin(admin.ModelAdmin):

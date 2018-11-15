@@ -16,13 +16,11 @@ from django.db import transaction
 from django.db.models import (Count, Exists, Max, OuterRef, Prefetch, Q,
                               QuerySet, Subquery)
 from django.db.models.functions import Now
-from django.http import FileResponse, Http404
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import (FileResponse, Http404, HttpResponse,
+                         HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import ugettext
@@ -32,27 +30,28 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
-                                       UpdateView, ProcessFormView)
+                                       ProcessFormView, UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 
-from base.models.academic_year import (current_academic_year,
-                                       find_academic_years, AcademicYear)
+from base.models.academic_year import (AcademicYear, current_academic_year,
+                                       find_academic_years)
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from osis_common.document import xls_build
-from partnership.forms import (AddressForm, ContactForm, MediaForm,
+from partnership.forms import (AddressForm, ContactForm, FinancingFilterForm,
+                               FinancingImportForm, MediaForm,
                                PartnerEntityForm, PartnerFilterForm,
                                PartnerForm, PartnershipAgreementForm,
                                PartnershipConfigurationForm,
                                PartnershipFilterForm, PartnershipForm,
-                               PartnershipYearForm, UCLManagementEntityForm, FinancingFilterForm, FinancingImportForm)
-from partnership.models import (Partner, PartnerEntity, Partnership,
+                               PartnershipYearForm, UCLManagementEntityForm)
+from partnership.models import (Financing, Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear, UCLManagementEntity, Financing)
-from partnership.utils import user_is_adri, user_is_gf, academic_years
+                                PartnershipYear, UCLManagementEntity)
+from partnership.utils import academic_years, user_is_adri, user_is_gf
 from reference.models.country import Country
 
 
