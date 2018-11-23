@@ -165,7 +165,7 @@ class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
         ordering = self.get_ordering()
         if ordering:
             queryset = queryset.order_by(ordering)
-        return queryset
+        return queryset.distinct()
 
 
 class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
@@ -237,7 +237,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView
                 'tags_list',
             )
         )
-        return queryset
+        return queryset.distinct()
 
     def get_description(self):
         return _('partners')
@@ -1030,6 +1030,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
     def get_title(self):
         return _('agreements')
 
+
 class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
 
     @cached_property
@@ -1098,7 +1099,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, Expo
             )
             .select_related('author')
         )
-        for partnership in queryset:
+        for partnership in queryset.distinct():
 
             first_year = None
             current_year = None
