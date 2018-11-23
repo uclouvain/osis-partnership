@@ -1011,7 +1011,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 str(agreement.partnership.partner),
                 str(agreement.partnership.partner.contact_address.country),
                 str(agreement.partnership.partner.contact_address.city),
-                str(agreement.partnership.get_supervisor()),
+                str(agreement.partnership.supervisor),
                 faculty.acronym,
                 entity.most_recent_acronym if entity is not None else '',
                 years,
