@@ -703,15 +703,15 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 ]
             elif ordering == 'ucl':
                 return [
-                    'partnership__ucl_university__entityversion__parent__entityversion__acronym',
-                    'partnership__ucl_university__entityversion__acronym',
-                    'partnership__ucl_university_labo__entityversion__acronym',
+                    'partnership_ucl_university_parent_most_recent_acronym',
+                    'partnership_ucl_university_most_recent_acronym',
+                    'partnership_ucl_university_labo_most_recent_acronym',
                 ]
             elif ordering == '-ucl':
                 return [
-                    '-partnership__ucl_university__entityversion__parent__entityversion__acronym',
-                    '-partnership__ucl_university__entityversion__acronym',
-                    '-partnership__ucl_university_labo__entityversion__acronym',
+                    '-partnership_ucl_university_parent_most_recent_acronym',
+                    '-partnership_ucl_university_most_recent_acronym',
+                    '-partnership_ucl_university_labo_most_recent_acronym',
                 ]
             return [ordering]
         else:
@@ -721,15 +721,15 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 return ['-partner__contact_address__country__name', '-partner__contact_address__city', '-partner__name']
             elif ordering == 'ucl':
                 return [
-                    'ucl_university__entityversion__parent__entityversion__acronym',
-                    'ucl_university__entityversion__acronym',
-                    'ucl_university_labo__entityversion__acronym',
+                    'ucl_university_parent_most_recent_acronym',
+                    'ucl_university_most_recent_acronym',
+                    'ucl_university_labo_most_recent_acronym',
                 ]
             elif ordering == '-ucl':
                 return [
-                    '-ucl_university__entityversion__parent__entityversion__acronym',
-                    '-ucl_university__entityversion__acronym',
-                    '-ucl_university_labo__entityversion__acronym',
+                    '-ucl_university_parent_most_recent_acronym',
+                    '-ucl_university_most_recent_acronym',
+                    '-ucl_university_labo_most_recent_acronym',
                 ]
             else:
                 return [ordering]
@@ -915,8 +915,36 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = self.filter_queryset(queryset, form.cleaned_data)
         ordering = self.get_ordering()
         if self.is_agreements:
-            queryset = PartnershipAgreement.objects.filter(
-                partnership__in=queryset.distinct()
+            queryset = self.get_agreements_queryset(queryset).order_by(*ordering)
+        else:
+            queryset = queryset.order_by(*ordering)
+        return queryset.distinct()
+
+    def get_agreements_queryset(self, partnerships):
+        return (
+            PartnershipAgreement.objects
+            .annotate(
+                # Used for ordering
+                partnership_ucl_university_parent_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity__parent_of__entity=OuterRef('partnership__ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                partnership_ucl_university_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('partnership__ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                partnership_ucl_university_labo_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('partnership__ucl_university_labo__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+            ).filter(
+                partnership__in=partnerships
             ).select_related(
                 'partnership__partner__contact_address__country',
                 'partnership__supervisor',
@@ -924,10 +952,8 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                 'partnership__ucl_university_labo',
                 'start_academic_year',
                 'end_academic_year',
-            ).order_by(*ordering)
-        else:
-            queryset = queryset.order_by(*ordering)
-        return queryset.distinct()
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
