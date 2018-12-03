@@ -1989,7 +1989,7 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
         else:
             return PartnerEntity.objects.none()
         if self.q:
-            qs = qs.filter(name__icontain=self.q)
+            qs = qs.filter(name__icontains=self.q)
         return qs.distinct()
 
 
@@ -2073,11 +2073,18 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         faculty = self.forwarded.get('faculty', None)
         if faculty is not None:
-            qs = Entity.objects.filter(entityversion__parent=faculty)
+            qs = Entity.objects.annotate(
+                most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+            ).filter(entityversion__parent=faculty)
         else:
             return Entity.objects.none()
         if self.q:
-            qs = qs.filter(title__icontains=self.q)
+            qs = qs.filter(most_recent_acronym__icontains=self.q)
         return qs.distinct()
 
     def get_result_label(self, result):
@@ -2142,7 +2149,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
         else:
             return PartnerEntity.objects.none()
         if self.q:
-            qs = qs.filter(name__icontain=self.q)
+            qs = qs.filter(name__icontains=self.q)
         return qs.distinct()
 
 
