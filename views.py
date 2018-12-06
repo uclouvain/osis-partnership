@@ -749,6 +749,8 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = queryset.filter(partner=data['partner'])
         if data.get('partner_entity', None):
             queryset = queryset.filter(partner_entity=data['partner_entity'])
+        if data.get('use_egracons', None) is not None:
+            queryset = queryset.filter(partner__use_egracons=data['use_egracons'])
         if data.get('partner_type', None):
             queryset = queryset.filter(partner__partner_type=data['partner_type'])
         if data.get('partner_tags', None):

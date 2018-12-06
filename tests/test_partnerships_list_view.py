@@ -44,6 +44,8 @@ class PartnershipsListViewTest(TestCase):
         # partner_entity
         cls.partner_entity = PartnerEntityFactory()
         cls.partnership_partner_entity = PartnershipFactory(partner_entity=cls.partner_entity)
+        # use_egracons
+        cls.partnership_use_egracons = PartnershipFactory(partner__use_egracons=True)
         # partner_type
         cls.partner_type = PartnerTypeFactory()
         cls.partnership_partner_type = PartnershipFactory(partner__partner_type=cls.partner_type)
@@ -217,7 +219,7 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url + '?university_offer=' + str(self.university_offer.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
-        self.assertEqual(context['paginator'].count, 41)  # Include partnerships with offers at None
+        self.assertEqual(context['paginator'].count, 42)  # Include partnerships with offers at None
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -234,6 +236,14 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_partner_entity)
+        
+    def test_filter_use_egracons(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url + '?use_egracons=True')
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_use_egracons)
 
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
@@ -390,6 +400,7 @@ class PartnershipsListViewTest(TestCase):
             'ucl_university_labo': str(self.partnership_all_filters.ucl_university_labo.pk),
             'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
             'partner': str(self.partnership_all_filters.partner.pk),
+            'use_egracons': 'False',
             'partner_entity': str(self.partnership_all_filters.partner_entity.pk),
             'city': 'all_filters',
             'country': str(self.partnership_all_filters.partner.contact_address.country.pk),
