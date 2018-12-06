@@ -506,6 +506,9 @@ msgstr "Éligible"
 msgid "financing"
 msgstr "Financement"
 
+msgid "can_access_partnerships_agreements"
+msgstr "Peux accéder aux accords"
+
 msgid "january"
 msgstr "Janvier"
 

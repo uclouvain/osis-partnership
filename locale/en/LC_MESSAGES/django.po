@@ -505,6 +505,9 @@ msgstr "Eligible"
 msgid "financing"
 msgstr "Financing"
 
+msgid "can_access_partnerships_agreements"
+msgstr "Can access agreements"
+
 msgid "january"
 msgstr ""
 
@@ -1100,9 +1103,11 @@ msgstr "UCLouvain management entity successfully created."
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
 
+#, python-brace-format
 msgid "financing_country_not_imported_{country}"
 msgstr "Unknown country {country}."
 
+#, python-brace-format
 msgid "financing_url_invalid_{country}_{url}"
 msgstr "Invalid url {url} for country {country}."
 
