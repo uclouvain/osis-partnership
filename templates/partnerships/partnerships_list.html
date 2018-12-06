@@ -46,7 +46,7 @@
               <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
-                <i class="fa fa-filter"></i> <span class="hidden-xs">{% trans "search_partnership_or_agreement" %}</span>
+                <i class="fa fa-filter"></i> <span class="hidden-xs">{% if can_search_agreements %}{% trans "search_partnership_or_agreement" %}{% else %}{% trans "search_partnership" %}{% endif %}</span>
               </button>
             </div>
           </div>
@@ -183,7 +183,7 @@
                   <div class="pull-right">
                     <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
                     <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">{% trans "search_partnership" %}</button>
-                    <button type="submit" class="submit-button btn btn-primary" name="search_agreement" value="search_agreement">{% trans "search_agreement" %}</button>
+                    {% if can_search_agreements %}<button type="submit" class="submit-button btn btn-primary" name="search_agreement" value="search_agreement">{% trans "search_agreement" %}</button>{% endif %}
                   </div>
                 </div>
               </div>

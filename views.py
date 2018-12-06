@@ -932,10 +932,13 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_agreements'] = self.is_agreements
+        context['can_search_agreements'] = user_is_adri(self.request.user)
         return context
 
     @cached_property
     def is_agreements(self):
+        if not user_is_adri(self.request.user):
+            return False
         if self.request.method == "GET":
             if "search_partnership" in self.request.GET:
                 return False
