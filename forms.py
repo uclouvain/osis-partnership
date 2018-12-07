@@ -644,6 +644,11 @@ class PartnershipFilterForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': _('erasmus_code')}),
         required=False,
     )
+    use_egracons = forms.NullBooleanField(
+        label=_('use_egracons'),
+        widget=CustomNullBooleanSelect(),
+        required=False,
+    )
     city = forms.ChoiceField(
         label=_('city'),
         choices=((None, _('city')),),
