@@ -6,10 +6,40 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import Media, PartnershipAgreement
+from partnership.models import Media, PartnershipAgreement, Partnership
 from partnership.tests.factories import (PartnershipAgreementFactory,
                                          PartnershipEntityManagerFactory,
                                          PartnershipFactory)
+
+
+class PartnershipsListViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        for i in range(15):
+            PartnershipAgreementFactory()
+        cls.user = UserFactory()
+        cls.user_adri = UserFactory()
+        entity_version = EntityVersionFactory(acronym='ADRI')
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        cls.url = reverse('partnerships:list') + '?agreements=1'
+
+    def test_get_list_anonymous(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
+
+    def test_get_list_authenticated(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateNotUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
+
+    def test_get_list_adri(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
 
 
 class PartnershipAgreementCreateViewTest(TestCase):

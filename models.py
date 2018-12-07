@@ -781,6 +781,9 @@ class PartnershipAgreement(models.Model):
         ordering = [
             '-start_academic_year__start_date',
         ]
+        permissions = (
+            ('can_access_partnerships_agreements', _('can_access_partnerships_agreements')),
+        )
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
