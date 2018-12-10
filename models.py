@@ -656,6 +656,11 @@ class PartnershipYear(models.Model):
         max_length=255,
         choices=TYPE_CHOICES,
     )
+    eligible = models.BooleanField(
+        _('eligible'),
+        default=True,
+        blank=True,
+    )
 
     class Meta:
         unique_together = ('partnership', 'academic_year')
@@ -705,6 +710,21 @@ class PartnershipYear(models.Model):
                     .order_by('-start_date')
                     .values('title')[:1]
             ),
+        )
+
+    def get_financing(self):
+        if not self.eligible:
+            return None
+        country = self.partnership.partner.contact_address.country
+        if country is None:
+            return None
+        return (
+            Financing.objects
+            .select_related('academic_year')
+            .filter(
+                countries=country,
+                academic_year=self.academic_year,
+            ).first()
         )
 
 
@@ -764,12 +784,6 @@ class PartnershipAgreement(models.Model):
         default=STATUS_WAITING,
     )
 
-    eligible = models.BooleanField(
-        _('eligible'),
-        default=False,
-        blank=True,
-    )
-
     comment = models.TextField(
         _('comment'),
         blank=True,
@@ -799,22 +813,6 @@ class PartnershipAgreement(models.Model):
     @property
     def is_valid(self):
         return self.status == self.STATUS_VALIDATED
-
-    def get_financings(self):
-        if not self.eligible:
-            return Financing.objects.none()
-        country = self.partnership.partner.contact_address.country
-        if country is None:
-            return Financing.objects.none()
-        return (
-            Financing.objects
-            .select_related('academic_year')
-            .filter(
-                countries=country,
-                academic_year__year__gte=self.start_academic_year.year,
-                academic_year__year__lte=self.end_academic_year.year,
-            ).order_by('academic_year__year')
-        )
 
 
 class PartnershipConfiguration(models.Model):

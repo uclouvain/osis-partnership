@@ -86,6 +86,7 @@
             <th>{% trans "education_levels" %}</th>
             <th>{% trans "partnership_year_entities" %}</th>
             <th>{% trans "partnership_year_offers" %}</th>
+            <th>{% trans "financing" %}</th>
             <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
@@ -121,6 +122,12 @@
                 {% for offer in partnership_year.offers.all %}<li><strong>{{ offer.acronym }}</strong> - {{ offer.title }}</li>{% empty %}<li>{% trans "all_offers" %}</li>{% endfor %}
               </ul>
               {% endif %}
+            </td>
+            <td>
+              <i class="fa {{ partnership_year.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+              {% if partnership_year.is_valid and partnership_year.eligible %}
+                 {{ partnership_year.get_financing.name|default_if_none:"" }}
+               {% endif %}
             </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
