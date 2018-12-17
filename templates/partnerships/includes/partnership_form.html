@@ -113,6 +113,11 @@
   <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form_year.end_academic_year %}
   </div>
+  {% if form_year.eligible %}
+  <div class="col-xs-12 col-sm-12">
+    {% bootstrap_field form_year.eligible %}
+  </div>
+  {% endif %}
 </div>
 
 {{ form.media }}

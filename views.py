@@ -1022,7 +1022,6 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
             ugettext('start_academic_year'),
             ugettext('end_academic_year'),
             ugettext('status'),
-            ugettext('eligible'),
         ]
 
     def get_xls_data(self):
@@ -1049,7 +1048,6 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
                 agreement.start_academic_year.year,
                 agreement.end_academic_year.year + 1,
                 agreement.get_status_display(),
-                agreement.eligible,
             ]
 
     def get_description(self):
@@ -1093,6 +1091,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, Expo
             ugettext('end_academic_year'),
             ugettext('is_valid'),
             ugettext('external_id'),
+            ugettext('eligible'),
         ]
 
     def get_xls_data(self):
@@ -1169,6 +1168,7 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, Expo
                 end_year.academic_year if end_year is not None else '',
                 partnership.is_valid,
                 partnership.external_id,
+                current_year.eligible if current_year is not None else '',
             ]
 
     def get_description(self):

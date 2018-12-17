@@ -957,6 +957,7 @@ class PartnershipYearForm(forms.ModelForm):
             'is_smp',
             'is_sta',
             'is_stt',
+            'eligible',
         )
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
@@ -973,6 +974,7 @@ class PartnershipYearForm(forms.ModelForm):
         )
         is_adri = user_is_adri(self.user)
         if not is_adri:
+            del self.fields['eligible']
             if current_academic_year is not None:
                 future_academic_years = AcademicYear.objects.filter(year__gte=current_academic_year.year)
                 self.fields['start_academic_year'].queryset = future_academic_years
@@ -1026,7 +1028,6 @@ class PartnershipAgreementForm(forms.ModelForm):
             'start_academic_year',
             'end_academic_year',
             'status',
-            'eligible',
             'comment',
         ]
 
@@ -1035,7 +1036,6 @@ class PartnershipAgreementForm(forms.ModelForm):
         super(PartnershipAgreementForm, self).__init__(*args, **kwargs)
         if not user_is_adri(user):
             del self.fields['status']
-            del self.fields['eligible']
 
     def clean(self):
         super(PartnershipAgreementForm, self).clean()

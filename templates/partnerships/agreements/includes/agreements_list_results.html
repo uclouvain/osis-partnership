@@ -10,7 +10,6 @@
         <td>{% trans "ucl" %}&nbsp;{% include "partnerships/includes/sort-icon-with-link.html" with ordering_field="ucl" %}</td>
         <td>{% trans "academic_years" %}</td>
         <td>{% trans "status" %}</td>
-        <td>{% trans "eligible" %}</td>
         <td></td>
       </tr>
     </thead>
@@ -24,7 +23,6 @@
           <td>{{ agreement.partnership.entities_acronyms }}</td>
           <td>{% academic_years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</td>
           <td>{{ agreement.get_status_display }}</td>
-          <td><i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           <td>
             <a href="{% url 'partnerships:detail' pk=agreement.partnership.id %}" class="btn btn-default">
               <i class="fa fa-eye"></i>

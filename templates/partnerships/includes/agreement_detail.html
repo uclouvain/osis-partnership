@@ -8,19 +8,6 @@
         <dt>{% trans "status" %}</dt>
         <dd>{{ agreement.get_status_display }}</dd>
 
-        <dt>{% trans "eligible" %}</dt>
-        <dd>
-          <i class="fa {{ agreement.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
-
-          {% if agreement.is_valid and agreement.eligible %}
-            <ul class="list-unstyled">
-            {% for financing in agreement.get_financings %}
-              <li>{{ financing }}</li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-        </dd>
-
         {% if agreement.comment %}
         <dt>{% trans "comment" %}</dt>
         <dd>{{ agreement.comment|linebreaksbr }}</dd>
