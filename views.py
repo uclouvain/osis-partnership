@@ -2130,7 +2130,7 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
 class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.filter(university_certificate=True).select_related('academic_year')
+        qs = EducationGroupYear.objects.filter(joint_diploma=True).select_related('academic_year')
         # Education levels filter
         education_levels = self.forwarded.get('education_levels', None)
         if education_levels is not None:
