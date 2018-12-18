@@ -2154,7 +2154,7 @@ class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
         # Query filter
         if self.q:
             qs = qs.filter(title__icontains=self.q)
-        return qs.distinct()
+        return qs.distinct('education_group')
 
     def get_result_label(self, result):
         return '{0.acronym} - {0.title}'.format(result)
