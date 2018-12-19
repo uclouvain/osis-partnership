@@ -865,7 +865,6 @@ class PartnershipForm(forms.ModelForm):
                 if self.instance.pk is not None:
                     self.fields['partner'].disabled = True
                     self.fields['ucl_university_labo'].disabled = True
-                    self.fields['supervisor'].disabled = True
                     self.fields['comment'].disabled = True
                     self.fields['tags'].disabled = True
                     self.fields['ucl_university'].disabled = True
