@@ -804,6 +804,17 @@ class PartnershipForm(forms.ModelForm):
         }),
     )
 
+    ucl_university_labo = EntityChoiceField(
+        label=_('ucl_university'),
+        queryset=Entity.objects.filter(
+            entity_managements__isnull=False,
+        ),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:ucl_university_labo',
+            forward=['ucl_university'],
+        )
+    )
+
     supervisor = PersonChoiceField(
         label=_('partnership_supervisor'),
         required=False,
@@ -836,10 +847,6 @@ class PartnershipForm(forms.ModelForm):
             'partner_entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:partner_entity',
                 forward=['partner'],
-            ),
-            'ucl_university_labo': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:ucl_university_labo',
-                forward=['ucl_university'],
             ),
             'tags': autocomplete.Select2Multiple(),
         }

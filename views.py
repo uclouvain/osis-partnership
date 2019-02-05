@@ -3,6 +3,7 @@ import csv
 import os
 from collections import OrderedDict
 from copy import copy
+from datetime import date
 
 from dal import autocomplete
 from django.conf import settings
@@ -2074,6 +2075,13 @@ class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(entityversion__parent=ucl_university)
         else:
             return Entity.objects.none()
+        qs = qs.annotate(
+            is_valid=Exists(
+                EntityVersion.objects
+                    .filter(entity=OuterRef('pk'))
+                    .exclude(end_date__lte=date.today())
+            )
+        ).filter(is_valid=True)
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
         qs = qs.order_by('most_recent_acronym')
@@ -2115,6 +2123,13 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
             ).filter(entityversion__parent=faculty)
         else:
             return Entity.objects.none()
+        qs = qs.annotate(
+            is_valid=Exists(
+                EntityVersion.objects
+                .filter(entity=OuterRef('pk'))
+                .exclude(end_date__lte=date.today())
+            )
+        ).filter(is_valid=True)
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
         return qs.distinct()
@@ -2197,8 +2212,13 @@ class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
+                is_valid=Exists(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('pk'))
+                        .exclude(end_date__lte=date.today())
+                ),
             )
-            .filter(partnerships__isnull=False)
+            .filter(partnerships__isnull=False, is_valid=True)
         )
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
