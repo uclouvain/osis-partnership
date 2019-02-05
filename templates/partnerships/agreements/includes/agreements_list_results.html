@@ -1,4 +1,6 @@
 {% load i18n years %}
+<div class="results-count">{% blocktrans count count=paginator.count %}{{ count }}_result_count{% plural %}{{ count }}_results_count{% endblocktrans %}</div>
+
 <div class="table-responsive">
   <table class="table table-stripped table-hover">
     <thead>

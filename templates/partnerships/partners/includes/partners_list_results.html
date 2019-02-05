@@ -1,6 +1,8 @@
 {% load i18n %}
 <div class="loader"><div class="spinner"><i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i></div></div>
 
+<div class="results-count">{% blocktrans count count=paginator.count %}{{ count }}_result_count{% plural %}{{ count }}_results_count{% endblocktrans %}</div>
+
 <div class="table-responsive">
   <table class="table table-striped table-hover">
     <thead>

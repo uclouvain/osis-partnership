@@ -79,3 +79,7 @@ ul.tags-list li {
     width: 100% !important;
     min-width: auto !important;
 }
+
+.results-count {
+  text-align: right;
+}

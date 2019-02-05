@@ -170,6 +170,9 @@ msgstr "Partner"
 msgid "partner_entity"
 msgstr "Partner entity"
 
+msgid "use_egracons"
+msgstr ""
+
 msgid "partner_tags"
 msgstr "Partner tags"
 
@@ -203,10 +206,8 @@ msgstr ""
 msgid "partnership_ending_in"
 msgstr ""
 
-#, fuzzy
-#| msgid "partnership_year_entities"
 msgid "parnership_ending_in_help_text"
-msgstr "Partnership year entities"
+msgstr ""
 
 msgid "partnership_valid_in"
 msgstr ""
@@ -238,18 +239,14 @@ msgstr "End academic year"
 msgid "partnership_year_entities"
 msgstr "Partnership year entities"
 
-#, fuzzy
-#| msgid "partnership_year_entities"
 msgid "partnership_year_entities_help_text"
-msgstr "Partnership year entities"
+msgstr ""
 
 msgid "partnership_year_offers"
 msgstr "Offers"
 
-#, fuzzy
-#| msgid "partnership_year_offers"
 msgid "partnership_year_offers_help_text"
-msgstr "Partnership year offers"
+msgstr ""
 
 msgid "education_levels_empty_errors"
 msgstr ""
@@ -419,9 +416,6 @@ msgstr "Now known as"
 msgid "partner_contact_type"
 msgstr "Organization type"
 
-msgid "use_egracons"
-msgstr ""
-
 msgid "medias"
 msgstr "Medias"
 
@@ -477,6 +471,9 @@ msgstr "Partnership year education fields"
 msgid "partnership_year_education_levels"
 msgstr "Partnership year education levels"
 
+msgid "eligible"
+msgstr "Eligible"
+
 msgid "partnership_year"
 msgstr "Partnership year"
 
@@ -498,9 +495,6 @@ msgstr "Media"
 
 msgid "status"
 msgstr "Status"
-
-msgid "eligible"
-msgstr "Eligible"
 
 msgid "financing"
 msgstr "Financing"
@@ -550,10 +544,8 @@ msgstr ""
 msgid "partnership_creation_update_max_date_month"
 msgstr ""
 
-#, fuzzy
-#| msgid "partnership_year_entities"
 msgid "partnership_email_notification_to"
-msgstr "Partnership year entities"
+msgstr "Partnership email notification to"
 
 msgid "faculty"
 msgstr "Faculty"
@@ -617,6 +609,11 @@ msgstr "Cancel"
 
 msgid "delete_partnership_agreement"
 msgstr "Delete partnership agreement"
+
+msgid "%(count)s_result_count"
+msgid_plural "%(count)s_results_count"
+msgstr[0] "%(count)s result"
+msgstr[1] "%(count)s results"
 
 msgid "ucl"
 msgstr "UCLouvain"
@@ -709,26 +706,20 @@ msgstr "Next"
 msgid "last"
 msgstr "Last"
 
-#, fuzzy
-#| msgid "partner_entity"
 msgid "partner_university"
 msgstr "Partner entity"
 
 msgid "add_partner"
 msgstr "Add partner"
 
-#, fuzzy
-#| msgid "partner_entity_saved"
 msgid "partner_entity_inside_partner"
-msgstr "Partner entity successfully saved"
+msgstr "Partner entity inside partner"
 
 msgid "add_partner_entity"
 msgstr "Add partner entity"
 
-#, fuzzy
-#| msgid "edit_partnership"
 msgid "ucl_entity_partner"
-msgstr "Edit partnership"
+msgstr "UCL entity partner"
 
 msgid "partnership_subject"
 msgstr "Partnership subject"
@@ -947,8 +938,6 @@ msgstr "Invalid partner"
 msgid "inactive_partner"
 msgstr "Inactive partner"
 
-#, fuzzy
-#| msgid "partnership_supervisor"
 msgid "partnership_supervisor_from_entity_management"
 msgstr "Partnership supervisor"
 
@@ -967,8 +956,6 @@ msgstr "Education fields"
 msgid "education_levels"
 msgstr "Education levels"
 
-#, fuzzy
-#| msgid "entities"
 msgid "all_entities"
 msgstr "Entities"
 
@@ -1036,10 +1023,8 @@ msgstr "ID"
 msgid "partner_saved"
 msgstr "Partner successfully saved"
 
-#, fuzzy
-#| msgid "partnership_create"
 msgid "partner_created"
-msgstr "Create partnership"
+msgstr "Partner created"
 
 msgid "partner_error"
 msgstr ""
