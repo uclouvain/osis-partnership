@@ -172,10 +172,17 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12 col-md-3">
+                      <label class="control-label" for="{{ form.partnership_with_no_agreements_in.id_for_label  }}">
+                        {{ form.partnership_with_no_agreements_in.label }}
+                        <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_with_no_agreements_in.help_text }}"></i>
+                      </label>
+                      {% bootstrap_field form.partnership_with_no_agreements_in show_label=False show_help=False %}
+                    </div>
+                    <div class="col-sm-12 col-md-3">
                       {% bootstrap_field form.tags %}
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.comment %}
                     </div>
                   </div>

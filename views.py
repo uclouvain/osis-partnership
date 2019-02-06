@@ -839,16 +839,40 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = queryset.annotate(
                 not_valid_in_has_agreements=Exists(
                     PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk')).filter(
+                        partnership=OuterRef('pk'),
+                    ).filter(
                         start_academic_year__start_date__lte=partnership_not_valid_in.start_date,
-                        end_academic_year__end_date__gte=partnership_not_valid_in.end_date), ),
+                        end_academic_year__end_date__gte=partnership_not_valid_in.end_date,
+                    ),
+                ),
                 not_valid_in_has_valid_agreements=Exists(
-                    PartnershipAgreement.objects.filter(partnership=OuterRef('pk')).filter(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                    ).filter(
                         status=PartnershipAgreement.STATUS_VALIDATED,
                         start_academic_year__start_date__lte=partnership_not_valid_in.start_date,
-                        end_academic_year__end_date__gte=partnership_not_valid_in.end_date),
+                        end_academic_year__end_date__gte=partnership_not_valid_in.end_date,
+                    ),
                 )
             ).filter(not_valid_in_has_agreements=True, not_valid_in_has_valid_agreements=False)
+        if data.get('partnership_with_no_agreements_in', None):
+            partnership_with_no_agreements_in = data['partnership_with_no_agreements_in']
+            # We need to use subqueries to avoid conflicts with other filters
+            queryset = queryset.annotate(
+                no_agreements_in_has_years=Exists(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                        academic_year=partnership_with_no_agreements_in,
+                    )
+                ),
+                no_agreements_in_has_agreements=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                        start_academic_year__start_date__lte=partnership_with_no_agreements_in.start_date,
+                        end_academic_year__end_date__gte=partnership_with_no_agreements_in.end_date,
+                    )
+                ),
+            ).filter(no_agreements_in_has_years=True, no_agreements_in_has_agreements=False)
         if data.get('comment', None):
             queryset = queryset.filter(comment__icontains=data['comment'])
         return queryset

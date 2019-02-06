@@ -170,6 +170,9 @@ msgstr "Partner"
 msgid "partner_entity"
 msgstr "Partner entity"
 
+msgid "use_egracons"
+msgstr ""
+
 msgid "partner_tags"
 msgstr "Partner tags"
 
@@ -213,6 +216,12 @@ msgstr ""
 
 msgid "partnership_not_valid_in"
 msgstr ""
+
+msgid "partnership_with_no_agreements_in"
+msgstr "Partnerships with no agreements in"
+
+msgid "partnership_with_no_agreements_in_help_text"
+msgstr "List partnerships with a year configured but no agreements in this academic year."
 
 msgid "same_supervisor_than_management_entity"
 msgstr "Create UCLouvain management entities"
@@ -419,9 +428,6 @@ msgstr "Now known as"
 msgid "partner_contact_type"
 msgstr "Organization type"
 
-msgid "use_egracons"
-msgstr ""
-
 msgid "medias"
 msgstr "Medias"
 
@@ -477,6 +483,9 @@ msgstr "Partnership year education fields"
 msgid "partnership_year_education_levels"
 msgstr "Partnership year education levels"
 
+msgid "eligible"
+msgstr "Eligible"
+
 msgid "partnership_year"
 msgstr "Partnership year"
 
@@ -498,9 +507,6 @@ msgstr "Media"
 
 msgid "status"
 msgstr "Status"
-
-msgid "eligible"
-msgstr "Eligible"
 
 msgid "financing"
 msgstr "Financing"
