@@ -171,6 +171,9 @@ msgstr "Partenaire"
 msgid "partner_entity"
 msgstr "Entité partenaire"
 
+msgid "use_egracons"
+msgstr "Utilise le système de conversion de note Égracons ?"
+
 msgid "partner_tags"
 msgstr "Tags"
 
@@ -420,9 +423,6 @@ msgstr "Est devenu / Fait partie de"
 msgid "partner_contact_type"
 msgstr "Type d’organisme"
 
-msgid "use_egracons"
-msgstr "Utilise le système de conversion de note Égracons ?"
-
 msgid "medias"
 msgstr "Médias"
 
@@ -478,6 +478,9 @@ msgstr "Domaines d'études"
 msgid "partnership_year_education_levels"
 msgstr "Niveaux d’études UCLouvain concernés"
 
+msgid "eligible"
+msgstr "Éligible"
+
 msgid "partnership_year"
 msgstr "Année de partenariat"
 
@@ -499,9 +502,6 @@ msgstr "Média"
 
 msgid "status"
 msgstr "État"
-
-msgid "eligible"
-msgstr "Éligible"
 
 msgid "financing"
 msgstr "Financement"
@@ -616,6 +616,11 @@ msgstr "Annuler"
 
 msgid "delete_partnership_agreement"
 msgstr "Supprimer l'accord"
+
+msgid "%(count)s_result_count"
+msgid_plural "%(count)s_results_count"
+msgstr[0] "%(count)s résultat"
+msgstr[1] "%(count)s résultats"
 
 msgid "ucl"
 msgstr "UCLouvain"
