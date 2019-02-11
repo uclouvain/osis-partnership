@@ -220,6 +220,13 @@ msgstr "Partenariats ayant un accord validé en"
 msgid "partnership_not_valid_in"
 msgstr "Partenariats dont les accords ne sont pas validés en"
 
+msgid "partnership_with_no_agreements_in"
+msgstr "Partenariats sans accord en"
+
+msgid "partnership_with_no_agreements_in_help_text"
+msgstr ""
+"Partenariats ayant une année configurée mais pas d'accord pour cette année académique."
+
 msgid "same_supervisor_than_management_entity"
 msgstr "Idem répondant mobilité facultaire"
 

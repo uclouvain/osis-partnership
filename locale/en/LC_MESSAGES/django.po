@@ -215,6 +215,12 @@ msgstr ""
 msgid "partnership_not_valid_in"
 msgstr ""
 
+msgid "partnership_with_no_agreements_in"
+msgstr "Partnerships with no agreements in"
+
+msgid "partnership_with_no_agreements_in_help_text"
+msgstr "List partnerships with a year configured but no agreements in this academic year."
+
 msgid "same_supervisor_than_management_entity"
 msgstr "Create UCLouvain management entities"
 

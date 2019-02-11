@@ -757,6 +757,12 @@ class PartnershipFilterForm(forms.Form):
         queryset=AcademicYear.objects.all(),
         required=False,
     )
+    partnership_with_no_agreements_in = forms.ModelChoiceField(
+        label=_('partnership_with_no_agreements_in'),
+        help_text=_('partnership_with_no_agreements_in_help_text'),
+        queryset=AcademicYear.objects.all(),
+        required=False,
+    )
     comment = forms.CharField(
         label=_('comment'),
         required=False,

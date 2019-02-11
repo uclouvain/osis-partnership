@@ -129,6 +129,12 @@ class PartnershipsListViewTest(TestCase):
             start_academic_year__year=2119,
             end_academic_year__year=2120,
         )
+        # partnership_no_agreement_in
+        cls.partnership_partnership_no_agreement_in = PartnershipFactory(years=[])
+        PartnershipYearFactory(
+            partnership=cls.partnership_partnership_no_agreement_in,
+            academic_year__year=2180,
+        )
         # All filters
         country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
         cls.partnership_all_filters = PartnershipFactory(
@@ -219,7 +225,7 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url + '?university_offer=' + str(self.university_offer.pk))
         self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
         context = response.context_data
-        self.assertEqual(context['paginator'].count, 42)  # Include partnerships with offers at None
+        self.assertEqual(context['paginator'].count, 43)  # Include partnerships with offers at None
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -392,6 +398,15 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_partnership_not_valid_in)
+
+    def test_filter_partnership_no_agreements_in(self):
+        self.client.force_login(self.user)
+        academic_year = self.partnership_partnership_no_agreement_in.years.first().academic_year
+        response = self.client.get(self.url + '?partnership_with_no_agreements_in=' + str(academic_year.pk))
+        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_partnership_no_agreement_in)
 
     def test_all_filters(self):
         self.client.force_login(self.user)
