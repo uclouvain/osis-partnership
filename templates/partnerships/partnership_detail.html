@@ -124,10 +124,12 @@
               {% endif %}
             </td>
             <td>
-              <i class="fa {{ partnership_year.eligible|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
               {% if partnership_year.is_valid and partnership_year.eligible %}
-                 {{ partnership_year.get_financing.name|default_if_none:"" }}
-               {% endif %}
+                <i class="fa fa-check text-success"></i>
+                {{ partnership_year.get_financing.name|default_if_none:"" }}
+              {% else %}
+                <i class="fa fa-times text-danger"></i>
+              {% endif %}
             </td>
             <td><i class="fa {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
