@@ -34,12 +34,12 @@ class FinancingsExportViewTest(TestCase):
 
     def test_export_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_export_as_user(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_export_as_adri(self):
         self.client.force_login(self.user_adri)

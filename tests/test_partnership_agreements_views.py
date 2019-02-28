@@ -27,7 +27,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
@@ -75,13 +75,13 @@ class PartnershipAgreementCreateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -92,7 +92,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -159,13 +159,13 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -176,7 +176,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -222,7 +222,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
 
 class PartnershipAgreementsDeleteViewTest(TestCase):
@@ -254,13 +254,13 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -271,7 +271,7 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -306,11 +306,11 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_validated_as_gf(self):
         self.client.force_login(self.user_gf)
         self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')

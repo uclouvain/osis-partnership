@@ -47,26 +47,26 @@ class UCLManagementEntityDeleteViewTest(TestCase):
 
     def test_get_as_anonymous(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
 
     def test_get_as_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_get_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_get_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.get(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_get_as_adri(self):
         self.client.force_login(self.adri_user)
@@ -75,26 +75,26 @@ class UCLManagementEntityDeleteViewTest(TestCase):
 
     def test_post_as_anonymous(self):
         response = self.client.post(self.url)
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
 
     def test_post_as_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_post_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_post_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.post(self.url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_post_as_adri(self):
         self.client.force_login(self.adri_user)
@@ -105,10 +105,10 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.linked_url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')
 
     def test_post_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.linked_url)
         self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('registration/login.html')
+        self.assertTemplateUsed('access_denied.html')

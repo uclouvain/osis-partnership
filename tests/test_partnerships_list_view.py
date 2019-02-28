@@ -178,7 +178,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)

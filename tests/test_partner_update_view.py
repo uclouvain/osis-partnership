@@ -34,13 +34,13 @@ class PartnerCreateViewTest(TestCase):
     def test_get_partner_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_partner_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_partner_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -51,21 +51,21 @@ class PartnerCreateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
         response = self.client.get(url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
         url = reverse('partnerships:partners:update', kwargs={'pk': self.partner_gf.pk})
         response = self.client.get(url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)

@@ -34,13 +34,13 @@ class PartnershipContactCreateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -51,7 +51,7 @@ class PartnershipContactCreateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -110,13 +110,13 @@ class PartnershipContactUpdateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -127,7 +127,7 @@ class PartnershipContactUpdateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/partnership_contact_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -189,13 +189,13 @@ class PartnershipContactDeleteViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -206,7 +206,7 @@ class PartnershipContactDeleteViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)

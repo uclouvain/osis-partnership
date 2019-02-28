@@ -57,6 +57,7 @@ from reference.models.country import Country
 
 
 class ExportView(FormMixin, View):
+    login_url = 'access_denied'
 
     def get_xls_headers(self):
         raise NotImplementedError
@@ -112,6 +113,7 @@ class ExportView(FormMixin, View):
 
 class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
     form_class = PartnerFilterForm
+    login_url = 'access_denied'
 
     def get_form_kwargs(self):
         kwargs = super(PartnersListFilterMixin, self).get_form_kwargs()
@@ -174,6 +176,7 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
     paginate_by = 20
     paginate_orphans = 2
     paginate_neighbours = 4
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -189,6 +192,7 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
 
 
 class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView):
+    login_url = 'access_denied'
 
     def get_xls_headers(self):
         return [
@@ -253,6 +257,7 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView
 class PartnerDetailView(LoginRequiredMixin, DetailView):
     template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
+    login_url = 'access_denied'
 
     def get_queryset(self):
         return (
@@ -375,6 +380,7 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     initial = {
         'is_valid': True,
     }
+    login_url = 'access_denied'
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
@@ -390,6 +396,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     prefix = 'partner'
     queryset = Partner.objects.select_related('contact_address')
     context_object_name = 'partner'
+    login_url = 'access_denied'
 
     def test_func(self):
         self.object = self.get_object()
@@ -403,6 +410,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 class SimilarPartnerView(ListView):
     template_name = 'partnerships/partners/includes/similar_partners_preview.html'
     context_object_name = 'similar_partners'
+    login_url = 'access_denied'
 
     def get_queryset(self):
         search = self.request.GET.get('search', '')
@@ -468,6 +476,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
 class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, CreateView):
     template_name = 'partnerships/partners/entities/partner_entity_create.html'
+    login_url = 'access_denied'
 
     def test_func(self):
         return Partner.user_can_add(self.request.user)
@@ -476,6 +485,7 @@ class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
 class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, UpdateView):
     template_name = 'partnerships/partners/entities/partner_entity_update.html'
     context_object_name = 'partner_entity'
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
@@ -484,6 +494,7 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
 class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, UserPassesTestMixin, DeleteView):
     template_name = 'partnerships/partners/entities/partner_entity_delete.html'
     context_object_name = 'partner_entity'
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
@@ -495,6 +506,7 @@ class PartnerEntityDeleteView(LoginRequiredMixin, PartnerEntityMixin, UserPasses
 
 
 class PartnerMediaMixin(UserPassesTestMixin):
+    login_url = 'access_denied'
 
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
@@ -517,6 +529,7 @@ class PartnerMediaMixin(UserPassesTestMixin):
 
 class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
     form_class = MediaForm
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -547,15 +560,18 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
 
 class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
     template_name = 'partnerships/partners/medias/partner_media_create.html'
+    login_url = 'access_denied'
 
 
 class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
     template_name = 'partnerships/partners/medias/partner_media_update.html'
     context_object_name = 'media'
+    login_url = 'access_denied'
 
 
 class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
     template_name = 'partnerships/partners/medias/partner_media_delete.html'
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -564,6 +580,7 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
 
 
 class PartnerMediaDownloadView(PartnerMediaMixin, SingleObjectMixin, View):
+    login_url = 'access_denied'
 
     def get(self, request, *args, **kwargs):
         media = self.get_object()
@@ -575,6 +592,7 @@ class PartnerMediaDownloadView(PartnerMediaMixin, SingleObjectMixin, View):
 
 
 class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.partnership.user_can_change(self.request.user)
@@ -596,7 +614,7 @@ class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 
 class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
-
+    login_url = 'access_denied'
     form_class = ContactForm
 
     def get_template_names(self):
@@ -612,8 +630,8 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
 
 
 class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
-
     template_name = 'partnerships/contacts/partnership_contact_create.html'
+    login_url = 'access_denied'
 
     def form_valid(self, form):
         contact = form.save()
@@ -623,8 +641,8 @@ class PartnershipContactCreateView(PartnershipContactFormMixin, CreateView):
 
 
 class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
-
     template_name = 'partnerships/contacts/partnership_contact_update.html'
+    login_url = 'access_denied'
 
     def form_valid(self, form):
         form.save()
@@ -635,6 +653,7 @@ class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
     template_name = 'partnerships/contacts/contact_confirm_delete.html'
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -649,6 +668,7 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
 
 class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
     form_class = PartnershipFilterForm
+    login_url = 'access_denied'
 
     def get(self, *args, **kwargs):
         if not self.request.GET and user_is_gf(self.request.user):
@@ -1007,6 +1027,7 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
     paginate_by = 20
     paginate_orphans = 2
     paginate_neighbours = 4
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.is_agreements:
@@ -1029,6 +1050,7 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
 
 
 class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+    login_url = 'access_denied'
 
     @cached_property
     def is_agreements(self):
@@ -1086,6 +1108,7 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
 
 
 class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+    login_url = 'access_denied'
 
     @cached_property
     def is_agreements(self):
@@ -1221,6 +1244,7 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
     template_name = 'partnerships/partnership_detail.html'
+    login_url = 'access_denied'
 
     def get_context_data(self, **kwargs):
         context = super(PartnershipDetailView, self).get_context_data(**kwargs)
@@ -1256,9 +1280,9 @@ class PartnershipDetailView(LoginRequiredMixin, DetailView):
 
 
 class PartnershipFormMixin(object):
-
     model = Partnership
     form_class = PartnershipForm
+    login_url = 'access_denied'
 
     def get_form_year(self):
         kwargs = self.get_form_kwargs()
@@ -1300,10 +1324,10 @@ class PartnershipFormMixin(object):
 
 
 class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
-
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_create.html"
+    login_url = 'access_denied'
 
     def test_func(self):
         return Partnership.user_can_add(self.request.user)
@@ -1361,10 +1385,10 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
 
 class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, UpdateView):
-
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership_update.html"
+    login_url = 'access_denied'
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
@@ -1459,6 +1483,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
 class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
     context_object_name = 'agreement'
+    login_url = 'access_denied'
 
     def dispatch(self, request, *args, **kwargs):
         self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
@@ -1478,6 +1503,7 @@ class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
     form_class = PartnershipAgreementForm
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -1529,6 +1555,7 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
 
 class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
     template_name = 'partnerships/agreements/create.html'
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.partnership.user_can_change(self.request.user)
@@ -1557,6 +1584,7 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
 
 class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     template_name = 'partnerships/agreements/update.html'
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.get_object().user_can_change(self.request.user)
@@ -1583,6 +1611,7 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
 
 class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
     template_name = 'partnerships/agreements/delete.html'
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.get_object().user_can_delete(self.request.user)
@@ -1594,6 +1623,7 @@ class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
 
 
 class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleObjectMixin, View):
+    login_url = 'access_denied'
 
     def test_func(self):
         return self.partnership.user_can_change(self.request.user)
@@ -1612,6 +1642,7 @@ class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     form_class = PartnershipConfigurationForm
     template_name = 'partnerships/configuration_update.html'
     success_url = reverse_lazy('partnerships:list')
+    login_url = 'access_denied'
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1630,6 +1661,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
+    login_url = 'access_denied'
 
     def test_func(self):
         result = UCLManagementEntity.user_can_list(self.request.user)
@@ -1673,6 +1705,7 @@ class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, Cre
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
     form_class = UCLManagementEntityForm
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+    login_url = 'access_denied'
 
     def test_func(self):
         result = UCLManagementEntity.user_can_create(self.request.user)
@@ -1694,6 +1727,7 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
     form_class = UCLManagementEntityForm
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+    login_url = 'access_denied'
 
     def test_func(self):
         self.object = self.get_object()
@@ -1715,6 +1749,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
     context_object_name = "ucl_management_entity"
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
+    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -1729,6 +1764,7 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
 
 
 class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = 'access_denied'
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1784,6 +1820,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
 class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateResponseMixin, FormMixin, ProcessFormView):
     form_class = FinancingImportForm
     template_name = "partnerships/financings/financing_import.html"
+    login_url = 'access_denied'
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1872,6 +1909,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
     paginate_by = 25
     paginate_orphans = 2
     paginate_neighbours = 3
+    login_url = 'access_denied'
 
     def test_func(self):
         return user_is_adri(self.request.user)
@@ -1973,6 +2011,7 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
 
 
 class PersonAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = Person.objects.filter(employee=True)
@@ -1989,6 +2028,7 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class EntityAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = Entity.objects.prefetch_related('entityversion_set').all()
@@ -2000,6 +2040,7 @@ class EntityAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = Partnership.objects.all()
@@ -2012,6 +2053,7 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_results(self, context):
         """Return data for the 'results' key of the response."""
@@ -2037,6 +2079,7 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = PartnerEntity.objects.all()
@@ -2051,6 +2094,7 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = (
@@ -2084,6 +2128,7 @@ class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = Entity.objects.annotate(
@@ -2117,6 +2162,7 @@ class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class UclUniversityAutocompleteView(FacultyAutocompleteView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         queryset = super(UclUniversityAutocompleteView, self).get_queryset()
@@ -2125,6 +2171,7 @@ class UclUniversityAutocompleteView(FacultyAutocompleteView):
 
 
 class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         queryset = super(UclUniversityLaboAutocompleteView, self).get_queryset()
@@ -2133,6 +2180,7 @@ class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
 
 
 class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         faculty = self.forwarded.get('faculty', None)
@@ -2167,6 +2215,7 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = EducationGroupYear.objects.filter(joint_diploma=True).select_related('academic_year')
@@ -2205,6 +2254,7 @@ class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
 # Partnership filters autocompletes
 
 class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = Partner.objects.filter(partnerships__isnull=False)
@@ -2214,6 +2264,7 @@ class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView
 
 
 class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = PartnerEntity.objects.filter(partnerships__isnull=False)
@@ -2228,6 +2279,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
 
 
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = (
@@ -2254,6 +2306,7 @@ class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -2266,6 +2319,7 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
 
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = super(YearsEntityAutocompleteFilterView, self).get_queryset()
@@ -2274,6 +2328,7 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
 
 
 class UniversityOffersAutocompleteFilterView(autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
 
     def get_queryset(self):
         qs = EducationGroupYear.objects.all().select_related('academic_year')

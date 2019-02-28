@@ -33,13 +33,13 @@ class PartnerMediaCreateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -85,13 +85,13 @@ class PartnerMediaUpdateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -137,13 +137,13 @@ class PartnerMediaDeleteViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/medias/partner_media_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)

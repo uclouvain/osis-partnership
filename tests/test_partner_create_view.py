@@ -26,13 +26,13 @@ class PartnerCreateViewTest(TestCase):
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
