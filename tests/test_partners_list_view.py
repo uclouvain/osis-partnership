@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -27,6 +28,7 @@ class PartnersListViewTest(TestCase):
         )
         cls.partner_tags = PartnerFactory(is_ies=False)
         cls.user = UserFactory()
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
         cls.url = reverse('partnerships:partners:list')
 
     def test_get_list_anonymous(self):
@@ -139,6 +141,7 @@ class PartnersExportViewTest(TestCase):
         )
         cls.partner_tags = PartnerFactory(is_ies=False)
         cls.user = UserFactory()
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
         cls.url = reverse('partnerships:partners:export')
 
     def test_get_list_anonymous(self):

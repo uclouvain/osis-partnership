@@ -8,7 +8,7 @@ from datetime import date
 from dal import autocomplete
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -171,12 +171,13 @@ class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
         return queryset.distinct()
 
 
-class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
+class PartnersListView(PermissionRequiredMixin, PartnersListFilterMixin, ListView):
     context_object_name = 'partners'
     paginate_by = 20
     paginate_orphans = 2
     paginate_neighbours = 4
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -191,8 +192,9 @@ class PartnersListView(LoginRequiredMixin, PartnersListFilterMixin, ListView):
         return context
 
 
-class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView):
+class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, ExportView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_xls_headers(self):
         return [
@@ -254,10 +256,11 @@ class PartnersExportView(LoginRequiredMixin, PartnersListFilterMixin, ExportView
         return _('partners')
 
 
-class PartnerDetailView(LoginRequiredMixin, DetailView):
+class PartnerDetailView(PermissionRequiredMixin, DetailView):
     template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         return (
@@ -407,10 +410,11 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
         return super(PartnerUpdateView, self).post(request, *args, **kwargs)
 
 
-class SimilarPartnerView(ListView):
+class SimilarPartnerView(ListView, PermissionRequiredMixin):
     template_name = 'partnerships/partners/includes/similar_partners_preview.html'
     context_object_name = 'similar_partners'
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         search = self.request.GET.get('search', '')
@@ -651,7 +655,6 @@ class PartnershipContactUpdateView(PartnershipContactFormMixin, UpdateView):
 
 
 class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
-
     template_name = 'partnerships/contacts/contact_confirm_delete.html'
     login_url = 'access_denied'
 
@@ -1021,13 +1024,14 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
         return False
 
 
-class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListView):
+class PartnershipsListView(PermissionRequiredMixin, PartnershipListFilterMixin, ListView):
     template_name = 'partnerships/partnerships_list.html'
     context_object_name = 'partnerships'
     paginate_by = 20
     paginate_orphans = 2
     paginate_neighbours = 4
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_template_names(self):
         if self.is_agreements:
@@ -1049,8 +1053,9 @@ class PartnershipsListView(LoginRequiredMixin, PartnershipListFilterMixin, ListV
         return context
 
 
-class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+class PartnershipAgreementExportView(PermissionRequiredMixin, PartnershipListFilterMixin, ExportView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     @cached_property
     def is_agreements(self):
@@ -1107,8 +1112,9 @@ class PartnershipAgreementExportView(LoginRequiredMixin, PartnershipListFilterMi
         return _('agreements')
 
 
-class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, ExportView):
+class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin, ExportView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     @cached_property
     def is_agreements(self):
@@ -1240,11 +1246,12 @@ class PartnershipExportView(LoginRequiredMixin, PartnershipListFilterMixin, Expo
         return super(PartnershipExportView, self).get(*args, **kwargs)
 
 
-class PartnershipDetailView(LoginRequiredMixin, DetailView):
+class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
     template_name = 'partnerships/partnership_detail.html'
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_context_data(self, **kwargs):
         context = super(PartnershipDetailView, self).get_context_data(**kwargs)
@@ -2010,8 +2017,9 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
 # Autocompletes
 
 
-class PersonAutocompleteView(autocomplete.Select2QuerySetView):
+class PersonAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = Person.objects.filter(employee=True)
@@ -2027,8 +2035,9 @@ class PersonAutocompleteView(autocomplete.Select2QuerySetView):
         return '{0} - {1}'.format(person, person.email)
 
 
-class EntityAutocompleteView(autocomplete.Select2QuerySetView):
+class EntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = Entity.objects.prefetch_related('entityversion_set').all()
@@ -2039,8 +2048,9 @@ class EntityAutocompleteView(autocomplete.Select2QuerySetView):
         return qs.distinct()
 
 
-class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
+class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = Partnership.objects.all()
@@ -2052,8 +2062,9 @@ class PartnershipAutocompleteView(autocomplete.Select2QuerySetView):
         return qs.distinct()
 
 
-class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
+class PartnerAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_results(self, context):
         """Return data for the 'results' key of the response."""
@@ -2078,8 +2089,9 @@ class PartnerAutocompleteView(autocomplete.Select2QuerySetView):
         return list(filter(lambda x: x.is_actif, qs))
 
 
-class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
+class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = PartnerEntity.objects.all()
@@ -2093,8 +2105,9 @@ class PartnerEntityAutocompleteView(autocomplete.Select2QuerySetView):
         return qs.distinct()
 
 
-class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
+class FacultyAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = (
@@ -2127,8 +2140,9 @@ class FacultyAutocompleteView(autocomplete.Select2QuerySetView):
         return '{0.most_recent_acronym} - {1}'.format(result, title)
 
 
-class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
+class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = Entity.objects.annotate(
@@ -2163,6 +2177,7 @@ class FacultyEntityAutocompleteView(autocomplete.Select2QuerySetView):
 
 class UclUniversityAutocompleteView(FacultyAutocompleteView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         queryset = super(UclUniversityAutocompleteView, self).get_queryset()
@@ -2172,6 +2187,7 @@ class UclUniversityAutocompleteView(FacultyAutocompleteView):
 
 class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         queryset = super(UclUniversityLaboAutocompleteView, self).get_queryset()
@@ -2179,8 +2195,9 @@ class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
         return queryset
 
 
-class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
+class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         faculty = self.forwarded.get('faculty', None)
@@ -2214,8 +2231,9 @@ class PartnershipYearEntitiesAutocompleteView(autocomplete.Select2QuerySetView):
             return result.most_recent_acronym
 
 
-class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
+class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = EducationGroupYear.objects.filter(joint_diploma=True).select_related('academic_year')
@@ -2253,8 +2271,9 @@ class PartnershipYearOffersAutocompleteView(autocomplete.Select2QuerySetView):
 
 # Partnership filters autocompletes
 
-class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+class PartnerAutocompletePartnershipsFilterView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = Partner.objects.filter(partnerships__isnull=False)
@@ -2263,8 +2282,9 @@ class PartnerAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView
         return qs.distinct()
 
 
-class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QuerySetView):
+class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = PartnerEntity.objects.filter(partnerships__isnull=False)
@@ -2280,6 +2300,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(autocomplete.Select2QueryS
 
 class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = (
@@ -2307,6 +2328,7 @@ class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
 
 class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -2320,6 +2342,7 @@ class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView)
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = super(YearsEntityAutocompleteFilterView, self).get_queryset()
@@ -2327,8 +2350,9 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
         return qs
 
 
-class UniversityOffersAutocompleteFilterView(autocomplete.Select2QuerySetView):
+class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = EducationGroupYear.objects.all().select_related('academic_year')

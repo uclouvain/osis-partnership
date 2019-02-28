@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -20,6 +21,10 @@ class PartnershipsListViewTest(TestCase):
             PartnershipAgreementFactory()
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.url = reverse('partnerships:list') + '?agreements=1'
@@ -55,6 +60,12 @@ class PartnershipAgreementCreateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         cls.partnership = PartnershipFactory()
@@ -134,6 +145,12 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
@@ -237,6 +254,12 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)

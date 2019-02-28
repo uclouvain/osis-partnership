@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -22,6 +23,12 @@ class PartnerEntityCreateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -98,6 +105,12 @@ class PartnerEntityUpdateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -191,6 +204,12 @@ class PartnerEntityDeleteViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
