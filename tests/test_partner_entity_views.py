@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -22,6 +23,12 @@ class PartnerEntityCreateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -33,13 +40,13 @@ class PartnerEntityCreateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -98,6 +105,12 @@ class PartnerEntityUpdateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -111,13 +124,13 @@ class PartnerEntityUpdateViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -128,7 +141,7 @@ class PartnerEntityUpdateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -191,6 +204,12 @@ class PartnerEntityDeleteViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         # Partner creation
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf)
@@ -204,13 +223,13 @@ class PartnerEntityDeleteViewTest(TestCase):
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -221,7 +240,7 @@ class PartnerEntityDeleteViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)

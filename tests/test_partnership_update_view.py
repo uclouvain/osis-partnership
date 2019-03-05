@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -30,6 +31,12 @@ class PartnershipUpdateViewTest(TestCase):
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gs.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
 
         # Dates :
         cls.partner = PartnerFactory()
@@ -100,7 +107,7 @@ class PartnershipUpdateViewTest(TestCase):
     def test_get_partnership_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_partnership_as_authenticated(self):
         self.client.force_login(self.user)

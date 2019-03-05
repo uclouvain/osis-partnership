@@ -78,13 +78,13 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_gf_user(self):
         self.client.force_login(self.gf_user)
@@ -100,7 +100,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         self.client.force_login(self.other_gf_user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_update.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_adri_user(self):
         self.client.force_login(self.adri_user)
@@ -110,13 +110,13 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     def test_post_view_anonymous(self):
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_view_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_view_gf_user(self):
         self.client.force_login(self.gf_user)

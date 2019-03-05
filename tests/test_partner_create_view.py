@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -19,6 +20,11 @@ class PartnerCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_gf)
+
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.url = reverse('partnerships:partners:create')
@@ -26,13 +32,13 @@ class PartnerCreateViewTest(TestCase):
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_create.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)

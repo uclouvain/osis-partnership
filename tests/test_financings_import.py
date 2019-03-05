@@ -45,7 +45,7 @@ class FinancingsImportViewTest(TestCase):
             }
             response = self.client.post(self.url, data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/financings/financing_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_import_as_user(self):
         self.client.force_login(self.user)
@@ -56,7 +56,7 @@ class FinancingsImportViewTest(TestCase):
             }
             response = self.client.post(self.url, data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/financings/financing_list.html')
-        self.assertTemplateUsed(response, 'registration/login.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_import_as_adri(self):
         self.client.force_login(self.user_adri)
