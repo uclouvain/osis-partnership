@@ -811,14 +811,15 @@ class PartnershipForm(forms.ModelForm):
     )
 
     ucl_university_labo = EntityChoiceField(
-        label=_('ucl_university'),
+        label=_('ucl_university_labo'),
         queryset=Entity.objects.filter(
             entity_managements__isnull=False,
         ),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university_labo',
             forward=['ucl_university'],
-        )
+        ),
+        required=False,
     )
 
     supervisor = PersonChoiceField(
