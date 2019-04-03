@@ -231,7 +231,7 @@ paths:
             application/json:
               schema:
                 properties:
-                  continent:
+                  continents:
                     type: array
                     items:
                       type: object
@@ -251,23 +251,23 @@ paths:
                                 type: array
                                 items:
                                   type: string
-                  partner:
+                  partners:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  ucl_university:
+                  ucl_universities:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  ucl_university_labo:
+                  ucl_university_labos:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  supervisor:
+                  supervisors:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  education_field:
+                  education_fields:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
