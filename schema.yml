@@ -234,15 +234,23 @@ paths:
                   continent:
                     type: array
                     items:
-                      type: string
-                  country:
-                    type: array
-                    items:
-                      type: string
-                  city:
-                    type: array
-                    items:
-                      type: string
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        countries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              iso:
+                                type: string
+                              cities:
+                                type: array
+                                items:
+                                  type: string
                   partner:
                     type: array
                     items:
