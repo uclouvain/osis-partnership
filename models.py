@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -152,6 +153,8 @@ class Partner(models.Model):
         ('EPLUS-SPORT-CLUB', _('Sport club')),
         ('OTH', _('Other')),
     )
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
 
     external_id = models.CharField(
         _('external_id'),
@@ -571,6 +574,7 @@ class Partnership(models.Model):
 
 
 class PartnershipYearEducationField(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     code = models.CharField(max_length=30, unique=True)
     label = models.CharField(max_length=255)
 
