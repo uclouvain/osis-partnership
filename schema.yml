@@ -245,24 +245,20 @@ paths:
                             properties:
                               name:
                                 type: string
-                              iso:
+                              iso_code:
                                 type: string
-                              cities:
-                                type: array
-                                items:
-                                  type: string
                   partners:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
                   ucl_universities:
-                    type: array
+                    type: object
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  ucl_university_labos:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ValueLabel'
+                      ucl_university_labos:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ValueLabel'
                   supervisors:
                     type: array
                     items:
