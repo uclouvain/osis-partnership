@@ -73,6 +73,7 @@ components:
             - studies
             - 'short_term'
             - training
+            - staff
         status:
           type: object
           properties:
