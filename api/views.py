@@ -67,10 +67,13 @@ class ConfigurationView(APIView):
 
 
 class PartnersListView(generics.ListAPIView):
-    queryset = Partner.objects.all()
+    queryset = Partner.objects.select_related('partner_type', 'contact_address__country')
     serializer_class = PartnerSerializer
 
 
 class PartnershipsListView(generics.ListAPIView):
-    queryset = Partnership.objects.all()
+    queryset = (
+        Partnership.objects
+        .select_related('partner__partner_type', 'partner__contact_address__country')
+    )
     serializer_class = PartnershipSerializer

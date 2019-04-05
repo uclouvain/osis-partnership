@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField
+from partnership.models import Partner, PartnershipYearEducationField, Partnership
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -72,8 +72,29 @@ class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
 
 
 class PartnerSerializer(serializers.ModelSerializer):
-    pass
+    partner_type = serializers.CharField(source='partner_type.value')
+    city = serializers.CharField(source='contact_address.city')
+    country = serializers.CharField(source='contact_address.country.name')
+
+    class Meta:
+        model = Partner
+        fields = ['name', 'erasmus_code', 'partner_type', 'city', 'country']
 
 
 class PartnershipSerializer(serializers.ModelSerializer):
-    pass
+    partner = PartnerSerializer()
+
+
+    class Meta:
+        model = Partnership
+        fields = [
+            'partner', 'education_field', 'ucl_university', 'ucl_university_labo', 'supervisor',
+            'mobility_type', 'status',
+            # OUT
+            'out_education_level', 'out_entity', 'out_university_offer', 'out_contact',
+            'out_portal', 'out_funding', 'out_partner_contact',
+            # IN
+            'in_contact', 'in_portal', 'staff_contact_name',
+            # STAFF
+            'staff_partner_contact', 'staff_funding',
+        ]
