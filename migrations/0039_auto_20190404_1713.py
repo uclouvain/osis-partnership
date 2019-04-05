@@ -6,6 +6,20 @@ from django.db import migrations, models
 import uuid
 
 
+def init_partner_uuid(apps, schema_editor):
+    Partner = apps.get_model('partnership', 'Partner')
+    for partner in Partner.objects.all():
+        partner.uuid = uuid.uuid4()
+        partner.save(update_fields=['uuid'])
+
+
+def init_partnershipyeareducationfield_uuid(apps, schema_editor):
+    PartnershipYearEducationField = apps.get_model('partnership', 'PartnershipYearEducationField')
+    for partner in PartnershipYearEducationField.objects.all():
+        partner.uuid = uuid.uuid4()
+        partner.save(update_fields=['uuid'])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -20,9 +34,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partner',
             name='uuid',
-            field=models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+            field=models.UUIDField(db_index=True, editable=False, null=True),
         ),
         migrations.AddField(
+            model_name='partnershipyeareducationfield',
+            name='uuid',
+            field=models.UUIDField(db_index=True, editable=False, null=True),
+        ),
+        migrations.RunPython(init_partner_uuid, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(init_partnershipyeareducationfield_uuid, reverse_code=migrations.RunPython.noop),
+        migrations.AlterField(
+            model_name='partner',
+            name='uuid',
+            field=models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),
+        ),
+        migrations.AlterField(
             model_name='partnershipyeareducationfield',
             name='uuid',
             field=models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True),

@@ -42,11 +42,15 @@ class UCLUniversityLaboConfigurationSerializer(serializers.ModelSerializer):
 class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
     label = serializers.CharField(source='most_recent_acronym')
-    ucl_university_labos = UCLUniversityLaboConfigurationSerializer(source='TODO')
+    ucl_university_labos = serializers.SerializerMethodField()
 
     class Meta:
         model = Entity
         fields = ['value', 'label', 'ucl_university_labos']
+
+    def get_ucl_university_labos(self, instance):
+        entities = (entity_version.entity for entity_version in instance.parent_of.all())
+        return UCLUniversityLaboConfigurationSerializer(entities, many=True).data
 
 
 class SupervisorConfigurationSerializer(serializers.ModelSerializer):
@@ -60,7 +64,7 @@ class SupervisorConfigurationSerializer(serializers.ModelSerializer):
 
 class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField(source='label')
+    label = serializers.CharField()
 
     class Meta:
         model = PartnershipYearEducationField
