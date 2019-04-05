@@ -83,18 +83,20 @@ class PartnerSerializer(serializers.ModelSerializer):
 
 class PartnershipSerializer(serializers.ModelSerializer):
     partner = PartnerSerializer()
-
+    supervisor = serializers.CharField(source='supervisor.__str__')
+    ucl_university = serializers.CharField(source='ucl_university.most_recent_acronym')
+    ucl_university_labo = serializers.CharField(source='ucl_university.most_recent_acronym')
 
     class Meta:
         model = Partnership
         fields = [
-            'partner', 'education_field', 'ucl_university', 'ucl_university_labo', 'supervisor',
-            'mobility_type', 'status',
-            # OUT
-            'out_education_level', 'out_entity', 'out_university_offer', 'out_contact',
-            'out_portal', 'out_funding', 'out_partner_contact',
-            # IN
-            'in_contact', 'in_portal', 'staff_contact_name',
-            # STAFF
-            'staff_partner_contact', 'staff_funding',
+            'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
+            # 'education_field', 'mobility_type', 'status',
+            # # OUT
+            # 'out_education_level', 'out_entity', 'out_university_offer', 'out_contact',
+            # 'out_portal', 'out_funding', 'out_partner_contact',
+            # # IN
+            # 'in_contact', 'in_portal',
+            # # STAFF
+            # 'staff_contact_name', 'staff_partner_contact', 'staff_funding',
         ]

@@ -74,6 +74,34 @@ class PartnersListView(generics.ListAPIView):
 class PartnershipsListView(generics.ListAPIView):
     queryset = (
         Partnership.objects
-        .select_related('partner__partner_type', 'partner__contact_address__country')
+        .select_related(
+            'partner__partner_type', 'partner__contact_address__country',
+            'supervisor',
+        ).prefetch_related(
+            Prefetch(
+                'ucl_university',
+                queryset=Entity.objects
+                .annotate(
+                    most_recent_acronym=Subquery(
+                        EntityVersion.objects
+                            .filter(entity=OuterRef('pk'))
+                            .order_by('-start_date')
+                            .values('acronym')[:1]
+                    ),
+                )
+            ),
+            Prefetch(
+                'ucl_university_labo',
+                queryset=Entity.objects
+                .annotate(
+                    most_recent_acronym=Subquery(
+                        EntityVersion.objects
+                            .filter(entity=OuterRef('pk'))
+                            .order_by('-start_date')
+                            .values('acronym')[:1]
+                    ),
+                )
+            ),
+        )
     )
     serializer_class = PartnershipSerializer
