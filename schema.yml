@@ -37,6 +37,8 @@ components:
       properties:
         name:
           type: string
+        phone:
+          type: string
         email:
           type: string
           format: email
@@ -58,22 +60,26 @@ components:
       properties:
         partner:
           $ref: '#/components/schemas/Partner'
-        education_field:
-          type: string
+        education_fields:
+          type: array
+          items:
+            type: string
         ucl_university:
           type: string
         ucl_university_labo:
           type: string
         supervisor:
           type: string
-        mobility_type:
-          type: string
-          enum:
-            - student
-            - studies
-            - 'short_term'
-            - training
-            - staff
+        is_sms:
+          type: boolean
+        is_smp:
+          type: boolean
+        is_smst:
+          type: boolean
+        is_sta:
+          type: boolean
+        is_stt:
+          type: boolean
         status:
           type: object
           properties:
@@ -81,12 +87,18 @@ components:
               type: boolean
             last_valid:
               type: string
-        out_education_level:
-          type: string
-        out_entity:
-          type: string
-        out_university_offer:
-          type: string
+        out_education_levels:
+          type: array
+          items:
+            type: string
+        out_entities:
+          type: array
+          items:
+            type: string
+        out_university_offers:
+          type: array
+          items:
+            type: string
         out_contact:
           description: UCL contact
           $ref: '#/components/schemas/Contact'
