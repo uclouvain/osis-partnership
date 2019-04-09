@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Count
 from django.db.models.expressions import Subquery, OuterRef
 from django.db.models.query import Prefetch
 from rest_framework import generics
@@ -68,7 +69,11 @@ class ConfigurationView(APIView):
 
 
 class PartnersListView(generics.ListAPIView):
-    queryset = Partner.objects.select_related('partner_type', 'contact_address__country')
+    queryset = (
+        Partner.objects
+        .select_related('partner_type', 'contact_address__country')
+        .annotate(partnerships_count=Count('partnerships'))
+    )
     serializer_class = PartnerSerializer
 
 
@@ -81,9 +86,14 @@ class PartnershipsListView(generics.ListAPIView):
         return (
             Partnership.objects
             .select_related(
-                'partner__partner_type', 'partner__contact_address__country',
                 'supervisor',
             ).prefetch_related(
+                Prefetch(
+                    'partner',
+                    queryset=Partner.objects
+                        .select_related('partner_type', 'contact_address__country')
+                        .annotate(partnerships_count=Count('partnerships'))
+                ),
                 Prefetch(
                     'ucl_university',
                     queryset=Entity.objects

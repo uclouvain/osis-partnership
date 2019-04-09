@@ -75,10 +75,11 @@ class PartnerSerializer(serializers.ModelSerializer):
     partner_type = serializers.CharField(source='partner_type.value')
     city = serializers.CharField(source='contact_address.city')
     country = serializers.CharField(source='contact_address.country.name')
+    partnerships_count = serializers.IntegerField()
 
     class Meta:
         model = Partner
-        fields = ['name', 'erasmus_code', 'partner_type', 'city', 'country']
+        fields = ['name', 'erasmus_code', 'partner_type', 'city', 'country', 'partnerships_count']
 
 
 class PartnershipSerializer(serializers.ModelSerializer):
