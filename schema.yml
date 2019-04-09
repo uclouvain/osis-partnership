@@ -55,6 +55,16 @@ components:
           type: string
         country:
           type: string
+        partnerships_count:
+          type: number
+        faculties:
+          type: array
+          items:
+            type: string
+        subject_area:
+          type: array
+          items:
+            type: string
     Partnership:
       type: object
       properties:
