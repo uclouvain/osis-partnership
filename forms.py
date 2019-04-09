@@ -968,6 +968,7 @@ class PartnershipYearForm(forms.ModelForm):
             'offers',
             'is_sms',
             'is_smp',
+            'is_smst',
             'is_sta',
             'is_stt',
             'eligible',
