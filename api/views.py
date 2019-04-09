@@ -10,7 +10,8 @@ from base.models.person import Person
 from partnership.api.serializers import PartnerSerializer, PartnershipSerializer, ContinentConfigurationSerializer, \
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
-from partnership.models import Partner, Partnership, PartnershipYearEducationField
+from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
+    PartnershipConfiguration
 from reference.models.continent import Continent
 
 
@@ -72,36 +73,50 @@ class PartnersListView(generics.ListAPIView):
 
 
 class PartnershipsListView(generics.ListAPIView):
-    queryset = (
-        Partnership.objects
-        .select_related(
-            'partner__partner_type', 'partner__contact_address__country',
-            'supervisor',
-        ).prefetch_related(
-            Prefetch(
-                'ucl_university',
-                queryset=Entity.objects
-                .annotate(
-                    most_recent_acronym=Subquery(
-                        EntityVersion.objects
-                            .filter(entity=OuterRef('pk'))
-                            .order_by('-start_date')
-                            .values('acronym')[:1]
-                    ),
-                )
-            ),
-            Prefetch(
-                'ucl_university_labo',
-                queryset=Entity.objects
-                .annotate(
-                    most_recent_acronym=Subquery(
-                        EntityVersion.objects
-                            .filter(entity=OuterRef('pk'))
-                            .order_by('-start_date')
-                            .values('acronym')[:1]
-                    ),
-                )
-            ),
-        )
-    )
     serializer_class = PartnershipSerializer
+
+    def get_queryset(self):
+        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+
+        return (
+            Partnership.objects
+            .select_related(
+                'partner__partner_type', 'partner__contact_address__country',
+                'supervisor',
+            ).prefetch_related(
+                Prefetch(
+                    'ucl_university',
+                    queryset=Entity.objects
+                    .annotate(
+                        most_recent_acronym=Subquery(
+                            EntityVersion.objects
+                                .filter(entity=OuterRef('pk'))
+                                .order_by('-start_date')
+                                .values('acronym')[:1]
+                        ),
+                    )
+                ),
+                Prefetch(
+                    'ucl_university_labo',
+                    queryset=Entity.objects
+                    .annotate(
+                        most_recent_acronym=Subquery(
+                            EntityVersion.objects
+                                .filter(entity=OuterRef('pk'))
+                                .order_by('-start_date')
+                                .values('acronym')[:1]
+                        ),
+                    )
+                ),
+                Prefetch(
+                    'years',
+                    queryset=(
+                        PartnershipYear.objects
+                        .prefetch_related(
+                            'education_fields', 'education_levels', 'entities', 'offers'
+                        ).filter(academic_year=academic_year)
+                    ),
+                    to_attr='current_year_for_api',
+                ),
+            )
+        )
