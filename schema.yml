@@ -20,12 +20,20 @@ components:
       required:
         - id
         - label
+      description: An label associated with an id
+      example:
+        id: 2
+        label: value
       properties:
         id:
           type: string
         label:
           type: string
     Funding:
+      description: A funding with a name and a url
+      example:
+        name: Erasmus
+        url: https://erasmus.com/
       properties:
         name:
           type: string
@@ -34,6 +42,11 @@ components:
           format: uri
     Contact:
       type: object
+      description: A contact with a name, a phone and an email
+      example:
+        name: John Doe
+        phone: +33245678987
+        email: john.doe@example.com
       properties:
         name:
           type: string
@@ -44,12 +57,28 @@ components:
           format: email
     Partner:
       type: object
+      description: A complete description of a partner
+      example:
+        name: Middle East Technical University
+        partner_entity: Faculdade de Odontologia de Piracicaba
+        erasmus_code: TR ANKARA04
+        partner_type: Université ou IES
+        city: Ankara
+        country: Turquie
+        partnerships_count: 1
+        faculties:
+          - FIAL
+        subject_area:
+          - Subject 1
+          - Subject 2
       properties:
         name:
           type: string
         erasmus_code:
           type: string
         partner_entity:
+          type: string
+        partner_type:
           type: string
         city:
           type: string
@@ -67,6 +96,67 @@ components:
             type: string
     Partnership:
       type: object
+      description: A complete description of a partnership
+      example:
+        partner:
+          name: Middle East Technical University
+          partner_entity: Faculdade de Odontologia de Piracicaba
+          erasmus_code: TR ANKARA04
+          partner_type: Université ou IES
+          city: Ankara
+          country: Turquie
+          partnerships_count: 1
+          faculties:
+            - FIAL
+          subject_area:
+            - Subject 1
+            - Subject 2
+        education_fields:
+          - Field 1
+          - Field 2
+        ucl_university: FIAL
+        ucl_university_labo: ARKE
+        supervisor: John DOE
+        is_sms: false
+        is_smp: false
+        is_smst: false
+        is_sta: true
+        is_stt: false
+        status:
+          valid:
+          last_valid:
+        out_education_levels:
+          - Level 1
+          - Level 2
+        out_entities:
+          - FIAL
+        out_university_offers:
+          - Offer 1
+        out_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        out_portal: https://example.com
+        out_funding:
+          name: Erasmus
+          url: https://erasmus.com/
+        out_partner_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        in_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        in_portal: https://example.com
+        staff_contact_name: John DOE
+        staff_partner_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        staff_funding:
+          name: Erasmus
+          url: https://erasmus.com/
       properties:
         partner:
           $ref: '#/components/schemas/Partner'
@@ -153,12 +243,14 @@ components:
         format: int32
         maximum: 100
         default: 25
+        example: 42
     offset:
       name: offset
       in: query
+      description: The initial index from which to return the results.
       schema:
-        description: The initial index from which to return the results.
         type: integer
+        example: 51
     ordering:
       name: ordering
       in: query
@@ -166,6 +258,7 @@ components:
       schema:
         type: string
         default: partner
+        example: country_en
         enum:
           - partner
           - country_en
@@ -175,61 +268,76 @@ components:
     continent:
       name: continent
       in: query
+      description: The continent uuid
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     country:
       name: country
       in: query
+      description: The country uuid
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     city:
       name: city
       in: query
+      description: The city uuid
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     partner:
       name: partner
       in: query
-      description: The id of the partner
+      description: The uuid of the partner
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     ucl_university:
       name: ucl_university
       in: query
-      description: The id of the faculty
+      description: The uuid of the faculty
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     ucl_university_labo:
       name: ucl_university_labo
       in: query
-      description: The id of the faculty's school
+      description: The uuid of the faculty's school
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     supervisor:
       name: supervisor
       in: query
-      description: The id of the supervisor
+      description: The uuid of the supervisor
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     education_field:
       name: education_field
       in: query
-      description: The id of the education field
+      description: The uuid of the education field
       schema:
         type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     mobility_type:
       name: mobility_type
       in: query
+      description: The type of mobility, either for student or for staff
       schema:
         type: string
+        example: student
         enum:
           - student
           - staff
     funding:
       name: funding
       in: query
+      description: The type of funding if there is any
       schema:
         type: string
+        example: erasmus
         enum:
           - erasmus
           - belgica
@@ -242,11 +350,12 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 paths:
-  /partnerships/configuration/:
+  /configuration/:
     get:
       summary: List all possible values for parameters on other endpoints
       tags:
         - partners
+      operationId: getPartnershipsConfiguration
       responses:
         '200':
           description: The list of possible values for parameters on other endpoints
@@ -290,11 +399,12 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-  /partnerships/partners/:
+  /partners/:
     get:
       summary: List all partners
       tags:
         - partners
+      operationId: getPartnersList
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
@@ -333,9 +443,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /partnerships/:
     get:
-      summary: List all partners
+      summary: List all partnerships
       tags:
-        - partners
+        - partnerships
+      operationId: getPartnershipsList
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
