@@ -311,24 +311,24 @@ components:
     continent:
       name: continent
       in: query
-      description: The continent uuid
+      description: The continent name
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: Asia
     country:
       name: country
       in: query
-      description: The country uuid
+      description: The country iso code
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     city:
       name: city
       in: query
-      description: The city uuid
+      description: The city name
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: Paris
     partner:
       name: partner
       in: query

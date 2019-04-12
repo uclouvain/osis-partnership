@@ -104,7 +104,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url')
 
-    staff_contact_name = serializers.CharField(source='ucl_management_entity.administrative_responsible.__str__')
+    staff_contact_name = serializers.SerializerMethodField()
     staff_funding = serializers.SerializerMethodField(method_name='get_funding')
 
 
@@ -213,3 +213,10 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'name': financing.name,
             'url': financing.url,
         }
+
+    def get_staff_contact_name(self, partnership):
+        supervisor = partnership.get_supervisor()
+        if supervisor is None:
+            return None
+        return str(supervisor)
+

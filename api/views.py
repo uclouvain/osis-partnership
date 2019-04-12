@@ -1,6 +1,8 @@
 from django.db.models.aggregates import Count
 from django.db.models.expressions import Subquery, OuterRef
 from django.db.models.query import Prefetch
+from django.db.models.query_utils import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,6 +10,7 @@ from rest_framework.views import APIView
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
+from partnership.api.filters import PartnerFilter
 from partnership.api.serializers import PartnerSerializer, PartnershipSerializer, ContinentConfigurationSerializer, \
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
@@ -55,7 +58,9 @@ class ConfigurationView(APIView):
             .distinct()
             .order_by('most_recent_acronym')
         )
-        supervisors = Person.objects.filter(management_entities__isnull=False).order_by('last_name', 'first_name')
+        supervisors = Person.objects.filter(
+            Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
+        ).order_by('last_name', 'first_name')
         education_fields = PartnershipYearEducationField.objects.values('uuid', 'label')
 
         data = {
@@ -75,6 +80,8 @@ class PartnersListView(generics.ListAPIView):
         .annotate(partnerships_count=Count('partnerships'))
     )
     serializer_class = PartnerSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PartnerFilter
 
 
 class PartnershipsListView(generics.ListAPIView):
