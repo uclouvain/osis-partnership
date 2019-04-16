@@ -95,14 +95,14 @@ class PartnershipSerializer(serializers.ModelSerializer):
     education_fields = serializers.SerializerMethodField()
 
     out_contact = serializers.SerializerMethodField()
-    out_portal = serializers.URLField(source='ucl_management_entity.contact_out_url')
+    out_portal = serializers.SerializerMethodField()
     out_education_levels = serializers.SerializerMethodField()
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
 
     in_contact = serializers.SerializerMethodField()
-    in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url')
+    in_portal = serializers.SerializerMethodField()
 
     staff_contact_name = serializers.SerializerMethodField()
     staff_funding = serializers.SerializerMethodField(method_name='get_funding')
@@ -178,25 +178,31 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     def get_out_contact(self, partnership):
         contact = {
-            'email': partnership.ucl_management_entity.contact_out_email,
+            'email': getattr(partnership.ucl_management_entity, 'contact_out_email', None),
             'name': None,
             'phone': None,
         }
-        if partnership.ucl_management_entity.contact_out_person is not None:
+        if getattr(partnership.ucl_management_entity, 'contact_out_person', None) is not None:
             contact['name'] = str(partnership.ucl_management_entity.contact_out_person)
             contact['phone'] = partnership.ucl_management_entity.contact_out_person.phone
         return contact
 
+    def get_out_portal(self, partnership):
+        return getattr(partnership.ucl_management_entity, 'contact_out_url', None)
+
     def get_in_contact(self, partnership):
         contact = {
-            'email': partnership.ucl_management_entity.contact_in_email,
+            'email': getattr(partnership.ucl_management_entity, 'contact_in_email', None),
             'name': None,
             'phone': None,
         }
-        if partnership.ucl_management_entity.contact_in_person is not None:
+        if getattr(partnership.ucl_management_entity, 'contact_in_person', None) is not None:
             contact['name'] = str(partnership.ucl_management_entity.contact_in_person)
             contact['phone'] = partnership.ucl_management_entity.contact_in_person.phone
         return contact
+
+    def get_in_portal(self, partnership):
+        return getattr(partnership.ucl_management_entity, 'contact_in_url', None)
 
     def get_funding(self, partnership):
         if not self._get_current_year_attr(partnership, 'eligible'):
