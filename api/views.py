@@ -1,5 +1,6 @@
+from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery, OuterRef
+from django.db.models.expressions import Subquery, OuterRef, Value
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
 from django_filters.rest_framework import DjangoFilterBackend
@@ -74,14 +75,21 @@ class ConfigurationView(APIView):
 
 
 class PartnersListView(generics.ListAPIView):
-    queryset = (
-        Partner.objects
-        .select_related('partner_type', 'contact_address__country')
-        .annotate(partnerships_count=Count('partnerships'))
-    )
     serializer_class = PartnerSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PartnerFilter
+
+    def get_queryset(self):
+        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+
+        return (
+            Partner.objects
+            .select_related('partner_type', 'contact_address__country')
+            .annotate(
+                current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
+                partnerships_count=Count('partnerships'),
+            )
+        )
 
 
 class PartnershipsListView(generics.ListAPIView):

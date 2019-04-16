@@ -95,12 +95,17 @@ class FinancingAdmin(admin.ModelAdmin):
     list_filter = ('name', 'academic_year')
 
 
+class PartnershipYearEducationFieldAdmin(admin.ModelAdmin):
+    fields = ('code', 'label', 'uuid')
+    readonly_fields = ('uuid',)
+
+
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
 admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(PartnershipTag)
-admin.site.register(PartnershipYearEducationField)
+admin.site.register(PartnershipYearEducationField, PartnershipYearEducationFieldAdmin)
 admin.site.register(PartnershipYearEducationLevel)
 admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Financing, FinancingAdmin)
