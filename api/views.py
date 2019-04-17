@@ -6,6 +6,8 @@ from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
+from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,6 +25,8 @@ from reference.models.continent import Continent
 
 
 class ConfigurationView(APIView):
+
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         continents = Continent.objects.prefetch_related('country_set')
@@ -78,6 +82,7 @@ class ConfigurationView(APIView):
 
 class PartnersListView(generics.ListAPIView):
     serializer_class = PartnerSerializer
+    permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = PartnerFilter
 
@@ -94,8 +99,9 @@ class PartnersListView(generics.ListAPIView):
         )
 
 
-class PartnershipsListView(generics.ListAPIView):
+class PartnershipsMixinView(GenericAPIView):
     serializer_class = PartnershipSerializer
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
@@ -175,3 +181,11 @@ class PartnershipsListView(generics.ListAPIView):
                 .values('status')[:1]
             )
         )
+
+
+class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
+    pass
+
+
+class PartnershipsRetrieveView(PartnershipsMixinView, generics.RetrieveAPIView):
+    lookup_field = 'uuid'

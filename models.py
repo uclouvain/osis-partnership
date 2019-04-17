@@ -295,6 +295,8 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
+
     external_id = models.CharField(
         _('external_id'),
         help_text=_('to_synchronize_with_epc'),

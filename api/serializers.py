@@ -92,6 +92,10 @@ class PartnerSerializer(serializers.ModelSerializer):
 
 
 class PartnershipSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='partnerships_api_v1:partnerships:retrieve',
+        lookup_field='uuid',
+    )
     partner = PartnerSerializer()
     supervisor = serializers.CharField(source='supervisor.__str__')
     ucl_university = serializers.CharField(source='ucl_university.most_recent_acronym')
@@ -122,7 +126,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
         fields = [
-            'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
+            'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
             'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
             'education_fields', 'status',
             # OUT
