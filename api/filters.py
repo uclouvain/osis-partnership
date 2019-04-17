@@ -22,19 +22,23 @@ class SupervisorFilter(filters.Filter):
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
-                ), has_supervisor_without_entity=Exists(UCLManagementEntity.objects
+                ),
+                has_supervisor_without_entity=Exists(UCLManagementEntity.objects
                     .filter(
                         entity__isnull=True,
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
-                ))
-                .filter(Q(partnerships__supervisor__uuid=value)
-                        | Q(partnerships__supervisor__isnull=True,
-                            has_supervisor_with_entity=True)
-                        | Q(partnerships__supervisor__isnull=True,
-                            partnerships__ucl_university_labo__isnull=True,
-                            has_supervisor_without_entity=True))
+                )
+            )
+            .filter(
+                Q(partnerships__supervisor__uuid=value)
+                | Q(partnerships__supervisor__isnull=True,
+                    has_supervisor_with_entity=True)
+                | Q(partnerships__supervisor__isnull=True,
+                    partnerships__ucl_university_labo__isnull=True,
+                    has_supervisor_without_entity=True)
+            )
         )
 
 

@@ -2,9 +2,12 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing
+from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact
 from reference.models.continent import Continent
 from reference.models.country import Country
+
+
+STAFF_FUNDING_URL = 'https://intranet.uclouvain.be/fr/myucl/administrations/adri/mobilite-du-personnel.html'
 
 
 class CountryConfigurationSerializer(serializers.ModelSerializer):
@@ -71,6 +74,12 @@ class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
         fields = ['value', 'label']
 
 
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ['title', 'first_name', 'last_name', 'phone', 'email']
+
+
 class PartnerSerializer(serializers.ModelSerializer):
     partner_type = serializers.CharField(source='partner_type.value')
     city = serializers.CharField(source='contact_address.city')
@@ -93,6 +102,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_sta = serializers.SerializerMethodField()
     is_stt = serializers.SerializerMethodField()
     education_fields = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.SerializerMethodField()
@@ -100,30 +110,30 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
+    out_partner_contact = ContactSerializer(source='contacts')
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.SerializerMethodField()
 
     staff_contact_name = serializers.SerializerMethodField()
-    staff_funding = serializers.SerializerMethodField(method_name='get_funding')
-
+    staff_funding = serializers.SerializerMethodField()
+    staff_partner_contact = ContactSerializer(source='contacts')
 
     class Meta:
         model = Partnership
         fields = [
             'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
             'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
-            'education_fields',
-            # 'status',
+            'education_fields', 'status',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
-            # 'out_partner_contact',
+            'out_partner_contact',
             # IN
             'in_contact', 'in_portal',
             # STAFF
             'staff_contact_name', 'staff_funding',
-            # 'staff_partner_contact',
+            'staff_partner_contact',
         ]
 
     def _get_current_year_attr(self, partnership, attr):
@@ -152,6 +162,14 @@ class PartnershipSerializer(serializers.ModelSerializer):
         if education_fields is None:
             return None
         return ['{0} ({1})'.format(field.label, field.code) for field in education_fields.all()]
+
+    def get_status(self, partnership):
+        if partnership.agreement_status is None:
+            return None
+        return {
+            'status': partnership.agreement_status,  # annotation on the queryset
+            'valid_years': partnership.validity_years,  # annotation on the queryset
+        }
 
     def get_ucl_university_labo(self, partnership):
         if partnership.ucl_university_labo is None:
@@ -226,3 +244,9 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return None
         return str(supervisor)
 
+    def get_staff_funding(self, partnership):
+        funding = self.get_funding(partnership)
+        if funding is None:
+            return None
+        funding['url'] = STAFF_FUNDING_URL
+        return funding

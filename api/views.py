@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.aggregates import Count
 from django.db.models.expressions import Subquery, OuterRef, Value
+from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,6 +9,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
@@ -16,7 +18,7 @@ from partnership.api.serializers import PartnerSerializer, PartnershipSerializer
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
 from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
-    PartnershipConfiguration
+    PartnershipConfiguration, PartnershipAgreement
 from reference.models.continent import Continent
 
 
@@ -103,6 +105,7 @@ class PartnershipsListView(generics.ListAPIView):
             .select_related(
                 'supervisor',
             ).prefetch_related(
+                'contacts',
                 Prefetch(
                     'partner',
                     queryset=Partner.objects
@@ -143,5 +146,32 @@ class PartnershipsListView(generics.ListAPIView):
                     ),
                     to_attr='current_year_for_api',
                 ),
+            )
+        ).annotate(
+            current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
+            validity_end_year=Subquery(
+                AcademicYear.objects
+                .filter(
+                    partnership_agreements_end__partnership=OuterRef('pk'),
+                    partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
+                )
+                .order_by('-end_date')
+                .values('year')[:1]
+            ),
+            validity_years=Concat(
+                Value(academic_year.year),
+                Value('-'),
+                'validity_end_year',
+                output_field=models.CharField()
+            ),
+            agreement_status=Subquery(
+                PartnershipAgreement.objects
+                .filter(
+                    partnership=OuterRef('pk'),
+                    start_academic_year__year__lte=academic_year.year,
+                    end_academic_year__year__gte=academic_year.year,
+                )
+                .order_by('-end_academic_year__year')
+                .values('status')[:1]
             )
         )
