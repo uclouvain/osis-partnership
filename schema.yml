@@ -48,7 +48,12 @@ components:
         phone: +33245678987
         email: john.doe@example.com
       properties:
-        name:
+        title:
+          type: string
+          description: mainly mr or mme
+        first_name:
+          type: string
+        last_name:
           type: string
         phone:
           type: string
@@ -123,8 +128,8 @@ components:
         is_sta: true
         is_stt: false
         status:
-          valid:
-          last_valid:
+          status: validated
+          valid_years: 2019-2022
         out_education_levels:
           - Level 1
           - Level 2
@@ -141,7 +146,9 @@ components:
           name: Erasmus
           url: https://erasmus.com/
         out_partner_contact:
-          name: John Doe
+          title: mr
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         in_contact:
@@ -151,7 +158,9 @@ components:
         in_portal: https://example.com
         staff_contact_name: John DOE
         staff_partner_contact:
-          name: John Doe
+          title: mr
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         staff_funding:
@@ -183,9 +192,13 @@ components:
         status:
           type: object
           properties:
-            valid:
-              type: boolean
-            last_valid:
+            status:
+              type: string
+              enum:
+                - waiting
+                - validated
+                - refused
+            valid_years:
               type: string
         out_education_levels:
           type: array
