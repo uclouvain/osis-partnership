@@ -264,20 +264,6 @@ components:
       schema:
         type: integer
         example: 51
-    ordering:
-      name: ordering
-      in: query
-      description: The ordering of the items returned
-      schema:
-        type: string
-        default: partner
-        example: country_en
-        enum:
-          - partner
-          - country_en
-          - city
-          - ucl_university
-          - subject_area
     continent:
       name: continent
       in: query
@@ -362,6 +348,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 paths:
   /configuration/:
     get:
@@ -421,7 +413,20 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/ordering'
+        - ordering:
+            name: ordering
+            in: query
+            description: The ordering of the items returned
+            schema:
+              type: string
+              default: partner
+              example: country_en
+              enum:
+                - partner
+                - country_en
+                - city
+                - ucl_university
+                - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
@@ -463,7 +468,21 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/ordering'
+        - ordering:
+            name: ordering
+            in: query
+            description: The ordering of the items returned
+            schema:
+              type: string
+              default: partner
+              example: country_en
+              enum:
+                - partner
+                - country_en
+                - city
+                - ucl_university
+                - type
+                - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
@@ -496,3 +515,18 @@ paths:
                       $ref: "#/components/schemas/Partnership"
         '400':
           $ref: '#/components/responses/BadRequest'
+  /partnerships/{uuid}/:
+    get:
+      summary: Get the detail for a particular partnership
+      tags:
+        - partnerships
+      operationId: getPartnershipsDetail
+      responses:
+        '200':
+          description: A partnership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Partnership"
+        '404':
+          $ref: '#/components/responses/NotFound'
