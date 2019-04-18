@@ -107,7 +107,6 @@ class PartnerFilter(filters.FilterSet):
             ('contact_address__country__name', 'country_en'),
             ('contact_address__city', 'city'),
             ('partnerships__ucl_university', 'ucl_university'),
-            # ('TODO', 'type'),
             # ('TODO', 'subject_area'),
         )
     )
@@ -242,6 +241,7 @@ class PartnershipFilter(filters.FilterSet):
             ('partner__contact_address__country__name', 'country_en'),
             ('partner__contact_address__city', 'city'),
             ('ucl_university', 'ucl_university'),
+            # ('TODO', 'type'),
             # ('TODO', 'subject_area'),
         )
     )

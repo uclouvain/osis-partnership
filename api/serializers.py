@@ -201,11 +201,14 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_out_contact(self, partnership):
         contact = {
             'email': getattr(partnership.ucl_management_entity, 'contact_out_email', None),
-            'name': None,
+            'title': None,
+            'first_name': None,
+            'last_name': None,
             'phone': None,
         }
         if getattr(partnership.ucl_management_entity, 'contact_out_person', None) is not None:
-            contact['name'] = str(partnership.ucl_management_entity.contact_out_person)
+            contact['first_name'] = partnership.ucl_management_entity.contact_out_person.first_name
+            contact['last_name'] = partnership.ucl_management_entity.contact_out_person.last_name
             contact['phone'] = partnership.ucl_management_entity.contact_out_person.phone
         return contact
 
@@ -215,11 +218,14 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_in_contact(self, partnership):
         contact = {
             'email': getattr(partnership.ucl_management_entity, 'contact_in_email', None),
-            'name': None,
+            'title': None,
+            'first_name': None,
+            'last_name': None,
             'phone': None,
         }
         if getattr(partnership.ucl_management_entity, 'contact_in_person', None) is not None:
-            contact['name'] = str(partnership.ucl_management_entity.contact_in_person)
+            contact['first_name'] = partnership.ucl_management_entity.contact_in_person.first_name
+            contact['last_name'] = partnership.ucl_management_entity.contact_in_person.last_name
             contact['phone'] = partnership.ucl_management_entity.contact_in_person.phone
         return contact
 
