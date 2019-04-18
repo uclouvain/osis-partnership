@@ -15,7 +15,7 @@ from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
-from partnership.api.filters import PartnerFilter
+from partnership.api.filters import PartnerFilter, PartnershipFilter
 from partnership.api.serializers import PartnerSerializer, PartnershipSerializer, ContinentConfigurationSerializer, \
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
@@ -184,7 +184,8 @@ class PartnershipsMixinView(GenericAPIView):
 
 
 class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
-    pass
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PartnershipFilter
 
 
 class PartnershipsRetrieveView(PartnershipsMixinView, generics.RetrieveAPIView):
