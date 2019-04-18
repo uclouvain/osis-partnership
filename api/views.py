@@ -128,6 +128,12 @@ class PartnershipsMixinView(GenericAPIView):
                                 .order_by('-start_date')
                                 .values('acronym')[:1]
                         ),
+                        most_recent_title=Subquery(
+                            EntityVersion.objects
+                                .filter(entity=OuterRef('pk'))
+                                .order_by('-start_date')
+                                .values('title')[:1]
+                        ),
                     )
                 ),
                 Prefetch(
@@ -139,6 +145,12 @@ class PartnershipsMixinView(GenericAPIView):
                                 .filter(entity=OuterRef('pk'))
                                 .order_by('-start_date')
                                 .values('acronym')[:1]
+                        ),
+                        most_recent_title=Subquery(
+                            EntityVersion.objects
+                                .filter(entity=OuterRef('pk'))
+                                .order_by('-start_date')
+                                .values('title')[:1]
                         ),
                     )
                 ),
@@ -179,6 +191,12 @@ class PartnershipsMixinView(GenericAPIView):
                 )
                 .order_by('-end_academic_year__year')
                 .values('status')[:1]
+            ),
+            sector_most_recent_acronym=Subquery(
+                EntityVersion.objects
+                    .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
+                    .order_by('-start_date')
+                    .values('acronym')[:1]
             )
         )
 

@@ -80,15 +80,30 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = ['title', 'first_name', 'last_name', 'phone', 'email']
 
 
+class EntitySerializer(serializers.ModelSerializer):
+    """ most_recent_acronym and most_recent_name must be annotated for this serializer """
+
+    acronym = serializers.CharField(source='most_recent_acronym')
+    title = serializers.CharField(source='most_recent_title')
+
+    class Meta:
+        model = Entity
+        fields = ['acronym', 'title']
+
+
 class PartnerSerializer(serializers.ModelSerializer):
     partner_type = serializers.CharField(source='partner_type.value')
     city = serializers.CharField(source='contact_address.city')
     country = serializers.CharField(source='contact_address.country.name')
+    country_iso = serializers.CharField(source='contact_address.country.iso_code')
     partnerships_count = serializers.IntegerField()
 
     class Meta:
         model = Partner
-        fields = ['name', 'erasmus_code', 'partner_type', 'city', 'country', 'partnerships_count']
+        fields = [
+            'name', 'website', 'erasmus_code', 'partner_type',
+            'city', 'country', 'country_iso', 'partnerships_count',
+        ]
 
 
 class PartnershipSerializer(serializers.ModelSerializer):
@@ -97,9 +112,11 @@ class PartnershipSerializer(serializers.ModelSerializer):
         lookup_field='uuid',
     )
     partner = PartnerSerializer()
+    partner_entity = serializers.CharField(source='partner_entity.name', allow_null=True)
     supervisor = serializers.CharField(source='supervisor.__str__')
-    ucl_university = serializers.CharField(source='ucl_university.most_recent_acronym')
-    ucl_university_labo = serializers.SerializerMethodField()
+    ucl_sector = serializers.CharField(source='sector_most_recent_acronym', allow_null=True)
+    ucl_university = EntitySerializer()
+    ucl_university_labo = EntitySerializer()
     is_sms = serializers.SerializerMethodField()
     is_smp = serializers.SerializerMethodField()
     is_smst = serializers.SerializerMethodField()
@@ -109,7 +126,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
 
     out_contact = serializers.SerializerMethodField()
-    out_portal = serializers.SerializerMethodField()
+    out_portal = serializers.URLField(source='ucl_management_entity.contact_out_url', allow_null=True)
     out_education_levels = serializers.SerializerMethodField()
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
@@ -117,7 +134,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_partner_contact = ContactSerializer(source='contacts')
 
     in_contact = serializers.SerializerMethodField()
-    in_portal = serializers.SerializerMethodField()
+    in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url', allow_null=True)
 
     staff_contact_name = serializers.SerializerMethodField()
     staff_funding = serializers.SerializerMethodField()
@@ -127,8 +144,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
         model = Partnership
         fields = [
             'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
-            'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
-            'education_fields', 'status',
+            'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
+            'education_fields', 'status', 'partner_entity',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
@@ -175,11 +192,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'valid_years': partnership.validity_years,  # annotation on the queryset
         }
 
-    def get_ucl_university_labo(self, partnership):
-        if partnership.ucl_university_labo is None:
-            return None
-        return partnership.ucl_university_labo.most_recent_acronym
-
     def get_out_education_levels(self, partnership):
         education_levels = self._get_current_year_attr(partnership, 'education_levels')
         if education_levels is None:
@@ -212,9 +224,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
             contact['phone'] = partnership.ucl_management_entity.contact_out_person.phone
         return contact
 
-    def get_out_portal(self, partnership):
-        return getattr(partnership.ucl_management_entity, 'contact_out_url', None)
-
     def get_in_contact(self, partnership):
         contact = {
             'email': getattr(partnership.ucl_management_entity, 'contact_in_email', None),
@@ -228,9 +237,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
             contact['last_name'] = partnership.ucl_management_entity.contact_in_person.last_name
             contact['phone'] = partnership.ucl_management_entity.contact_in_person.phone
         return contact
-
-    def get_in_portal(self, partnership):
-        return getattr(partnership.ucl_management_entity, 'contact_in_url', None)
 
     def get_funding(self, partnership):
         if not self._get_current_year_attr(partnership, 'eligible'):
