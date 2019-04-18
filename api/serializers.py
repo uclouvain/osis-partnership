@@ -101,7 +101,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         fields = [
-            'name', 'website', 'erasmus_code', 'partner_type',
+            'uuid', 'name', 'website', 'erasmus_code', 'partner_type',
             'city', 'country', 'country_iso', 'partnerships_count',
         ]
 
