@@ -29,6 +29,16 @@ components:
           type: string
         label:
           type: string
+    Entity:
+      description: An entity
+      example:
+        name: Science
+        acronym: SC
+      properties:
+        name:
+          type: string
+        acronym:
+          type: string
     Funding:
       description: A funding with a name and a url
       example:
@@ -65,11 +75,13 @@ components:
       description: A complete description of a partner
       example:
         name: Middle East Technical University
+        website: https://example.com
         partner_entity: Faculdade de Odontologia de Piracicaba
         erasmus_code: TR ANKARA04
         partner_type: Université ou IES
         city: Ankara
         country: Turquie
+        country_iso: TK
         partnerships_count: 1
         faculties:
           - FIAL
@@ -78,6 +90,8 @@ components:
           - Subject 2
       properties:
         name:
+          type: string
+        website:
           type: string
         erasmus_code:
           type: string
@@ -88,6 +102,8 @@ components:
         city:
           type: string
         country:
+          type: string
+        country_iso:
           type: string
         partnerships_count:
           type: number
@@ -105,11 +121,13 @@ components:
       example:
         partner:
           name: Middle East Technical University
+          website: https://example.com
           partner_entity: Faculdade de Odontologia de Piracicaba
           erasmus_code: TR ANKARA04
           partner_type: Université ou IES
           city: Ankara
           country: Turquie
+          country_iso: TK
           partnerships_count: 1
           faculties:
             - FIAL
@@ -119,8 +137,12 @@ components:
         education_fields:
           - Field 1
           - Field 2
-        ucl_university: FIAL
-        ucl_university_labo: ARKE
+        ucl_university:
+          name: science
+          acronym: SC
+        ucl_university_labo:
+          name: science
+          acronym: SC
         supervisor: John DOE
         is_sms: false
         is_smp: false
@@ -173,10 +195,13 @@ components:
           type: array
           items:
             type: string
+        ucl_sector:
+          type: string
+          description: Acronym of the sector
         ucl_university:
-          type: string
+          $ref: '#/components/schemas/Entity'
         ucl_university_labo:
-          type: string
+          $ref: '#/components/schemas/Entity'
         supervisor:
           type: string
         is_sms:
@@ -207,7 +232,7 @@ components:
         out_entities:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Entity'
         out_university_offers:
           type: array
           items:
