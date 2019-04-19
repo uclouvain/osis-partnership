@@ -354,6 +354,13 @@ class Partnership(models.Model):
         blank=True,
     )
 
+    medias = models.ManyToManyField(
+        'partnership.Media',
+        verbose_name=_('medias'),
+        related_name='+',
+        blank=True,
+    )
+
     comment = models.TextField(_('comment'), default='', blank=True)
     tags = models.ManyToManyField(
         PartnershipTag,

@@ -10,6 +10,11 @@ def partner_media_download_url(partner, media):
 
 
 @register.filter
+def partnership_media_download_url(partnership, media):
+    return reverse('partnerships:medias:download', kwargs={'partnership_pk': partnership.pk, 'pk': media.pk})
+
+
+@register.filter
 def can_change_partner_entity(user, entity):
     return entity.user_can_change(user)
 

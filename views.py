@@ -1273,6 +1273,7 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             )
             .prefetch_related(
                 'contacts',
+                'medias',
                 'tags',
                 Prefetch(
                     'years',
@@ -1486,6 +1487,92 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
+
+
+class PartnershipMediaMixin(UserPassesTestMixin):
+    login_url = 'access_denied'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
+        return super(PartnershipMediaMixin, self).dispatch(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.partnership.user_can_change(self.request.user)
+
+    def get_queryset(self):
+        return self.partnership.medias.all()
+
+    def get_success_url(self):
+        return self.partnership.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(PartnershipMediaMixin, self).get_context_data(**kwargs)
+        context['partnership'] = self.partnership
+        return context
+
+
+class PartnershipMediaFormMixin(PartnershipMediaMixin, FormMixin):
+    form_class = MediaForm
+    login_url = 'access_denied'
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/media_form.html'
+        return self.template_name
+
+    def get_filename(self, filename):
+        extension = filename.split('.')[-1]
+        return 'partnership_media_{}.{}'.format(self.partnership.pk, extension)
+
+    @transaction.atomic
+    def form_valid(self, form):
+        media = form.save(commit=False)
+        if media.pk is None:
+            media.author = self.request.user
+        if media.file and not hasattr(form.cleaned_data['file'], 'path'):
+            media.file.name = self.get_filename(media.file.name)
+        media.save()
+        form.save_m2m()
+        self.partnership.medias.add(media)
+        messages.success(self.request, _('partnership_media_saved'))
+        return redirect(self.partnership)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('partnership_media_error'))
+        return super(PartnershipMediaFormMixin, self).form_invalid(form)
+
+
+class PartnershipMediaCreateView(LoginRequiredMixin, PartnershipMediaFormMixin, CreateView):
+    template_name = 'partnerships/partners/medias/partner_media_create.html'
+    login_url = 'access_denied'
+
+
+class PartnershipMediaUpdateView(LoginRequiredMixin, PartnershipMediaFormMixin, UpdateView):
+    template_name = 'partnerships/partners/medias/partner_media_update.html'
+    context_object_name = 'media'
+    login_url = 'access_denied'
+
+
+class PartnershipMediaDeleteView(LoginRequiredMixin, PartnershipMediaMixin, DeleteView):
+    template_name = 'partnerships/partners/medias/partner_media_delete.html'
+    login_url = 'access_denied'
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return 'partnerships/includes/media_delete.html'
+        return self.template_name
+
+
+class PartnershipMediaDownloadView(PartnershipMediaMixin, SingleObjectMixin, View):
+    login_url = 'access_denied'
+
+    def get(self, request, *args, **kwargs):
+        media = self.get_object()
+        if media.file is None:
+            raise Http404
+        response = FileResponse(media.file)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(media.file.name))
+        return response
 
 
 class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
