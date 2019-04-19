@@ -20,7 +20,7 @@ from partnership.api.serializers import PartnerSerializer, PartnershipSerializer
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
 from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
-    PartnershipConfiguration, PartnershipAgreement
+    PartnershipConfiguration, PartnershipAgreement, Media
 from reference.models.continent import Continent
 
 
@@ -112,6 +112,12 @@ class PartnershipsMixinView(GenericAPIView):
                 'supervisor',
             ).prefetch_related(
                 'contacts',
+                Prefetch(
+                    'medias',
+                    queryset=Media.objects
+                        .filter(visibility=Media.VISIBILITY_PUBLIC),
+                    to_attr='public_medias',
+                ),
                 Prefetch(
                     'partner',
                     queryset=Partner.objects

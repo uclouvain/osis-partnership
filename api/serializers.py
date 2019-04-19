@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact
+from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact, Media
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -91,6 +91,13 @@ class EntitySerializer(serializers.ModelSerializer):
         fields = ['acronym', 'title']
 
 
+class MediaSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = Media
+        fields = ['name', 'url']
+
+
 class PartnerSerializer(serializers.ModelSerializer):
     partner_type = serializers.CharField(source='partner_type.value')
     city = serializers.CharField(source='contact_address.city')
@@ -124,6 +131,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_stt = serializers.SerializerMethodField()
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    medias = MediaSerializers(many=True, source='public_medias')
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.URLField(source='ucl_management_entity.contact_out_url', allow_null=True)
@@ -145,7 +153,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         fields = [
             'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
             'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
-            'education_fields', 'status', 'partner_entity',
+            'education_fields', 'status', 'partner_entity', 'medias',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
