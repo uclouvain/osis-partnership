@@ -71,7 +71,7 @@ class ConfigurationView(APIView):
             Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
         ).order_by('last_name', 'first_name')
         education_fields = PartnershipYearEducationField.objects.values('uuid', 'label')
-        financings = (
+        fundings = (
              Financing.objects
              .filter(academic_year=current_year)
              .values_list('name', flat=True)
@@ -85,7 +85,7 @@ class ConfigurationView(APIView):
             'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
             'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
             'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
-            'financings': list(financings),
+            'fundings': list(fundings),
         }
         return Response(data)
 
