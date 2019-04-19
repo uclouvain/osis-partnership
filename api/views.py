@@ -20,7 +20,7 @@ from partnership.api.serializers import PartnerSerializer, PartnershipSerializer
     PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
     EducationFieldConfigurationSerializer
 from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
-    PartnershipConfiguration, PartnershipAgreement, Media
+    PartnershipConfiguration, PartnershipAgreement, Media, Financing
 from reference.models.continent import Continent
 
 
@@ -29,6 +29,8 @@ class ConfigurationView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
+        current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+
         continents = Continent.objects.prefetch_related('country_set')
         partners = Partner.objects.values('uuid', 'name')
         ucl_universities = (
@@ -69,6 +71,13 @@ class ConfigurationView(APIView):
             Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
         ).order_by('last_name', 'first_name')
         education_fields = PartnershipYearEducationField.objects.values('uuid', 'label')
+        financings = (
+             Financing.objects
+             .filter(academic_year=current_year)
+             .values_list('name', flat=True)
+             .distinct('name')
+             .order_by('name')
+        )
 
         data = {
             'continents': ContinentConfigurationSerializer(continents, many=True).data,
@@ -76,6 +85,7 @@ class ConfigurationView(APIView):
             'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
             'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
             'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
+            'financings': list(financings),
         }
         return Response(data)
 
