@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery, OuterRef, Value
+from django.db.models.expressions import Subquery, OuterRef, Value, Exists
 from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
@@ -32,7 +32,20 @@ class ConfigurationView(APIView):
         current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
         continents = Continent.objects.prefetch_related('country_set')
-        partners = Partner.objects.values('uuid', 'name')
+        partners = (
+            Partner.objects
+            .annotate(
+                has_in=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership__partner=OuterRef('pk'),
+                        start_academic_year__year__lte=current_year.year,
+                        end_academic_year__year__gte=current_year.year,
+                    )
+                )
+            )
+            .filter(has_in=True)
+            .values('uuid', 'name')
+        )
         ucl_universities = (
             Entity.objects
             .filter(partnerships__isnull=False)
@@ -105,7 +118,14 @@ class PartnersListView(generics.ListAPIView):
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
                 partnerships_count=Count('partnerships'),
-            )
+                has_in=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership__partner=OuterRef('pk'),
+                        start_academic_year__year__lte=academic_year.year,
+                        end_academic_year__year__gte=academic_year.year,
+                    )
+                )
+            ).filter(has_in=True)
         )
 
 
@@ -213,8 +233,15 @@ class PartnershipsMixinView(GenericAPIView):
                     .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
                     .order_by('-start_date')
                     .values('acronym')[:1]
+            ),
+            has_in=Exists(
+                PartnershipAgreement.objects.filter(
+                    partnership=OuterRef('pk'),
+                    start_academic_year__year__lte=academic_year.year,
+                    end_academic_year__year__gte=academic_year.year,
+                )
             )
-        )
+        ).filter(has_in=True)
 
 
 class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
