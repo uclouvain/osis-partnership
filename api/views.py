@@ -48,7 +48,6 @@ class ConfigurationView(APIView):
         )
         ucl_universities = (
             Entity.objects
-            .filter(partnerships__isnull=False)
             .prefetch_related(
                 Prefetch(
                     'parent_of',
@@ -76,14 +75,26 @@ class ConfigurationView(APIView):
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
+                has_in=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('partnerships'),
+                        start_academic_year__year__lte=current_year.year,
+                        end_academic_year__year__gte=current_year.year,
+                    )
+                )
             )
+            .filter(has_in=True)
             .distinct()
             .order_by('most_recent_acronym')
         )
         supervisors = Person.objects.filter(
             Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
         ).order_by('last_name', 'first_name')
-        education_fields = PartnershipYearEducationField.objects.values('uuid', 'label')
+        education_fields = (
+            PartnershipYearEducationField.objects
+            .filter(partnershipyear__academic_year=current_year)
+            .values('uuid', 'label')
+        )
         fundings = (
              Financing.objects
              .filter(academic_year=current_year)

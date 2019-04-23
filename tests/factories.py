@@ -235,3 +235,6 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
 class FinancingFactory(factory.DjangoModelFactory):
     class Meta:
         model = Financing
+
+    name = factory.Faker('word')
+    url = factory.Faker('url')
