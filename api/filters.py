@@ -110,16 +110,16 @@ class PartnerFilter(filters.FilterSet):
             # ('TODO', 'subject_area'),
         )
     )
-    continent = filters.CharFilter(field_name='partner__contact_address__country__continent__name', lookup_expr='iexact')
-    country = filters.CharFilter(field_name='partner__contact_address__country__iso_code', lookup_expr='iexact')
-    city = filters.CharFilter(field_name='partner__contact_address__city', lookup_expr='iexact')
-    partner = filters.UUIDFilter(field_name='partner__uuid')
+    continent = filters.CharFilter(field_name='contact_address__country__continent__name', lookup_expr='iexact')
+    country = filters.CharFilter(field_name='contact_address__country__iso_code', lookup_expr='iexact')
+    city = filters.CharFilter(field_name='contact_address__city', lookup_expr='iexact')
+    partner = filters.UUIDFilter(field_name='uuid')
     ucl_university = filters.UUIDFilter(
-        field_name='ucl_university__uuid',
+        field_name='partnerships__ucl_university__uuid',
         distinct=True,
     )
     ucl_university_labo = filters.UUIDFilter(
-        field_name='ucl_university_labo__uuid',
+        field_name='partnerships__ucl_university_labo__uuid',
         distinct=True,
     )
 
