@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery, OuterRef, Value, Exists
+from django.db.models.expressions import Subquery, OuterRef, Value, Exists, Case, When
 from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
@@ -89,7 +89,7 @@ class ConfigurationView(APIView):
         )
         supervisors = Person.objects.filter(
             Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
-        ).order_by('last_name', 'first_name')
+        ).order_by('last_name', 'first_name').distinct()
         education_fields = (
             PartnershipYearEducationField.objects
             .filter(partnershipyear__academic_year=current_year)
@@ -135,8 +135,19 @@ class PartnersListView(generics.ListAPIView):
                         start_academic_year__year__lte=academic_year.year,
                         end_academic_year__year__gte=academic_year.year,
                     )
-                )
-            ).filter(has_in=True)
+                ),
+                subject_area_ordered=Subquery(  # For ordering only
+                    PartnershipYearEducationField.objects
+                    .filter(
+                        partnershipyear__academic_year=academic_year,
+                        partnershipyear__partnership__partner=OuterRef('pk'),
+                    )
+                    .order_by('label')
+                    .values('label')[:1]
+                ),
+            )
+            .filter(has_in=True)
+            .distinct()
         )
 
 
@@ -212,47 +223,88 @@ class PartnershipsMixinView(GenericAPIView):
                     to_attr='current_year_for_api',
                 ),
             )
-        ).annotate(
-            current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
-            validity_end_year=Subquery(
-                AcademicYear.objects
-                .filter(
-                    partnership_agreements_end__partnership=OuterRef('pk'),
-                    partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
-                )
-                .order_by('-end_date')
-                .values('year')[:1]
-            ),
-            validity_years=Concat(
-                Value(academic_year.year),
-                Value('-'),
-                'validity_end_year',
-                output_field=models.CharField()
-            ),
-            agreement_status=Subquery(
-                PartnershipAgreement.objects
-                .filter(
-                    partnership=OuterRef('pk'),
-                    start_academic_year__year__lte=academic_year.year,
-                    end_academic_year__year__gte=academic_year.year,
-                )
-                .order_by('-end_academic_year__year')
-                .values('status')[:1]
-            ),
-            sector_most_recent_acronym=Subquery(
-                EntityVersion.objects
-                    .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-            ),
-            has_in=Exists(
-                PartnershipAgreement.objects.filter(
-                    partnership=OuterRef('pk'),
-                    start_academic_year__year__lte=academic_year.year,
-                    end_academic_year__year__gte=academic_year.year,
+            .annotate(
+                current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
+                validity_end_year=Subquery(
+                    AcademicYear.objects
+                    .filter(
+                        partnership_agreements_end__partnership=OuterRef('pk'),
+                        partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
+                    )
+                    .order_by('-end_date')
+                    .values('year')[:1]
+                ),
+                validity_years=Concat(
+                    Value(academic_year.year),
+                    Value('-'),
+                    'validity_end_year',
+                    output_field=models.CharField()
+                ),
+                agreement_status=Subquery(
+                    PartnershipAgreement.objects
+                    .filter(
+                        partnership=OuterRef('pk'),
+                        start_academic_year__year__lte=academic_year.year,
+                        end_academic_year__year__gte=academic_year.year,
+                    )
+                    .order_by('-end_academic_year__year')
+                    .values('status')[:1]
+                ),
+                sector_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                has_in=Exists(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                        start_academic_year__year__lte=academic_year.year,
+                        end_academic_year__year__gte=academic_year.year,
+                    )
+                ),
+                subject_area_ordered=Subquery(  # For ordering only
+                    PartnershipYearEducationField.objects
+                    .filter(
+                        partnershipyear__academic_year=academic_year,
+                        partnershipyear__partnership=OuterRef('pk'),
+                    )
+                    .order_by('label')
+                    .values('label')[:1]
+                ),
+                type_ordered=Subquery(  # For ordering only
+                    PartnershipYear.objects
+                    .filter(academic_year=academic_year, partnership=OuterRef('pk'))
+                    .annotate(
+                        type_ordered=Case(  # We can't make a Case directly as it will create several lines in the results
+                            When(
+                                (Q(is_sms=True)
+                                | Q(is_smp=True)
+                                | Q(is_smst=True))
+                                & (Q(is_sta=True)
+                                   | Q(is_stt=True)),
+                                then=Value('a-student-staff')
+                            ),
+                            When(
+                                Q(is_sms=True)
+                                | Q(is_smp=True)
+                                | Q(is_smst=True),
+                                then=Value('b-student')
+                            ),
+                            When(
+                                Q(is_sta=True)
+                                | Q(is_stt=True),
+                                then=Value('c-staff')
+                            ),
+                            default=Value('d-none'),
+                            output_field=models.CharField(),
+                        )
+                    ).values('type_ordered')[:1]
                 )
             )
-        ).filter(has_in=True)
+            .filter(has_in=True)
+            .distinct()
+        )
 
 
 class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):

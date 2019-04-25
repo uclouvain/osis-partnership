@@ -98,11 +98,11 @@ class PartnersApiViewTest(TestCase):
         data = response.json()
         self.assertEqual(len(data['results']), 2)
 
-    # def test_ordering_subject_area(self):
-    #     response = self.client.get(self.url + '?ordering=subject_area')
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.json()
-    #     self.assertEqual(len(data['results']), 2)
+    def test_ordering_subject_area(self):
+        response = self.client.get(self.url + '?ordering=subject_area')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data['results']), 2)
 
     def test_filter_continent(self):
         response = self.client.get(self.url + '?continent=' + str(self.continent.name))

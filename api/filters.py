@@ -107,7 +107,7 @@ class PartnerFilter(filters.FilterSet):
             ('contact_address__country__name', 'country_en'),
             ('contact_address__city', 'city'),
             ('partnerships__ucl_university', 'ucl_university'),
-            # ('TODO', 'subject_area'),
+            ('subject_area_ordered', 'subject_area'),
         )
     )
     continent = filters.CharFilter(field_name='contact_address__country__continent__name', lookup_expr='iexact')
@@ -241,8 +241,8 @@ class PartnershipFilter(filters.FilterSet):
             ('partner__contact_address__country__name', 'country_en'),
             ('partner__contact_address__city', 'city'),
             ('ucl_university', 'ucl_university'),
-            # ('TODO', 'type'),
-            # ('TODO', 'subject_area'),
+            ('type_ordered', 'type'),
+            ('subject_area_ordered', 'subject_area'),
         )
     )
     continent = filters.CharFilter(field_name='partner__contact_address__country__continent__name', lookup_expr='iexact')
