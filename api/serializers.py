@@ -157,12 +157,12 @@ class PartnershipSerializer(serializers.ModelSerializer):
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
-            'out_partner_contact',
+            'out_partner_contacts',
             # IN
             'in_contact', 'in_portal',
             # STAFF
             'staff_contact_name', 'staff_funding',
-            'staff_partner_contact',
+            'staff_partner_contacts',
         ]
 
     def _get_current_year_attr(self, partnership, attr):
