@@ -93,6 +93,7 @@ class ConfigurationView(APIView):
         education_fields = (
             PartnershipYearEducationField.objects
             .filter(partnershipyear__academic_year=current_year)
+            .distinct()
             .values('uuid', 'label')
         )
         fundings = (
