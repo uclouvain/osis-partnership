@@ -2263,7 +2263,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
         # Query filter
         if self.q:
             qs = qs.filter(title__icontains=self.q)
-        return qs.distinct('education_group')
+        return qs.distinct('education_group').order_by()
 
     def get_result_label(self, result):
         return '{0.acronym} - {0.title}'.format(result)
