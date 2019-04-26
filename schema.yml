@@ -173,24 +173,24 @@ components:
         out_funding:
           name: Erasmus
           url: https://erasmus.com/
-        out_partner_contact:
-          title: mr
-          first_name: John
-          last_name: Doe
-          phone: +33245678987
-          email: john.doe@example.com
+        out_partner_contacts:
+          - title: mr
+            first_name: John
+            last_name: Doe
+            phone: +33245678987
+            email: john.doe@example.com
         in_contact:
           name: John Doe
           phone: +33245678987
           email: john.doe@example.com
         in_portal: https://example.com
         staff_contact_name: John DOE
-        staff_partner_contact:
-          title: mr
-          first_name: John
-          last_name: Doe
-          phone: +33245678987
-          email: john.doe@example.com
+        staff_partner_contacts:
+          - title: mr
+            first_name: John
+            last_name: Doe
+            phone: +33245678987
+            email: john.doe@example.com
         staff_funding:
           name: Erasmus
           url: https://erasmus.com/
@@ -260,9 +260,11 @@ components:
           format: uri
         out_funding:
           $ref: '#/components/schemas/Funding'
-        out_partner_contact:
-          description: Contact in partner institution
-          $ref: '#/components/schemas/Contact'
+        out_partner_contacts:
+          description: Contacts in partner institution
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
         in_contact:
           $ref: '#/components/schemas/Contact'
         in_portal:
@@ -271,9 +273,11 @@ components:
         staff_contact_name:
           description: UCL contact
           type: string
-        staff_partner_contact:
-          description: Contact in partner institution
-          $ref: '#/components/schemas/Contact'
+        staff_partner_contacts:
+          description: Contacts in partner institution
+          type: array
+            items:
+            $ref: '#/components/schemas/Contact'
         staff_funding:
           $ref: '#/components/schemas/Funding'
     Error:
