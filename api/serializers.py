@@ -139,14 +139,14 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
-    out_partner_contact = ContactSerializer(source='contacts')
+    out_partner_contacts = ContactSerializer(source='contacts', many=True)
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url', allow_null=True)
 
     staff_contact_name = serializers.SerializerMethodField()
     staff_funding = serializers.SerializerMethodField()
-    staff_partner_contact = ContactSerializer(source='contacts')
+    staff_partner_contacts = ContactSerializer(source='contacts', many=True)
 
     class Meta:
         model = Partnership
