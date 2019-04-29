@@ -120,7 +120,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     )
     partner = PartnerSerializer()
     partner_entity = serializers.CharField(source='partner_entity.name', allow_null=True)
-    supervisor = serializers.CharField(source='supervisor.__str__')
+    supervisor = serializers.CharField(allow_null=True)
     ucl_sector = serializers.CharField(source='sector_most_recent_acronym', allow_null=True)
     ucl_university = EntitySerializer()
     ucl_university_labo = EntitySerializer()

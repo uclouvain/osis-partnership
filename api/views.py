@@ -235,6 +235,7 @@ class PartnershipsMixinView(GenericAPIView):
                     .order_by('-end_date')
                     .values('year')[:1]
                 ),
+            ).annotate(
                 validity_years=Concat(
                     Value(academic_year.year),
                     Value('-'),
