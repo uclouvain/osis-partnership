@@ -902,9 +902,9 @@ class PartnershipConfiguration(models.Model):
             self.partnership_api_max_date_day,
         )
         if date.today() <= limit_date:
-            return AcademicYear.objects.filter(year=date.today().year + 1).first()
+            return AcademicYear.objects.filter(year=date.today().year - 1).first()
         else:
-            return AcademicYear.objects.filter(year=date.today().year + 2).first()
+            return AcademicYear.objects.filter(year=date.today().year).first()
 
 
 class UCLManagementEntity(models.Model):
