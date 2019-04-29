@@ -1,0 +1,576 @@
+openapi: "3.0.0"
+servers:
+ - url: https://{environment}.osis.uclouvain.be/api/v1/partnerships/
+   variables:
+     environment:
+       default: dev
+       enum:
+         - dev # Development server
+         - qa # Staging server
+         - test # Test server
+ - url: https://osis.uclouvain.be/api/v1/partnerships/
+   description: Production server
+info:
+  version: 1.0.0
+  title: OSIS Partnerships
+components:
+  schemas:
+    ValueLabel:
+      type: object
+      required:
+        - id
+        - label
+      description: An label associated with an id
+      example:
+        id: 2
+        label: value
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    Entity:
+      description: An entity
+      example:
+        name: Science
+        acronym: SC
+      properties:
+        name:
+          type: string
+        acronym:
+          type: string
+    Funding:
+      description: A funding with a name and a url
+      example:
+        name: Erasmus
+        url: https://erasmus.com/
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+    Contact:
+      type: object
+      description: A contact with a name, a phone and an email
+      example:
+        name: John Doe
+        phone: +33245678987
+        email: john.doe@example.com
+      properties:
+        title:
+          type: string
+          description: mainly mr or mme
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+    Partner:
+      type: object
+      description: A complete description of a partner
+      example:
+        uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        name: Middle East Technical University
+        website: https://example.com
+        partner_entity: Faculdade de Odontologia de Piracicaba
+        erasmus_code: TR ANKARA04
+        partner_type: Université ou IES
+        city: Ankara
+        country: Turquie
+        country_iso: TK
+        partnerships_count: 1
+        faculties:
+          - FIAL
+        subject_area:
+          - Subject 1
+          - Subject 2
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        website:
+          type: string
+        erasmus_code:
+          type: string
+        partner_entity:
+          type: string
+        partner_type:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        country_iso:
+          type: string
+        partnerships_count:
+          type: number
+        faculties:
+          type: array
+          items:
+            type: string
+        subject_area:
+          type: array
+          items:
+            type: string
+    Partnership:
+      type: object
+      description: A complete description of a partnership
+      example:
+        partner:
+          name: Middle East Technical University
+          website: https://example.com
+          partner_entity: Faculdade de Odontologia de Piracicaba
+          erasmus_code: TR ANKARA04
+          partner_type: Université ou IES
+          city: Ankara
+          country: Turquie
+          country_iso: TK
+          partnerships_count: 1
+          faculties:
+            - FIAL
+          subject_area:
+            - Subject 1
+            - Subject 2
+        education_fields:
+          - Field 1
+          - Field 2
+        ucl_university:
+          name: science
+          acronym: SC
+        ucl_university_labo:
+          name: science
+          acronym: SC
+        supervisor: John DOE
+        is_sms: false
+        is_smp: false
+        is_smst: false
+        is_sta: true
+        is_stt: false
+        status:
+          status: validated
+          valid_years: 2019-2022
+        medias:
+          - url: http://example.com/file1
+            name: file 1
+        out_education_levels:
+          - Level 1
+          - Level 2
+        out_entities:
+          - FIAL
+        out_university_offers:
+          - Offer 1
+        out_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        out_portal: https://example.com
+        out_funding:
+          name: Erasmus
+          url: https://erasmus.com/
+        out_partner_contacts:
+          - title: mr
+            first_name: John
+            last_name: Doe
+            phone: +33245678987
+            email: john.doe@example.com
+        in_contact:
+          name: John Doe
+          phone: +33245678987
+          email: john.doe@example.com
+        in_portal: https://example.com
+        staff_contact_name: John DOE
+        staff_partner_contacts:
+          - title: mr
+            first_name: John
+            last_name: Doe
+            phone: +33245678987
+            email: john.doe@example.com
+        staff_funding:
+          name: Erasmus
+          url: https://erasmus.com/
+      properties:
+        partner:
+          $ref: '#/components/schemas/Partner'
+        education_fields:
+          type: array
+          items:
+            type: string
+        ucl_sector:
+          type: string
+          description: Acronym of the sector
+        ucl_university:
+          $ref: '#/components/schemas/Entity'
+        ucl_university_labo:
+          $ref: '#/components/schemas/Entity'
+        supervisor:
+          type: string
+        is_sms:
+          type: boolean
+        is_smp:
+          type: boolean
+        is_smst:
+          type: boolean
+        is_sta:
+          type: boolean
+        is_stt:
+          type: boolean
+        status:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - waiting
+                - validated
+                - refused
+            valid_years:
+              type: string
+        medias:
+          type: array
+          items:
+            type: object
+            items:
+              name:
+                type: string
+              url:
+                type: string
+        out_education_levels:
+          type: array
+          items:
+            type: string
+        out_entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        out_university_offers:
+          type: array
+          items:
+            type: string
+        out_contact:
+          description: UCL contact
+          $ref: '#/components/schemas/Contact'
+        out_portal:
+          type: string
+          format: uri
+        out_funding:
+          $ref: '#/components/schemas/Funding'
+        out_partner_contacts:
+          description: Contacts in partner institution
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        in_contact:
+          $ref: '#/components/schemas/Contact'
+        in_portal:
+          type: string
+          format: uri
+        staff_contact_name:
+          description: UCL contact
+          type: string
+        staff_partner_contacts:
+          description: Contacts in partner institution
+          type: array
+            items:
+            $ref: '#/components/schemas/Contact'
+        staff_funding:
+          $ref: '#/components/schemas/Funding'
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  parameters:
+    limit:
+      name: limit
+      in: query
+      description: How many items to return at one time
+      schema:
+        type: integer
+        format: int32
+        maximum: 100
+        default: 25
+        example: 42
+    offset:
+      name: offset
+      in: query
+      description: The initial index from which to return the results.
+      schema:
+        type: integer
+        example: 51
+    continent:
+      name: continent
+      in: query
+      description: The continent uuid
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    country:
+      name: country
+      in: query
+      description: The country uuid
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    city:
+      name: city
+      in: query
+      description: The city uuid
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    partner:
+      name: partner
+      in: query
+      description: The uuid of the partner
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    ucl_university:
+      name: ucl_university
+      in: query
+      description: The uuid of the faculty
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    ucl_university_labo:
+      name: ucl_university_labo
+      in: query
+      description: The uuid of the faculty's school
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    supervisor:
+      name: supervisor
+      in: query
+      description: The uuid of the supervisor
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    education_field:
+      name: education_field
+      in: query
+      description: The uuid of the education field
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    mobility_type:
+      name: mobility_type
+      in: query
+      description: The type of mobility, either for student or for staff
+      schema:
+        type: string
+        example: student
+        enum:
+          - student
+          - staff
+    funding:
+      name: funding
+      in: query
+      description: The type of funding if there is any
+      schema:
+        type: string
+        example: erasmus
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+paths:
+  /configuration/:
+    get:
+      summary: List all possible values for parameters on other endpoints
+      tags:
+        - partners
+      operationId: getPartnershipsConfiguration
+      responses:
+        '200':
+          description: The list of possible values for parameters on other endpoints
+          content:
+            application/json:
+              schema:
+                properties:
+                  continents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        countries:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              iso_code:
+                                type: string
+                  partners:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                  ucl_universities:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                      ucl_university_labos:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ValueLabel'
+                  supervisors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                  education_fields:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                  fundings:
+                    type: array
+                    items:
+                      type: string
+  /partners/:
+    get:
+      summary: List all partners
+      tags:
+        - partners
+      operationId: getPartnersList
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - ordering:
+            name: ordering
+            in: query
+            description: The ordering of the items returned
+            schema:
+              type: string
+              default: partner
+              example: country_en
+              enum:
+                - partner
+                - country_en
+                - city
+                - ucl_university
+                - subject_area
+        - $ref: '#/components/parameters/continent'
+        - $ref: '#/components/parameters/country'
+        - $ref: '#/components/parameters/city'
+        - $ref: '#/components/parameters/partner'
+        - $ref: '#/components/parameters/ucl_university'
+        - $ref: '#/components/parameters/ucl_university_labo'
+        - $ref: '#/components/parameters/supervisor'
+        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/mobility_type'
+        - $ref: '#/components/parameters/funding'
+      responses:
+        '200':
+          description: A paged array of partners
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  next:
+                    type: string
+                    format: uri
+                  previous:
+                    type: string
+                    format: uri
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Partner"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /partnerships/:
+    get:
+      summary: List all partnerships
+      tags:
+        - partnerships
+      operationId: getPartnershipsList
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - ordering:
+            name: ordering
+            in: query
+            description: The ordering of the items returned
+            schema:
+              type: string
+              default: partner
+              example: country_en
+              enum:
+                - partner
+                - country_en
+                - city
+                - ucl_university
+                - type
+                - subject_area
+        - $ref: '#/components/parameters/continent'
+        - $ref: '#/components/parameters/country'
+        - $ref: '#/components/parameters/city'
+        - $ref: '#/components/parameters/partner'
+        - $ref: '#/components/parameters/ucl_university'
+        - $ref: '#/components/parameters/ucl_university_labo'
+        - $ref: '#/components/parameters/supervisor'
+        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/mobility_type'
+        - $ref: '#/components/parameters/funding'
+      responses:
+        '200':
+          description: A paged array of partnerships
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  next:
+                    type: string
+                    format: uri
+                  previous:
+                    type: string
+                    format: uri
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Partnership"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /partnerships/{uuid}/:
+    get:
+      summary: Get the detail for a particular partnership
+      tags:
+        - partnerships
+      operationId: getPartnershipsDetail
+      responses:
+        '200':
+          description: A partnership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Partnership"
+        '404':
+          $ref: '#/components/responses/NotFound'
