@@ -1,6 +1,8 @@
 from django.conf.urls import url, include
 
-from partnership.api.views import ConfigurationView, PartnersListView, PartnershipsListView, PartnershipsRetrieveView
+from .views.partnerships import PartnershipsListView, PartnershipsRetrieveView
+from .views.partners import PartnersListView
+from .views.configuration import ConfigurationView
 
 urlpatterns = [
     url(r'^configuration/$', ConfigurationView.as_view(), name='configuration'),

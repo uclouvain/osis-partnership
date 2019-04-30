@@ -8,148 +8,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.person import Person
-from partnership.api.filters import PartnerFilter, PartnershipFilter
-from partnership.api.serializers import PartnerSerializer, PartnershipSerializer, ContinentConfigurationSerializer, \
-    PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, SupervisorConfigurationSerializer, \
-    EducationFieldConfigurationSerializer
+from partnership.api.filters import PartnershipFilter
+from partnership.api.serializers import PartnershipSerializer
+
 from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
-    PartnershipConfiguration, PartnershipAgreement, Media, Financing
-from reference.models.continent import Continent
-
-
-class ConfigurationView(APIView):
-
-    permission_classes = (AllowAny,)
-
-    def get(self, request):
-        current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
-
-        continents = Continent.objects.prefetch_related('country_set')
-        partners = (
-            Partner.objects
-            .annotate(
-                has_in=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership__partner=OuterRef('pk'),
-                        start_academic_year__year__lte=current_year.year,
-                        end_academic_year__year__gte=current_year.year,
-                    )
-                )
-            )
-            .filter(has_in=True)
-            .values('uuid', 'name')
-        )
-        ucl_universities = (
-            Entity.objects
-            .prefetch_related(
-                Prefetch(
-                    'parent_of',
-                    queryset=EntityVersion.objects
-                        .filter(entity__partnerships_labo__isnull=False, end_date__isnull=True)
-                        .distinct()
-                ),
-                Prefetch(
-                    'parent_of__entity',
-                    queryset=Entity.objects
-                        .annotate(
-                            most_recent_acronym=Subquery(
-                                EntityVersion.objects
-                                    .filter(entity=OuterRef('pk'))
-                                    .order_by('-start_date')
-                                    .values('acronym')[:1]
-                            ),
-                        )
-                )
-            )
-            .annotate(
-                most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-                has_in=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('partnerships'),
-                        start_academic_year__year__lte=current_year.year,
-                        end_academic_year__year__gte=current_year.year,
-                    )
-                )
-            )
-            .filter(has_in=True)
-            .distinct()
-            .order_by('most_recent_acronym')
-        )
-        supervisors = Person.objects.filter(
-            Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
-        ).order_by('last_name', 'first_name').distinct()
-        education_fields = (
-            PartnershipYearEducationField.objects
-            .filter(partnershipyear__academic_year=current_year)
-            .distinct()
-            .values('uuid', 'label')
-        )
-        fundings = (
-             Financing.objects
-             .filter(academic_year=current_year)
-             .values_list('name', flat=True)
-             .distinct('name')
-             .order_by('name')
-        )
-
-        data = {
-            'continents': ContinentConfigurationSerializer(continents, many=True).data,
-            'partners': PartnerConfigurationSerializer(partners, many=True).data,
-            'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
-            'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
-            'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
-            'fundings': list(fundings),
-        }
-        return Response(data)
-
-
-class PartnersListView(generics.ListAPIView):
-    serializer_class = PartnerSerializer
-    permission_classes = (AllowAny,)
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = PartnerFilter
-
-    def get_queryset(self):
-        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
-
-        return (
-            Partner.objects
-            .select_related('partner_type', 'contact_address__country')
-            .annotate(
-                current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
-                partnerships_count=Count('partnerships'),
-                has_in=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership__partner=OuterRef('pk'),
-                        start_academic_year__year__lte=academic_year.year,
-                        end_academic_year__year__gte=academic_year.year,
-                    )
-                ),
-                subject_area_ordered=Subquery(  # For ordering only
-                    PartnershipYearEducationField.objects
-                    .filter(
-                        partnershipyear__academic_year=academic_year,
-                        partnershipyear__partnership__partner=OuterRef('pk'),
-                    )
-                    .order_by('label')
-                    .values('label')[:1]
-                ),
-            )
-            .filter(has_in=True)
-            .distinct()
-        )
+    PartnershipConfiguration, PartnershipAgreement, Media
 
 
 class PartnershipsMixinView(GenericAPIView):
