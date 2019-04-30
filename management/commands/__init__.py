@@ -1,7 +1,6 @@
 
 class ProgressBarMixin:
-    def print_progress_bar(self, iteration, total, prefix='', suffix='',
-                           decimals=1, length=100, fill='█'):
+    def print_progress_bar(self, iteration, total, **kwargs):
         """
         From http://stackoverflow.com/a/34325723/2575355
 
@@ -15,6 +14,11 @@ class ProgressBarMixin:
             length    - Optional: character length of bar (Int)
             fill      - Optional: bar fill character (Str)
         """
+        prefix = kwargs.get('prefix', '')
+        suffix = kwargs.get('suffix', '')
+        decimals = kwargs.get('decimals', 1)
+        length = kwargs.get('length', 100)
+        fill = kwargs.get('fill', '█')
         percent = ("{0:." + str(decimals) + "f}").format(
             100 * (iteration / float(total))
         )
