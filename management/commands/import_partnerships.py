@@ -1,16 +1,15 @@
 import csv
 import os
 from datetime import date
-from urllib.parse import quote_plus
 
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
-from base.models.academic_year import AcademicYear, current_academic_year
+from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.management.commands import ProgressBarMixin
+from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (Address, Media, Partner, Partnership,
                                 PartnershipAgreement, PartnershipYear,
                                 PartnershipYearEducationField, PartnerType,
@@ -162,29 +161,13 @@ class Command(ProgressBarMixin, BaseCommand):
     def handle(self, *args, **options):
         # Init
         csv_folder = options['csv_folder']
-        # Read CSV file
-        # We may need to do that on the fly if the files are too big
-        partners_lines = []
-        partnerships_lines = []
-        agreements_lines = []
 
-        # Reading files
+        # Read CSV files
+        # We may need to do that on the fly if the files are too big
         self.stdout.write("Reading files 1/5")
-        with open(os.path.join(csv_folder, 'partenaires.csv')) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                partners_lines.append(row)
-        with open(os.path.join(csv_folder, 'partenariats.csv')) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                partnerships_lines.append(row)
-        with open(os.path.join(csv_folder, 'accords.csv')) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                agreements_lines.append(row)
+        partners_lines = self.import_file(csv_folder, 'partenaires.csv')
+        partnerships_lines = self.import_file(csv_folder, 'partenariats.csv')
+        agreements_lines = self.import_file(csv_folder, 'accords.csv')
 
         # Import partners
         self.stdout.write("Importing partners 2/5")
@@ -225,6 +208,15 @@ class Command(ProgressBarMixin, BaseCommand):
             self.print_progress_bar(index, total_lines_number)
 
     # HELPERS
+
+    def import_file(self, csv_folder, filename):
+        rows = []
+        with open(os.path.join(csv_folder, filename)) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=';')
+            next(csv_reader)  # Header
+            for row in csv_reader:
+                rows.append(row)
+        return rows
 
     def write_error(self, message):
         self.stderr.write('({filename} line {line}) {message}'.format(

@@ -3,7 +3,7 @@ import csv
 
 from django.core.management import BaseCommand
 
-from partnership.management.commands import ProgressBarMixin
+from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import Partner
 
 
