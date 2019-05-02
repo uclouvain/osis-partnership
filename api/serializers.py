@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from base.models.entity import Entity
@@ -5,9 +6,6 @@ from base.models.person import Person
 from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact, Media
 from reference.models.continent import Continent
 from reference.models.country import Country
-
-
-STAFF_FUNDING_URL = 'https://intranet.uclouvain.be/fr/myucl/administrations/adri/mobilite-du-personnel.html'
 
 
 class CountryConfigurationSerializer(serializers.ModelSerializer):
@@ -272,5 +270,5 @@ class PartnershipSerializer(serializers.ModelSerializer):
         funding = self.get_funding(partnership)
         if funding is None:
             return None
-        funding['url'] = STAFF_FUNDING_URL
+        funding['url'] = settings.STAFF_FUNDING_URL
         return funding
