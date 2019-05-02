@@ -54,7 +54,8 @@ components:
       type: object
       description: A contact with a name, a phone and an email
       example:
-        name: John Doe
+        first_name: John
+        last_name: Doe
         phone: +33245678987
         email: john.doe@example.com
       properties:
@@ -157,7 +158,8 @@ components:
         out_university_offers:
           - Offer 1
         out_contact:
-          name: John Doe
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         out_portal: https://example.com
@@ -171,7 +173,8 @@ components:
             phone: +33245678987
             email: john.doe@example.com
         in_contact:
-          name: John Doe
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         in_portal: https://example.com
