@@ -14,7 +14,7 @@ class ConfigurationApiViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse('partnerships_api_v1:configuration')
+        cls.url = reverse('partnership_api_v1:configuration')
 
         AcademicYearFactory.produce_in_future(quantity=3)
         current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()

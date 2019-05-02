@@ -15,7 +15,7 @@ class PartnershipApiViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse('partnerships_api_v1:partnerships:list')
+        cls.url = reverse('partnership_api_v1:partnerships:list')
 
         AcademicYearFactory.produce_in_future(quantity=3)
         current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
@@ -178,7 +178,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_retrieve(self):
         url = reverse(
-            'partnerships_api_v1:partnerships:retrieve',
+            'partnership_api_v1:partnerships:retrieve',
             kwargs={'uuid': self.partnership.uuid},
         )
         response = self.client.get(url)

@@ -113,7 +113,7 @@ class PartnerSerializer(serializers.ModelSerializer):
 
 class PartnershipSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='partnerships_api_v1:partnerships:retrieve',
+        view_name='partnership_api_v1:partnerships:retrieve',
         lookup_field='uuid',
     )
     partner = PartnerSerializer()
