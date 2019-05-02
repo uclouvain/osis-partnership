@@ -77,15 +77,12 @@ components:
         uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
         name: Middle East Technical University
         website: https://example.com
-        partner_entity: Faculdade de Odontologia de Piracicaba
         erasmus_code: TR ANKARA04
         partner_type: Université ou IES
         city: Ankara
         country: Turquie
         country_iso: TK
         partnerships_count: 1
-        faculties:
-          - FIAL
         subject_area:
           - Subject 1
           - Subject 2
@@ -98,8 +95,6 @@ components:
           type: string
         erasmus_code:
           type: string
-        partner_entity:
-          type: string
         partner_type:
           type: string
         city:
@@ -110,10 +105,6 @@ components:
           type: string
         partnerships_count:
           type: number
-        faculties:
-          type: array
-          items:
-            type: string
         subject_area:
           type: array
           items:
