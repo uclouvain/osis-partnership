@@ -1,15 +1,15 @@
 import csv
 import os
 from datetime import date
-from urllib.parse import quote_plus
 
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
-from base.models.academic_year import AcademicYear, current_academic_year
+from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.person import Person
+from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (Address, Media, Partner, Partnership,
                                 PartnershipAgreement, PartnershipYear,
                                 PartnershipYearEducationField, PartnerType,
@@ -135,7 +135,7 @@ COUNTRIES_OLD_TO_ISO = {
 }
 
 
-class Command(BaseCommand):
+class Command(ProgressBarMixin, BaseCommand):
 
     line = -1
     filename = ''
@@ -154,36 +154,20 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'csv_folder', type=str, help='folder containing partenaires.csv, partenariats.csv and accords.csv',
+            'csv_folder', type=str, help='folder containing partenaires.csv, '
+                                         'partenariats.csv and accords.csv',
         )
 
     def handle(self, *args, **options):
         # Init
         csv_folder = options['csv_folder']
-        # Read CSV file
+
+        # Read CSV files
         # We may need to do that on the fly if the files are too big
-        partners_lines = []
-        partnerships_lines = []
-        agreements_lines = []
-
-        # Reading files
         self.stdout.write("Reading files 1/5")
-        with open(os.path.join(csv_folder, 'partenaires.csv'), 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                partners_lines.append(row)
-        with open(os.path.join(csv_folder, 'partenariats.csv'), 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                partnerships_lines.append(row)
-        with open(os.path.join(csv_folder, 'accords.csv'), 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            next(csv_reader)  # Header
-            for row in csv_reader:
-                agreements_lines.append(row)
-
+        partners_lines = self.import_file(csv_folder, 'partenaires.csv')
+        partnerships_lines = self.import_file(csv_folder, 'partenariats.csv')
+        agreements_lines = self.import_file(csv_folder, 'accords.csv')
 
         # Import partners
         self.stdout.write("Importing partners 2/5")
@@ -225,32 +209,19 @@ class Command(BaseCommand):
 
     # HELPERS
 
+    def import_file(self, csv_folder, filename):
+        rows = []
+        with open(os.path.join(csv_folder, filename)) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=';')
+            next(csv_reader)  # Header
+            for row in csv_reader:
+                rows.append(row)
+        return rows
+
     def write_error(self, message):
         self.stderr.write('({filename} line {line}) {message}'.format(
             filename=self.filename, line=self.line, message=message)
         )
-
-    def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
-        """
-        From http://stackoverflow.com/a/34325723/2575355
-
-        Call in a loop to create terminal progress bar
-        @params:
-            iteration   - Required  : current iteration (Int)
-            total       - Required  : total iterations (Int)
-            prefix      - Optional  : prefix string (Str)
-            suffix      - Optional  : suffix string (Str)
-            decimals    - Optional  : positive number of decimals in percent complete (Int)
-            length      - Optional  : character length of bar (Int)
-            fill        - Optional  : bar fill character (Str)
-        """
-        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filled_length = int(length * iteration // total)
-        bar = fill * filled_length + '-' * (length - filled_length)
-        self.stdout.write('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), ending='\r')
-        # Print New Line on Complete
-        if iteration == total:
-            self.stdout.write('')
 
     def parse_date(self, date_string):
         if not date_string:
@@ -267,7 +238,9 @@ class Command(BaseCommand):
         if old_code not in self.countries:
             iso = COUNTRIES_OLD_TO_ISO.get(old_code, None)
             if iso is None:
-                self.write_error('Unknown old country code {code} (fmp_id={fmp_id} ; nom={nom})'.format(
+                msg = 'Unknown old country code {code} (fmp_id={fmp_id} ; ' \
+                       'nom={nom})'
+                self.write_error(msg.format(
                     code=old_code,
                     fmp_id=line[2],
                     nom=line[6],
@@ -283,9 +256,12 @@ class Command(BaseCommand):
                 if iso in code_fix:
                     iso = code_fix[iso]
                 try:
-                    self.countries[old_code] = Country.objects.get(iso_code=iso)
+                    country = Country.objects.get(iso_code=iso)
+                    self.countries[old_code] = country
                 except Country.DoesNotExist:
-                    self.write_error('Unknown country for iso {iso} (fmp_id={fmp_id} ; nom={nom})'.format(
+                    msg = 'Unknown country for iso {iso} (fmp_id={fmp_id} ; ' \
+                           'nom={nom})'
+                    self.write_error(msg.format(
                         iso=iso,
                         fmp_id=line[2],
                         nom=line[6],
@@ -301,7 +277,9 @@ class Command(BaseCommand):
             if partner_type is None:
                 partner_type = PartnerType.objects.create(value='IMPORTED')
             self.default_values = {
-                'author': User.objects.filter(person__personentity__entity__entityversion__acronym='ADRI')[0],
+                'author': User.objects.filter(
+                    person__personentity__entity__entityversion__acronym='ADRI'
+                )[0],
                 'partner_type': partner_type,
                 'website': 'https://uclouvain.be',
             }
@@ -342,7 +320,9 @@ class Command(BaseCommand):
         partner.external_id = self.get_partner_external_id(line[1], partner.pk)
         partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
-        partner.erasmus_code = line[4] if line[4] and line[4] != line[10] else None
+        partner.erasmus_code = (
+            line[4] if line[4] and line[4] != line[10] else None
+        )
         partner.name = line[6] if line[6] else None
         partner.start_date = self.parse_date(line[7])
         partner.end_date = self.parse_date(line[8])
@@ -366,7 +346,9 @@ class Command(BaseCommand):
         try:
             partner.save()
         except IntegrityError as e:
-            self.write_error('Error while importing partner {0}: {1}'.format(partner.name, str(e)))
+            self.write_error('Error while importing partner {0}: {1}'.format(
+                partner.name, str(e))
+            )
             return
 
         # Médias
@@ -396,7 +378,8 @@ class Command(BaseCommand):
         if not now_known_as or line[2] not in self.partners_by_code:
             return
         if now_known_as not in self.partners_by_code:
-            self.write_error("Unknown partner {partner} (fmp_id={fmp_id} ; nom={nom})".format(
+            msg = "Unknown partner {partner} (fmp_id={fmp_id} ; nom={nom})"
+            self.write_error(msg.format(
                 partner=now_known_as,
                 fmp_id=line[2],
                 nom=line[6],
@@ -406,18 +389,19 @@ class Command(BaseCommand):
         partner.now_known_as = self.partners_by_code[now_known_as]
         partner.save()
 
-
     # PARTNERSHIPS
-
     def get_education_field(self, code):
         if not code:
             return None
         code = code.rjust(4, '0')
         if code not in self.education_fields:
             try:
-                self.education_fields[code] = PartnershipYearEducationField.objects.get(code=code)
+                ed_field = PartnershipYearEducationField.objects.get(code=code)
+                self.education_fields[code] = ed_field
             except PartnershipYearEducationField.DoesNotExist:
-                self.write_error('Unknown education field {code}'.format(code=code))
+                self.write_error('Unknown education field {code}'.format(
+                    code=code)
+                )
                 self.education_fields[code] = None
         return self.education_fields[code]
 
@@ -433,7 +417,9 @@ class Command(BaseCommand):
                         .last()
                 )
             except Entity.DoesNotExist:
-                self.write_error('Unknown entity {acronym}'.format(acronym=acronym))
+                self.write_error('Unknown entity {acronym}'.format(
+                    acronym=acronym)
+                )
                 self.entities[acronym] = None
         return self.entities[acronym]
 
@@ -444,9 +430,12 @@ class Command(BaseCommand):
 
         if global_id not in self.supervisors:
             try:
-                self.supervisors[global_id] = Person.objects.get(global_id=global_id)
+                supervisor = Person.objects.get(global_id=global_id)
+                self.supervisors[global_id] = supervisor
             except Person.DoesNotExist:
-                self.write_error('Unknown responsable {global_id}'.format(global_id=global_id))
+                self.write_error('Unknown responsable {global_id}'.format(
+                    global_id=global_id)
+                )
                 self.supervisors[global_id] = None
 
         return self.supervisors[global_id]
@@ -462,7 +451,9 @@ class Command(BaseCommand):
     @transaction.atomic
     def import_partnership(self, line):
         if not line[1]:
-            self.write_error('Invalid partenariat_id (partenariat_id_osis={0}, partenariat_id={1})'.format(
+            msg = 'Invalid partenariat_id (partenariat_id_osis={0}, ' \
+                  'partenariat_id={1})'
+            self.write_error(msg.format(
                 line[0], line[1],
             ))
             return
@@ -471,12 +462,15 @@ class Command(BaseCommand):
         try:
             partnership = Partnership.objects.get(external_id=external_id)
         except Partnership.DoesNotExist:
-            partnership = Partnership(external_id=external_id, author=default_values['author'])
+            partnership = Partnership(external_id=external_id,
+                                      author=default_values['author'])
 
         partner = self.partners_by_csv_id.get(line[5], None)
         if partner is None:
-            self.write_error('Invalid partenaire_id_osis {partner_id} '
-                             '(partenariat_id_osis={osis}, partenariat_id={partenariat_id})'.format(
+            msg = 'Invalid partenaire_id_osis {partner_id} ' \
+                  '(partenariat_id_osis={osis}, ' \
+                  'partenariat_id={partenariat_id})'
+            self.write_error(msg.format(
                 partner_id=line[5],
                 osis=line[0],
                 partenariat_id=line[1],
@@ -511,10 +505,14 @@ class Command(BaseCommand):
         for year in range(2018, end_year):
             academic_year = self.get_academic_year(year)
             if academic_year is None:
-                self.write_error('No academic year for year {year}'.format(year))
+                self.write_error(
+                    'No academic year for year {year}'.format(year=year)
+                )
                 continue
             try:
-                partnership_year = partnership.years.get(academic_year=academic_year)
+                partnership_year = partnership.years.get(
+                    academic_year=academic_year
+                )
             except PartnershipYear.DoesNotExist:
                 partnership_year = PartnershipYear(
                     partnership=partnership,
@@ -528,7 +526,8 @@ class Command(BaseCommand):
             if partnership.ucl_university_labo is not None:
                 partnership_year.entities = [partnership.ucl_university_labo]
 
-        self.partnerships_for_agreements['{0}-{1}'.format(line[5], line[11])] = partnership
+        key = '{0}-{1}'.format(line[5], line[11])
+        self.partnerships_for_agreements[key] = partnership
 
     # AGREEMENTS
 
@@ -541,10 +540,12 @@ class Command(BaseCommand):
             self.write_error('No external id')
             return
 
-        partnership = self.partnerships_for_agreements.get('{0}-{1}'.format(line[5], line[7]), None)
+        key = '{0}-{1}'.format(line[5], line[7])
+        partnership = self.partnerships_for_agreements.get(key, None)
         if partnership is None:
-            self.write_error('No partnership for partner/fmp {0}-{1} (num_accord={2}, '
-                             'partenaire_id_osis={3}, entite_fmp={4})'.format(
+            msg = 'No partnership for partner/fmp {0}-{1} (num_accord={2}, ' \
+                   'partenaire_id_osis={3}, entite_fmp={4})'
+            self.write_error(msg.format(
                 line[5],
                 line[7],
                 line[0],
@@ -556,7 +557,9 @@ class Command(BaseCommand):
         external_id = line[0]
         default_values = self.get_default_value()
         try:
-            agreement = PartnershipAgreement.objects.get(external_id=external_id)
+            agreement = PartnershipAgreement.objects.get(
+                external_id=external_id
+            )
         except PartnershipAgreement.DoesNotExist:
             agreement = PartnershipAgreement(external_id=external_id)
 
@@ -572,11 +575,14 @@ class Command(BaseCommand):
             ))
             return
         agreement.partnership = partnership
+        error_msg = 'Academic year does not exist in OSIS : {0} (' \
+                    'num_accord={1}, partenaire_id_osis={2}, entite_fmp={3})'
         try:
-            agreement.start_academic_year = AcademicYear.objects.get(year=start_year)
+            agreement.start_academic_year = AcademicYear.objects.get(
+                year=start_year
+            )
         except AcademicYear.DoesNotExist:
-            self.write_error('Academic year does not exist in OSIS : {0} (num_accord={1}, '
-                             'partenaire_id_osis={2}, entite_fmp={3})'.format(
+            self.write_error(error_msg.format(
                 start_year,
                 line[0],
                 line[5],
@@ -584,10 +590,11 @@ class Command(BaseCommand):
             ))
             return
         try:
-            agreement.end_academic_year = AcademicYear.objects.get(year=end_year - 1)
+            agreement.end_academic_year = AcademicYear.objects.get(
+                year=end_year - 1
+            )
         except AcademicYear.DoesNotExist:
-            self.write_error('Academic year does not exist in OSIS : {0} (num_accord={1}, '
-                             'partenaire_id_osis={2}, entite_fmp={3})'.format(
+            self.write_error(error_msg.format(
                 end_year - 1,
                 line[0],
                 line[5],

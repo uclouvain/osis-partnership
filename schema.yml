@@ -54,7 +54,8 @@ components:
       type: object
       description: A contact with a name, a phone and an email
       example:
-        name: John Doe
+        first_name: John
+        last_name: Doe
         phone: +33245678987
         email: john.doe@example.com
       properties:
@@ -77,15 +78,12 @@ components:
         uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
         name: Middle East Technical University
         website: https://example.com
-        partner_entity: Faculdade de Odontologia de Piracicaba
         erasmus_code: TR ANKARA04
         partner_type: Université ou IES
         city: Ankara
         country: Turquie
         country_iso: TK
         partnerships_count: 1
-        faculties:
-          - FIAL
         subject_area:
           - Subject 1
           - Subject 2
@@ -98,8 +96,6 @@ components:
           type: string
         erasmus_code:
           type: string
-        partner_entity:
-          type: string
         partner_type:
           type: string
         city:
@@ -110,10 +106,6 @@ components:
           type: string
         partnerships_count:
           type: number
-        faculties:
-          type: array
-          items:
-            type: string
         subject_area:
           type: array
           items:
@@ -166,7 +158,8 @@ components:
         out_university_offers:
           - Offer 1
         out_contact:
-          name: John Doe
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         out_portal: https://example.com
@@ -180,7 +173,8 @@ components:
             phone: +33245678987
             email: john.doe@example.com
         in_contact:
-          name: John Doe
+          first_name: John
+          last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         in_portal: https://example.com
@@ -311,24 +305,24 @@ components:
     continent:
       name: continent
       in: query
-      description: The continent uuid
+      description: The continent name
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: Asia
     country:
       name: country
       in: query
-      description: The country uuid
+      description: The country iso code
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     city:
       name: city
       in: query
-      description: The city uuid
+      description: The city name
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: Paris
     partner:
       name: partner
       in: query

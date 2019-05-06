@@ -1,0 +1,10 @@
+plugins:
+  duplication:
+    enabled: true
+    config:
+        count_threshold: 3
+
+exclude_paths:
+- "**/tests/"
+- "**/migrations/"
+- "**/fixtures/"

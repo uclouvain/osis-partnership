@@ -22,18 +22,18 @@
       {% else %}
       <a href="{% if file_url %}{{ file_url }}{% else %}{{ media.file.url }}{% endif %}" class="btn btn-default" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
       {% endif %}
-      {% if can_change and not hide_actions %}
+      {% if can_update_partner and not hide_actions %}
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="{% url "partnerships:medias:update" partnership.id media.id %}"
+        <li><a href="{% url "partnerships:partners:medias:update" partner.id media.id %}"
            class="modal-link"
            data-modal-submit="{% trans "update_media" %}"
            data-modal-title="{{ media }}"
            data-modal="modal-form"><i class="fa fa-pencil fa-fw"></i> {% trans "update_media" %}</a></li>
-        <li><a href="{% url "partnerships:medias:delete" partnership.id media.id %}"
+        <li><a href="{% url "partnerships:partners:medias:delete" partner.id media.id %}"
            class="modal-link"
            data-modal-danger
            data-modal-submit="{% trans "delete_media" %}"

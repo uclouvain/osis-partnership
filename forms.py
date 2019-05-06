@@ -968,6 +968,7 @@ class PartnershipYearForm(forms.ModelForm):
             'offers',
             'is_sms',
             'is_smp',
+            'is_smst',
             'is_sta',
             'is_stt',
             'eligible',
@@ -1068,6 +1069,8 @@ class PartnershipConfigurationForm(forms.ModelForm):
         fields = [
             'partnership_creation_update_max_date_day',
             'partnership_creation_update_max_date_month',
+            'partnership_api_max_date_day',
+            'partnership_api_max_date_month',
             'email_notification_to',
         ]
 
@@ -1083,6 +1086,17 @@ class PartnershipConfigurationForm(forms.ModelForm):
             self.add_error(
                 'partnership_creation_update_max_date_day',
                 ValidationError(_('invalid_partnership_creation_max_date'))
+            )
+        try:
+            date(
+                2001,
+                self.cleaned_data['partnership_api_max_date_month'],
+                self.cleaned_data['partnership_api_max_date_day'],
+            )
+        except ValueError:
+            self.add_error(
+                'partnership_api_max_date_day',
+                ValidationError(_('invalid_partnership_api_max_date'))
             )
         return self.cleaned_data
 

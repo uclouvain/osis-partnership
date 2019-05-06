@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -153,6 +154,8 @@ class Partner(models.Model):
         ('OTH', _('Other')),
     )
 
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
+
     external_id = models.CharField(
         _('external_id'),
         help_text=_('to_synchronize_with_epc'),
@@ -292,6 +295,8 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
+
     external_id = models.CharField(
         _('external_id'),
         help_text=_('to_synchronize_with_epc'),
@@ -345,6 +350,13 @@ class Partnership(models.Model):
     contacts = models.ManyToManyField(
         'partnership.Contact',
         verbose_name=_('contacts'),
+        related_name='+',
+        blank=True,
+    )
+
+    medias = models.ManyToManyField(
+        'partnership.Media',
+        verbose_name=_('medias'),
         related_name='+',
         blank=True,
     )
@@ -554,6 +566,8 @@ class Partnership(models.Model):
         return UCLManagementEntity.objects.filter(
             faculty=self.ucl_university,
             entity=self.ucl_university_labo,
+        ).select_related(
+            'administrative_responsible', 'contact_in_person', 'contact_out_person'
         ).first()
 
     @cached_property
@@ -571,6 +585,7 @@ class Partnership(models.Model):
 
 
 class PartnershipYearEducationField(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     code = models.CharField(max_length=30, unique=True)
     label = models.CharField(max_length=255)
 
@@ -649,6 +664,7 @@ class PartnershipYear(models.Model):
     )
     is_sms = models.BooleanField(_('is_sms'), default=False, blank=True)
     is_smp = models.BooleanField(_('is_smp'), default=False, blank=True)
+    is_smst = models.BooleanField(_('is_smst'), default=False, blank=True)
     is_sta = models.BooleanField(_('is_sta'), default=False, blank=True)
     is_stt = models.BooleanField(_('is_stt'), default=False, blank=True)
     partnership_type = models.CharField(
@@ -844,6 +860,18 @@ class PartnershipConfiguration(models.Model):
         default=12,
     )
 
+    partnership_api_max_date_day = models.IntegerField(
+        _('partnership_api_max_date_day'),
+        choices=DAYS_CHOICES,
+        default=31,
+    )
+
+    partnership_api_max_date_month = models.IntegerField(
+        _('partnership_api_max_date_month'),
+        choices=MONTHES_CHOICES,
+        default=12,
+    )
+
     email_notification_to = models.EmailField(
         _('partnership_email_notification_to'),
         default='programmes.mobilite@uclouvain.be',
@@ -866,6 +894,17 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 1).first()
         else:
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
+
+    def get_current_academic_year_for_api(self):
+        limit_date = date(
+            date.today().year,
+            self.partnership_api_max_date_month,
+            self.partnership_api_max_date_day,
+        )
+        if date.today() <= limit_date:
+            return AcademicYear.objects.filter(year=date.today().year - 1).first()
+        else:
+            return AcademicYear.objects.filter(year=date.today().year).first()
 
 
 class UCLManagementEntity(models.Model):
