@@ -23,8 +23,8 @@ from partnership.utils import (merge_agreement_ranges, user_is_adri,
 
 
 class PartnershipEntityManager(models.Model):
-    person = models.ForeignKey('base.Person')
-    entity = models.ForeignKey('base.Entity')
+    person = models.ForeignKey('base.Person', on_delete=models.CASCADE)
+    entity = models.ForeignKey('base.Entity', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} {}'.format(self.person, self.entity)
@@ -345,6 +345,7 @@ class Partnership(models.Model):
         related_name='partnerships_supervisor',
         blank=True,
         null=True,
+        on_delete = models.CASCADE
     )
 
     contacts = models.ManyToManyField(
@@ -745,7 +746,6 @@ class PartnershipYear(models.Model):
 
 
 class PartnershipAgreement(models.Model):
-
     STATUS_WAITING = 'waiting'
     STATUS_VALIDATED = 'validated'
     STATUS_REFUSED = 'refused'
@@ -912,6 +912,7 @@ class UCLManagementEntity(models.Model):
         'base.Entity',
         verbose_name=_("faculty"),
         related_name='faculty_managements',
+        on_delete = models.CASCADE
     )
     entity = models.ForeignKey(
         'base.Entity',
@@ -919,16 +920,19 @@ class UCLManagementEntity(models.Model):
         blank=True,
         verbose_name=_("entity"),
         related_name='entity_managements',
+        on_delete=models.CASCADE
     )
     academic_responsible = models.ForeignKey(
         'base.Person',
         related_name='management_entities',
         verbose_name=_("academic_responsible"),
+        on_delete=models.CASCADE
     )
     administrative_responsible = models.ForeignKey(
         'base.Person',
         related_name='+',
         verbose_name=_("administrative_responsible"),
+        on_delete=models.CASCADE
     )
     contact_in_person = models.ForeignKey(
         'base.Person',
@@ -936,6 +940,7 @@ class UCLManagementEntity(models.Model):
         null=True,
         blank=True,
         verbose_name=_("contact_in_name"),
+        on_delete=models.CASCADE
     )
     contact_in_email = models.EmailField(
         null=True,
@@ -953,6 +958,7 @@ class UCLManagementEntity(models.Model):
         null=True,
         blank=True,
         verbose_name=_("contact_out_name"),
+        on_delete=models.CASCADE
     )
     contact_out_email = models.EmailField(
         null=True,
@@ -999,7 +1005,6 @@ class UCLManagementEntity(models.Model):
     def user_can_read(self, user):
         return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
 
-
     @staticmethod
     def user_can_create(user):
         return user_is_adri(user)
@@ -1018,7 +1023,7 @@ class UCLManagementEntity(models.Model):
         return user_is_adri(user) and not self.has_linked_partnerships()
 
     def validate_unique(self, exclude=None):
-        if (self.entity is None):# and hasattr(self, faculty) and self.faculty is not None):
+        if (self.entity is None):  # and hasattr(self, faculty) and self.faculty is not None):
             try:
                 if UCLManagementEntity.objects.exclude(id=self.id).filter(
                         faculty=self.faculty,
@@ -1037,7 +1042,11 @@ class Financing(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     url = models.URLField(_('url'))
     countries = models.ManyToManyField('reference.Country', verbose_name=_('countries'))
-    academic_year = models.ForeignKey('base.AcademicYear', verbose_name=_('academic_year'))
+    academic_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('academic_year'),
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         unique_together = (('name', 'academic_year'),)
@@ -1182,7 +1191,8 @@ class Media(models.Model):
 
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
-    file = models.FileField(_('file'), help_text=_('media_file_or_url'), upload_to='partnerships/', blank=True, null=True)
+    file = models.FileField(_('file'), help_text=_('media_file_or_url'), upload_to='partnerships/', blank=True,
+                            null=True)
     url = models.URLField(_('url'), help_text=_('media_file_or_url'), blank=True, null=True)
     visibility = models.CharField(
         _('visibility'),
