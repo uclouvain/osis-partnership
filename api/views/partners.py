@@ -48,5 +48,5 @@ class PartnersListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).annotate(
             # This needs to be after all the filtering done on partnerships
-            partnerships_count=Count('partnerships'),
+            partnerships_count=Count('partnerships', distinct=True),
         )

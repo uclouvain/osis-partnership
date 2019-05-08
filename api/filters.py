@@ -59,24 +59,31 @@ class PartnerEducationFieldFilter(filters.Filter):
 
 
 class PartnerMobilityTypeFilter(filters.Filter):
-    field_class = forms.CharField
+    field_class = forms.MultipleChoiceField
+
+    def __init__(self, **kwargs):
+        choices = (('student', "Student"), ('staff', "Staff"))
+        super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
         if not value:
             return qs
-        if value == 'student':
-            return qs.filter(
+        filter_qs = Q()
+        if 'student' in value:
+            filter_qs = (
                 Q(partnerships__years__is_sms=True)
                 | Q(partnerships__years__is_smst=True)
-                | Q(partnerships__years__is_smp=True),
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(partnerships__years__is_smp=True)
             )
-        if value == 'staff':
-            return qs.filter(
+        if 'staff' in value:
+            filter_qs = (
                 Q(partnerships__years__is_stt=True)
-                | Q(partnerships__years__is_sta=True),
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(partnerships__years__is_sta=True)
             )
+        return qs.filter(
+            filter_qs,
+            partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+        )
 
 
 class PartnerFundingFilter(filters.Filter):
@@ -192,24 +199,31 @@ class PartnershipEducationFieldFilter(filters.Filter):
 
 
 class PartnershipMobilityTypeFilter(filters.Filter):
-    field_class = forms.CharField
+    field_class = forms.MultipleChoiceField
+
+    def __init__(self, **kwargs):
+        choices = (('student', "Student"), ('staff', "Staff"))
+        super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
         if not value:
             return qs
-        if value == 'student':
-            return qs.filter(
+        filter_qs = Q()
+        if 'student' in value:
+            filter_qs = (
                 Q(years__is_sms=True)
                 | Q(years__is_smst=True)
-                | Q(years__is_smp=True),
-                years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(years__is_smp=True)
             )
-        if value == 'staff':
-            return qs.filter(
+        if 'staff' in value:
+            filter_qs = (
                 Q(years__is_stt=True)
-                | Q(years__is_sta=True),
-                years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(years__is_sta=True)
             )
+        return qs.filter(
+            filter_qs,
+            years__academic_year=F('current_academic_year'),  # From annotation
+        )
 
 
 class PartnershipFundingFilter(filters.Filter):
