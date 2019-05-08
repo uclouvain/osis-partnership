@@ -7,7 +7,7 @@ from django_filters import rest_framework as filters
 from partnership.models import Partner, UCLManagementEntity, Financing, Partnership
 
 
-## Partners
+# Partners
 
 class PartnerSupervisorFilter(filters.Filter):
     field_class = forms.UUIDField
@@ -17,16 +17,16 @@ class PartnerSupervisorFilter(filters.Filter):
             return qs
         return (
             qs.annotate(
-                has_supervisor_with_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_with_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=False,
                         entity=OuterRef('partnerships__ucl_university_labo'),
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_without_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=True,
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
@@ -130,7 +130,6 @@ class PartnerFilter(filters.FilterSet):
     mobility_type = PartnerMobilityTypeFilter(label=_('mobility_type'))
     funding = PartnerFundingFilter(label=_('funding'))
 
-
     class Meta:
         model = Partner
         fields = [
@@ -141,7 +140,7 @@ class PartnerFilter(filters.FilterSet):
         ]
 
 
-## Partnerships
+# Partnerships
 
 class PartnershipSupervisorFilter(filters.Filter):
     field_class = forms.UUIDField
@@ -151,16 +150,16 @@ class PartnershipSupervisorFilter(filters.Filter):
             return qs
         return (
             qs.annotate(
-                has_supervisor_with_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_with_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=False,
                         entity=OuterRef('ucl_university_labo'),
                         faculty=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_without_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=True,
                         faculty=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
@@ -264,7 +263,6 @@ class PartnershipFilter(filters.FilterSet):
     education_field = PartnershipEducationFieldFilter(label=_('education_field'))
     mobility_type = PartnershipMobilityTypeFilter(label=_('mobility_type'))
     funding = PartnershipFundingFilter(label=_('funding'))
-
 
     class Meta:
         model = Partnership

@@ -24,7 +24,6 @@ class PartnersListView(generics.ListAPIView):
             .select_related('partner_type', 'contact_address__country')
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
-                partnerships_count=Count('partnerships'),
                 has_in=Exists(
                     PartnershipAgreement.objects.filter(
                         partnership__partner=OuterRef('pk'),
@@ -44,4 +43,10 @@ class PartnersListView(generics.ListAPIView):
             )
             .filter(has_in=True)
             .distinct()
+        )
+
+    def filter_queryset(self, queryset):
+        return super().filter_queryset(queryset).annotate(
+            # This needs to be after all the filtering done on partnerships
+            partnerships_count=Count('partnerships'),
         )
