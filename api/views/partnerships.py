@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery, OuterRef, Value, Exists, Case, When
+from django.db.models.expressions import Subquery, OuterRef, Value, Exists, Case, When, F
 from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
@@ -171,7 +171,10 @@ class PartnershipsMixinView(GenericAPIView):
                     ).values('type_ordered')[:1]
                 )
             )
-            .filter(has_in=True)
+            .filter(
+                has_in=True,
+                years__academic_year=F('current_academic_year'),  # From annotation
+            )
             .distinct()
         )
 

@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Value, Count, Exists, OuterRef, Subquery
+from django.db.models import Value, Count, Exists, OuterRef, Subquery, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
@@ -41,7 +41,10 @@ class PartnersListView(generics.ListAPIView):
                     .values('label')[:1]
                 ),
             )
-            .filter(has_in=True)
+            .filter(
+                has_in=True,
+                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+            )
             .distinct()
         )
 

@@ -50,12 +50,7 @@ class PartnerEducationFieldFilter(filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
-        return (
-            qs.filter(
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
-                partnerships__years__education_fields__uuid=value,
-            )
-        )
+        return qs.filter(partnerships__years__education_fields__uuid=value)
 
 
 class PartnerMobilityTypeFilter(filters.Filter):
@@ -80,10 +75,7 @@ class PartnerMobilityTypeFilter(filters.Filter):
                 Q(partnerships__years__is_stt=True)
                 | Q(partnerships__years__is_sta=True)
             )
-        return qs.filter(
-            filter_qs,
-            partnerships__years__academic_year=F('current_academic_year'),  # From annotation
-        )
+        return qs.filter(filter_qs)
 
 
 class PartnerFundingFilter(filters.Filter):
@@ -190,12 +182,7 @@ class PartnershipEducationFieldFilter(filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
-        return (
-            qs.filter(
-                years__academic_year=F('current_academic_year'),  # From annotation
-                years__education_fields__uuid=value,
-            )
-        )
+        return qs.filter(years__education_fields__uuid=value)
 
 
 class PartnershipMobilityTypeFilter(filters.Filter):
@@ -220,10 +207,7 @@ class PartnershipMobilityTypeFilter(filters.Filter):
                 Q(years__is_stt=True)
                 | Q(years__is_sta=True)
             )
-        return qs.filter(
-            filter_qs,
-            years__academic_year=F('current_academic_year'),  # From annotation
-        )
+        return qs.filter(filter_qs)
 
 
 class PartnershipFundingFilter(filters.Filter):
