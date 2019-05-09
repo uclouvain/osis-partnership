@@ -4,7 +4,7 @@ from django.db.models.query_utils import Q
 from django.utils.translation import ugettext_lazy as _
 from django_filters import rest_framework as filters
 
-from partnership.models import Partner, UCLManagementEntity, Financing, Partnership
+from partnership.models import Partner, UCLManagementEntity, Financing, Partnership, PartnershipConfiguration
 
 
 # Partners
@@ -79,20 +79,33 @@ class PartnerMobilityTypeFilter(filters.Filter):
 
 
 class PartnerFundingFilter(filters.Filter):
-    field_class = forms.CharField
+    field_class = forms.MultipleChoiceField
+
+    def __init__(self, **kwargs):
+        current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        choices = (
+             Financing.objects
+             .filter(academic_year=current_year)
+             .values_list('name', 'name')
+             .distinct()
+        )
+        super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
         if not value:
             return qs
+        filter_qs = Q()
+        for name in value:
+            filter_qs |= Q(name__iexact=name)
         return (
             qs
             .annotate(
                 has_funding=Exists(
                     Financing.objects
                     .filter(
+                        filter_qs,
                         countries=OuterRef('contact_address__country'),
                         academic_year=OuterRef('current_academic_year'),
-                        name__iexact=value,
                     )
                 )
             ).filter(has_funding=True)
