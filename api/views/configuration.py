@@ -1,4 +1,5 @@
-from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q
+from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
+from django.db.models.functions import Concat
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -53,7 +54,8 @@ class ConfigurationView(APIView):
                                 EntityVersion.objects
                                     .filter(entity=OuterRef('pk'))
                                     .order_by('-start_date')
-                                    .values('acronym')[:1]
+                                    .annotate(name=Concat('acronym', Value(' - '), 'title'))
+                                    .values('name')[:1]
                             ),
                         )
                 )
@@ -63,7 +65,8 @@ class ConfigurationView(APIView):
                     EntityVersion.objects
                         .filter(entity=OuterRef('pk'))
                         .order_by('-start_date')
-                        .values('acronym')[:1]
+                        .annotate(name=Concat('acronym', Value(' - '), 'title'))
+                        .values('name')[:1]
                 ),
                 has_in=Exists(
                     PartnershipAgreement.objects.filter(
