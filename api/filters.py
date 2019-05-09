@@ -1,5 +1,5 @@
 from django import forms
-from django.db.models.expressions import Exists, OuterRef, F
+from django.db.models.expressions import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import ugettext_lazy as _
 from django_filters import rest_framework as filters
