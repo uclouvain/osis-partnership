@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Value, Count, Exists, OuterRef, Subquery
+from django.db.models import Value, Count, Exists, OuterRef, Subquery, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
@@ -24,7 +24,6 @@ class PartnersListView(generics.ListAPIView):
             .select_related('partner_type', 'contact_address__country')
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
-                partnerships_count=Count('partnerships'),
                 has_in=Exists(
                     PartnershipAgreement.objects.filter(
                         partnership__partner=OuterRef('pk'),
@@ -42,6 +41,15 @@ class PartnersListView(generics.ListAPIView):
                     .values('label')[:1]
                 ),
             )
-            .filter(has_in=True)
+            .filter(
+                has_in=True,
+                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+            )
             .distinct()
+        )
+
+    def filter_queryset(self, queryset):
+        return super().filter_queryset(queryset).annotate(
+            # This needs to be after all the filtering done on partnerships
+            partnerships_count=Count('partnerships', distinct=True),
         )

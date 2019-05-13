@@ -1,5 +1,5 @@
 from django import forms
-from django.db.models.expressions import Exists, OuterRef, F
+from django.db.models.expressions import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import ugettext_lazy as _
 from django_filters import rest_framework as filters
@@ -7,7 +7,7 @@ from django_filters import rest_framework as filters
 from partnership.models import Partner, UCLManagementEntity, Financing, Partnership
 
 
-## Partners
+# Partners
 
 class PartnerSupervisorFilter(filters.Filter):
     field_class = forms.UUIDField
@@ -17,16 +17,16 @@ class PartnerSupervisorFilter(filters.Filter):
             return qs
         return (
             qs.annotate(
-                has_supervisor_with_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_with_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=False,
                         entity=OuterRef('partnerships__ucl_university_labo'),
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_without_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=True,
                         faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
@@ -50,33 +50,32 @@ class PartnerEducationFieldFilter(filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
-        return (
-            qs.filter(
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
-                partnerships__years__education_fields__uuid=value,
-            )
-        )
+        return qs.filter(partnerships__years__education_fields__uuid=value)
 
 
 class PartnerMobilityTypeFilter(filters.Filter):
-    field_class = forms.CharField
+    field_class = forms.MultipleChoiceField
+
+    def __init__(self, **kwargs):
+        choices = (('student', "Student"), ('staff', "Staff"))
+        super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
         if not value:
             return qs
-        if value == 'student':
-            return qs.filter(
+        filter_qs = Q()
+        if 'student' in value:
+            filter_qs = (
                 Q(partnerships__years__is_sms=True)
                 | Q(partnerships__years__is_smst=True)
-                | Q(partnerships__years__is_smp=True),
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(partnerships__years__is_smp=True)
             )
-        if value == 'staff':
-            return qs.filter(
+        if 'staff' in value:
+            filter_qs = (
                 Q(partnerships__years__is_stt=True)
-                | Q(partnerships__years__is_sta=True),
-                partnerships__years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(partnerships__years__is_sta=True)
             )
+        return qs.filter(filter_qs)
 
 
 class PartnerFundingFilter(filters.Filter):
@@ -130,7 +129,6 @@ class PartnerFilter(filters.FilterSet):
     mobility_type = PartnerMobilityTypeFilter(label=_('mobility_type'))
     funding = PartnerFundingFilter(label=_('funding'))
 
-
     class Meta:
         model = Partner
         fields = [
@@ -141,7 +139,7 @@ class PartnerFilter(filters.FilterSet):
         ]
 
 
-## Partnerships
+# Partnerships
 
 class PartnershipSupervisorFilter(filters.Filter):
     field_class = forms.UUIDField
@@ -151,16 +149,16 @@ class PartnershipSupervisorFilter(filters.Filter):
             return qs
         return (
             qs.annotate(
-                has_supervisor_with_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_with_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=False,
                         entity=OuterRef('ucl_university_labo'),
                         faculty=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(UCLManagementEntity.objects
-                    .filter(
+                has_supervisor_without_entity=Exists(
+                    UCLManagementEntity.objects.filter(
                         entity__isnull=True,
                         faculty=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
@@ -184,33 +182,32 @@ class PartnershipEducationFieldFilter(filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
-        return (
-            qs.filter(
-                years__academic_year=F('current_academic_year'),  # From annotation
-                years__education_fields__uuid=value,
-            )
-        )
+        return qs.filter(years__education_fields__uuid=value)
 
 
 class PartnershipMobilityTypeFilter(filters.Filter):
-    field_class = forms.CharField
+    field_class = forms.MultipleChoiceField
+
+    def __init__(self, **kwargs):
+        choices = (('student', "Student"), ('staff', "Staff"))
+        super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
         if not value:
             return qs
-        if value == 'student':
-            return qs.filter(
+        filter_qs = Q()
+        if 'student' in value:
+            filter_qs = (
                 Q(years__is_sms=True)
                 | Q(years__is_smst=True)
-                | Q(years__is_smp=True),
-                years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(years__is_smp=True)
             )
-        if value == 'staff':
-            return qs.filter(
+        if 'staff' in value:
+            filter_qs = (
                 Q(years__is_stt=True)
-                | Q(years__is_sta=True),
-                years__academic_year=F('current_academic_year'),  # From annotation
+                | Q(years__is_sta=True)
             )
+        return qs.filter(filter_qs)
 
 
 class PartnershipFundingFilter(filters.Filter):
@@ -264,7 +261,6 @@ class PartnershipFilter(filters.FilterSet):
     education_field = PartnershipEducationFieldFilter(label=_('education_field'))
     mobility_type = PartnershipMobilityTypeFilter(label=_('mobility_type'))
     funding = PartnershipFundingFilter(label=_('funding'))
-
 
     class Meta:
         model = Partnership
