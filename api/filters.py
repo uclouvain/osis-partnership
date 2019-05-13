@@ -83,12 +83,14 @@ class PartnerFundingFilter(filters.Filter):
 
     def __init__(self, **kwargs):
         current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
-        choices = (
+        qs = (
              Financing.objects
              .filter(academic_year=current_year)
-             .values_list('name', 'name')
+             .values('pk', 'name')
              .distinct()
         )
+        self._map = {i['name']: i['pk'] for i in qs}
+        choices = ((i['name'], i['name']) for i in qs)
         super().__init__(choices=choices, **kwargs)
 
     def filter(self, qs, value):
@@ -96,7 +98,7 @@ class PartnerFundingFilter(filters.Filter):
             return qs
         filter_qs = Q()
         for name in value:
-            filter_qs |= Q(name__iexact=name)
+            filter_qs |= Q(pk=self._map[name])
         return (
             qs
             .annotate(
