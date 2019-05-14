@@ -3,8 +3,9 @@ from django.db.models.expressions import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import ugettext_lazy as _
 from django_filters import rest_framework as filters
+from django_filters.fields import ModelMultipleChoiceField
 
-from partnership.models import Partner, UCLManagementEntity, Financing, Partnership
+from partnership.models import Partner, UCLManagementEntity, Financing, Partnership, PartnershipConfiguration
 
 
 # Partners
@@ -78,21 +79,38 @@ class PartnerMobilityTypeFilter(filters.Filter):
         return qs.filter(filter_qs)
 
 
-class PartnerFundingFilter(filters.Filter):
-    field_class = forms.CharField
+class FundingFilterMixin:
+    field_class = ModelMultipleChoiceField
 
+    def __init__(self, **kwargs):
+        queryset = self.get_queryset
+        super().__init__(to_field_name='name', queryset=queryset, **kwargs)
+
+    def get_queryset(self, request):
+        current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        return (
+            Financing.objects
+                .filter(academic_year=current_year)
+                .distinct()
+        )
+
+
+class PartnerFundingFilter(FundingFilterMixin, filters.ModelMultipleChoiceFilter):
     def filter(self, qs, value):
         if not value:
             return qs
+        filter_qs = Q()
+        for funding in value:
+            filter_qs |= Q(pk=funding.pk)
         return (
             qs
             .annotate(
                 has_funding=Exists(
                     Financing.objects
                     .filter(
+                        filter_qs,
                         countries=OuterRef('contact_address__country'),
                         academic_year=OuterRef('current_academic_year'),
-                        name__iexact=value,
                     )
                 )
             ).filter(has_funding=True)
@@ -210,21 +228,22 @@ class PartnershipMobilityTypeFilter(filters.Filter):
         return qs.filter(filter_qs)
 
 
-class PartnershipFundingFilter(filters.Filter):
-    field_class = forms.CharField
-
+class PartnershipFundingFilter(FundingFilterMixin, filters.ModelMultipleChoiceFilter):
     def filter(self, qs, value):
         if not value:
             return qs
+        filter_qs = Q()
+        for funding in value:
+            filter_qs |= Q(pk=funding.pk)
         return (
             qs
             .annotate(
                 has_funding=Exists(
                     Financing.objects
                     .filter(
+                        filter_qs,
                         countries=OuterRef('partner__contact_address__country'),
                         academic_year=OuterRef('current_academic_year'),
-                        name__iexact=value,
                     )
                 )
             ).filter(has_funding=True)
