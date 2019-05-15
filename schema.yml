@@ -229,7 +229,7 @@ components:
           type: array
           items:
             type: object
-            items:
+            properties:
               name:
                 type: string
               url:
@@ -247,8 +247,9 @@ components:
           items:
             type: string
         out_contact:
+          allOf:
+            - $ref: '#/components/schemas/Contact'
           description: UCL contact
-          $ref: '#/components/schemas/Contact'
         out_portal:
           type: string
           format: uri
@@ -270,7 +271,7 @@ components:
         staff_partner_contacts:
           description: Contacts in partner institution
           type: array
-            items:
+          items:
             $ref: '#/components/schemas/Contact'
         staff_funding:
           $ref: '#/components/schemas/Funding'
@@ -425,11 +426,14 @@ paths:
                   ucl_universities:
                     type: object
                     items:
-                      $ref: '#/components/schemas/ValueLabel'
-                      ucl_university_labos:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/ValueLabel'
+                      allOf:
+                        - $ref: '#/components/schemas/ValueLabel'
+                        - type: object
+                          properties:
+                            ucl_university_labos:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/ValueLabel'
                   supervisors:
                     type: array
                     items:
@@ -451,20 +455,19 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - ordering:
-            name: ordering
-            in: query
-            description: The ordering of the items returned
-            schema:
-              type: string
-              default: partner
-              example: country_en
-              enum:
-                - partner
-                - country_en
-                - city
-                - ucl_university
-                - subject_area
+        - in: query
+          name: ordering
+          description: The ordering of the items returned
+          schema:
+            type: string
+            default: partner
+            example: country_en
+            enum:
+              - partner
+              - country_en
+              - city
+              - ucl_university
+              - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
@@ -506,21 +509,20 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - ordering:
-            name: ordering
-            in: query
-            description: The ordering of the items returned
-            schema:
-              type: string
-              default: partner
-              example: country_en
-              enum:
-                - partner
-                - country_en
-                - city
-                - ucl_university
-                - type
-                - subject_area
+        - in: query
+          name: ordering
+          description: The ordering of the items returned
+          schema:
+            type: string
+            default: partner
+            example: country_en
+            enum:
+              - partner
+              - country_en
+              - city
+              - ucl_university
+              - type
+              - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
@@ -559,6 +561,14 @@ paths:
       tags:
         - partnerships
       operationId: getPartnershipsDetail
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "abcd-efgh-ijkl-mnop-1234-5678"
       responses:
         '200':
           description: A partnership
