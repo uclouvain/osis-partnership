@@ -645,6 +645,9 @@ msgid ""
 "%(max_year)s"
 msgstr ""
 
+msgid "partnership_api_max_date"
+msgstr "Date after which the academic year rolls for the API"
+
 msgid "confirm_contact_delete"
 msgstr ""
 

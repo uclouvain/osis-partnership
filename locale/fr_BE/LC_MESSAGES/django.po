@@ -657,6 +657,9 @@ msgstr ""
 "Date maximum pour la création ou la modification d'un partenariat de l'année "
 "%(min_year)s-%(max_year)s."
 
+msgid "partnership_api_max_date"
+msgstr "Date après laquelle l'année académique change pour l'API"
+
 msgid "confirm_contact_delete"
 msgstr ""
 "Voulez-vous vraiment supprimer ce contact ? ATTENTION, cette action est "
