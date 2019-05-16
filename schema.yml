@@ -390,7 +390,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 paths:
-  /configuration/:
+  /configuration:
     get:
       summary: List all possible values for parameters on other endpoints
       tags:
@@ -446,7 +446,7 @@ paths:
                     type: array
                     items:
                       type: string
-  /partners/:
+  /partners:
     get:
       summary: List all partners
       tags:
@@ -500,7 +500,7 @@ paths:
                       $ref: "#/components/schemas/Partner"
         '400':
           $ref: '#/components/responses/BadRequest'
-  /partnerships/:
+  /partnerships:
     get:
       summary: List all partnerships
       tags:
@@ -555,7 +555,7 @@ paths:
                       $ref: "#/components/schemas/Partnership"
         '400':
           $ref: '#/components/responses/BadRequest'
-  /partnerships/{uuid}/:
+  /partnerships/{uuid}:
     get:
       summary: Get the detail for a particular partnership
       tags:
