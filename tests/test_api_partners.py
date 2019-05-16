@@ -18,7 +18,7 @@ class PartnersApiViewTest(TestCase):
         cls.url = reverse('partnership_api_v1:partners')
 
         AcademicYearFactory.produce_in_future(quantity=3)
-        current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        cls.current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
         # Continents
         cls.continent = Continent.objects.create(code='AA', name='aaaaa')
@@ -38,30 +38,30 @@ class PartnersApiViewTest(TestCase):
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
-            academic_year=current_academic_year,
+            academic_year=cls.current_academic_year,
             is_smp=True,
         )
         cls.education_field = PartnershipYearEducationFieldFactory()
         year.education_fields.add(cls.education_field)
         PartnershipAgreementFactory(
             partnership=cls.partnership,
-            start_academic_year=current_academic_year,
-            end_academic_year__year=current_academic_year.year + 1,
+            start_academic_year=cls.current_academic_year,
+            end_academic_year__year=cls.current_academic_year.year + 1,
         )
 
         partnership = PartnershipFactory(supervisor=None, years=[])
-        PartnershipYearFactory(partnership=partnership, academic_year=current_academic_year)
+        PartnershipYearFactory(partnership=partnership, academic_year=cls.current_academic_year)
         PartnershipAgreementFactory(
             partnership=partnership,
-            start_academic_year=current_academic_year,
-            end_academic_year__year=current_academic_year.year + 1,
+            start_academic_year=cls.current_academic_year,
+            end_academic_year__year=cls.current_academic_year.year + 1,
         )
         cls.management_entity = UCLManagementEntityFactory(
             faculty=partnership.ucl_university,
             entity=None,
             academic_responsible=cls.supervisor_management_entity
         )
-        cls.financing = FinancingFactory(academic_year=current_academic_year)
+        cls.financing = FinancingFactory(academic_year=cls.current_academic_year)
         cls.financing.countries.add(partnership.partner.contact_address.country)
 
         # Some noises
@@ -169,3 +169,20 @@ class PartnersApiViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data['results']), 1)
+
+    def test_partnerships_count(self):
+        partnership = PartnershipFactory(partner=self.partnership.partner, years=[])
+        PartnershipYearFactory(
+            partnership=partnership,
+            academic_year=self.current_academic_year,
+        )
+        PartnershipAgreementFactory(
+            partnership=partnership,
+            start_academic_year=self.current_academic_year,
+            end_academic_year__year=self.current_academic_year.year + 1,
+        )
+        response = self.client.get(self.url + '?mobility_type=student')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data['results']), 1)
+        self.assertEqual(data['results'][0]['partnerships_count'], 1)
