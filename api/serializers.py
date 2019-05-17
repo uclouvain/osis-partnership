@@ -9,9 +9,14 @@ from reference.models.country import Country
 
 
 class CountryConfigurationSerializer(serializers.ModelSerializer):
+    cities = serializers.SerializerMethodField()
+
     class Meta:
         model = Country
-        fields = ['name', 'iso_code']
+        fields = ['name', 'iso_code', 'cities']
+
+    def get_cities(self, country):
+        return country.cities.split(';')
 
 
 class ContinentConfigurationSerializer(serializers.ModelSerializer):

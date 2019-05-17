@@ -422,6 +422,10 @@ paths:
                                 type: string
                               iso_code:
                                 type: string
+                              cities:
+                                type: array
+                                items:
+                                  type: string
                   partners:
                     type: array
                     items:
