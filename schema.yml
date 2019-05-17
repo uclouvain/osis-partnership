@@ -114,6 +114,7 @@ components:
       type: object
       description: A complete description of a partnership
       example:
+        uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
         partner:
           name: Middle East Technical University
           website: https://example.com
@@ -189,6 +190,8 @@ components:
           name: Erasmus
           url: https://erasmus.com/
       properties:
+        uuid:
+          type: string
         partner:
           $ref: '#/components/schemas/Partner'
         education_fields:

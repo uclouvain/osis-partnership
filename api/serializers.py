@@ -149,7 +149,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
         fields = [
-            'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
+            'uuid', 'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
             'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
             'education_fields', 'status', 'partner_entity', 'medias',
             # OUT
