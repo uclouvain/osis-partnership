@@ -1,3 +1,4 @@
+from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
 from django.db.models.functions import Concat
 from rest_framework.permissions import AllowAny
@@ -13,6 +14,7 @@ from partnership.api.serializers import ContinentConfigurationSerializer, \
 from partnership.models import PartnershipConfiguration, Partner, \
     PartnershipAgreement, PartnershipYearEducationField, Financing
 from reference.models.continent import Continent
+from reference.models.country import Country
 
 
 class ConfigurationView(APIView):
@@ -22,7 +24,12 @@ class ConfigurationView(APIView):
     def get(self, request):
         current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
-        continents = Continent.objects.prefetch_related('country_set')
+        continents = Continent.objects.prefetch_related(
+            Prefetch(
+                'country_set',
+                queryset=Country.objects.annotate(cities=StringAgg('address__city', ';', distinct=True))
+            )
+        )
         partners = (
             Partner.objects
             .annotate(
