@@ -106,7 +106,7 @@ class PartnershipsMixinView(GenericAPIView):
                 validity_years=Concat(
                     Value(academic_year.year),
                     Value('-'),
-                    'validity_end_year',
+                    F('validity_end_year') + 1,
                     output_field=models.CharField()
                 ),
                 agreement_status=Subquery(

@@ -222,31 +222,47 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return ['{} - {}'.format(offer.acronym, offer.title) for offer in offers.all()]
 
     def get_out_contact(self, partnership):
+        administrative_person = getattr(partnership.ucl_management_entity, 'administrative_responsible', None)
+        email = getattr(partnership.ucl_management_entity, 'contact_out_email', None)
+        if email is None:
+            email = getattr(administrative_person, 'email', None)
+        person = getattr(partnership.ucl_management_entity, 'contact_out_person', None)
+        if person is None:
+            person = administrative_person
+
         contact = {
-            'email': getattr(partnership.ucl_management_entity, 'contact_out_email', None),
+            'email': email,
             'title': None,
             'first_name': None,
             'last_name': None,
             'phone': None,
         }
-        if getattr(partnership.ucl_management_entity, 'contact_out_person', None) is not None:
-            contact['first_name'] = partnership.ucl_management_entity.contact_out_person.first_name
-            contact['last_name'] = partnership.ucl_management_entity.contact_out_person.last_name
-            contact['phone'] = partnership.ucl_management_entity.contact_out_person.phone
+        if person is not None:
+            contact['first_name'] = person.first_name
+            contact['last_name'] = person.last_name
+            contact['phone'] = person.phone
         return contact
 
     def get_in_contact(self, partnership):
+        administrative_person = getattr(partnership.ucl_management_entity, 'administrative_responsible', None)
+        email = getattr(partnership.ucl_management_entity, 'contact_in_email', None)
+        if email is None:
+            email = getattr(administrative_person, 'email', None)
+        person = getattr(partnership.ucl_management_entity, 'contact_in_person', None)
+        if person is None:
+            person = administrative_person
+
         contact = {
-            'email': getattr(partnership.ucl_management_entity, 'contact_in_email', None),
+            'email': email,
             'title': None,
             'first_name': None,
             'last_name': None,
             'phone': None,
         }
-        if getattr(partnership.ucl_management_entity, 'contact_in_person', None) is not None:
-            contact['first_name'] = partnership.ucl_management_entity.contact_in_person.first_name
-            contact['last_name'] = partnership.ucl_management_entity.contact_in_person.last_name
-            contact['phone'] = partnership.ucl_management_entity.contact_in_person.phone
+        if person is not None:
+            contact['first_name'] = person.first_name
+            contact['last_name'] = person.last_name
+            contact['phone'] = person.phone
         return contact
 
     def get_funding(self, partnership):
