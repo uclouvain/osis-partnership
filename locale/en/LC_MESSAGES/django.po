@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-14 17:05+0100\n"
+"POT-Creation-Date: 2019-05-27 16:16+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,441 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "partnerships_general_configuration"
-msgstr "General configuration"
-
-msgid "partnerships_financing_configuration"
-msgstr "Financings configuration"
-
-msgid "Yes"
-msgstr "Yes"
-
-msgid "No"
-msgstr "No"
-
-msgid "is_ies"
-msgstr "Is IES"
-
-msgid "is_nonprofit"
-msgstr "Is non-profit"
-
-msgid "mandatory_if_not_pic_ies"
-msgstr ""
-
-msgid "is_public"
-msgstr "Is public"
-
-msgid "partner_name"
-msgstr "Partner name"
-
-msgid "partner_start_date"
-msgstr "Partner start date"
-
-msgid "partner_end_date"
-msgstr "Partner end date"
-
-msgid "partner_code"
-msgstr "Partner code"
-
-msgid "pic_code"
-msgstr "PIC code"
-
-msgid "erasmus_code"
-msgstr "Erasmus code"
-
-msgid "comment"
-msgstr "Comment"
-
-msgid "phone"
-msgstr "Phone"
-
-msgid "website"
-msgstr "Website"
-
-msgid "email"
-msgstr "Email"
-
-msgid "start_date_gt_end_date_error"
-msgstr "The start date can't be later than the end date"
-
-msgid "required"
-msgstr "Required"
-
-msgid "Name"
-msgstr "Name"
-
-msgid "address_name_help_text"
-msgstr ""
-
-msgid "address"
-msgstr "Address"
-
-msgid "postal_code"
-msgstr "Postal code"
-
-msgid "city"
-msgstr "City"
-
-msgid "country"
-msgstr "Country"
-
-msgid "contact_title"
-msgstr "contact title"
-
-msgid "last_name"
-msgstr "Last name"
-
-msgid "first_name"
-msgstr "First name"
-
-msgid "function"
-msgstr "Function"
-
-msgid "mobile_phone"
-msgstr "Mobile phone"
-
-msgid "fax"
-msgstr "Fax"
-
-msgid "name"
-msgstr "name"
-
-msgid "partner_type"
-msgstr "Partner type"
-
-msgid "continent"
-msgstr "Continent"
-
-msgid "is_valid"
-msgstr "Is valid"
-
-msgid "is_actif"
-msgstr "Is active"
-
-msgid "tags"
-msgstr "Tags"
-
-msgid "description"
-msgstr "Description"
-
-msgid "url"
-msgstr "URL"
-
-msgid "file_or_url_only"
-msgstr "File or URL only"
-
-msgid "file_or_url_required"
-msgstr "File or URL required"
-
-msgid "faculty_filter"
-msgstr "Faculty"
-
-msgid "ucl_university"
-msgstr "UCLouvain university"
-
-msgid "faculty_entity_filter"
-msgstr "Entity"
-
-msgid "ucl_university_labo_filter"
-msgstr "School / Laboratory"
-
-msgid "education_level_filter"
-msgstr "Education level"
-
-msgid "entity_filter"
-msgstr "Entity"
-
-msgid "university_offers_filter"
-msgstr "University offer"
-
-msgid "partner"
-msgstr "Partner"
-
-msgid "partner_entity"
-msgstr "Partner entity"
-
-msgid "use_egracons"
-msgstr ""
-
-msgid "partner_tags"
-msgstr "Partner tags"
-
-msgid "education_field"
-msgstr "Education field"
-
-msgid "is_sms"
-msgstr "Is SMS"
-
-msgid "is_smp"
-msgstr "Is SMP"
-
-msgid "is_sta"
-msgstr "Is STA"
-
-msgid "is_stt"
-msgstr "Is STT"
-
-msgid "partnership_type"
-msgstr "Partnership type"
-
-msgid "partnership_supervisor"
-msgstr "Partnership supervisor"
-
-msgid "partnership_in"
-msgstr ""
-
-msgid "parnership_in_help_text"
-msgstr ""
-
-msgid "partnership_ending_in"
-msgstr ""
-
-msgid "parnership_ending_in_help_text"
-msgstr ""
-
-msgid "partnership_valid_in"
-msgstr ""
-
-msgid "partnership_not_valid_in"
-msgstr ""
-
-msgid "partnership_with_no_agreements_in"
-msgstr "Partnerships with no agreements in"
-
-msgid "partnership_with_no_agreements_in_help_text"
-msgstr "List partnerships with a year configured but no agreements in this academic year."
-
-msgid "same_supervisor_than_management_entity"
-msgstr "Create UCLouvain management entities"
-
-msgid "partnership_inactif_partner_error"
-msgstr ""
-
-msgid "invalid_partner_entity"
-msgstr "Invalid partner entity"
-
-msgid "invalid_ucl_university_labo"
-msgstr "Invalid school or laboratory"
-
-msgid "start_academic_year"
-msgstr "Start academic year"
-
-msgid "from_academic_year"
-msgstr ""
-
-msgid "end_academic_year"
-msgstr "End academic year"
-
-msgid "partnership_year_entities"
-msgstr "Partnership year entities"
-
-msgid "partnership_year_entities_help_text"
-msgstr ""
-
-msgid "partnership_year_offers"
-msgstr "Offers"
-
-msgid "partnership_year_offers_help_text"
-msgstr ""
-
-msgid "education_levels_empty_errors"
-msgstr ""
-
-msgid "start_date_after_end_date"
-msgstr ""
-
-msgid "start_date_after_from_date"
-msgstr ""
-
-msgid "from_date_after_end_date"
-msgstr ""
-
-msgid "invalid_partnership_creation_max_date"
-msgstr ""
-
-msgid "administrative_responsible"
-msgstr "Administrative responsible"
-
-msgid "academic_responsible"
-msgstr "Academic responsible"
-
-msgid "contact_in_name"
-msgstr "In mobility contact name"
-
-msgid "contact_out_name"
-msgstr "Out mobility contact name"
-
-msgid "academic_year"
-msgstr "Academic year"
-
-msgid "current_year"
-msgstr "Current year"
-
-msgid "csv_file"
-msgstr "CSV file"
-
-msgid "academic_years"
-msgstr "Academic years"
-
-msgid "financing_csv_file_invalid_extension"
-msgstr "Please import a csv file."
-
-msgid "contact_in"
-msgstr "In mobility contact"
-
-msgid "contact_out"
-msgstr "Out mobility contact"
-
-msgid "parent_entity"
-msgstr "Parent entity"
-
-msgid "created"
-msgstr "Created"
-
-msgid "modified"
-msgstr "Modified"
-
-msgid "author"
-msgstr "Author"
-
-msgid "Higher education institution (tertiary level)"
-msgstr ""
-
-msgid ""
-"School/Institute/Educational centre – General education (pre-primary level)"
-msgstr ""
-
-msgid "School/Institute/Educational centre – General education (primary level)"
-msgstr ""
-
-msgid ""
-"School/Institute/Educational centre – General education (secondary level)"
-msgstr ""
-
-msgid ""
-"School/Institute/Educational centre – Vocational Training (secondary level)"
-msgstr ""
-
-msgid ""
-"School/Institute/Educational centre – Vocational Training (tertiary level)"
-msgstr ""
-
-msgid "School/Institute/Educational centre – Adult education"
-msgstr ""
-
-msgid "National Public body"
-msgstr ""
-
-msgid "Regional Public body"
-msgstr ""
-
-msgid "Local Public body"
-msgstr ""
-
-msgid "Small and medium sized enterprise"
-msgstr ""
-
-msgid "Large enterprise"
-msgstr ""
-
-msgid "Non-governmental organisation/association/social enterprise"
-msgstr ""
-
-msgid "Foundation"
-msgstr ""
-
-msgid ""
-"Social partner or other representative of working life (chambers of "
-"commerce, trade union, trade association)"
-msgstr ""
-
-msgid "Research Institute/Centre"
-msgstr ""
-
-msgid "National Youth Council"
-msgstr ""
-
-msgid "European NGO"
-msgstr ""
-
-msgid "EU-wide network"
-msgstr ""
-
-msgid "Group of young people active in youth work"
-msgstr ""
-
-msgid "European grouping of territorial cooperation"
-msgstr ""
-
-msgid "Accreditation, _(certification or qualification body"
-msgstr ""
-
-msgid "Counsellzing body"
-msgstr ""
-
-msgid "International organisation under public law"
-msgstr ""
-
-msgid "Organisation or association representing (parts of) the sport sector"
-msgstr ""
-
-msgid "Sport federation"
-msgstr ""
-
-msgid "Sport league"
-msgstr ""
-
-msgid "Sport club"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "external_id"
-msgstr "external ID"
-
-msgid "to_synchronize_with_epc"
-msgstr "To synchronize with EPC"
-
-msgid "changed"
-msgstr "Changed"
-
-msgid "now_known_as"
-msgstr "Now known as"
-
-msgid "partner_contact_type"
-msgstr "Organization type"
-
-msgid "medias"
-msgstr "Medias"
-
-msgid "can_access_partners"
-msgstr "Can access partners"
-
-msgid "ucl_university_labo"
-msgstr "School / Laboratory"
-
-msgid "contacts"
-msgstr "Contacts"
-
-msgid "can_access_partnerships"
-msgstr "Can access partnerships"
-
-#, python-brace-format
-msgid "partnership_with_{partner}"
-msgstr "Partnership with {partner}"
-
-msgid "education_group_types"
-msgstr "Education group types"
-
-msgid "Déclaration d’intention"
-msgstr ""
-
-msgid "Accord-cadre"
-msgstr ""
-
-msgid "Accord spécifique"
-msgstr ""
+#, python-format
+msgid "%(count)s_result_count"
+msgid_plural "%(count)s_results_count"
+msgstr[0] "%(count)s result"
+msgstr[1] "%(count)s results"
 
 msgid "Accord de co-diplômation"
 msgstr ""
@@ -459,294 +29,64 @@ msgstr ""
 msgid "Accord de co-tutelle"
 msgstr ""
 
-msgid "Partenariat de mobilité"
+msgid "Accord spécifique"
 msgstr ""
 
-msgid "Projet Fonds d’appuie à l’internationnalisation"
+msgid "Accord-cadre"
 msgstr ""
 
-msgid "Autre"
-msgstr "Other"
-
-msgid "partnership"
-msgstr "Partnership"
-
-msgid "partnership_year_education_fields"
-msgstr "Partnership year education fields"
-
-msgid "partnership_year_education_levels"
-msgstr "Partnership year education levels"
-
-msgid "eligible"
-msgstr "Eligible"
-
-msgid "partnership_year"
-msgstr "Partnership year"
-
-#, python-brace-format
-msgid "partnership_year_{partnership}_{year}"
-msgstr "Partnership year {partnership} {year}"
-
-msgid "status_waiting"
+msgid "Accreditation, _(certification or qualification body"
 msgstr ""
-
-msgid "status_validated"
-msgstr ""
-
-msgid "status_refused"
-msgstr ""
-
-msgid "media"
-msgstr "Media"
-
-msgid "status"
-msgstr "Status"
-
-msgid "financing"
-msgstr "Financing"
-
-msgid "can_access_partnerships_agreements"
-msgstr "Can access agreements"
-
-msgid "january"
-msgstr ""
-
-msgid "february"
-msgstr ""
-
-msgid "march"
-msgstr ""
-
-msgid "april"
-msgstr ""
-
-msgid "may"
-msgstr ""
-
-msgid "june"
-msgstr ""
-
-msgid "july"
-msgstr ""
-
-msgid "august"
-msgstr ""
-
-msgid "september"
-msgstr ""
-
-msgid "october"
-msgstr ""
-
-msgid "november"
-msgstr ""
-
-msgid "december"
-msgstr ""
-
-msgid "partnership_creation_update_max_date_day"
-msgstr ""
-
-msgid "partnership_creation_update_max_date_month"
-msgstr ""
-
-msgid "partnership_email_notification_to"
-msgstr "Partnership email notification to"
-
-msgid "faculty"
-msgstr "Faculty"
-
-msgid "entity"
-msgstr "Entity"
-
-msgid "portal"
-msgstr "Portal"
-
-msgid "duplicate_ucl_management_entity_error_with_faculty"
-msgstr "Update UCLouvain management entity"
-
-msgid "countries"
-msgstr "Countries"
-
-msgid "mister"
-msgstr "Mister"
-
-msgid "madame"
-msgstr ""
-
-msgid "contact_type"
-msgstr "contact type"
-
-msgid "society"
-msgstr "Society"
-
-msgid "city_french"
-msgstr ""
-
-msgid "city_english"
-msgstr ""
-
-msgid "visibility_public"
-msgstr ""
-
-msgid "visibility_staff"
-msgstr ""
-
-msgid "visibility_staff_student"
-msgstr ""
-
-msgid "file"
-msgstr "File"
-
-msgid "media_file_or_url"
-msgstr "Media file or URL"
-
-msgid "visibility"
-msgstr "Visibility"
-
-msgid "partnerships"
-msgstr "Partnerships"
-
-msgid "add_partnership_agreements"
-msgstr "Add partnership agreements"
-
-msgid "cancel"
-msgstr "Cancel"
-
-msgid "delete_partnership_agreement"
-msgstr "Delete partnership agreement"
-
-msgid "%(count)s_result_count"
-msgid_plural "%(count)s_results_count"
-msgstr[0] "%(count)s result"
-msgstr[1] "%(count)s results"
-
-msgid "ucl"
-msgstr "UCLouvain"
-
-msgid "agreements_export"
-msgstr "Agreements export"
-
-msgid "partnership_agreement_delete_warning"
-msgstr "Are you sure you want to delete this partnership agreement?"
-
-msgid "mandatory_fields_help_text"
-msgstr "The fields marked with a * are mandatory"
-
-msgid "update_partnership_agreement"
-msgstr "Update partnership agreement"
-
-msgid "update_configuration"
-msgstr "Update configuration"
 
 #, python-format
-msgid ""
-"partnership_configuration_creation_modification_max_date_%(min_year)s_"
-"%(max_year)s"
-msgstr ""
-
-msgid "partnership_api_max_date"
-msgstr "Date after which the academic year rolls for the API"
-
-msgid "confirm_contact_delete"
-msgstr ""
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "Are you sure you want to delete \"%(object)s\"?"
 
 msgid "Are you sure you want to delete this contact?"
 msgstr "Are you sure you want to delete this contact?"
 
-msgid "identity"
-msgstr "Identity"
-
-msgid "coordinates"
-msgstr "Coordinates"
+msgid "Autre"
+msgstr "Other"
 
 msgid "Cancel"
 msgstr "Cancel"
 
-msgid "partnership_contact_create"
-msgstr "Create partnership contact"
+msgid "Counsellzing body"
+msgstr ""
 
-msgid "create_contact"
-msgstr "create contact"
+msgid "Déclaration d’intention"
+msgstr ""
 
-msgid "partnership_contact_update"
-msgstr "Update partnership contact"
+msgid "EU-wide network"
+msgstr ""
 
-msgid "update_contact"
-msgstr "update contact"
+msgid "European NGO"
+msgstr ""
 
-msgid "financings"
-msgstr "Financings"
+msgid "European grouping of territorial cooperation"
+msgstr ""
 
-msgid "import_financings"
-msgstr "Import financings"
+msgid "Foundation"
+msgstr ""
 
-msgid "change_year"
-msgstr "Change year"
-
-msgid "no_country"
-msgstr "No country"
+msgid "Group of young people active in youth work"
+msgstr ""
 
 #, python-format
-msgid "export_financings_for_year_%(academic_year)s"
-msgstr "Export financings for year %(academic_year)s"
-
-msgid "media_delete_warning"
-msgstr "Are you sure you want to delete this media?"
-
-msgid "external_link"
-msgstr "External link"
-
-msgid "update_media"
-msgstr "Update media"
-
-msgid "delete_media"
-msgstr "Delete media"
-
-msgid "first"
-msgstr "First"
-
-msgid "previous"
-msgstr "Previous"
-
-msgid "next"
-msgstr "Next"
-
-msgid "last"
-msgstr "Last"
-
-msgid "partner_university"
-msgstr "Partner entity"
-
-msgid "add_partner"
-msgstr "Add partner"
-
-msgid "partner_entity_inside_partner"
-msgstr "Partner entity inside partner"
-
-msgid "add_partner_entity"
-msgstr "Add partner entity"
-
-msgid "ucl_entity_partner"
-msgstr "UCL entity partner"
-
-msgid "partnership_subject"
-msgstr "Partnership subject"
-
-msgid "planned_activity"
+msgid ""
+"Hello,\n"
+"\n"
+"Partner %(partner)s has been successfully created by %(person)s "
+"(%(username)s).\n"
+"\n"
+"You can access it at this url :\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Regards,\n"
+"\n"
+"Osis team"
 msgstr ""
-
-msgid "partnership_when"
-msgstr ""
-
-msgid "current_academic_year"
-msgstr "Current academic year"
-
-msgid "validity_end"
-msgstr "Validity end"
-
-msgid "partnerships_export"
-msgstr "Export partnerships"
 
 #, python-format
 msgid ""
@@ -788,8 +128,8 @@ msgstr ""
 msgid ""
 "Hello,\n"
 "\n"
-"Partner %(partner)s has been successfully created by %(person)s "
-"(%(username)s).\n"
+"The end academic year of partnership %(partnership)s has been changed by "
+"%(person)s (%(username)s).\n"
 "\n"
 "You can access it at this url :\n"
 "\n"
@@ -816,315 +156,1014 @@ msgid ""
 "Osis team"
 msgstr ""
 
-#, python-format
+msgid "Higher education institution (tertiary level)"
+msgstr ""
+
+msgid "International organisation under public law"
+msgstr ""
+
+msgid "Large enterprise"
+msgstr ""
+
+msgid "Local Public body"
+msgstr ""
+
+msgid "Name"
+msgstr "Name"
+
+msgid "National Public body"
+msgstr ""
+
+msgid "National Youth Council"
+msgstr ""
+
+msgid "No"
+msgstr "No"
+
+msgid "Non-governmental organisation/association/social enterprise"
+msgstr ""
+
+msgid "Organisation or association representing (parts of) the sport sector"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Partenariat de mobilité"
+msgstr ""
+
+msgid "Projet Fonds d’appuie à l’internationnalisation"
+msgstr ""
+
+msgid "Regional Public body"
+msgstr ""
+
+msgid "Research Institute/Centre"
+msgstr ""
+
+msgid "School/Institute/Educational centre – Adult education"
+msgstr ""
+
 msgid ""
-"Hello,\n"
-"\n"
-"The end academic year of partnership %(partnership)s has been changed by "
-"%(person)s (%(username)s).\n"
-"\n"
-"You can access it at this url :\n"
-"\n"
-"%(url)s\n"
-"\n"
-"Regards,\n"
-"\n"
-"Osis team"
+"School/Institute/Educational centre – General education (pre-primary level)"
 msgstr ""
 
-msgid "partner_entity_delete_warning"
-msgstr "Are you sure you want to delete this partner entity?"
-
-msgid "partners"
-msgstr "Partners"
-
-msgid "delete_partner_entity"
-msgstr "Delete partner entity"
-
-msgid "update_partner_entity"
-msgstr "Update partner entity"
-
-msgid "informations"
-msgstr "Informations"
-
-msgid "contact_information"
-msgstr "Contact information"
-
-msgid "code"
-msgstr "Code"
-
-msgid "type"
-msgstr "Type"
-
-msgid "valid"
-msgstr "Valid"
-
-msgid "still_actif"
-msgstr "Still active"
-
-msgid "partners_export"
-msgstr "Export partners"
-
-msgid "similar_partners_possible"
+msgid "School/Institute/Educational centre – General education (primary level)"
 msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – General education (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre – Vocational Training (tertiary level)"
+msgstr ""
+
+msgid "Small and medium sized enterprise"
+msgstr ""
+
+msgid ""
+"Social partner or other representative of working life (chambers of "
+"commerce, trade union, trade association)"
+msgstr ""
+
+msgid "Sport club"
+msgstr ""
+
+msgid "Sport federation"
+msgstr ""
+
+msgid "Sport league"
+msgstr ""
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "academic_responsible"
+msgstr "Academic responsible"
+
+msgid "academic_year"
+msgstr "Academic year"
+
+msgid "academic_years"
+msgstr "Academic years"
+
+msgid "add_contact"
+msgstr "Add contact"
+
+msgid "add_entities_after_creation"
+msgstr "You will be able to add entities after the partner creation."
 
 msgid "add_media"
 msgstr "Add media"
 
-msgid "new_partner"
-msgstr "New partner"
-
 msgid "add_media_after_creation"
-msgstr ""
+msgstr "You will be able to add media after the partner creation."
 
-msgid "associated_entities"
-msgstr "Associated entities"
+msgid "add_partner"
+msgstr "Add partner"
 
-msgid "add_entities_after_creation"
-msgstr ""
+msgid "add_partner_entity"
+msgstr "Add partner entity"
 
-msgid "update_partner"
-msgstr "Update partner"
+msgid "add_partnership"
+msgstr "Add partnership"
 
-#, python-format
-msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
-msgstr ""
+msgid "add_partnership_agreements"
+msgstr "Add partnership agreements"
 
-msgid "not_filled_in"
-msgstr "Not filled in"
+msgid "address"
+msgstr "Address"
 
-msgid "contact_address"
-msgstr "Contact address"
+msgid "address_name_help_text"
+msgstr "Name of the faculty, the company, …"
 
-msgid "associated_tags"
-msgstr "Associated tags"
-
-msgid "new_media"
-msgstr "New media"
-
-msgid "no_media_yet"
-msgstr "No media yet"
-
-msgid "entities"
-msgstr "Entities"
-
-msgid "contact_mobility_in"
-msgstr ""
-
-msgid "contact_mobility_out"
-msgstr ""
+msgid "administrative_responsible"
+msgstr "Administrative responsible"
 
 msgid "agreements"
 msgstr "Agreements"
 
-msgid "no_agreement_yet"
-msgstr "No agreement yet"
-
-msgid "close"
-msgstr "Close"
-
-msgid "submit"
-msgstr "Submit"
-
-msgid "search_partners"
-msgstr "Search partners"
-
-msgid "reset_search_fields"
-msgstr "Reset search fields"
-
-msgid "search"
-msgstr "Search"
-
-msgid "partnership_create"
-msgstr "Create partnership"
-
-msgid "edit_partnership"
-msgstr "Edit partnership"
-
-msgid "invalid_partner"
-msgstr "Invalid partner"
-
-msgid "inactive_partner"
-msgstr "Inactive partner"
-
-msgid "partnership_supervisor_from_entity_management"
-msgstr "Partnership supervisor"
-
-msgid "validated_agreements"
-msgstr "Validated agreements"
-
-msgid "years"
-msgstr "Years"
-
-msgid "partnership_missing_valid_years"
-msgstr "This partnership is missing valid years"
-
-msgid "education_fields"
-msgstr "Education fields"
-
-msgid "education_levels"
-msgstr "Education levels"
+msgid "agreements_export"
+msgstr "Agreements export"
 
 msgid "all_entities"
 msgstr "Entities"
 
 msgid "all_offers"
-msgstr ""
+msgstr "All offers"
 
-msgid "partnership_years_show_all_years"
-msgstr ""
+msgid "april"
+msgstr "April"
 
-msgid "no_tag_yet"
-msgstr "No tag yet"
+msgid "associated_entities"
+msgstr "Associated entities"
 
-msgid "add_contact"
-msgstr "Add contact"
+msgid "associated_tags"
+msgstr "Associated tags"
 
-msgid "delete_contact"
-msgstr "Delete contact"
+msgid "august"
+msgstr "August"
 
-msgid "no_partnership_contact_yet"
-msgstr "No partnership contact yet"
+msgid "author"
+msgstr "Author"
 
-msgid "ucl_management_entity_contacts"
-msgstr "UCLouvain management entity contacts"
+msgid "can_access_partners"
+msgstr "Can access partners"
+
+msgid "can_access_partnerships"
+msgstr "Can access partnerships"
+
+msgid "can_access_partnerships_agreements"
+msgstr "Can access agreements"
+
+msgid "cancel"
+msgstr "Cancel"
 
 msgid "change_configuration"
 msgstr "Change configuration"
 
-msgid "ucl_management_entities"
-msgstr "UCLouvain management entities"
+msgid "change_year"
+msgstr "Change year"
 
-msgid "add_partnership"
-msgstr "Add partnership"
+msgid "changed"
+msgstr "Changed"
 
-msgid "search_partnership_or_agreement"
-msgstr "Search for partnerships or agreements"
+msgid "city"
+msgstr "City"
 
-msgid "search_partnership"
-msgstr "Search partnership"
+msgid "city_english"
+msgstr "City in english"
 
-msgid "search_agreement"
-msgstr "Search for agreements"
+msgid "city_french"
+msgstr "City in french"
 
-#, python-format
-msgid "Are you sure you want to delete \"%(object)s\"?"
-msgstr "Are you sure you want to delete \"%(object)s\"?"
+msgid "close"
+msgstr "Close"
 
-msgid "create_ucl_management_entity"
-msgstr "Create UCLouvain management entities"
+msgid "code"
+msgstr "Code"
 
-msgid "ucl_management_entities_list"
-msgstr "List of UCLouvain management entities"
+msgid "comment"
+msgstr "Comment"
 
-msgid "delete_ucl_management_entity"
-msgstr "Delete UCLouvain management entity"
+msgid "configuration_saved"
+msgstr "Configuration saved"
 
-msgid "ucl_management_entities_empty"
-msgstr "UCLouvain management entities"
-
-msgid "update_ucl_management_entity"
-msgstr "Update UCLouvain management entity"
-
-msgid "id"
-msgstr "ID"
-
-msgid "partner_saved"
-msgstr "Partner successfully saved"
-
-msgid "partner_created"
-msgstr "Partner created"
-
-msgid "partner_error"
+msgid "confirm_contact_delete"
 msgstr ""
+"Do you really want to delete this contact? WARNING, this cannot be undone."
 
-msgid "partner_entity_saved"
-msgstr "Partner entity successfully saved"
-
-msgid "partner_entity_error"
-msgstr ""
-
-msgid "partner_media_saved"
-msgstr "Partner media successfully saved"
-
-msgid "partner_media_error"
-msgstr ""
+msgid "contact_address"
+msgstr "Contact address"
 
 msgid "contact_creation_success"
 msgstr "Contact successfully created"
 
-msgid "contact_update_success"
-msgstr "Contact successfully edited"
-
 msgid "contact_delete_success"
 msgstr "Contact successfully deleted"
 
-msgid "supervisor"
-msgstr "Supervisor"
+msgid "contact_in"
+msgstr "In mobility contact"
 
-msgid "partnership_error"
-msgstr ""
+msgid "contact_in_name"
+msgstr "In mobility contact name"
 
-msgid "partnership_success"
+msgid "contact_information"
+msgstr "Contact information"
+
+msgid "contact_mobility_in"
+msgstr "Mobility IN contact"
+
+msgid "contact_mobility_out"
+msgstr "MObility OUT contact"
+
+msgid "contact_out"
+msgstr "Out mobility contact"
+
+msgid "contact_out_name"
+msgstr "Out mobility contact name"
+
+msgid "contact_title"
+msgstr "contact title"
+
+msgid "contact_type"
+msgstr "contact type"
+
+msgid "contact_update_success"
+msgstr "Contact successfully edited"
+
+msgid "contacts"
+msgstr "Contacts"
+
+msgid "continent"
+msgstr "Continent"
+
+msgid "coordinates"
+msgstr "Coordinates"
+
+msgid "countries"
+msgstr "Countries"
+
+msgid "country"
+msgstr "Country"
+
+msgid "course_catalogue"
+msgstr "Course catalogue"
+
+msgid "course_catalogue_text_en"
+msgstr "Text for course catalogue in english"
+
+msgid "course_catalogue_text_fr"
+msgstr "Text for course catalogue in french"
+
+msgid "course_catalogue_url_en"
+msgstr "Link to course catalogue in english"
+
+msgid "course_catalogue_url_fr"
+msgstr "Link course catalogue in french"
+
+msgid "create_contact"
+msgstr "create contact"
+
+msgid "create_ucl_management_entity"
+msgstr "Create UCLouvain management entities"
+
+msgid "created"
+msgstr "Created"
+
+#, python-format
+msgid "created_%(created)s_by_%(author)s_modified_%(modified)s"
+msgstr "Created the %(created)s by %(author)s, last updated the %(modified)s"
+
+msgid "csv_file"
+msgstr "CSV file"
+
+msgid "current_academic_year"
+msgstr "Current academic year"
+
+msgid "current_year"
+msgstr "Current year"
+
+msgid "december"
+msgstr "December"
+
+msgid "delete_contact"
+msgstr "Delete contact"
+
+msgid "delete_media"
+msgstr "Delete media"
+
+msgid "delete_partner_entity"
+msgstr "Delete partner entity"
+
+msgid "delete_partnership_agreement"
+msgstr "Delete partnership agreement"
+
+msgid "delete_ucl_management_entity"
+msgstr "Delete UCLouvain management entity"
+
+msgid "description"
+msgstr "Description"
+
+msgid "duplicate_ucl_management_entity_error_with_faculty"
+msgstr "Update UCLouvain management entity"
+
+msgid "edit_partnership"
+msgstr "Edit partnership"
+
+msgid "education_field"
+msgstr "Education field"
+
+msgid "education_fields"
+msgstr "Education fields"
+
+msgid "education_group_types"
+msgstr "Education group types"
+
+msgid "education_level_filter"
+msgstr "Education level"
+
+msgid "education_levels"
+msgstr "Education levels"
+
+msgid "education_levels_empty_errors"
+msgstr "This field is required"
+
+msgid "eligible"
+msgstr "Eligible"
+
+msgid "email"
+msgstr "Email"
+
+msgid "end_academic_year"
+msgstr "End academic year"
+
+msgid "entities"
+msgstr "Entities"
+
+msgid "entity"
+msgstr "Entity"
+
+msgid "entity_filter"
+msgstr "Entity"
+
+msgid "erasmus_code"
+msgstr "Erasmus code"
+
+#, python-format
+msgid "export_financings_for_year_%(academic_year)s"
+msgstr "Export financings for year %(academic_year)s"
+
+msgid "external_id"
+msgstr "external ID"
+
+msgid "external_link"
+msgstr "External link"
+
+msgid "faculty"
+msgstr "Faculty"
+
+msgid "faculty_entity_filter"
+msgstr "Entity"
+
+msgid "faculty_filter"
+msgstr "Faculty"
+
+msgid "fax"
+msgstr "Fax"
+
+msgid "february"
+msgstr "February"
+
+msgid "file"
+msgstr "File"
+
+msgid "file_or_url_only"
+msgstr "File or URL only"
+
+msgid "file_or_url_required"
+msgstr "File or URL required"
+
+msgid "financing"
+msgstr "Financing"
+
+#, python-brace-format
+msgid "financing_country_not_imported_{country}"
+msgstr "Unknown country {country}."
+
+msgid "financing_csv_file_invalid_extension"
+msgstr "Please import a csv file."
+
+#, python-brace-format
+msgid "financing_url_invalid_{country}_{url}"
+msgstr "Invalid url {url} for country {country}."
+
+msgid "financings"
+msgstr "Financings"
+
+msgid "financings_imported"
+msgstr "Financings successfully imported."
+
+msgid "financings_imported_error"
+msgstr "Financings could not be imported."
+
+msgid "first"
+msgstr "First"
+
+msgid "first_name"
+msgstr "First name"
+
+msgid "from_academic_year"
+msgstr "The modification will apply from this academic year"
+
+msgid "from_date_after_end_date"
+msgstr "The end date is before the from date"
+
+msgid "function"
+msgstr "Function"
+
+msgid "funding"
+msgstr "Funding"
+
+msgid "id"
+msgstr "ID"
+
+msgid "identity"
+msgstr "Identity"
+
+msgid "import_financings"
+msgstr "Import financings"
+
+msgid "inactive_partner"
+msgstr "Inactive partner"
+
+msgid "informations"
+msgstr "Informations"
+
+msgid "invalid_partner"
+msgstr "Invalid partner"
+
+msgid "invalid_partner_entity"
+msgstr "Invalid partner entity"
+
+msgid "invalid_partnership_api_max_date"
+msgstr "Invalid date (this cannot be February the 29th)"
+
+msgid "invalid_partnership_creation_max_date"
+msgstr "Invalid date (this cannot be February the 29th)"
+
+msgid "invalid_ucl_university_labo"
+msgstr "Invalid school or laboratory"
+
+msgid "is_actif"
+msgstr "Is active"
+
+msgid "is_ies"
+msgstr "Is IES"
+
+msgid "is_nonprofit"
+msgstr "Is non-profit"
+
+msgid "is_public"
+msgstr "Is public"
+
+msgid "is_smp"
+msgstr "Is SMP"
+
+msgid "is_sms"
+msgstr "Is SMS"
+
+msgid "is_smst"
+msgstr "Is SMST"
+
+msgid "is_sta"
+msgstr "Is STA"
+
+msgid "is_stt"
+msgstr "Is STT"
+
+msgid "is_valid"
+msgstr "Is valid"
+
+msgid "is_visible_in_portal"
+msgstr "Visible on the portal"
+
+msgid "january"
+msgstr "January"
+
+msgid "july"
+msgstr "July"
+
+msgid "june"
+msgstr "June"
+
+msgid "label"
+msgstr "Label"
+
+msgid "last"
+msgstr "Last"
+
+msgid "last_name"
+msgstr "Last name"
+
+msgid "madame"
+msgstr "Madame"
+
+msgid "mandatory_fields_help_text"
+msgstr "The fields marked with a * are mandatory"
+
+msgid "mandatory_if_not_pic_ies"
+msgstr "Mandatory field if partner does not have a PIC code and is not an IES"
+
+msgid "march"
+msgstr "March"
+
+msgid "may"
+msgstr "Mat=y"
+
+msgid "media"
+msgstr "Media"
+
+msgid "media_delete_warning"
+msgstr "Are you sure you want to delete this media?"
+
+msgid "media_file_or_url"
+msgstr "Media file or URL"
+
+msgid "medias"
+msgstr "Medias"
+
+msgid "mister"
+msgstr "Mister"
+
+msgid "mobile_phone"
+msgstr "Mobile phone"
+
+msgid "mobility_type"
+msgstr "Mobility type"
+
+msgid "modified"
+msgstr "Modified"
+
+msgid "name"
+msgstr "name"
+
+msgid "new_media"
+msgstr "New media"
+
+msgid "new_partner"
+msgstr "New partner"
+
+msgid "next"
+msgstr "Next"
+
+msgid "no_agreement_yet"
+msgstr "No agreement yet"
+
+msgid "no_country"
+msgstr "No country"
+
+msgid "no_media_yet"
+msgstr "No media yet"
+
+msgid "no_partnership_contact_yet"
+msgstr "No partnership contact yet"
+
+msgid "no_tag_yet"
+msgstr "No tag yet"
+
+msgid "not_filled_in"
+msgstr "Not filled in"
+
+msgid "november"
+msgstr "November"
+
+msgid "now_known_as"
+msgstr "Now known as"
+
+msgid "october"
+msgstr "October"
+
+msgid "parent_entity"
+msgstr "Parent entity"
+
+msgid "parnership_ending_in_help_text"
 msgstr ""
+"Partnership which have a last agreement (whatever its status) ending this "
+"academic year"
+
+msgid "parnership_in_help_text"
+msgstr ""
+"List all partnerships having at least one agreememt covering this academic "
+"year (whatever its status)"
+
+msgid "partner"
+msgstr "Partner"
+
+msgid "partner_code"
+msgstr "Partner code"
+
+msgid "partner_contact_type"
+msgstr "Organization type"
+
+msgid "partner_created"
+msgstr "Partner created"
+
+msgid "partner_end_date"
+msgstr "Partner end date"
+
+msgid "partner_entity"
+msgstr "Partner entity"
+
+msgid "partner_entity_delete_warning"
+msgstr "Are you sure you want to delete this partner entity?"
+
+msgid "partner_entity_error"
+msgstr "Error while saving the partner entity"
+
+msgid "partner_entity_inside_partner"
+msgstr "Partner entity inside partner"
+
+msgid "partner_entity_saved"
+msgstr "Partner entity successfully saved"
+
+msgid "partner_error"
+msgstr "Error while saving the partner"
+
+msgid "partner_media_error"
+msgstr "Error while saving the media"
+
+msgid "partner_media_saved"
+msgstr "Partner media successfully saved"
+
+msgid "partner_name"
+msgstr "Partner name"
+
+msgid "partner_saved"
+msgstr "Partner successfully saved"
+
+msgid "partner_start_date"
+msgstr "Partner start date"
+
+msgid "partner_tags"
+msgstr "Partner tags"
+
+msgid "partner_type"
+msgstr "Partner type"
+
+msgid "partner_university"
+msgstr "Partner entity"
+
+msgid "partners"
+msgstr "Partners"
+
+msgid "partners_export"
+msgstr "Export partners"
+
+msgid "partnership"
+msgstr "Partnership"
+
+msgid "partnership_agreement_delete_warning"
+msgstr "Are you sure you want to delete this partnership agreement?"
+
+msgid "partnership_agreement_error"
+msgstr "Error while saving the agreement"
+
+msgid "partnership_agreement_success"
+msgstr "Agreement saved successfully"
+
+msgid "partnership_agreement_warning_after"
+msgstr "Agreement finishes after the partnership end."
+
+msgid "partnership_agreement_warning_before"
+msgstr "Agreement begins before the partnership start."
+
+msgid "partnership_api_max_date"
+msgstr "Date after which the academic year rolls for the API"
+
+msgid "partnership_api_max_date_day"
+msgstr "Date after which the academic year rolls for the API: day"
+
+msgid "partnership_api_max_date_month"
+msgstr "Date after which the academic year rolls for the API: month"
+
+#, python-format
+msgid ""
+"partnership_configuration_creation_modification_max_date_%(min_year)s_"
+"%(max_year)s"
+msgstr ""
+"Maximum date for the creation or update of a partnership in year "
+"%(min_year)s-%(max_year)s."
+
+msgid "partnership_contact_create"
+msgstr "Create partnership contact"
+
+msgid "partnership_contact_update"
+msgstr "Update partnership contact"
+
+msgid "partnership_create"
+msgstr "Create partnership"
 
 msgid "partnership_created"
 msgstr "partnership created"
+
+msgid "partnership_creation_update_max_date_day"
+msgstr "Maximum day for creation or update"
+
+msgid "partnership_creation_update_max_date_month"
+msgstr "Maximum month for creation or update"
+
+msgid "partnership_email_notification_to"
+msgstr "Partnership email notification to"
 
 #, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
 msgstr ""
 "End academic year has been changed for partnership with {partner} ({faculty})"
 
-msgid "partnership_agreement_warning_before"
-msgstr "Agreement begins before the partnership start."
+msgid "partnership_ending_in"
+msgstr "Partnership ending in"
 
-msgid "partnership_agreement_warning_after"
-msgstr "Agreement finishes after the partnership end."
+msgid "partnership_error"
+msgstr "Error while saving the partnership"
 
-msgid "partnership_agreement_error"
+msgid "partnership_in"
+msgstr "Partnership valid in"
+
+msgid "partnership_inactif_partner_error"
+msgstr "This partner is inactive"
+
+msgid "partnership_media_error"
+msgstr "Error while saving the media."
+
+msgid "partnership_media_saved"
+msgstr "Partnership media successfully saved"
+
+msgid "partnership_missing_valid_years"
+msgstr "This partnership is missing valid years"
+
+msgid "partnership_not_valid_in"
+msgstr "Partnership not valid in"
+
+msgid "partnership_subject"
+msgstr "Partnership subject"
+
+msgid "partnership_success"
+msgstr "Partnership saved successfully"
+
+msgid "partnership_supervisor"
+msgstr "Partnership supervisor"
+
+msgid "partnership_supervisor_from_entity_management"
+msgstr "Partnership supervisor"
+
+msgid "partnership_type"
+msgstr "Partnership type"
+
+msgid "partnership_valid_in"
+msgstr "Partnership valid in"
+
+msgid "partnership_when"
+msgstr "Years"
+
+msgid "partnership_with_no_agreements_in"
+msgstr "Partnerships with no agreements in"
+
+msgid "partnership_with_no_agreements_in_help_text"
 msgstr ""
+"List partnerships with a year configured but no agreements in this academic "
+"year."
 
-msgid "partnership_agreement_success"
+#, python-brace-format
+msgid "partnership_with_{partner}"
+msgstr "Partnership with {partner}"
+
+msgid "partnership_year"
+msgstr "Partnership year"
+
+msgid "partnership_year_education_fields"
+msgstr "Partnership year education fields"
+
+msgid "partnership_year_education_levels"
+msgstr "Partnership year education levels"
+
+msgid "partnership_year_entities"
+msgstr "Partnership year entities"
+
+msgid "partnership_year_entities_help_text"
+msgstr "If none selected, then all entities will be concerned"
+
+msgid "partnership_year_offers"
+msgstr "Offers"
+
+msgid "partnership_year_offers_help_text"
+msgstr "If none selected, then all offers will be concerned"
+
+#, python-brace-format
+msgid "partnership_year_{partnership}_{year}"
+msgstr "Partnership year {partnership} {year}"
+
+msgid "partnership_years_show_all_years"
+msgstr "Show all years."
+
+msgid "partnerships"
+msgstr "Partnerships"
+
+msgid "partnerships_export"
+msgstr "Export partnerships"
+
+msgid "partnerships_financing_configuration"
+msgstr "Financings configuration"
+
+msgid "partnerships_general_configuration"
+msgstr "General configuration"
+
+msgid "phone"
+msgstr "Phone"
+
+msgid "pic_code"
+msgstr "PIC code"
+
+msgid "planned_activity"
+msgstr "Planned activity"
+
+msgid "portal"
+msgstr "Portal"
+
+msgid "postal_code"
+msgstr "Postal code"
+
+msgid "previous"
+msgstr "Previous"
+
+msgid "required"
+msgstr "Required"
+
+msgid "reset_search_fields"
+msgstr "Reset search fields"
+
+msgid "same_supervisor_than_management_entity"
+msgstr "Create UCLouvain management entities"
+
+msgid "search"
+msgstr "Search"
+
+msgid "search_agreement"
+msgstr "Search for agreements"
+
+msgid "search_partners"
+msgstr "Search partners"
+
+msgid "search_partnership"
+msgstr "Search partnership"
+
+msgid "search_partnership_or_agreement"
+msgstr "Search for partnerships or agreements"
+
+msgid "september"
+msgstr "September"
+
+msgid "similar_partners_possible"
 msgstr ""
+"This partner may already exists. Please check in the following list before "
+"creating it."
 
-msgid "configuration_saved"
-msgstr "Configuration saved"
+msgid "society"
+msgstr "Society"
 
-msgid "ucl_management_entity_create_success"
-msgstr "UCLouvain management entity successfully created."
+msgid "start_academic_year"
+msgstr "Start academic year"
+
+msgid "start_date_after_end_date"
+msgstr "The end date is before the start date."
+
+msgid "start_date_after_from_date"
+msgstr "The end date is after the from date."
+
+msgid "start_date_gt_end_date_error"
+msgstr "The start date can't be later than the end date"
+
+msgid "status"
+msgstr "Status"
+
+msgid "status_refused"
+msgstr "Refused"
+
+msgid "status_validated"
+msgstr "Validated"
+
+msgid "status_waiting"
+msgstr "Waiting"
+
+msgid "still_actif"
+msgstr "Still active"
+
+msgid "submit"
+msgstr "Submit"
+
+msgid "supervisor"
+msgstr "Supervisor"
+
+msgid "tags"
+msgstr "Tags"
+
+msgid "to_synchronize_with_epc"
+msgstr "To synchronize with EPC"
+
+msgid "type"
+msgstr "Type"
+
+msgid "ucl"
+msgstr "UCLouvain"
+
+msgid "ucl_entity_partner"
+msgstr "UCL entity partner"
+
+msgid "ucl_management_entities"
+msgstr "UCLouvain management entities"
+
+msgid "ucl_management_entities_empty"
+msgstr "UCLouvain management entities"
+
+msgid "ucl_management_entities_list"
+msgstr "List of UCLouvain management entities"
 
 msgid "ucl_management_entity_change_success"
 msgstr "UCLouvain management entity successfully changed."
 
-#, python-brace-format
-msgid "financing_country_not_imported_{country}"
-msgstr "Unknown country {country}."
+msgid "ucl_management_entity_contacts"
+msgstr "UCLouvain management entity contacts"
 
-#, python-brace-format
-msgid "financing_url_invalid_{country}_{url}"
-msgstr "Invalid url {url} for country {country}."
+msgid "ucl_management_entity_create_success"
+msgstr "UCLouvain management entity successfully created."
 
-msgid "financings_imported_error"
-msgstr "Financings could not be imported."
+msgid "ucl_university"
+msgstr "UCLouvain university"
 
-msgid "financings_imported"
-msgstr "Financings successfully imported."
+msgid "ucl_university_labo"
+msgstr "School / Laboratory"
 
-msgid "course_catalogue"
-msgstr "Course catalogue"
+msgid "ucl_university_labo_filter"
+msgstr "School / Laboratory"
 
-msgid "course_catalogue_text_fr"
-msgstr "Text for course catalogue in french"
+msgid "university_offers_filter"
+msgstr "University offer"
 
-msgid "course_catalogue_text_en"
-msgstr "Text for course catalogue in english"
+msgid "update_configuration"
+msgstr "Update configuration"
 
-msgid "course_catalogue_url_fr"
-msgstr "Link course catalogue in french"
+msgid "update_contact"
+msgstr "update contact"
 
-msgid "course_catalogue_url_en"
-msgstr "Link to course catalogue in english"
+msgid "update_media"
+msgstr "Update media"
 
-msgid "is_visible_in_portal"
-msgstr "Visible on the portal"
+msgid "update_partner"
+msgstr "Update partner"
+
+msgid "update_partner_entity"
+msgstr "Update partner entity"
+
+msgid "update_partnership_agreement"
+msgstr "Update partnership agreement"
+
+msgid "update_ucl_management_entity"
+msgstr "Update UCLouvain management entity"
+
+msgid "url"
+msgstr "URL"
+
+msgid "use_egracons"
+msgstr "Use egracons conversion system"
+
+msgid "valid"
+msgstr "Valid"
+
+msgid "validated_agreements"
+msgstr "Validated agreements"
+
+msgid "validity_end"
+msgstr "Validity end"
+
+msgid "visibility"
+msgstr "Visibility"
+
+msgid "visibility_public"
+msgstr "Public"
+
+msgid "visibility_staff"
+msgstr "Staff"
+
+msgid "visibility_staff_student"
+msgstr "Staff and Student"
+
+msgid "website"
+msgstr "Website"
+
+msgid "years"
+msgstr "Years"
