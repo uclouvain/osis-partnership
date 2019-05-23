@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from partnership.api.filters import PartnerFilter, PartnershipFilter
 from partnership.api.serializers import PartnerSerializer
 from partnership.models import PartnershipConfiguration, Partner, \
-    PartnershipAgreement, PartnershipYearEducationField, Partnership
+    PartnershipAgreement, PartnershipYearEducationField, Partnership, PartnershipYear
 
 
 class PartnersListView(generics.ListAPIView):
@@ -20,15 +20,14 @@ class PartnersListView(generics.ListAPIView):
         # Partnership queryset for subquery count
         partnerships_queryset = Partnership.objects.annotate(
             current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
-            has_in=Exists(
-                PartnershipAgreement.objects.filter(
+            has_years_in=Exists(
+                PartnershipYear.objects.filter(
                     partnership=OuterRef('pk'),
-                    start_academic_year__year__lte=academic_year.year,
-                    end_academic_year__year__gte=academic_year.year,
+                    academic_year=academic_year,
                 )
             ),
         ).filter(
-            has_in=True,
+            has_years_in=True,
             years__academic_year=F('current_academic_year'),  # From annotation
         )
         partnerships_filter = PartnershipFilter(

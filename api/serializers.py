@@ -266,6 +266,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return contact
 
     def get_funding(self, partnership):
+        if not partnership.has_valid_agreement_in_current_year:
+            return None
         if not self._get_current_year_attr(partnership, 'eligible'):
             return None
         academic_year = self._get_current_year_attr(partnership, 'academic_year')

@@ -125,9 +125,16 @@ class PartnershipsMixinView(GenericAPIView):
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
-                has_in=Exists(
+                has_years_in=Exists(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                        academic_year=academic_year,
+                    )
+                ),
+                has_valid_agreement_in_current_year=Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('pk'),
+                        status=PartnershipAgreement.STATUS_VALIDATED,
                         start_academic_year__year__lte=academic_year.year,
                         end_academic_year__year__gte=academic_year.year,
                     )
@@ -172,7 +179,7 @@ class PartnershipsMixinView(GenericAPIView):
                 )
             )
             .filter(
-                has_in=True,
+                has_years_in=True,
                 years__academic_year=F('current_academic_year'),  # From annotation
             )
             .distinct()
