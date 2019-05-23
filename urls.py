@@ -138,5 +138,5 @@ urlpatterns = [
     ], namespace='autocomplete')),
 
     # API
-    url(r'^v1/', include(url_v1.urlpatterns))
+    url(r'^v1/', include(url_v1.urlpatterns, namespace='partnership_api_v1'))
 ]
