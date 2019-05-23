@@ -207,7 +207,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         education_levels = self._get_current_year_attr(partnership, 'education_levels')
         if education_levels is None:
             return None
-        return [level.label for level in education_levels.all()]
+        return [level.code for level in education_levels.all()]
 
     def get_out_entities(self, partnership):
         entities = self._get_current_year_attr(partnership, 'entities')
