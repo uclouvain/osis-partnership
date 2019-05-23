@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 servers:
- - url: https://{environment}.osis.uclouvain.be/api/v1/partnership/
+ - url: https://{environment}.osis.uclouvain.be/partnerships/v1
    variables:
      environment:
        default: dev
@@ -8,7 +8,7 @@ servers:
          - dev # Development server
          - qa # Staging server
          - test # Test server
- - url: https://osis.uclouvain.be/api/v1/partnership/
+ - url: https://osis.uclouvain.be/partnerships/v1
    description: Production server
 info:
   version: 1.0.0
