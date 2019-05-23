@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 
+from partnership.api import url_v1
 from partnership.views import (EntityAutocompleteView, FacultyAutocompleteView,
                                FacultyEntityAutocompleteView,
                                FinancingExportView, FinancingImportView,
@@ -135,4 +136,7 @@ urlpatterns = [
         url('^years_entity_filter/$', YearsEntityAutocompleteFilterView.as_view(), name='years_entity_filter'),
         url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
     ], namespace='autocomplete')),
+
+    # API
+    url(r'^v1/', include(url_v1.urlpatterns))
 ]
