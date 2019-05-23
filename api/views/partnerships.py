@@ -85,7 +85,27 @@ class PartnershipsMixinView(GenericAPIView):
                     queryset=(
                         PartnershipYear.objects
                         .prefetch_related(
-                            'education_fields', 'education_levels', 'entities', 'offers'
+                            Prefetch(
+                                'entities',
+                                queryset=Entity.objects
+                                .annotate(
+                                    most_recent_acronym=Subquery(
+                                        EntityVersion.objects
+                                            .filter(entity=OuterRef('pk'))
+                                            .order_by('-start_date')
+                                            .values('acronym')[:1]
+                                    ),
+                                    most_recent_title=Subquery(
+                                        EntityVersion.objects
+                                            .filter(entity=OuterRef('pk'))
+                                            .order_by('-start_date')
+                                            .values('title')[:1]
+                                    ),
+                                )
+                            ),
+                            'education_fields',
+                            'education_levels',
+                            'offers',
                         ).filter(academic_year=academic_year)
                     ),
                     to_attr='current_year_for_api',
