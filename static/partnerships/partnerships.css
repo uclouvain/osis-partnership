@@ -83,3 +83,7 @@ ul.tags-list li {
 .results-count {
   text-align: right;
 }
+
+.small-textarea textarea {
+  height: 6em;
+}

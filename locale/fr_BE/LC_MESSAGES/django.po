@@ -1192,3 +1192,18 @@ msgstr "Les financements n'ont pas pu être importés."
 
 msgid "financings_imported"
 msgstr "Financements importés avec succès"
+
+msgid "course_catalogue"
+msgstr "Catalogue de formation"
+
+msgid "course_catalogue_text_fr"
+msgstr "Texte pour le catalogue de formation en français"
+
+msgid "course_catalogue_text_en"
+msgstr "Texte pour le catalogue de formation en anglais"
+
+msgid "course_catalogue_url_fr"
+msgstr "Lien pour le catalogue de formation en français"
+
+msgid "course_catalogue_url_en"
+msgstr "Lien pour le catalogue de formation en anglais"

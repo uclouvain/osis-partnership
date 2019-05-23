@@ -1150,6 +1150,10 @@ class UCLManagementEntityForm(forms.ModelForm):
             'contact_out_person',
             'contact_out_email',
             'contact_out_url',
+            'course_catalogue_text_fr',
+            'course_catalogue_text_en',
+            'course_catalogue_url_fr',
+            'course_catalogue_url_en',
         ]
         widgets = {
             'faculty': autocomplete.ModelSelect2(

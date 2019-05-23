@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% load i18n static %}
 
+{% block style %}
+  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+{% endblock %}
+
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}">{% trans 'partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>

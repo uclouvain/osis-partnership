@@ -143,6 +143,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_university_offers = serializers.SerializerMethodField()
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
     out_partner_contacts = ContactSerializer(source='contacts', many=True)
+    out_course_catalogue = serializers.SerializerMethodField()
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url', allow_null=True)
@@ -160,7 +161,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
-            'out_partner_contacts',
+            'out_partner_contacts', 'out_course_catalogue',
             # IN
             'in_contact', 'in_portal',
             # STAFF
@@ -242,6 +243,18 @@ class PartnershipSerializer(serializers.ModelSerializer):
             contact['last_name'] = person.last_name
             contact['phone'] = person.phone
         return contact
+
+    def get_out_course_catalogue(self, partnership):
+        return {
+            'fr': {
+                'text': getattr(partnership.ucl_management_entity, 'course_catalogue_text_fr', None),
+                'url': getattr(partnership.ucl_management_entity, 'course_catalogue_url_fr', None),
+            },
+            'en': {
+                'text': getattr(partnership.ucl_management_entity, 'course_catalogue_text_en', None),
+                'url': getattr(partnership.ucl_management_entity, 'course_catalogue_url_en', None),
+            }
+        }
 
     def get_in_contact(self, partnership):
         administrative_person = getattr(partnership.ucl_management_entity, 'administrative_responsible', None)
