@@ -25,7 +25,7 @@
     <div class="row">
       <div class="col-sm-12">
         {% if can_update_partner %}
-        <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right"><i class="fa fa-fw fa-pencil"></i> {% trans "update_partner" %}</a>
+        <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right"><i class="fas fa-fw fa-pencil-alt"></i> {% trans "update_partner" %}</a>
         {% endif %}
         <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
       </div>
@@ -51,26 +51,26 @@
           <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
           <dt>{% trans "is_ies" %}</dt>
-          <dd><i class="fa {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+          <dd><i class="fas {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_nonprofit" %}</dt>
-          <dd>{% if partner.is_nonprofit is None %}{% trans "not_filled_in" %}{% else %}<i class="fa {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
+          <dd>{% if partner.is_nonprofit is None %}{% trans "not_filled_in" %}{% else %}<i class="fas {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
 
           <dt>{% trans "is_public" %}</dt>
-          <dd>{% if partner.is_public is None %}{% trans "not_filled_in" %}{% else %}<i class="fa {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
+          <dd>{% if partner.is_public is None %}{% trans "not_filled_in" %}{% else %}<i class="fas {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
 
           <dt title="{% trans "use_egracons" %}">{% trans "use_egracons" %}</dt>
-          <dd><i class="fa {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+          <dd><i class="fas {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
         </dl>
       </div>
       <div class="col-sm-12 col-md-6">
         <dl class="dl-horizontal">
           <dt>{% trans "is_valid" %}</dt>
-          <dd><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
+          <dd><i class="fas {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_actif" %}</dt>
           <dd>
-            <i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            <i class="fas {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
             {% academic_dates start_date=partner.start_date end_date=partner.end_date %}
           </dd>
 
@@ -124,7 +124,7 @@
            class="btn btn-default modal-link pull-right"
            data-modal-submit="{% trans "new_media" %}"
            data-modal-title="{% trans "new_media" %}"
-           data-modal="modal-form"><i class="fa fa-fw fa-plus"></i> {% trans "add_media" %}</a>
+           data-modal="modal-form"><i class="fas fa-fw fa-plus"></i> {% trans "add_media" %}</a>
         {% endif %}
         </h2>
       </div>
@@ -147,7 +147,7 @@
         {% if can_add_entities %}
         <a href="{% url "partnerships:partners:entities:create" partner.id %}"
                class="btn btn-default pull-right">
-          <i class="fa fa-fw fa-plus"></i> {% trans "add_partner_entity" %}
+          <i class="fas fa-fw fa-plus"></i> {% trans "add_partner_entity" %}
         </a>
         {% endif %}
         </h2>
@@ -165,7 +165,7 @@
             <div class="btn-group">
               <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
                  class="btn btn-default">
-                <i class="fa fa-pencil fa-fw"></i>
+                <i class="fas fa-pencil-alt fa-fw"></i>
               </a>
               {% if user|can_delete_partner_entity:entity %}
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -178,7 +178,7 @@
                    data-modal-danger
                    data-modal-submit="{% trans "delete_partner_entity" %}"
                    data-modal-title="{{ entity }}"
-                   data-modal="modal-form"><i class="fa fa-times fa-fw"></i> {% trans "delete_partner_entity" %}</a></li>
+                   data-modal="modal-form"><i class="fas fa-times fa-fw"></i> {% trans "delete_partner_entity" %}</a></li>
               </ul>
                 {% endif %}
             </div>
@@ -248,11 +248,11 @@
     <div class="modal-content">
       <form action="" method="post" class="partner-form" enctype="multipart/form-data">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
           <h4 class="modal-title" id="myModalLabel">Title</h4>
         </div>
         <div class="modal-body">
-          <i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i>
+          <i class="fas fa-circle-notch fa-spin fa-fw fa-5x"></i>
         </div>
         <div class="modal-footer">
           <div class="row button-row">

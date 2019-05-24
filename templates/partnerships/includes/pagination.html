@@ -5,17 +5,17 @@
     {% if page_obj.has_previous %}
     <li>
       <a href="{% change_current_url_param 'page' '1' request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "first" %}">
-        <span aria-hidden="true"><i class="fa fa-step-backward"></i></span>
+        <span aria-hidden="true"><i class="fas fa-step-backward"></i></span>
       </a>
     </li>
     <li>
       <a href="{% change_current_url_param 'page' page_obj.previous_page_number request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "previous" %}">
-        <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
+        <span aria-hidden="true"><i class="fas fa-arrow-left"></i></span>
       </a>
     </li>
     {% else %}
-      <li class="disabled"><span aria-hidden="true"><i class="fa fa-step-backward"></i></span></li>
-      <li class="disabled"><span aria-hidden="true"><i class="fa fa-arrow-left"></i></span></li>
+      <li class="disabled"><span aria-hidden="true"><i class="fas fa-step-backward"></i></span></li>
+      <li class="disabled"><span aria-hidden="true"><i class="fas fa-arrow-left"></i></span></li>
     {% endif %}
     {% for page_number in paginator.page_range %}
       {# Only show neighbours pages #}
@@ -30,17 +30,17 @@
     {% if page_obj.has_next %}
     <li>
       <a href="{% change_current_url_param 'page' page_obj.next_page_number request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "next" %}">
-        <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
+        <span aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
       </a>
     </li>
     <li>
       <a href="{% change_current_url_param 'page' paginator.num_pages request.GET.urlencode %}" class="ajax-results" aria-label="{% trans "last" %}">
-        <span aria-hidden="true"><i class="fa fa-step-forward"></i></span>
+        <span aria-hidden="true"><i class="fas fa-step-forward"></i></span>
       </a>
     </li>
     {% else %}
-      <li class="disabled"><span aria-hidden="true"><i class="fa fa-arrow-right"></i></span></li>
-      <li class="disabled"><span aria-hidden="true"><i class="fa fa-step-forward"></i></span></li>
+      <li class="disabled"><span aria-hidden="true"><i class="fas fa-arrow-right"></i></span></li>
+      <li class="disabled"><span aria-hidden="true"><i class="fas fa-step-forward"></i></span></li>
     {% endif %}
   </ul>
 </nav>

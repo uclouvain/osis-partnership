@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="loader"><div class="spinner"><i class="fa fa-circle-o-notch fa-spin fa-fw fa-5x"></i></div></div>
+<div class="loader"><div class="spinner"><i class="fas fa-circle-o-notch fa-spin fa-fw fa-5x"></i></div></div>
 
 <div class="results-count">{% blocktrans count count=paginator.count %}{{ count }}_result_count{% plural %}{{ count }}_results_count{% endblocktrans %}</div>
 
@@ -26,10 +26,10 @@
         <td>{{ partner.contact_address.city|default_if_none:"" }}</td>
         <td>{{ partner.partner_code|default_if_none:"" }}</td>
         <td>{{ partner.partner_type }}</td>
-        <td><i class="fa {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
-        <td><i class="fa {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+        <td><i class="fas {{ partner.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
+        <td><i class="fas {{ partner.is_actif|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
         <td><a href="{% url "partnerships:list" %}?partner={{ partner.id }}">{{ partner.partnerships_count }}</a></td>
-        <td><a href="{{ partner.get_absolute_url }}" class="btn btn-default"><i class="fa fa-eye"></i></a></td>
+        <td><a href="{{ partner.get_absolute_url }}" class="btn btn-default"><i class="fas fa-eye"></i></a></td>
       </tr>
       {% endfor %}
     </tbody>
