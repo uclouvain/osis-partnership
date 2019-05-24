@@ -90,6 +90,18 @@ class PartnershipsMixinView(GenericAPIView):
                     ),
                     to_attr='current_year_for_api',
                 ),
+                Prefetch(
+                    'agreements',
+                    queryset=(
+                        PartnershipAgreement.objects
+                        .filter(status=PartnershipAgreement.STATUS_VALIDATED)
+                        .filter(
+                            start_academic_year__year__lte=academic_year.year,
+                            end_academic_year__year__gte=academic_year.year,
+                        )
+                    ),
+                    to_attr='valid_current_agreements',
+                ),
             )
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),

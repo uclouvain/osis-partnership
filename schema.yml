@@ -151,6 +151,9 @@ components:
         medias:
           - url: http://example.com/file1
             name: file 1
+        bilateral_agreements:
+          - url: http://example.com/file1
+            name: file 1
         out_education_levels:
           - Level 1
           - Level 2
@@ -237,6 +240,15 @@ components:
                 type: string
               url:
                 type: string
+        bilateral_agreements:
+          type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
         out_education_levels:
           type: array
           items:
