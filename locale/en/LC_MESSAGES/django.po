@@ -1125,3 +1125,6 @@ msgstr "Link course catalogue in french"
 
 msgid "course_catalogue_url_en"
 msgstr "Link to course catalogue in english"
+
+msgid "is_visible_in_portal"
+msgstr "Visible on the portal"

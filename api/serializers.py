@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact, Media
+from partnership.models import Partner, PartnershipYearEducationField, Partnership, Financing, Contact, Media, MediaType
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -134,8 +134,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_stt = serializers.SerializerMethodField()
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    medias = MediaSerializers(many=True, source='public_medias')
     bilateral_agreements = serializers.SerializerMethodField()
+    medias = MediaSerializers(many=True)
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.URLField(source='ucl_management_entity.contact_out_url', allow_null=True)
@@ -145,6 +145,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
     out_partner_contacts = ContactSerializer(source='contacts', many=True)
     out_course_catalogue = serializers.SerializerMethodField()
+    out_summary_tables = serializers.SerializerMethodField()
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(source='ucl_management_entity.contact_in_url', allow_null=True)
@@ -162,7 +163,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
-            'out_partner_contacts', 'out_course_catalogue',
+            'out_partner_contacts', 'out_course_catalogue', 'out_summary_tables',
             # IN
             'in_contact', 'in_portal',
             # STAFF
@@ -262,6 +263,22 @@ class PartnershipSerializer(serializers.ModelSerializer):
                 'url': getattr(partnership.ucl_management_entity, 'course_catalogue_url_en', None),
             }
         }
+
+    def get_out_summary_tables(self, partnership):
+        medias = [
+            MediaSerializers(media).data
+            for media in partnership.medias.all()
+            if media.is_visible_in_portal
+               and media.type is not None
+               and media.type.code == MediaType.SUMMARY_TABLE
+        ] + [
+            MediaSerializers(media).data
+            for media in partnership.partner.medias.all()
+            if media.is_visible_in_portal
+               and media.type is not None
+               and media.type.code == MediaType.SUMMARY_TABLE
+        ]
+        return medias
 
     def get_in_contact(self, partnership):
         administrative_person = getattr(partnership.ucl_management_entity, 'administrative_responsible', None)
