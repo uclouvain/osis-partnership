@@ -72,43 +72,43 @@ class PartnershipApiViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_partner(self):
         response = self.client.get(self.url + '?ordering=partner')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_country_en(self):
         response = self.client.get(self.url + '?ordering=country_en')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_city(self):
         response = self.client.get(self.url + '?ordering=city')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_ucl_university(self):
         response = self.client.get(self.url + '?ordering=ucl_university')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_type(self):
         response = self.client.get(self.url + '?ordering=type')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_ordering_subject_area(self):
         response = self.client.get(self.url + '?ordering=subject_area')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), 3)
 
     def test_filter_continent(self):
         response = self.client.get(self.url + '?continent=' + str(self.continent.name))
