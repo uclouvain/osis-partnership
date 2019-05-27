@@ -32,10 +32,10 @@ components:
     Entity:
       description: An entity
       example:
-        name: Science
+        title: Science
         acronym: SC
       properties:
-        name:
+        title:
           type: string
         acronym:
           type: string
@@ -134,10 +134,10 @@ components:
           - Field 1
           - Field 2
         ucl_university:
-          name: science
+          title: science
           acronym: SC
         ucl_university_labo:
-          name: science
+          title: science
           acronym: SC
         supervisor: John DOE
         is_sms: false
@@ -155,7 +155,8 @@ components:
           - Level 1
           - Level 2
         out_entities:
-          - FIAL
+          - acronym: FIAL
+            title: School of something
         out_university_offers:
           - Offer 1
         out_contact:

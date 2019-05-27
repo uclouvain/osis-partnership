@@ -214,7 +214,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         entities = self._get_current_year_attr(partnership, 'entities')
         if entities is None:
             return None
-        return [str(entity) for entity in entities.all()]
+        return [EntitySerializer(entity).data for entity in entities.all()]
 
     def get_out_university_offers(self, partnership):
         offers = self._get_current_year_attr(partnership, 'offers')
