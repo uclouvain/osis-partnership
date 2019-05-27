@@ -184,6 +184,9 @@ components:
           en:
             text: Course catalogue
             url: http://course.en
+        out_summary_tables:
+          - url: http://example.com/file1
+            name: file 1
         in_contact:
           first_name: John
           last_name: Doe
@@ -303,6 +306,15 @@ components:
                 url:
                   type: string
                   format: uri
+        out_summary_tables:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
         in_contact:
           $ref: '#/components/schemas/Contact'
         in_portal:

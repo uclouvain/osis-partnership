@@ -35,13 +35,21 @@ class PartnershipsMixinView(GenericAPIView):
                 Prefetch(
                     'medias',
                     queryset=Media.objects
-                        .filter(visibility=Media.VISIBILITY_PUBLIC),
-                    to_attr='public_medias',
+                        .select_related('type')
+                        .filter(is_visible_in_portal=True),
                 ),
                 Prefetch(
                     'partner',
                     queryset=Partner.objects
                         .select_related('partner_type', 'contact_address__country')
+                        .prefetch_related(
+                            Prefetch(
+                                'medias',
+                                queryset=Media.objects
+                                    .filter(is_visible_in_portal=True)
+                                    .select_related('type')
+                            ),
+                        )
                         .annotate(partnerships_count=Count('partnerships'))
                 ),
                 Prefetch(

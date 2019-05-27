@@ -6,7 +6,7 @@ from partnership.models import (Address, Contact, ContactType, Financing,
                                 PartnershipTag, PartnershipYear,
                                 PartnershipYearEducationField,
                                 PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+                                PartnerType, UCLManagementEntity, MediaType)
 
 
 class PartnershipEntityManagerAdmin(admin.ModelAdmin):
@@ -111,6 +111,7 @@ admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Financing, FinancingAdmin)
 admin.site.register(Media)
 admin.site.register(ContactType)
+admin.site.register(MediaType)
 admin.site.register(Contact)
 admin.site.register(Address)
 admin.site.register(UCLManagementEntity)
