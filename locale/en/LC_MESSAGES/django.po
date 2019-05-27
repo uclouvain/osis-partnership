@@ -1110,3 +1110,18 @@ msgstr "Financings could not be imported."
 
 msgid "financings_imported"
 msgstr "Financings successfully imported."
+
+msgid "course_catalogue"
+msgstr "Course catalogue"
+
+msgid "course_catalogue_text_fr"
+msgstr "Text for course catalogue in french"
+
+msgid "course_catalogue_text_en"
+msgstr "Text for course catalogue in english"
+
+msgid "course_catalogue_url_fr"
+msgstr "Link course catalogue in french"
+
+msgid "course_catalogue_url_en"
+msgstr "Link to course catalogue in english"

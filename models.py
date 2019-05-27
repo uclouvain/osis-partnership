@@ -971,6 +971,27 @@ class UCLManagementEntity(models.Model):
         verbose_name=_("portal")
     )
 
+    course_catalogue_text_fr = models.TextField(
+        _('course_catalogue_text_fr'),
+        blank=True,
+        default='',
+    )
+    course_catalogue_text_en = models.TextField(
+        _('course_catalogue_text_en'),
+        blank=True,
+        default='',
+    )
+    course_catalogue_url_fr = models.URLField(
+        _('course_catalogue_url_fr'),
+        blank=True,
+        default='',
+    )
+    course_catalogue_url_en = models.URLField(
+        _('course_catalogue_url_en'),
+        blank=True,
+        default='',
+    )
+
     class Meta:
         unique_together = ("faculty", "entity")
 

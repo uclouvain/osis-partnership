@@ -173,6 +173,13 @@ components:
             last_name: Doe
             phone: +33245678987
             email: john.doe@example.com
+        out_course_catalogue:
+          fr:
+            text: Course catalogue
+            url: http://course.fr
+          en:
+            text: Course catalogue
+            url: http://course.en
         in_contact:
           first_name: John
           last_name: Doe
@@ -263,6 +270,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Contact'
+        out_course_catalogue:
+          description: Course catalogue in FR and EN
+          type: object
+          properties:
+            fr:
+              type: object
+              properties:
+                text:
+                  type: string
+                url:
+                  type: string
+                  format: uri
+            en:
+              type: object
+              properties:
+                text:
+                  type: string
+                url:
+                  type: string
+                  format: uri
         in_contact:
           $ref: '#/components/schemas/Contact'
         in_portal:
