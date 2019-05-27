@@ -295,9 +295,9 @@ components:
         in_portal:
           type: string
           format: uri
-        staff_contact_name:
+        staff_contact:
           description: UCL contact
-          type: string
+          $ref: '#/components/schemas/Contact'
         staff_partner_contacts:
           description: Contacts in partner institution
           type: array
