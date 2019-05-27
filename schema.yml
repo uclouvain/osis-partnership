@@ -555,6 +555,7 @@ paths:
               - country_en
               - city
               - ucl_university
+              - ucl_university_labo
               - type
               - subject_area
         - $ref: '#/components/parameters/continent'
