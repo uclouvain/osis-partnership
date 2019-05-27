@@ -135,6 +135,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     medias = MediaSerializers(many=True, source='public_medias')
+    bilateral_agreements = serializers.SerializerMethodField()
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.URLField(source='ucl_management_entity.contact_out_url', allow_null=True)
@@ -157,7 +158,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'ucl_university', 'ucl_university_labo',
             'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
-            'education_fields', 'status', 'partner_entity', 'medias',
+            'education_fields', 'status', 'partner_entity', 'medias', 'bilateral_agreements',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
@@ -203,6 +204,12 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'status': partnership.agreement_status,  # annotation on the queryset
             'valid_years': partnership.validity_years,  # annotation on the queryset
         }
+
+    def get_bilateral_agreements(self, partnership):
+        return [
+            MediaSerializers(agreement.media).data
+            for agreement in partnership.valid_current_agreements
+        ]
 
     def get_out_education_levels(self, partnership):
         education_levels = self._get_current_year_attr(partnership, 'education_levels')
