@@ -121,7 +121,7 @@ class PartnerFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('name', 'partner'),
-            ('contact_address__country__name', 'country_en'),
+            ('contact_address__country__iso_code', 'country_en'),
             ('contact_address__city', 'city'),
             ('partnerships__ucl_university', 'ucl_university'),
             ('subject_area_ordered', 'subject_area'),
