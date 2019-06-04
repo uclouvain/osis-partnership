@@ -256,8 +256,8 @@ class PartnershipFilter(filters.FilterSet):
             ('partner__name', 'partner'),
             ('partner__contact_address__country__name', 'country_en'),
             ('partner__contact_address__city', 'city'),
-            ('ucl_university', 'ucl_university'),
-            ('ucl_university_labo', 'ucl_university_labo'),
+            ('ucl_university_most_recent_acronym', 'ucl_university'),
+            ('ucl_university_labo_most_recent_acronym', 'ucl_university_labo'),
             ('type_ordered', 'type'),
             ('subject_area_ordered', 'subject_area'),
         )
