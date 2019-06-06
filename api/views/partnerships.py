@@ -165,6 +165,18 @@ class PartnershipsMixinView(GenericAPIView):
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
+                ucl_university_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                ucl_university_labo_most_recent_acronym=Subquery(
+                    EntityVersion.objects
+                        .filter(entity=OuterRef('ucl_university_labo__pk'))
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
                 has_years_in=Exists(
                     PartnershipYear.objects.filter(
                         partnership=OuterRef('pk'),

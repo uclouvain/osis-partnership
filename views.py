@@ -51,7 +51,7 @@ from partnership.forms import (AddressForm, ContactForm, FinancingFilterForm,
                                PartnershipYearForm, UCLManagementEntityForm)
 from partnership.models import (Financing, Partner, PartnerEntity, Partnership,
                                 PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipYear, UCLManagementEntity)
+                                PartnershipYear, UCLManagementEntity, Media)
 from partnership.utils import academic_years, user_is_adri, user_is_gf
 from reference.models.country import Country
 
@@ -267,11 +267,14 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
             Partner.objects
             .select_related('partner_type', 'author')
             .prefetch_related(
+                'tags',
                 Prefetch('entities', queryset=PartnerEntity.objects.select_related(
                     'contact_in', 'contact_out', 'address', 'parent', 'author',
                 )),
-                'tags',
-                'medias',
+                Prefetch(
+                    'medias',
+                    queryset=Media.objects.select_related('type'),
+                ),
             )
         )
 
@@ -1273,8 +1276,11 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             )
             .prefetch_related(
                 'contacts',
-                'medias',
                 'tags',
+                Prefetch(
+                    'medias',
+                    queryset=Media.objects.select_related('type'),
+                ),
                 Prefetch(
                     'years',
                     queryset=PartnershipYear.objects.select_related('academic_year')
@@ -1615,7 +1621,9 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
         if self.object is not None:
             kwargs['instance'] = self.object.media
         del kwargs['user']
-        return MediaForm(**kwargs)
+        form = MediaForm(**kwargs)
+        del form.fields['type']
+        return form
 
     def get_context_data(self, **kwargs):
         if 'form_media' not in kwargs:
