@@ -321,15 +321,15 @@ class PartnershipSerializer(serializers.ModelSerializer):
         }
 
     def get_staff_contact(self, partnership):
-        supervisor = partnership.get_supervisor()
-        if supervisor is None:
+        administrative_person = getattr(partnership.ucl_management_entity, 'administrative_responsible', None)
+        if administrative_person is None:
             return None
         contact = {
-            'email': supervisor.email,
+            'email': administrative_person.email,
             'title': None,
-            'first_name': supervisor.first_name,
-            'last_name': supervisor.last_name,
-            'phone': supervisor.phone,
+            'first_name': administrative_person.first_name,
+            'last_name': administrative_person.last_name,
+            'phone': administrative_person.phone,
         }
         return contact
 
