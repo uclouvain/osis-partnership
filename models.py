@@ -1226,6 +1226,8 @@ class Media(models.Model):
         (VISIBILITY_STAFF_STUDENT, _('visibility_staff_student')),
     )
 
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
+
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
     file = models.FileField(_('file'), help_text=_('media_file_or_url'), upload_to='partnerships/', blank=True,

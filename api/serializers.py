@@ -98,7 +98,7 @@ class MediaSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Media
-        fields = ['name', 'url']
+        fields = ['uuid', 'name', 'url']
 
 
 class PartnerSerializer(serializers.ModelSerializer):
@@ -339,3 +339,11 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return None
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
+
+
+class MediaWithMetadataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Media
+        fields = (
+            'uuid', 'name', 'description', 'url', 'type', 'visibility'
+        )

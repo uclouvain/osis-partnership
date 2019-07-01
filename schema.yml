@@ -638,3 +638,70 @@ paths:
                 $ref: "#/components/schemas/Partnership"
         '404':
           $ref: '#/components/responses/NotFound'
+  /medias/{uuid}:
+    get:
+      summary: Get the metadata for a media
+      tags:
+        - partnerships
+        - medias
+      operationId: getMediaDetail
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "abcd-efgh-ijkl-mnop-1234-5678"
+      responses:
+        '200':
+          description: A media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 2
+                  label: value
+                properties:
+                  uuid:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  url:
+                    type: string
+                  type:
+                    type: string
+                  visibility:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /medias/{uuid}/download:
+    get:
+      summary: Get the file
+      tags:
+        - partnerships
+        - medias
+      operationId: getMediaDownload
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "abcd-efgh-ijkl-mnop-1234-5678"
+      responses:
+        '200':
+          description: An URL or the file directly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
