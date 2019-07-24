@@ -1465,10 +1465,10 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
                     first_year.id = None
                     first_year.academic_year = academic_year
                     first_year.save()
-                    first_year.education_fields = first_year_education_fields
-                    first_year.education_levels = first_year_education_levels
-                    first_year.entities = first_year_entities
-                    first_year.offers = first_year_offers
+                    first_year.education_fields.set(first_year_education_fields)
+                    first_year.education_levels.set(first_year_education_levels)
+                    first_year.entities.set(first_year_entities)
+                    first_year.offers.set(first_year_offers)
 
         # Update years
         academic_years = find_academic_years(start_year=from_year, end_year=end_year)
@@ -1985,7 +1985,7 @@ class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateRespo
             )
         financings = Financing.objects.bulk_create(financings)
         for financing in financings:
-            financing.countries = financings_countries.get(financing.name, [])
+            financing.countries.set(financings_countries.get(financing.name, []))
 
     def form_valid(self, form):
         academic_year = form.cleaned_data.get('import_academic_year')
