@@ -59,7 +59,9 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_country = PartnershipFactory(partner=partner_country)
         # continent
         cls.continent = Continent.objects.create(code='fo', name='foo')
-        country_continent = CountryFactory(continent=cls.continent)
+        country_continent = CountryFactory()
+        country_continent.continent = cls.continent
+        country_continent.save()
         partner_continent = PartnerFactory(contact_address__country=country_continent)
         cls.partnership_continent = PartnershipFactory(partner=partner_continent)
         # partner_tags

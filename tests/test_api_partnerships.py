@@ -4,10 +4,11 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import PartnershipConfiguration
+from partnership.models import PartnershipConfiguration, Partnership
 from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
     PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
 from reference.models.continent import Continent
+from reference.models.country import Country
 from reference.tests.factories.country import CountryFactory
 
 
@@ -22,7 +23,9 @@ class PartnershipApiViewTest(TestCase):
 
         # Continents
         cls.continent = Continent.objects.create(code='AA', name='aaaaa')
-        cls.country = CountryFactory(continent=cls.continent)
+        cls.country = CountryFactory()
+        cls.country.continent = cls.continent
+        cls.country.save()
         CountryFactory(continent=cls.continent)
         CountryFactory()
 
