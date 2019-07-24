@@ -5,12 +5,12 @@ from .views.partners import PartnersListView
 from .views.configuration import ConfigurationView
 
 
-app_name = "partnership"
+app_name = "partnership_api_v1"
 urlpatterns = [
     url(r'^configuration$', ConfigurationView.as_view(), name='configuration'),
     url(r'^partners$', PartnersListView.as_view(), name='partners'),
-    url(r'^partnerships', include([
+    url(r'^partnerships', include(([
         url(r'^$', PartnershipsListView.as_view(), name='list'),
-        url(r'^/(?P<uuid>[0-9a-f-]+)$', PartnershipsRetrieveView.as_view(), name='retrieve'),
-    ], namespace='partnerships')),
+        url(r'^(?P<uuid>[0-9a-f-]+)$', PartnershipsRetrieveView.as_view(), name='retrieve'),
+    ], "partnership_api_v1"), namespace='partnerships')),
 ]
