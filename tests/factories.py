@@ -78,17 +78,17 @@ class PartnerFactory(factory.DjangoModelFactory):
     def tags(obj, create, extracted, **kwargs):
         if create:
             if extracted:
-                obj.tags = extracted
+                obj.tags.set(extracted)
             else:
-                obj.tags = [PartnerTagFactory(), PartnerTagFactory()]
+                obj.tags.set([PartnerTagFactory(), PartnerTagFactory()])
 
     @factory.post_generation
     def entities(obj, create, extracted, **kwargs):
         if create:
             if extracted:
-                obj.entities = extracted
+                obj.entities.set(extracted)
             else:
-                obj.entities = [PartnerEntityFactory(partner=obj, author=obj.author)]
+                obj.entities.set([PartnerEntityFactory(partner=obj, author=obj.author)])
 
 
 class PartnerEntityFactory(factory.DjangoModelFactory):
@@ -126,25 +126,25 @@ class PartnershipFactory(factory.DjangoModelFactory):
     def tags(obj, create, extracted, **kwargs):
         if create:
             if extracted:
-                obj.tags = extracted
+                obj.tags.set(extracted)
             else:
-                obj.tags = [PartnershipTagFactory(), PartnershipTagFactory()]
+                obj.tags.set([PartnershipTagFactory(), PartnershipTagFactory()])
 
     @factory.post_generation
     def contacts(obj, create, extracted, **kwargs):
         if create:
             if extracted:
-                obj.contacts = extracted
+                obj.contacts.set(extracted)
             else:
-                obj.contacts = [ContactFactory(), ContactFactory()]
+                obj.contacts.set([ContactFactory(), ContactFactory()])
 
     @factory.post_generation
     def years(obj, create, extracted, **kwargs):
         if create:
             if extracted is not None:
-                obj.years = extracted
+                obj.years.set(extracted)
             else:
-                obj.years = [PartnershipYearFactory(partnership=obj)]
+                obj.years.set([PartnershipYearFactory(partnership=obj)])
 
 
 class PartnershipYearEducationFieldFactory(factory.DjangoModelFactory):

@@ -1,6 +1,5 @@
 from django.conf.urls import include, url
 
-from partnership.api import url_v1
 from partnership.views import (EntityAutocompleteView, FacultyAutocompleteView,
                                FacultyEntityAutocompleteView,
                                FinancingExportView, FinancingImportView,
@@ -45,6 +44,7 @@ from partnership.views import (EntityAutocompleteView, FacultyAutocompleteView,
                                YearsEntityAutocompleteFilterView, PartnershipMediaCreateView,
                                PartnershipMediaUpdateView, PartnershipMediaDeleteView, PartnershipMediaDownloadView)
 
+app_name = "partnerships"
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
     url(r'^export/$', PartnershipExportView.as_view(), name="export"),
@@ -53,54 +53,54 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', PartnershipDetailView.as_view(), name="detail"),
     url(r'^create/$', PartnershipCreateView.as_view(), name="create"),
     url(r'^(?P<pk>\d+)/update/$', PartnershipUpdateView.as_view(), name="update"),
-    url(r'^(?P<partnership_pk>\d+)/contacts/', include([
+    url(r'^(?P<partnership_pk>\d+)/contacts/', include(([
         url(r'^new/$', PartnershipContactCreateView.as_view(), name="create"),
         url(r'^(?P<pk>\d+)/update/$', PartnershipContactUpdateView.as_view(), name="update"),
         url(r'^(?P<pk>\d+)/delete/$', PartnershipContactDeleteView.as_view(), name="delete"),
-    ], namespace='contacts')),
-    url(r'^(?P<partnership_pk>\d+)/medias/', include([
+    ], 'partnerships'), namespace='contacts')),
+    url(r'^(?P<partnership_pk>\d+)/medias/', include(([
         url(r'^new/$', PartnershipMediaCreateView.as_view(), name="create"),
         url(r'^(?P<pk>\d+)/update/$', PartnershipMediaUpdateView.as_view(), name="update"),
         url(r'^(?P<pk>\d+)/delete/$', PartnershipMediaDeleteView.as_view(), name="delete"),
         url(r'^(?P<pk>\d+)/download/$', PartnershipMediaDownloadView.as_view(), name="download"),
-    ], namespace='medias')),
-    url(r'^(?P<partnership_pk>\d+)/agreements/', include([
+    ], 'partnerships'), namespace='medias')),
+    url(r'^(?P<partnership_pk>\d+)/agreements/', include(([
         url(r'^(?P<pk>\d+)/delete/$', PartneshipAgreementDeleteView.as_view(), name="delete"),
         url(r'^(?P<pk>\d+)/update/$', PartneshipAgreementUpdateView.as_view(), name="update"),
         url(r'^(?P<pk>\d+)/download_media/$', PartnershipAgreementMediaDownloadView.as_view(), name="download_media"),
         url(r'^new/$', PartneshipAgreementCreateView.as_view(), name="create"),
-    ], namespace='agreements')),
-    url(r'^partners/', include([
+    ], 'partnerships'), namespace='agreements')),
+    url(r'^partners/', include(([
         url(r'^$', PartnersListView.as_view(), name="list"),
         url(r'^export/$', PartnersExportView.as_view(), name="export"),
         url(r'^similar/$', SimilarPartnerView.as_view(), name="similar"),
         url(r'^(?P<pk>\d+)/$', PartnerDetailView.as_view(), name="detail"),
         url(r'^(?P<pk>\d+)/update/$', PartnerUpdateView.as_view(), name="update"),
-        url(r'^(?P<partner_pk>\d+)/medias/', include([
+        url(r'^(?P<partner_pk>\d+)/medias/', include(([
             url(r'^new/$', PartnerMediaCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerMediaUpdateView.as_view(), name="update"),
             url(r'^(?P<pk>\d+)/delete/$', PartnerMediaDeleteView.as_view(), name="delete"),
             url(r'^(?P<pk>\d+)/download/$', PartnerMediaDownloadView.as_view(), name="download"),
-        ], namespace='medias')),
-        url(r'^(?P<partner_pk>\d+)/entities/', include([
+        ], 'partnerships'), namespace='medias')),
+        url(r'^(?P<partner_pk>\d+)/entities/', include(([
             url(r'^new/$', PartnerEntityCreateView.as_view(), name="create"),
             url(r'^(?P<pk>\d+)/update/$', PartnerEntityUpdateView.as_view(), name="update"),
             url(r'^(?P<pk>\d+)/delete/$', PartnerEntityDeleteView.as_view(), name="delete"),
-        ], namespace='entities')),
+        ],'partnerships'), namespace='entities')),
         url(r'^new/$', PartnerCreateView.as_view(), name="create"),
-    ], namespace='partners')),
-    url(r'^ucl_management_entities/', include([
+    ], 'partnerships'), namespace='partners')),
+    url(r'^ucl_management_entities/', include(([
         url(r'^$', UCLManagementEntityListView.as_view(), name="list"),
         url(r'^create/$', UCLManagementEntityCreateView.as_view(), name="create"),
         url(r'^(?P<pk>\d+)/edit/$', UCLManagementEntityUpdateView.as_view(), name="update"),
         url(r'^(?P<pk>\d+)/delete/$', UCLManagementEntityDeleteView.as_view(), name="delete"),
-    ], namespace='ucl_management_entities')),
-    url(r'^financings/', include([
+    ], 'partnerships'), namespace='ucl_management_entities')),
+    url(r'^financings/', include(([
         url(r'^(?:(?P<year>\d{4})/)?$', FinancingListView.as_view(), name='list'),
         url(r'^(?:(?P<year>\d{4})/)?export/$', FinancingExportView.as_view(), name='export'),
         url(r'^import/$', FinancingImportView.as_view(), name='import'),
-    ], namespace='financings')),
-    url(r'^autocomplete/', include([
+    ], 'partnerships'), namespace='financings')),
+    url(r'^autocomplete/', include(([
         url('^person/$', PersonAutocompleteView.as_view(), name='person'),
         url('^partner/$', PartnerAutocompleteView.as_view(), name='partner'),
         url('^partnership/$', PartnershipAutocompleteView.as_view(), name='partnership'),
@@ -135,5 +135,5 @@ urlpatterns = [
         ),
         url('^years_entity_filter/$', YearsEntityAutocompleteFilterView.as_view(), name='years_entity_filter'),
         url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
-    ], namespace='autocomplete')),
+    ], 'partnerships'), namespace='autocomplete')),
 ]
