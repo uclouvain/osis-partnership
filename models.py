@@ -1236,6 +1236,7 @@ class Media(models.Model):
         verbose_name=_('type'),
         null=True,
         blank=True,
+        on_delete=models.CASCADE
     )
     is_visible_in_portal = models.BooleanField(
         _('is_visible_in_portal'),
