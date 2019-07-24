@@ -4,6 +4,8 @@ from .views.partnerships import PartnershipsListView, PartnershipsRetrieveView
 from .views.partners import PartnersListView
 from .views.configuration import ConfigurationView
 
+
+app_name = "partnership"
 urlpatterns = [
     url(r'^configuration$', ConfigurationView.as_view(), name='configuration'),
     url(r'^partners$', PartnersListView.as_view(), name='partners'),
