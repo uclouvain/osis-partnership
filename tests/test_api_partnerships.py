@@ -22,7 +22,9 @@ class PartnershipApiViewTest(TestCase):
 
         # Continents
         cls.continent = Continent.objects.create(code='AA', name='aaaaa')
-        cls.country = CountryFactory(continent=cls.continent)
+        cls.country = CountryFactory()
+        cls.country.continent = cls.continent
+        cls.country.save()
         CountryFactory(continent=cls.continent)
         CountryFactory()
 
