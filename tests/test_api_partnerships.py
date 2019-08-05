@@ -4,11 +4,10 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import PartnershipConfiguration, Partnership
+from partnership.models import PartnershipConfiguration
 from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
     PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
 from reference.models.continent import Continent
-from reference.models.country import Country
 from reference.tests.factories.country import CountryFactory
 
 
