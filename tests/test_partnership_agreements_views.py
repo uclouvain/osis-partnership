@@ -7,10 +7,12 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import Media, PartnershipAgreement, Partnership
-from partnership.tests.factories import (PartnershipAgreementFactory,
-                                         PartnershipEntityManagerFactory,
-                                         PartnershipFactory)
+from partnership.models import Media, PartnershipAgreement
+from partnership.tests.factories import (
+    PartnershipAgreementFactory,
+    PartnershipEntityManagerFactory,
+    PartnershipFactory
+)
 
 
 class PartnershipsListViewTest(TestCase):

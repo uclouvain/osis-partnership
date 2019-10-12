@@ -6,9 +6,11 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import (ContactTypeFactory,
-                                         PartnershipEntityManagerFactory,
-                                         PartnershipFactory)
+from partnership.tests.factories import (
+    ContactTypeFactory,
+    PartnershipEntityManagerFactory,
+    PartnershipFactory
+)
 
 
 class PartnershipContactCreateViewTest(TestCase):

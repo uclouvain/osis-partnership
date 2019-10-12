@@ -1,11 +1,12 @@
 from django.test import TestCase
-from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from partnership.models import PartnershipAgreement
-from partnership.tests.factories import (PartnershipAgreementFactory,
-                                         PartnershipFactory,
-                                         PartnershipYearFactory)
+from partnership.tests.factories import (
+    PartnershipAgreementFactory,
+    PartnershipFactory,
+    PartnershipYearFactory
+)
 
 
 class PartnershipHasMissingValidYearsTest(TestCase):

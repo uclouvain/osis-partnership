@@ -5,9 +5,11 @@ from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import UCLManagementEntity
-from partnership.tests.factories import (PartnershipEntityManagerFactory,
-                                         PartnershipFactory,
-                                         UCLManagementEntityFactory)
+from partnership.tests.factories import (
+    PartnershipEntityManagerFactory,
+    PartnershipFactory,
+    UCLManagementEntityFactory
+)
 
 
 class UCLManagementEntityDeleteViewTest(TestCase):

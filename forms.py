@@ -13,16 +13,19 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion, get_last_version
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
-from partnership.models import (Address, Contact, Financing, Media, Partner,
-                                PartnerEntity, Partnership,
-                                PartnershipAgreement, PartnershipConfiguration,
-                                PartnershipTag, PartnershipYear,
-                                PartnershipYearEducationField,
-                                PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+from partnership.models import (
+    Address, Contact, Financing, Media, Partner,
+    PartnerEntity, Partnership,
+    PartnershipAgreement, PartnershipConfiguration,
+    PartnershipTag, PartnershipYear,
+    PartnershipYearEducationField,
+    PartnershipYearEducationLevel, PartnerTag,
+    PartnerType, UCLManagementEntity
+)
 from partnership.utils import user_is_adri
 from reference.models.continent import Continent
 from reference.models.country import Country
+
 
 ##### Custom Fields
 

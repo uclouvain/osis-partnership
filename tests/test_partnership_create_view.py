@@ -10,11 +10,13 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
-                                         PartnershipEntityManagerFactory,
-                                         PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory,
-                                         UCLManagementEntityFactory)
+from partnership.tests.factories import (
+    PartnerEntityFactory, PartnerFactory,
+    PartnershipEntityManagerFactory,
+    PartnershipYearEducationFieldFactory,
+    PartnershipYearEducationLevelFactory,
+    UCLManagementEntityFactory
+)
 from reference.tests.factories.country import CountryFactory
 
 

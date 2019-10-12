@@ -5,13 +5,15 @@ import factory
 from django.utils import timezone
 
 from base.tests.factories.academic_year import get_current_year
-from partnership.models import (Address, Contact, ContactType, Financing,
-                                Media, Partner, PartnerEntity, Partnership,
-                                PartnershipAgreement, PartnershipEntityManager,
-                                PartnershipTag, PartnershipYear,
-                                PartnershipYearEducationField,
-                                PartnershipYearEducationLevel, PartnerTag,
-                                PartnerType, UCLManagementEntity)
+from partnership.models import (
+    Address, Contact, ContactType, Financing,
+    Media, Partner, PartnerEntity, Partnership,
+    PartnershipAgreement, PartnershipEntityManager,
+    PartnershipTag, PartnershipYear,
+    PartnershipYearEducationField,
+    PartnershipYearEducationLevel, PartnerTag,
+    PartnerType, UCLManagementEntity
+)
 
 
 class PartnershipEntityManagerFactory(factory.DjangoModelFactory):

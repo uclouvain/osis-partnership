@@ -5,8 +5,10 @@ from base.models.enums.entity_type import FACULTY
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import (PartnershipEntityManagerFactory,
-                                         UCLManagementEntityFactory)
+from partnership.tests.factories import (
+    PartnershipEntityManagerFactory,
+    UCLManagementEntityFactory
+)
 
 GF_UME_NUMBER = 3
 OTHER_GF_UME_NUMBER = 7

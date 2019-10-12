@@ -6,8 +6,10 @@ from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
-from partnership.tests.factories import (PartnershipEntityManagerFactory,
-                                         UCLManagementEntityFactory)
+from partnership.tests.factories import (
+    PartnershipEntityManagerFactory,
+    UCLManagementEntityFactory
+)
 
 
 class UCLManagementEntityCreateViewTest(TestCase):

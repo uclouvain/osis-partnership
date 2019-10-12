@@ -5,9 +5,11 @@ from django.urls import reverse
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
-from partnership.tests.factories import (PartnerFactory,
-                                         PartnershipEntityManagerFactory,
-                                         PartnerTagFactory, PartnerTypeFactory)
+from partnership.tests.factories import (
+    PartnerFactory,
+    PartnershipEntityManagerFactory,
+    PartnerTagFactory, PartnerTypeFactory
+)
 from reference.tests.factories.country import CountryFactory
 
 
