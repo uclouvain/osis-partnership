@@ -28,8 +28,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import TemplateResponseMixin
@@ -210,24 +210,24 @@ class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, Expor
 
     def get_xls_headers(self):
         return [
-            ugettext('id'),
-            ugettext('external_id'),
-            ugettext('author'),
-            ugettext('created'),
-            ugettext('changed'),
-            ugettext('Name'),
-            ugettext('is_valid'),
-            ugettext('partner_start_date'),
-            ugettext('partner_end_date'),
-            ugettext('now_known_as'),
-            ugettext('partner_type'),
-            ugettext('pic_code'),
-            ugettext('erasmus_code'),
-            ugettext('is_ies'),
-            ugettext('use_egracons'),
-            ugettext('city'),
-            ugettext('country'),
-            ugettext('tags'),
+            gettext('id'),
+            gettext('external_id'),
+            gettext('author'),
+            gettext('created'),
+            gettext('changed'),
+            gettext('Name'),
+            gettext('is_valid'),
+            gettext('partner_start_date'),
+            gettext('partner_end_date'),
+            gettext('now_known_as'),
+            gettext('partner_type'),
+            gettext('pic_code'),
+            gettext('erasmus_code'),
+            gettext('is_ies'),
+            gettext('use_egracons'),
+            gettext('city'),
+            gettext('country'),
+            gettext('tags'),
         ]
 
     def get_xls_data(self):
@@ -1078,17 +1078,17 @@ class PartnershipAgreementExportView(PermissionRequiredMixin, PartnershipListFil
 
     def get_xls_headers(self):
         return [
-            ugettext('id'),
-            ugettext('partner'),
-            ugettext('country'),
-            ugettext('city'),
-            ugettext('partnership_supervisor'),
-            ugettext('faculty'),
-            ugettext('entity'),
-            ugettext('academic_years'),
-            ugettext('start_academic_year'),
-            ugettext('end_academic_year'),
-            ugettext('status'),
+            gettext('id'),
+            gettext('partner'),
+            gettext('country'),
+            gettext('city'),
+            gettext('partnership_supervisor'),
+            gettext('faculty'),
+            gettext('entity'),
+            gettext('academic_years'),
+            gettext('start_academic_year'),
+            gettext('end_academic_year'),
+            gettext('status'),
         ]
 
     def get_xls_data(self):
@@ -1137,30 +1137,30 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
 
     def get_xls_headers(self):
         return [
-            ugettext('id'),
-            ugettext('partner'),
-            ugettext('partner_code'),
-            ugettext('erasmus_code'),
-            ugettext('pic_code'),
-            ugettext('partner_entity'),
-            ugettext('ucl_university'),
-            ugettext('ucl_university_labo'),
-            ugettext('supervisor'),
-            ugettext('partnership_year_entities'),
-            ugettext('partnership_year_education_levels'),
-            ugettext('tags'),
-            ugettext('created'),
-            ugettext('modified'),
-            ugettext('author'),
-            ugettext('is_sms'),
-            ugettext('is_smp'),
-            ugettext('is_sta'),
-            ugettext('is_stt'),
-            ugettext('start_academic_year'),
-            ugettext('end_academic_year'),
-            ugettext('is_valid'),
-            ugettext('external_id'),
-            ugettext('eligible'),
+            gettext('id'),
+            gettext('partner'),
+            gettext('partner_code'),
+            gettext('erasmus_code'),
+            gettext('pic_code'),
+            gettext('partner_entity'),
+            gettext('ucl_university'),
+            gettext('ucl_university_labo'),
+            gettext('supervisor'),
+            gettext('partnership_year_entities'),
+            gettext('partnership_year_education_levels'),
+            gettext('tags'),
+            gettext('created'),
+            gettext('modified'),
+            gettext('author'),
+            gettext('is_sms'),
+            gettext('is_smp'),
+            gettext('is_sta'),
+            gettext('is_stt'),
+            gettext('start_academic_year'),
+            gettext('end_academic_year'),
+            gettext('is_valid'),
+            gettext('external_id'),
+            gettext('eligible'),
         ]
 
     def get_xls_data(self):
