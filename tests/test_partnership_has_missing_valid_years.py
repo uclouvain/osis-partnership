@@ -35,21 +35,21 @@ class PartnershipHasMissingValidYearsTest(TestCase):
         # No agreement :
         PartnershipYearFactory(
             partnership=cls.partnership_no_agreement,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_15,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_no_agreement,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_19,
         )
 
         # missing before :
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_15,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before,
-            academic_year__year = 2019,
+            academic_year_=cls.academic_year_19,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_before,
