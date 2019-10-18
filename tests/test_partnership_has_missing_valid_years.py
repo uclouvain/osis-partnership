@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from base.tests.factories.academic_year import AcademicYearFactory
+from base.models import academic_year
+from base.tests.factories.academic_year import AcademicYearFactory, get_current_year
 from partnership.models import PartnershipAgreement
 from partnership.tests.factories import (PartnershipAgreementFactory,
                                          PartnershipFactory,
@@ -13,11 +14,12 @@ class PartnershipHasMissingValidYearsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Years :
-        cls.academic_year_15 = AcademicYearFactory(year=2015)
-        cls.academic_year_16 = AcademicYearFactory(year=2016)
-        cls.academic_year_17 = AcademicYearFactory(year=2017)
-        cls.academic_year_18 = AcademicYearFactory(year=2018)
-        cls.academic_year_19 = AcademicYearFactory(year=2019)
+        current_year = get_current_year()
+        cls.academic_year_less_3 = AcademicYearFactory(year=current_year - 3)
+        cls.academic_year_less_2 = AcademicYearFactory(year=current_year - 2)
+        cls.academic_year_less_1 = AcademicYearFactory(year=current_year - 1)
+        cls.current_academic_year = AcademicYearFactory(year=current_year)
+        cls.academic_year_more_1 = AcademicYearFactory(year=current_year + 1)
 
         # Partnerships :
         cls.partnership_no_agreement = PartnershipFactory()
@@ -34,140 +36,140 @@ class PartnershipHasMissingValidYearsTest(TestCase):
         # No agreement :
         PartnershipYearFactory(
             partnership=cls.partnership_no_agreement,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_no_agreement,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
 
         # missing before :
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_before,
-            start_academic_year=cls.academic_year_16,
-            end_academic_year=cls.academic_year_19,
+            start_academic_year=cls.academic_year_less_2,
+            end_academic_year=cls.academic_year_more_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # missing after :
         PartnershipYearFactory(
             partnership=cls.partnership_missing_after,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_missing_after,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_after,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_18,
+            start_academic_year=cls.academic_year_less_3,
+            end_academic_year=cls.current_academic_year,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # missing middle :
         PartnershipYearFactory(
             partnership=cls.partnership_missing_middle,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_missing_middle,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_middle,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_16,
+            start_academic_year=cls.academic_year_less_3,
+            end_academic_year=cls.academic_year_less_2,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_middle,
-            start_academic_year=cls.academic_year_18,
-            end_academic_year=cls.academic_year_19,
+            start_academic_year=cls.current_academic_year,
+            end_academic_year=cls.academic_year_more_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # missing before middle after :
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before_middle_after,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_missing_before_middle_after,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_before_middle_after,
-            start_academic_year=cls.academic_year_16,
-            end_academic_year=cls.academic_year_16,
+            start_academic_year=cls.academic_year_less_2,
+            end_academic_year=cls.academic_year_less_2,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_before_middle_after,
-            start_academic_year=cls.academic_year_18,
-            end_academic_year=cls.academic_year_18,
+            start_academic_year=cls.current_academic_year,
+            end_academic_year=cls.current_academic_year,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # full :
         PartnershipYearFactory(
             partnership=cls.partnership_full,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_full,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_full,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_19,
+            start_academic_year=cls.academic_year_less_3,
+            end_academic_year=cls.academic_year_more_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # with adjacent :
         PartnershipYearFactory(
             partnership=cls.partnership_with_adjacent,
-            academic_year__year = 2015,
+            academic_year=cls.academic_year_less_3,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_with_adjacent,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_with_adjacent,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_17,
+            start_academic_year=cls.academic_year_less_3,
+            end_academic_year=cls.academic_year_less_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_with_adjacent,
-            start_academic_year=cls.academic_year_18,
-            end_academic_year=cls.academic_year_19,
+            start_academic_year=cls.current_academic_year,
+            end_academic_year=cls.academic_year_more_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
         # with extra agreements before :
         PartnershipYearFactory(
             partnership=cls.partnership_with_extra_agreements_before,
-            academic_year__year = 2016,
+            academic_year=cls.academic_year_less_2,
         )
         PartnershipYearFactory(
             partnership=cls.partnership_with_extra_agreements_before,
-            academic_year__year = 2019,
+            academic_year=cls.academic_year_more_1,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_with_extra_agreements_before,
-            start_academic_year=cls.academic_year_15,
-            end_academic_year=cls.academic_year_19,
+            start_academic_year=cls.academic_year_less_3,
+            end_academic_year=cls.academic_year_more_1,
             status=PartnershipAgreement.STATUS_VALIDATED,
         )
 
