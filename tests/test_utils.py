@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.test import TestCase
 
 from partnership.utils import merge_agreement_ranges

@@ -10,10 +10,12 @@ from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.person import Person
 from partnership.management.commands.progress_bar import ProgressBarMixin
-from partnership.models import (Address, Media, Partner, Partnership,
-                                PartnershipAgreement, PartnershipYear,
-                                PartnershipYearEducationField, PartnerType,
-                                UCLManagementEntity)
+from partnership.models import (
+    Address, Media, Partner, Partnership,
+    PartnershipAgreement, PartnershipYear,
+    PartnershipYearEducationField, PartnerType,
+    UCLManagementEntity
+)
 from reference.models.country import Country
 
 COUNTRIES_OLD_TO_ISO = {

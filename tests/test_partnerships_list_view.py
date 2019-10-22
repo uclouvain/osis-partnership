@@ -9,14 +9,16 @@ from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import PartnershipAgreement
-from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
-                                         PartnershipAgreementFactory,
-                                         PartnershipFactory,
-                                         PartnershipTagFactory,
-                                         PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory,
-                                         PartnershipYearFactory,
-                                         PartnerTagFactory, PartnerTypeFactory)
+from partnership.tests.factories import (
+    PartnerEntityFactory, PartnerFactory,
+    PartnershipAgreementFactory,
+    PartnershipFactory,
+    PartnershipTagFactory,
+    PartnershipYearEducationFieldFactory,
+    PartnershipYearEducationLevelFactory,
+    PartnershipYearFactory,
+    PartnerTagFactory, PartnerTypeFactory
+)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 

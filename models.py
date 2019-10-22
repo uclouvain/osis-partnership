@@ -1,6 +1,6 @@
-from datetime import date, timedelta
-
 import uuid
+from datetime import date
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -17,10 +17,11 @@ from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.person import Person
-from partnership.utils import (merge_agreement_ranges, user_is_adri,
-                               user_is_gf, user_is_gf_of_faculty,
-                               user_is_in_user_faculty)
+from partnership.utils import (
+    merge_agreement_ranges, user_is_adri,
+    user_is_gf, user_is_gf_of_faculty,
+    user_is_in_user_faculty
+)
 
 
 class PartnershipEntityManager(models.Model):

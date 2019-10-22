@@ -14,7 +14,6 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.api.filters import PartnershipFilter
 from partnership.api.serializers import PartnershipSerializer
-
 from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
     PartnershipConfiguration, PartnershipAgreement, Media
 

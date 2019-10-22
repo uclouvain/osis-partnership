@@ -1,9 +1,6 @@
-from datetime import timedelta
-
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
 
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import PartnerFactory

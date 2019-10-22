@@ -7,9 +7,7 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import Financing
-from partnership.tests.factories import (FinancingFactory,
-                                         PartnershipEntityManagerFactory)
-from reference.models.country import Country
+from partnership.tests.factories import (PartnershipEntityManagerFactory)
 from reference.tests.factories.country import CountryFactory
 
 

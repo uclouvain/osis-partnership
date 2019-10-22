@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
@@ -11,13 +9,15 @@ from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import Partnership
-from partnership.tests.factories import (PartnerEntityFactory, PartnerFactory,
-                                         PartnershipEntityManagerFactory,
-                                         PartnershipFactory,
-                                         PartnershipYearEducationFieldFactory,
-                                         PartnershipYearEducationLevelFactory,
-                                         PartnershipYearFactory,
-                                         UCLManagementEntityFactory)
+from partnership.tests.factories import (
+    PartnerEntityFactory, PartnerFactory,
+    PartnershipEntityManagerFactory,
+    PartnershipFactory,
+    PartnershipYearEducationFieldFactory,
+    PartnershipYearEducationLevelFactory,
+    PartnershipYearFactory,
+    UCLManagementEntityFactory
+)
 
 
 class PartnershipUpdateViewTest(TestCase):

@@ -1,9 +1,8 @@
 from django.conf.urls import url, include
 
-from .views.partnerships import PartnershipsListView, PartnershipsRetrieveView
-from .views.partners import PartnersListView
 from .views.configuration import ConfigurationView
-
+from .views.partners import PartnersListView
+from .views.partnerships import PartnershipsListView, PartnershipsRetrieveView
 
 app_name = "partnership_api_v1"
 urlpatterns = [
