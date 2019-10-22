@@ -1,6 +1,5 @@
 from django.test import TestCase
 
-from base.models import academic_year
 from base.tests.factories.academic_year import AcademicYearFactory, get_current_year
 from partnership.models import PartnershipAgreement
 from partnership.tests.factories import (
