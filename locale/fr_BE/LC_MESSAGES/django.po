@@ -355,7 +355,7 @@ msgid "all_entities"
 msgstr "Toutes les entités"
 
 msgid "all_offers"
-msgstr "Toutes les offres"
+msgstr "Toutes les formations"
 
 msgid "april"
 msgstr "Avril"
@@ -1031,10 +1031,10 @@ msgid "partnership_year_entities_help_text"
 msgstr "Si non précisé alors toutes les entités seront concernées."
 
 msgid "partnership_year_offers"
-msgstr "Offres principalement concernées"
+msgstr "Formations principalement concernées"
 
 msgid "partnership_year_offers_help_text"
-msgstr "Si non précisé alors toutes les offres seront concernées."
+msgstr "Si non précisé alors toutes les formations seront concernées."
 
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
@@ -1184,7 +1184,7 @@ msgid "ucl_university_labo_filter"
 msgstr "Entité"
 
 msgid "university_offers_filter"
-msgstr "Offre concernée"
+msgstr "Formation concernée"
 
 msgid "update_configuration"
 msgstr "Mettre à jour la configuration"
