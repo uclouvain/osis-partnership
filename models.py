@@ -12,6 +12,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from base.models import academic_year
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
@@ -903,9 +904,9 @@ class PartnershipConfiguration(models.Model):
             self.partnership_api_max_date_day,
         )
         if date.today() <= limit_date:
-            return AcademicYear.objects.filter(year=date.today().year - 1).first()
+            return academic_year.current_academic_year()
         else:
-            return AcademicYear.objects.filter(year=date.today().year).first()
+            return academic_year.starting_academic_year()
 
 
 class UCLManagementEntity(models.Model):
