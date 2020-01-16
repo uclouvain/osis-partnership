@@ -173,7 +173,7 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     partnership_type = 'mobility'
     academic_year = factory.SubFactory(
         'base.tests.factories.academic_year.AcademicYearFactory',
-        year=get_current_year() + 1,  # BUG: OP-348 - dirty fix
+        year=2020,  # BUG: OP-348 - dirty fix
     )
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
 
