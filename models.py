@@ -898,15 +898,17 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
 
     def get_current_academic_year_for_api(self):
-        limit_date = date(
-            date.today().year,
-            self.partnership_api_max_date_month,
-            self.partnership_api_max_date_day,
-        )
-        if date.today() <= limit_date:
-            return academic_year.current_academic_year()
-        else:
-            return academic_year.starting_academic_year()
+        # TODO: Use event calendar instead of current_academic_year/starting_academic_year
+        return AcademicYear.objects.get(year=2020)  # BUG: OP-348 - dirty fix
+        # limit_date = date(
+        #     date.today().year,
+        #     self.partnership_api_max_date_month,
+        #     self.partnership_api_max_date_day,
+        # )
+        # if date.today() <= limit_date:
+        #     return academic_year.current_academic_year()
+        # else:
+        #     return academic_year.starting_academic_year()
 
 
 class UCLManagementEntity(models.Model):
