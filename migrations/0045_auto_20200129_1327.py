@@ -16,4 +16,14 @@ class Migration(migrations.Migration):
             name='external_id',
             field=models.CharField(blank=True, editable=False, help_text='to_synchronize_with_epc', max_length=255, null=True, unique=True, verbose_name='external_id'),
         ),
+        migrations.AlterField(
+            model_name='partnership',
+            name='external_id',
+            field=models.CharField(blank=True, editable=False, help_text='to_synchronize_with_epc', max_length=255, null=True, unique=True, verbose_name='external_id'),
+        ),
+        migrations.AlterField(
+            model_name='partnershipagreement',
+            name='external_id',
+            field=models.CharField(blank=True, editable=False, help_text='to_synchronize_with_epc', max_length=255, null=True, unique=True, verbose_name='external_id'),
+        ),
     ]
