@@ -109,7 +109,7 @@ class PartnerForm(forms.ModelForm):
 
     class Meta:
         model = Partner
-        exclude = ['contact_address', 'medias']
+        exclude = ['external_id', 'contact_address', 'medias']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('partner_name')}),
             'is_valid': forms.CheckboxInput(),

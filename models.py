@@ -165,6 +165,7 @@ class Partner(models.Model):
         unique=True,
         blank=True,
         null=True,
+        editable=False,
     )
     changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
@@ -306,6 +307,7 @@ class Partnership(models.Model):
         unique=True,
         blank=True,
         null=True,
+        editable=False,
     )
 
     partner = models.ForeignKey(
@@ -764,6 +766,7 @@ class PartnershipAgreement(models.Model):
         unique=True,
         blank=True,
         null=True,
+        editable=False,
     )
     changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
