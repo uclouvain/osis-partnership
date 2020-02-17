@@ -49,7 +49,8 @@ class PartnershipApiViewTest(TestCase):
             partnership=cls.partnership,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_VALIDATED
+            status=PartnershipAgreement.STATUS_VALIDATED,
+            media__is_visible_in_portal=False,
         )
 
         partnership = PartnershipFactory(supervisor=None, years=[])
@@ -215,3 +216,11 @@ class PartnershipApiViewTest(TestCase):
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+    def test_retrieve_should_not_display_denied_media(self):
+        url = reverse(
+            'partnership_api_v1:partnerships:retrieve',
+            kwargs={'uuid': self.partnership.uuid},
+        )
+        response = self.client.get(url)
+        self.assertEqual(len(response.json()['bilateral_agreements']), 0)
