@@ -53,6 +53,12 @@ class PartnerAdmin(admin.ModelAdmin):
 
 class PartnershipYearInline(admin.TabularInline):
     model = PartnershipYear
+    raw_id_fields = (
+        'academic_year',
+        'education_fields',
+        'entities',
+        'offers',
+    )
 
     def get_queryset(self, request):
         return PartnershipYear.objects.select_related('academic_year', 'partnership__partner')
@@ -60,13 +66,24 @@ class PartnershipYearInline(admin.TabularInline):
 
 class PartnershipAgreementInline(admin.TabularInline):
     model = PartnershipAgreement
+    raw_id_fields = (
+        'media',
+    )
 
     def get_queryset(self, request):
         return PartnershipAgreement.objects.select_related('partnership__partner')
 
 
 class PartnershipAdmin(admin.ModelAdmin):
-    raw_id_fields = ('ucl_university', 'ucl_university_labo', 'supervisor')
+    raw_id_fields = (
+        'ucl_university',
+        'ucl_university_labo',
+        'supervisor',
+        'partner',
+        'partner_entity',
+        'contacts',
+        'medias',
+    )
     inlines = (PartnershipYearInline, PartnershipAgreementInline)
 
     def get_queryset(self, request):
@@ -100,6 +117,16 @@ class FinancingAdmin(admin.ModelAdmin):
 class PartnershipYearEducationFieldAdmin(admin.ModelAdmin):
     fields = ('code', 'label', 'uuid')
     readonly_fields = ('uuid',)
+    search_fields = ('code', 'label')
+
+
+class MediaAdmin(admin.ModelAdmin):
+    search_fields = ('name', 'description')
+    list_filter = ('visibility', 'is_visible_in_portal')
+
+
+class ContactAdmin(admin.ModelAdmin):
+    search_fields = ('last_name', 'first_name', 'email')
 
 
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
@@ -111,10 +138,10 @@ admin.site.register(PartnershipYearEducationField, PartnershipYearEducationField
 admin.site.register(PartnershipYearEducationLevel)
 admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Financing, FinancingAdmin)
-admin.site.register(Media)
+admin.site.register(Media, MediaAdmin)
 admin.site.register(ContactType)
 admin.site.register(MediaType)
-admin.site.register(Contact)
+admin.site.register(Contact, ContactAdmin)
 admin.site.register(Address)
 admin.site.register(UCLManagementEntity)
 admin.site.register(PartnershipYear)
