@@ -33,7 +33,7 @@ class PartnerEntityCreateViewTest(TestCase):
 
         # Partner creation
         cls.partner = PartnerFactory()
-        cls.partner_gf = PartnerFactory(author=cls.user_gf)
+        cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
@@ -115,7 +115,7 @@ class PartnerEntityUpdateViewTest(TestCase):
 
         # Partner creation
         cls.partner = PartnerFactory()
-        cls.partner_gf = PartnerFactory(author=cls.user_gf)
+        cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
@@ -214,7 +214,7 @@ class PartnerEntityDeleteViewTest(TestCase):
 
         # Partner creation
         cls.partner = PartnerFactory()
-        cls.partner_gf = PartnerFactory(author=cls.user_gf)
+        cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()

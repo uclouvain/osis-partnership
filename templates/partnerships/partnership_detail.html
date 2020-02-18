@@ -34,7 +34,7 @@
           {% endif %}
           <p>
             <em>
-              {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
+              {% blocktrans with created=partnership.created|date:"SHORT_DATE_FORMAT" author=partnership.author.user modified=partnership.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
             </em>
           </p>
         </div>

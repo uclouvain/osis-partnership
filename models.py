@@ -96,11 +96,12 @@ class PartnerEntity(models.Model):
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'base.Person',
         verbose_name=_('author'),
         on_delete=models.PROTECT,
         related_name='+',
         editable=False,
+        null=True,
     )
 
     class Meta:
@@ -116,7 +117,7 @@ class PartnerEntity(models.Model):
         )
 
     def user_can_change(self, user):
-        return user_is_adri(user) or user_is_in_user_faculty(user, self.author)
+        return user_is_adri(user) or user_is_in_user_faculty(user, self.author.user)
 
     def user_can_delete(self, user):
         return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()
@@ -243,11 +244,12 @@ class Partner(models.Model):
 
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'base.Person',
         verbose_name=_('author'),
         on_delete=models.PROTECT,
         related_name='+',
         editable=False,
+        null=True,
     )
 
     class Meta:
@@ -377,11 +379,12 @@ class Partnership(models.Model):
     created = models.DateField(_('created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'base.Person',
         verbose_name=_('author'),
         on_delete=models.PROTECT,
         related_name='+',
         editable=False,
+        null=True,
     )
 
     class Meta:
@@ -1256,11 +1259,12 @@ class Media(models.Model):
         choices=VISIBILITY_CHOICES,
     )
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'base.Person',
         verbose_name=_('author'),
         on_delete=models.PROTECT,
         related_name='+',
         editable=False,
+        null=True,
     )
 
     def __str__(self):

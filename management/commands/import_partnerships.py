@@ -281,7 +281,7 @@ class Command(ProgressBarMixin, BaseCommand):
             self.default_values = {
                 'author': User.objects.filter(
                     person__personentity__entity__entityversion__acronym='ADRI'
-                )[0],
+                )[0].person,
                 'partner_type': partner_type,
                 'website': 'https://uclouvain.be',
             }
