@@ -210,6 +210,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return [
             MediaSerializers(agreement.media).data
             for agreement in partnership.valid_current_agreements
+            if agreement.media.is_visible_in_portal
         ]
 
     def get_out_education_levels(self, partnership):
