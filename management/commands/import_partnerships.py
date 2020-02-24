@@ -279,9 +279,9 @@ class Command(ProgressBarMixin, BaseCommand):
             if partner_type is None:
                 partner_type = PartnerType.objects.create(value='IMPORTED')
             self.default_values = {
-                'author': User.objects.filter(
-                    person__personentity__entity__entityversion__acronym='ADRI'
-                )[0].person,
+                'author': Person.objects.filter(
+                    personentity__entity__entityversion__acronym='ADRI'
+                )[0],
                 'partner_type': partner_type,
                 'website': 'https://uclouvain.be',
             }
