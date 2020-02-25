@@ -45,7 +45,7 @@ class PartnerAdmin(admin.ModelAdmin):
         """
         partner = form.save(commit=False)
         if not change:
-            partner.author = request.user
+            partner.author = request.user.person
         return partner
 
     def save_formset(self, request, form, formset, change):
@@ -56,7 +56,7 @@ class PartnerAdmin(admin.ModelAdmin):
             entities = formset.save(commit=False)
             for entity in entities:
                 if entity.pk is None:
-                    entity.author = request.user
+                    entity.author = request.user.person
                 entity.save()
         else:
             formset.save()
@@ -106,7 +106,7 @@ class PartnershipAdmin(admin.ModelAdmin):
         """
         partnership = form.save(commit=False)
         if not change:
-            partnership.author = request.user
+            partnership.author = request.user.person
         return partnership
 
 

@@ -74,7 +74,7 @@ class PartnerFactory(factory.DjangoModelFactory):
     is_nonprofit = factory.Faker('boolean')
     is_public = factory.Faker('boolean')
 
-    author = factory.SubFactory('base.tests.factories.user.UserFactory')
+    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
 
     @factory.post_generation
     def tags(obj, create, extracted, **kwargs):
@@ -99,7 +99,7 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
 
     partner = factory.SubFactory(PartnerFactory)
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
-    author = factory.SubFactory('base.tests.factories.user.UserFactory')
+    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
     address = factory.SubFactory(AddressFactory, country=factory.SelfAttribute('..partner.contact_address.country'))
 
 
@@ -122,7 +122,7 @@ class PartnershipFactory(factory.DjangoModelFactory):
         country=factory.SelfAttribute('..partner.contact_address.country'),
     )
 
-    author = factory.SubFactory('base.tests.factories.user.UserFactory')
+    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
 
     @factory.post_generation
     def tags(obj, create, extracted, **kwargs):
@@ -196,7 +196,7 @@ class MediaFactory(factory.DjangoModelFactory):
     description = factory.Faker('sentence')
     url = factory.Faker('url')
     visibility = Media.VISIBILITY_PUBLIC
-    author = factory.SubFactory('base.tests.factories.user.UserFactory')
+    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
 
 
 class ContactTypeFactory(factory.DjangoModelFactory):

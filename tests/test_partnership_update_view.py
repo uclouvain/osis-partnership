@@ -70,11 +70,11 @@ class PartnershipUpdateViewTest(TestCase):
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
-        cls.partner_gf = PartnerFactory(author=cls.user_gf)
+        cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
             partner_entity=cls.partner_entity,
-            author=cls.user_gf,
+            author=cls.user_gf.person,
             years=[
                 PartnershipYearFactory(academic_year=cls.start_academic_year),
                 PartnershipYearFactory(academic_year=cls.from_academic_year),

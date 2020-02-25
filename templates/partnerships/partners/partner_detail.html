@@ -27,7 +27,7 @@
         {% if can_update_partner %}
         <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right"><i class="fas fa-fw fa-pencil-alt"></i> {% trans "update_partner" %}</a>
         {% endif %}
-        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author.user modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
       </div>
     </div>
     <div class="row">
@@ -188,7 +188,7 @@
         </div>
 
         <div class="col-sm-12 col-md-6">
-          <p><em>{% blocktrans with created=entity.created|date:"SHORT_DATE_FORMAT" author=entity.author modified=entity.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+          <p><em>{% blocktrans with created=entity.created|date:"SHORT_DATE_FORMAT" author=entity.author.user modified=entity.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
         </div>
       </div>
 

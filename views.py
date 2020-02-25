@@ -238,7 +238,7 @@ class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, Expor
             .values_list(
                 'id',
                 'external_id',
-                'author__username',
+                'author__user__username',
                 'created',
                 'changed',
                 'name',
@@ -277,11 +277,11 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
     def get_queryset(self):
         return (
             Partner.objects
-            .select_related('partner_type', 'author')
+            .select_related('partner_type', 'author__user')
             .prefetch_related(
                 'tags',
                 Prefetch('entities', queryset=PartnerEntity.objects.select_related(
-                    'contact_in', 'contact_out', 'address', 'parent', 'author',
+                    'contact_in', 'contact_out', 'address', 'parent', 'author__user',
                 )),
                 Prefetch(
                     'medias',
@@ -329,7 +329,7 @@ class PartnerFormMixin(object):
         partner = form.save(commit=False)
         is_create = partner.pk is None
         if is_create:
-            partner.author = self.request.user
+            partner.author = self.request.user.person
         partner.contact_address = contact_address
         partner.save()
         form.save_m2m()
@@ -476,7 +476,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         #  because the one on the entity is not saved yet
         entity.partner = self.partner
         if entity.pk is None:
-            entity.author = self.request.user
+            entity.author = self.request.user.person
         entity.address.save()
         entity.address_id = entity.address.id
         entity.contact_in.save()
@@ -563,7 +563,7 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
     def form_valid(self, form):
         media = form.save(commit=False)
         if media.pk is None:
-            media.author = self.request.user
+            media.author = self.request.user.person
         if media.file and not hasattr(form.cleaned_data['file'], 'path'):
             media.file.name = self.get_filename(media.file.name)
         media.save()
@@ -1196,7 +1196,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
                         )
                 ),
             )
-            .select_related('author')
+            .select_related('author__user')
         )
         for partnership in queryset.distinct():
 
@@ -1228,7 +1228,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
-                str(partnership.author),
+                str(partnership.author.user),
                 current_year.is_sms if current_year is not None else '',
                 current_year.is_smp if current_year is not None else '',
                 current_year.is_sta if current_year is not None else '',
@@ -1284,7 +1284,7 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             Partnership.objects
             .select_related(
                 'partner', 'partner_entity', 'ucl_university',
-                'ucl_university_labo', 'author'
+                'ucl_university_labo', 'author__user'
             )
             .prefetch_related(
                 'contacts',
@@ -1361,7 +1361,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
-        partnership.author = self.request.user
+        partnership.author = self.request.user.person
 
         # Resume saving
         partnership.save()
@@ -1546,7 +1546,7 @@ class PartnershipMediaFormMixin(PartnershipMediaMixin, FormMixin):
     def form_valid(self, form):
         media = form.save(commit=False)
         if media.pk is None:
-            media.author = self.request.user
+            media.author = self.request.user.person
         if media.file and not hasattr(form.cleaned_data['file'], 'path'):
             media.file.name = self.get_filename(media.file.name)
         media.save()
@@ -1677,7 +1677,7 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
     @transaction.atomic
     def form_valid(self, form, form_media):
         media = form_media.save(commit=False)
-        media.author = self.request.user
+        media.author = self.request.user.person
         if media.file:
             media.file.name = self.get_filename(media.file.name)
         media.save()
