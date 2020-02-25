@@ -49,7 +49,6 @@ from base.models.person import Person
 from partnership.forms import (
     ContactForm, FinancingFilterForm,
     FinancingImportForm, MediaForm, PartnershipAgreementForm,
-    PartnershipConfigurationForm,
     PartnershipFilterForm, PartnershipForm,
     PartnershipYearForm, UCLManagementEntityForm
 )
@@ -61,6 +60,7 @@ from partnership.models import (
 from partnership.utils import academic_years, user_is_adri, user_is_gf
 from reference.models.country import Country
 
+from .configuration import PartnershipConfigurationUpdateView
 from .export import ExportView
 from .partner import *
 
@@ -1305,23 +1305,6 @@ class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleOb
         response = FileResponse(media.file)
         response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(media.file.name))
         return response
-
-
-class PartneshipConfigurationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    form_class = PartnershipConfigurationForm
-    template_name = 'partnerships/configuration_update.html'
-    success_url = reverse_lazy('partnerships:list')
-    login_url = 'access_denied'
-
-    def test_func(self):
-        return user_is_adri(self.request.user)
-
-    def get_object(self, queryset=None):
-        return PartnershipConfiguration.get_configuration()
-
-    def form_valid(self, form):
-        messages.success(self.request, _('configuration_saved'))
-        return super().form_valid(form)
 
 
 # UCLManagementEntities views :
