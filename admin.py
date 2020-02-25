@@ -19,6 +19,11 @@ class PartnershipEntityManagerAdmin(admin.ModelAdmin):
 
 class PartnerEntityAdmin(admin.TabularInline):
     model = PartnerEntity
+    raw_id_fields = (
+        'address',
+        'contact_in',
+        'contact_out',
+    )
 
 
 class PartnerAdmin(admin.ModelAdmin):
@@ -27,6 +32,12 @@ class PartnerAdmin(admin.ModelAdmin):
     inlines = [
         PartnerEntityAdmin,
     ]
+    raw_id_fields = (
+        'now_known_as',
+        'medias',
+        'author',
+        'contact_address',
+    )
 
     def save_form(self, request, form, change):
         """
@@ -129,6 +140,30 @@ class ContactAdmin(admin.ModelAdmin):
     search_fields = ('last_name', 'first_name', 'email')
 
 
+class AddressAdmin(admin.ModelAdmin):
+    raw_id_fields = ('country',)
+
+
+class PartnershipYearAdmin(admin.ModelAdmin):
+    raw_id_fields = (
+        'partnership',
+        'academic_year',
+        'entities',
+        'offers',
+    )
+
+
+class UCLManagementEntityAdmin(admin.ModelAdmin):
+    raw_id_fields = (
+        'faculty',
+        'entity',
+        'academic_responsible',
+        'administrative_responsible',
+        'contact_in_person',
+        'contact_out_person',
+    )
+
+
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
 admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
@@ -142,6 +177,6 @@ admin.site.register(Media, MediaAdmin)
 admin.site.register(ContactType)
 admin.site.register(MediaType)
 admin.site.register(Contact, ContactAdmin)
-admin.site.register(Address)
-admin.site.register(UCLManagementEntity)
-admin.site.register(PartnershipYear)
+admin.site.register(Address, AddressAdmin)
+admin.site.register(UCLManagementEntity, UCLManagementEntityAdmin)
+admin.site.register(PartnershipYear, PartnershipYearAdmin)
