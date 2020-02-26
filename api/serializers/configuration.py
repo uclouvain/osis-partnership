@@ -1,0 +1,89 @@
+from rest_framework import serializers
+
+from base.models.entity import Entity
+from base.models.person import Person
+from partnership.models import Partner, PartnershipYearEducationField
+from reference.models.continent import Continent
+from reference.models.country import Country
+
+__all__ = [
+    'CountryConfigurationSerializer',
+    'ContinentConfigurationSerializer',
+    'PartnerConfigurationSerializer',
+    'UCLUniversityConfigurationSerializer',
+    'UCLUniversityLaboConfigurationSerializer',
+    'EducationFieldConfigurationSerializer',
+    'SupervisorConfigurationSerializer',
+]
+
+
+class CountryConfigurationSerializer(serializers.ModelSerializer):
+    cities = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Country
+        fields = ['name', 'iso_code', 'cities']
+
+    def get_cities(self, country):
+        return country.cities.split(';')
+
+
+class ContinentConfigurationSerializer(serializers.ModelSerializer):
+    countries = CountryConfigurationSerializer(many=True, source='country_set')
+
+    class Meta:
+        model = Continent
+        fields = ['name', 'countries']
+
+
+class PartnerConfigurationSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.CharField(source='name')
+
+    class Meta:
+        model = Partner
+        fields = ['value', 'label']
+
+
+class UCLUniversityLaboConfigurationSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.CharField(source='most_recent_acronym')
+
+    class Meta:
+        model = Entity
+        fields = ['value', 'label']
+
+
+class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.CharField(source='most_recent_acronym')
+    ucl_university_labos = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Entity
+        fields = ['value', 'label', 'ucl_university_labos']
+
+    def get_ucl_university_labos(self, instance):
+        entities = (entity_version.entity for entity_version in
+                    instance.parent_of.all())
+        return UCLUniversityLaboConfigurationSerializer(
+            entities, many=True,
+        ).data
+
+
+class SupervisorConfigurationSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.CharField(source='__str__')
+
+    class Meta:
+        model = Person
+        fields = ['value', 'label']
+
+
+class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.CharField()
+
+    class Meta:
+        model = PartnershipYearEducationField
+        fields = ['value', 'label']
