@@ -51,7 +51,7 @@ class PartnershipMediaCreateViewTest(TestCase):
             'visibility': Media.VISIBILITY_PUBLIC,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
 class PartnershipMediaUpdateViewTest(TestCase):
@@ -100,7 +100,7 @@ class PartnershipMediaUpdateViewTest(TestCase):
             'visibility': Media.VISIBILITY_PUBLIC,
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
 class PartnershipMediaDeleteViewTest(TestCase):
@@ -144,4 +144,4 @@ class PartnershipMediaDeleteViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = {}
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')

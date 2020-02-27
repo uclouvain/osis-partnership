@@ -12,7 +12,7 @@ __all__ = [
 
 
 class PartnershipsListView(PermissionRequiredMixin, PartnershipListFilterMixin, ListView):
-    template_name = 'partnerships/partnerships_list.html'
+    template_name = 'partnerships/partnership/partnership_list.html'
     context_object_name = 'partnerships'
     paginate_by = 20
     paginate_orphans = 2
@@ -25,12 +25,12 @@ class PartnershipsListView(PermissionRequiredMixin, PartnershipListFilterMixin, 
             if self.request.is_ajax():
                 return 'partnerships/agreements/includes/agreements_list_results.html'
             else:
-                return 'partnerships/partnerships_list.html'
+                return 'partnerships/partnership/partnership_list.html'
         else:
             if self.request.is_ajax():
                 return 'partnerships/includes/partnerships_list_results.html'
             else:
-                return 'partnerships/partnerships_list.html'
+                return 'partnerships/partnership/partnership_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

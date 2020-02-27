@@ -93,81 +93,81 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_create.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_create.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_get_view_as_gf(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_get_view_as_gs(self):
         self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_past_start_date_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['year-start_academic_year'] = str(AcademicYearFactory(year=2000).pk)
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_past_start_date_as_gf(self):
         self.client.force_login(self.user_gf)
         data = self.data.copy()
         data['year-start_academic_year'] = str(AcademicYearFactory(year=2000).pk)
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post_post_start_date_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_ucl_university_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
         data['ucl_university'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
         data['ucl_university_labo'] = self.ucl_university_labo_not_choice.pk
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership_create.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_post_start_date_as_gs(self):
         self.client.force_login(self.user_gs)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')

@@ -24,7 +24,7 @@ __all__ = [
 class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, UpdateView):
     model = Partnership
     form_class = PartnershipForm
-    template_name = "partnerships/partnership_update.html"
+    template_name = "partnerships/partnership/partnership_update.html"
     login_url = 'access_denied'
 
     def dispatch(self, *args, **kwargs):

@@ -14,7 +14,7 @@ __all__ = [
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
-    template_name = 'partnerships/partnership_detail.html'
+    template_name = 'partnerships/partnership/partnership_detail.html'
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
