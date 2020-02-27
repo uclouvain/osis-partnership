@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType
+from partnership.models import ContactType, ContactTitle
 from partnership.tests.factories import (
     PartnerFactory,
     PartnershipEntityManagerFactory
@@ -71,7 +71,7 @@ class PartnerEntityCreateViewTest(TestCase):
             'address_city': 'test',
             'address_country': self.country.pk,
             'contact_in_type': self.contact_type.pk,
-            'contact_in_title': 'mr',
+            'contact_in_title': ContactTitle.MISTER.name,
             'contact_in_last_name': 'test',
             'contact_in_first_name': 'test',
             'contact_in_function': 'test',
@@ -80,7 +80,7 @@ class PartnerEntityCreateViewTest(TestCase):
             'contact_in_fax': 'test',
             'contact_in_email': 'test@test.test',
             'contact_out_type': self.contact_type.pk,
-            'contact_out_title': 'mr',
+            'contact_out_title': ContactTitle.MISTER.name,
             'contact_out_last_name': 'test',
             'contact_out_first_name': 'test',
             'contact_out_function': 'test',
@@ -170,7 +170,7 @@ class PartnerEntityUpdateViewTest(TestCase):
             'address_city': 'test',
             'address_country': self.country.pk,
             'contact_in_type': self.contact_type.pk,
-            'contact_in_title': 'mr',
+            'contact_in_title': ContactTitle.MISTER.name,
             'contact_in_last_name': 'test',
             'contact_in_first_name': 'test',
             'contact_in_function': 'test',
@@ -179,7 +179,7 @@ class PartnerEntityUpdateViewTest(TestCase):
             'contact_in_fax': 'test',
             'contact_in_email': 'test@test.test',
             'contact_out_type': self.contact_type.pk,
-            'contact_out_title': 'mr',
+            'contact_out_title': ContactTitle.MISTER.name,
             'contact_out_last_name': 'test',
             'contact_out_first_name': 'test',
             'contact_out_function': 'test',

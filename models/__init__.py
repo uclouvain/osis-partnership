@@ -1,6 +1,7 @@
 try:
     from .address import *
     from .contact import *
+    from .enums import *
     from .financing import *
     from .media import *
     from .partner import *

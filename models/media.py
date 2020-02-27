@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from partnership.models import MediaVisibility
+
 __all__ = [
     'Media',
     'MediaType',
@@ -31,15 +33,6 @@ class Media(models.Model):
     """
     Un fichier uploadé ou un lien.
     """
-    VISIBILITY_PUBLIC = 'public'
-    VISIBILITY_STAFF = 'staff'
-    VISIBILITY_STAFF_STUDENT = 'staff_student'
-    VISIBILITY_CHOICES = (
-        (VISIBILITY_PUBLIC, _('visibility_public')),
-        (VISIBILITY_STAFF, _('visibility_staff')),
-        (VISIBILITY_STAFF_STUDENT, _('visibility_staff_student')),
-    )
-
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
     file = models.FileField(
@@ -70,7 +63,7 @@ class Media(models.Model):
     visibility = models.CharField(
         _('visibility'),
         max_length=50,
-        choices=VISIBILITY_CHOICES,
+        choices=MediaVisibility.choices(),
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,

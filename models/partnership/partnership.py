@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
+from partnership.models import AgreementStatus
 from partnership.utils import (
     merge_agreement_ranges,
 )
@@ -152,7 +153,7 @@ class Partnership(models.Model):
     @property
     def validated_agreements(self):
         from .agreement import PartnershipAgreement
-        return self.agreements.filter(status=PartnershipAgreement.STATUS_VALIDATED)
+        return self.agreements.filter(status=AgreementStatus.VALIDATED.name)
 
     @cached_property
     def start_partnership_year(self):

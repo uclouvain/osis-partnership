@@ -4,9 +4,13 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import PartnershipConfiguration, PartnershipAgreement
-from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
-    PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
+from partnership.models import AgreementStatus, PartnershipConfiguration
+from partnership.tests.factories import (
+    FinancingFactory, PartnerFactory,
+    PartnershipAgreementFactory, PartnershipFactory,
+    PartnershipYearEducationFieldFactory, PartnershipYearFactory,
+    UCLManagementEntityFactory,
+)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
@@ -49,7 +53,7 @@ class PartnershipApiViewTest(TestCase):
             partnership=cls.partnership,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
             media__is_visible_in_portal=False,
         )
 
@@ -59,7 +63,7 @@ class PartnershipApiViewTest(TestCase):
             partnership=partnership,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_VALIDATED
+            status=AgreementStatus.VALIDATED.name,
         )
         cls.management_entity = UCLManagementEntityFactory(
             faculty=partnership.ucl_university,
@@ -82,7 +86,7 @@ class PartnershipApiViewTest(TestCase):
             partnership=cls.partnership_with_agreement_not_validated,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_WAITING
+            status=AgreementStatus.WAITING.name,
         )
 
     def test_get(self):

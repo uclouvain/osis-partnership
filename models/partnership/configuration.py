@@ -13,7 +13,7 @@ class PartnershipConfiguration(models.Model):
     Configurations diverses concernant les partenariats et modifiable depuis l'interface d'OSIS.
     """
     DAYS_CHOICES = [(day, day) for day in range(1, 32)]
-    MONTHES_CHOICES = (
+    MONTHS_CHOICES = (
         (1, _('january')),
         (2, _('february')),
         (3, _('march')),
@@ -36,7 +36,7 @@ class PartnershipConfiguration(models.Model):
 
     partnership_creation_update_max_date_month = models.IntegerField(
         _('partnership_creation_update_max_date_month'),
-        choices=MONTHES_CHOICES,
+        choices=MONTHS_CHOICES,
         default=12,
     )
 
@@ -48,7 +48,7 @@ class PartnershipConfiguration(models.Model):
 
     partnership_api_max_date_month = models.IntegerField(
         _('partnership_api_max_date_month'),
-        choices=MONTHES_CHOICES,
+        choices=MONTHS_CHOICES,
         default=12,
     )
 

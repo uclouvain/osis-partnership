@@ -4,9 +4,13 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import PartnershipConfiguration, PartnershipAgreement
-from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
-    PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
+from partnership.models import AgreementStatus, PartnershipConfiguration
+from partnership.tests.factories import (
+    FinancingFactory, PartnerFactory,
+    PartnershipAgreementFactory, PartnershipFactory,
+    PartnershipYearEducationFieldFactory, PartnershipYearFactory,
+    UCLManagementEntityFactory,
+)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 
@@ -47,7 +51,7 @@ class PartnersApiViewTest(TestCase):
             partnership=cls.partnership,
             start_academic_year=cls.current_academic_year,
             end_academic_year__year=cls.current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_VALIDATED
+            status=AgreementStatus.VALIDATED.name,
         )
 
         partnership = PartnershipFactory(supervisor=None, years=[])
@@ -56,7 +60,7 @@ class PartnersApiViewTest(TestCase):
             partnership=partnership,
             start_academic_year=cls.current_academic_year,
             end_academic_year__year=cls.current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_VALIDATED
+            status=AgreementStatus.VALIDATED.name,
         )
         cls.management_entity = UCLManagementEntityFactory(
             faculty=partnership.ucl_university,
@@ -179,13 +183,13 @@ class PartnersApiViewTest(TestCase):
             partnership=partnership,
             start_academic_year=self.current_academic_year,
             end_academic_year__year=self.current_academic_year.year + 1,
-            status=PartnershipAgreement.STATUS_WAITING
+            status=AgreementStatus.WAITING.name,
         )
         PartnershipAgreementFactory(
             partnership=partnership,
             start_academic_year=self.current_academic_year,
             end_academic_year__year=self.current_academic_year.year + 5,
-            status=PartnershipAgreement.STATUS_VALIDATED
+            status=AgreementStatus.VALIDATED.name,
         )
         response = self.client.get(self.url + '?partner=' + str(partnership.partner.uuid))
         self.assertEqual(response.status_code, 200)

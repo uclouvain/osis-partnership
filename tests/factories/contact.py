@@ -1,6 +1,6 @@
 import factory
 
-from partnership.models import ContactType, Contact
+from partnership.models import Contact, ContactTitle, ContactType
 
 __all__ = [
     'ContactFactory',
@@ -20,4 +20,4 @@ class ContactFactory(factory.DjangoModelFactory):
         model = Contact
 
     type = factory.SubFactory(ContactTypeFactory)
-    title = Contact.TITLE_MISTER
+    title = ContactTitle.MISTER.name

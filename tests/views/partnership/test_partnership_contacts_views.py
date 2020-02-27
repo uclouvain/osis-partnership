@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import ContactTitle
 from partnership.tests.factories import (
     ContactTypeFactory,
     PartnershipEntityManagerFactory,
@@ -77,7 +78,7 @@ class PartnershipContactCreateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
-            'title': 'mr',
+            'title': ContactTitle.MISTER.name,
             'type': ContactTypeFactory().pk,
             'last_name': 'test',
             'first_name': 'test',
@@ -163,7 +164,7 @@ class PartnershipContactUpdateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
-            'title': 'mr',
+            'title': ContactTitle.MISTER.name,
             'type': ContactTypeFactory().pk,
             'last_name': 'test',
             'first_name': 'test',

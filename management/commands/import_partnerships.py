@@ -14,7 +14,7 @@ from partnership.models import (
     Address, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipYear,
     PartnershipYearEducationField, PartnerType,
-    UCLManagementEntity
+    UCLManagementEntity, MediaVisibility, PartnershipType, AgreementStatus,
 )
 from reference.models.country import Country
 
@@ -362,7 +362,7 @@ class Command(ProgressBarMixin, BaseCommand):
             media = Media.objects.create(
                 name=name,
                 url=url,
-                visibility=Media.VISIBILITY_STAFF,
+                visibility=MediaVisibility.STAFF.name,
                 author=default_values['author'],
             )
             partner.medias.add(media)
@@ -519,7 +519,7 @@ class Command(ProgressBarMixin, BaseCommand):
                 partnership_year = PartnershipYear(
                     partnership=partnership,
                     academic_year=academic_year,
-                    partnership_type=PartnershipYear.TYPE_MOBILITY
+                    partnership_type=PartnershipType.MOBILITY.name
                 )
             partnership_year.is_sms = bool(line[13])
             partnership_year.is_sta = bool(line[14])
@@ -613,11 +613,11 @@ class Command(ProgressBarMixin, BaseCommand):
             media = Media.objects.create(
                 name=line[10],
                 url=line[11].replace(' ', '%20'),
-                visibility=Media.VISIBILITY_STAFF,
+                visibility=MediaVisibility.STAFF.name,
                 author=default_values['author'],
             )
             media.save()
             agreement.media = media
-        agreement.status = PartnershipAgreement.STATUS_VALIDATED
+        agreement.status = AgreementStatus.VALIDATED.name
         agreement.eligible = True
         agreement.save()

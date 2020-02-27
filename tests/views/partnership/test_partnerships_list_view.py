@@ -8,7 +8,7 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
-from partnership.models import PartnershipAgreement
+from partnership.models import AgreementStatus, PartnershipType
 from partnership.tests.factories import (
     PartnerEntityFactory, PartnerFactory,
     PartnershipAgreementFactory,
@@ -97,7 +97,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_type = PartnershipFactory()
         PartnershipYearFactory(
             partnership=cls.partnership_type,
-            partnership_type='codiplomation',
+            partnership_type=PartnershipType.CODIPLOMATION.name,
             academic_year__year=2154,
         )
         # tags
@@ -123,7 +123,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_partnership_valid_in = PartnershipFactory()
         PartnershipAgreementFactory(
             partnership=cls.partnership_partnership_valid_in,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
             start_academic_year__year=2117,
             end_academic_year__year=2118,
         )
@@ -155,7 +155,7 @@ class PartnershipsListViewTest(TestCase):
             is_smp=False,
             is_sta=False,
             is_stt=False,
-            partnership_type='autre',
+            partnership_type=PartnershipType.AUTRE.name,
             academic_year__year=2160,
         )
         partnership_year.offers.add(EducationGroupYearFactory())
@@ -171,7 +171,7 @@ class PartnershipsListViewTest(TestCase):
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_all_filters,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
             start_academic_year__year=2127,
             end_academic_year__year=2129,
         )
@@ -347,7 +347,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partnership_type=codiplomation')
+        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.CODIPLOMATION.name)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -433,7 +433,7 @@ class PartnershipsListViewTest(TestCase):
             'is_smp': 'False',
             'is_sta': 'False',
             'is_stt': 'False',
-            'partnership_type': 'autre',
+            'partnership_type': PartnershipType.AUTRE.name,
             'tags': str(self.partnership_all_filters.tags.first().pk),
             'comment': 'all_filters',
             'partnership_in': str(AcademicYear.objects.get(year=2125).pk),

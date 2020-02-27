@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from partnership.models import AgreementStatus
+
 __all__ = ['PartnershipAgreement']
 
 
@@ -10,15 +12,6 @@ class PartnershipAgreement(models.Model):
 
     Valable pour un partenariat et une plage d'année académique.
     """
-    STATUS_WAITING = 'waiting'
-    STATUS_VALIDATED = 'validated'
-    STATUS_REFUSED = 'refused'
-    STATUS_CHOICES = (
-        (STATUS_WAITING, _('status_waiting')),
-        (STATUS_VALIDATED, _('status_validated')),
-        (STATUS_REFUSED, _('status_refused')),
-    )
-
     external_id = models.CharField(
         _('external_id'),
         help_text=_('to_synchronize_with_epc'),
@@ -61,8 +54,8 @@ class PartnershipAgreement(models.Model):
     status = models.CharField(
         _('status'),
         max_length=10,
-        choices=STATUS_CHOICES,
-        default=STATUS_WAITING,
+        choices=AgreementStatus.choices(),
+        default=AgreementStatus.WAITING.name,
     )
 
     comment = models.TextField(
@@ -85,4 +78,4 @@ class PartnershipAgreement(models.Model):
 
     @property
     def is_valid(self):
-        return self.status == self.STATUS_VALIDATED
+        return self.status == AgreementStatus.VALIDATED.name
