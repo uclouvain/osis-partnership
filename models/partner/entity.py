@@ -2,8 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from partnership.utils import user_is_adri, user_is_in_user_faculty
-
 __all__ = ['PartnerEntity']
 
 
@@ -74,9 +72,3 @@ class PartnerEntity(models.Model):
             reverse('partnerships:partners:detail', kwargs={'pk': self.partner_id}),
             self.id,
         )
-
-    def user_can_change(self, user):
-        return user_is_adri(user) or user_is_in_user_faculty(user, self.author.user)
-
-    def user_can_delete(self, user):
-        return self.user_can_change(user) and not self.partnerships.exists() and not self.childs.exists()

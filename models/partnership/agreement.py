@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from partnership.utils import user_is_adri, user_is_gf_of_faculty
-
 __all__ = ['PartnershipAgreement']
 
 
@@ -84,14 +82,6 @@ class PartnershipAgreement(models.Model):
 
     def __str__(self):
         return '{0} > {1}'.format(self.start_academic_year, self.end_academic_year)
-
-    def user_can_change(self, user):
-        if user_is_adri(user):
-            return True
-        return self.status == self.STATUS_WAITING and user_is_gf_of_faculty(user, self.partnership.ucl_university)
-
-    def user_can_delete(self, user):
-        return self.status != self.STATUS_VALIDATED and self.user_can_change(user)
 
     @property
     def is_valid(self):

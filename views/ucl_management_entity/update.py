@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
+from partnership import perms
 from partnership.forms import UCLManagementEntityForm
 from partnership.models import UCLManagementEntity
 
@@ -21,9 +22,7 @@ class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upd
     login_url = 'access_denied'
 
     def test_func(self):
-        self.object = self.get_object()
-        result = self.object.user_can_change(self.request.user)
-        return result
+        return perms.user_can_change_ucl_management_entity(self.request.user, self.get_object())
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

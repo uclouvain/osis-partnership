@@ -6,6 +6,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
 
 from base.models.academic_year import AcademicYear
+from partnership import perms
 from partnership.forms import FinancingFilterForm, FinancingImportForm
 from partnership.models import Financing, PartnershipConfiguration
 from partnership.utils import user_is_adri
@@ -83,11 +84,12 @@ class FinancingListView(LoginRequiredMixin, UserPassesTestMixin, FormMixin, List
         return self.form_invalid(self.form)
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super().get_context_data(**kwargs)
         context['import_form'] = self.import_form
         context['paginate_neighbours'] = self.paginate_neighbours
-        context['can_import_financing'] = Financing.user_can_import(self.request.user)
-        context['can_export_financing'] = Financing.user_can_export(self.request.user)
+        context['can_import_financing'] = perms.user_can_import_financing(user)
+        context['can_export_financing'] = perms.user_can_export_financing(user)
         context['academic_year'] = self.academic_year
         return context
 
