@@ -22,6 +22,12 @@ __all__ = [
 
 
 class PartnershipTag(models.Model):
+    """
+    Tags décrivant un partenariat.
+
+    Dans un autre modèle car configurable dans l'administration Django et
+    possibilité d'en mettre plusieurs par partenariat.
+    """
     value = models.CharField(max_length=255, unique=True)
 
     class Meta:
@@ -32,6 +38,9 @@ class PartnershipTag(models.Model):
 
 
 class Partnership(models.Model):
+    """
+    Le modèle principal représentant un partenariat.
+    """
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,

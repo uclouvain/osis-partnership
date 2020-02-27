@@ -15,6 +15,11 @@ __all__ = [
 
 
 class PartnerType(models.Model):
+    """
+    Le type de partenaire
+
+    Dans un autre modèle car configurable dans l'administration Django.
+    """
     value = models.CharField(max_length=255, unique=True)
 
     class Meta:
@@ -25,6 +30,12 @@ class PartnerType(models.Model):
 
 
 class PartnerTag(models.Model):
+    """
+    Tags décrivant un partenaire.
+
+    Dans un autre modèle car configurable dans l'administration Django et
+    possibilité d'en mettre plusieurs par partenaire.
+    """
     value = models.CharField(max_length=255, unique=True)
 
     class Meta:
@@ -35,6 +46,9 @@ class PartnerTag(models.Model):
 
 
 class Partner(models.Model):
+    """
+    Le modèle principal représentant un partenaire.
+    """
     CONTACT_TYPE_CHOICES = (
         ('EPLUS-EDU-HEI', _('Higher education institution (tertiary level)')),
         ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre – General education (pre-primary level)')),

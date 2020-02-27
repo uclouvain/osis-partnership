@@ -8,6 +8,10 @@ __all__ = ['PartnerEntity']
 
 
 class PartnerEntity(models.Model):
+    """
+    Une entité d'un partenaire.
+    Il peut y avoir plusieurs entités par partenaire.
+    """
     partner = models.ForeignKey(
         'partnership.Partner',
         verbose_name=_('partner'),

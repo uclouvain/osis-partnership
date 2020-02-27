@@ -5,6 +5,9 @@ __all__ = ['Address']
 
 
 class Address(models.Model):
+    """
+    Une adresse postale.
+    """
     name = models.CharField(
         _('Name'),
         help_text=_('address_name_help_text'),

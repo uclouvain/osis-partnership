@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 from django.db.models import Subquery, OuterRef
 from django.utils.functional import cached_property
@@ -9,40 +7,13 @@ from base.models.entity_version import EntityVersion
 
 __all__ = [
     'PartnershipYear',
-    'PartnershipYearEducationField',
-    'PartnershipYearEducationLevel',
 ]
 
 
-class PartnershipYearEducationField(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
-    code = models.CharField(max_length=30, unique=True)
-    label = models.CharField(max_length=255)
-
-    class Meta:
-        ordering = ('code',)
-
-    def __str__(self):
-        return '{0} - {1}'.format(self.code, self.label)
-
-
-class PartnershipYearEducationLevel(models.Model):
-    code = models.CharField(max_length=30, unique=True)
-    label = models.CharField(max_length=255)
-    education_group_types = models.ManyToManyField(
-        'base.EducationGroupType',
-        verbose_name=_('education_group_types'),
-        related_name='partnership_education_levels',
-    )
-
-    class Meta:
-        ordering = ('code',)
-
-    def __str__(self):
-        return '{0} - {1}'.format(self.code, self.label)
-
-
 class PartnershipYear(models.Model):
+    """
+    Données annualisées concernant un partenariat.
+    """
     TYPE_MOBILITY = 'mobility'
     TYPE_CHOICES = (
         ('intention', _('Déclaration d’intention')),
