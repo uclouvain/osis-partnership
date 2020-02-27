@@ -11,6 +11,7 @@ from partnership.models import (
     Address, Partner, PartnerEntity, PartnerTag, PartnerType, PartnershipTag,
     PartnershipYear, PartnershipYearEducationField,
     PartnershipYearEducationLevel,
+    PartnershipType,
 )
 from reference.models.continent import Continent
 from reference.models.country import Country
@@ -207,7 +208,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
-        choices=((None, '---------'),) + PartnershipYear.TYPE_CHOICES,
+        choices=((None, '---------'),) + PartnershipType.choices(),
         required=False,
     )
     supervisor = forms.ModelChoiceField(
@@ -277,7 +278,7 @@ class PartnershipFilterForm(forms.Form):
                 .order_by('partnership_type')
                 .distinct('partnership_type')
         )
-        types_dict = dict(PartnershipYear.TYPE_CHOICES)
+        types_dict = dict(PartnershipType.choices())
         choices = sorted([
             (partnership_type, types_dict.get(partnership_type, partnership_type))
             for partnership_type in partnership_types

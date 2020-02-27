@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType, Media
+from partnership.models import ContactType, MediaVisibility
 from partnership.tests.factories import (
     MediaFactory, PartnerFactory,
     PartnershipEntityManagerFactory
@@ -61,7 +61,7 @@ class PartnerMediaCreateViewTest(TestCase):
             'name': 'test',
             'description': 'test',
             'url': 'http://example.com',
-            'visibility': Media.VISIBILITY_PUBLIC,
+            'visibility': MediaVisibility.PUBLIC.name,
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
@@ -119,7 +119,7 @@ class PartnerMediaUpdateViewTest(TestCase):
             'name': 'test',
             'description': 'test',
             'url': 'http://example.com',
-            'visibility': Media.VISIBILITY_PUBLIC,
+            'visibility': MediaVisibility.PUBLIC.name,
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')

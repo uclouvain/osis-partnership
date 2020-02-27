@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     PartnershipConfiguration, PartnershipYear, PartnershipYearEducationField,
+    AgreementStatus,
 )
 from ..filters import PartnerFilter, PartnershipFilter
 from ..serializers import PartnerSerializer
@@ -31,7 +32,7 @@ class PartnersListView(generics.ListAPIView):
             has_valid_agreement_in_current_year=Exists(
                 PartnershipAgreement.objects.filter(
                     partnership=OuterRef('pk'),
-                    status=PartnershipAgreement.STATUS_VALIDATED,
+                    status=AgreementStatus.VALIDATED.name,
                     start_academic_year__year__lte=academic_year.year,
                     end_academic_year__year__gte=academic_year.year,
                 )

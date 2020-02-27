@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from partnership.models import Address, Contact, PartnerEntity
+from partnership.models import Address, Contact, PartnerEntity, ContactTitle
 from reference.models.country import Country
 
 __all__ = ['PartnerEntityForm']
@@ -45,7 +45,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_in_title = forms.ChoiceField(
         label=_('contact_title'),
-        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + ContactTitle.choices(),
         required=False,
     )
 
@@ -95,7 +95,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     contact_out_title = forms.ChoiceField(
         label=_('contact_title'),
-        choices=((None, '---------'),) + Contact.TITLE_CHOICES,
+        choices=((None, '---------'),) + ContactTitle.choices(),
         required=False,
     )
 

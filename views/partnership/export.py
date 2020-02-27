@@ -9,6 +9,7 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.models import (
     PartnershipAgreement, PartnershipYear, PartnershipConfiguration,
+    AgreementStatus,
 )
 
 from .mixins import PartnershipListFilterMixin
@@ -63,7 +64,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
                 tags_list=StringAgg('tags__value', ', '),
                 is_valid=Exists(
                     PartnershipAgreement.objects
-                        .filter(status=PartnershipAgreement.STATUS_VALIDATED,
+                        .filter(status=AgreementStatus.VALIDATED.name,
                                 partnership=OuterRef('pk'))
                 ),
             )

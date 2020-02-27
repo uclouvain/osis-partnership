@@ -4,6 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
+from partnership.models import PartnershipType
 
 __all__ = [
     'PartnershipYear',
@@ -14,18 +15,6 @@ class PartnershipYear(models.Model):
     """
     Données annualisées concernant un partenariat.
     """
-    TYPE_MOBILITY = 'mobility'
-    TYPE_CHOICES = (
-        ('intention', _('Déclaration d’intention')),
-        ('cadre', _('Accord-cadre')),
-        ('specifique', _('Accord spécifique')),
-        ('codiplomation', _('Accord de co-diplômation')),
-        ('cotutelle', _('Accord de co-tutelle')),
-        (TYPE_MOBILITY, _('Partenariat de mobilité')),
-        ('fond_appuie', _('Projet Fonds d’appuie à l’internationnalisation')),
-        ('autre', _('Autre')),
-    )
-
     partnership = models.ForeignKey(
         'partnership.Partnership',
         verbose_name=_('partnership'),
@@ -71,7 +60,7 @@ class PartnershipYear(models.Model):
     partnership_type = models.CharField(
         _('partnership_type'),
         max_length=255,
-        choices=TYPE_CHOICES,
+        choices=PartnershipType.choices(),
     )
     eligible = models.BooleanField(
         _('eligible'),

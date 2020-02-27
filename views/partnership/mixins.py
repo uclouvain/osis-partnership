@@ -15,7 +15,7 @@ from partnership.forms import (
 )
 from partnership.models import (
     Partnership, PartnershipConfiguration, UCLManagementEntity,
-    PartnershipAgreement, PartnershipYear,
+    PartnershipAgreement, PartnershipYear, AgreementStatus
 )
 from partnership.utils import user_is_gf, user_is_adri
 
@@ -251,7 +251,8 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
             queryset = queryset.annotate(
                 has_valid=Exists(
                     PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk'), status=PartnershipAgreement.STATUS_VALIDATED,
+                        partnership=OuterRef('pk'),
+                        status=AgreementStatus.VALIDATED.name,
                         start_academic_year__start_date__lte=partnership_valid_in.start_date,
                         end_academic_year__end_date__gte=partnership_valid_in.end_date,
                     )
@@ -273,7 +274,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('pk'),
                     ).filter(
-                        status=PartnershipAgreement.STATUS_VALIDATED,
+                        status=AgreementStatus.VALIDATED.name,
                         start_academic_year__start_date__lte=partnership_not_valid_in.start_date,
                         end_academic_year__end_date__gte=partnership_not_valid_in.end_date,
                     ),
@@ -315,7 +316,7 @@ class PartnershipListFilterMixin(FormMixin, MultipleObjectMixin):
                     AcademicYear.objects
                         .filter(
                             partnership_agreements_end__partnership=OuterRef('pk'),
-                            partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
+                            partnership_agreements_end__status=AgreementStatus.VALIDATED.name,
                         )
                         .order_by('-end_date')
                         .values('year')[:1]

@@ -7,7 +7,7 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import Media, PartnershipAgreement
+from partnership.models import AgreementStatus, MediaVisibility
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
@@ -77,12 +77,12 @@ class PartnershipAgreementCreateViewTest(TestCase):
         cls.data = {
             'start_academic_year': AcademicYearFactory(year=cls.date_ok.year).pk,
             'end_academic_year': AcademicYearFactory(year=cls.date_ok.year + 1).pk,
-            'status': PartnershipAgreement.STATUS_WAITING,
+            'status': AgreementStatus.WAITING.name,
             'comment': 'test',
             'media-name': 'test',
             'media-description': 'test',
             'media-url': 'http://example.com',
-            'media-visibility': Media.VISIBILITY_PUBLIC,
+            'media-visibility': MediaVisibility.PUBLIC.name,
         }
 
     def test_get_view_as_anonymous(self):
@@ -167,12 +167,12 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         cls.data = {
             'start_academic_year': AcademicYearFactory(year=cls.date_ok.year).pk,
             'end_academic_year': AcademicYearFactory(year=cls.date_ok.year + 1).pk,
-            'status': PartnershipAgreement.STATUS_WAITING,
+            'status': AgreementStatus.WAITING.name,
             'comment': 'test',
             'media-name': 'test',
             'media-description': 'test',
             'media-url': 'http://example.com',
-            'media-visibility': Media.VISIBILITY_PUBLIC,
+            'media-visibility': MediaVisibility.PUBLIC.name,
         }
 
     def test_get_view_as_anonymous(self):
@@ -230,14 +230,14 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
 
     def test_post_validated_as_adri(self):
         self.client.force_login(self.user_adri)
-        self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
+        self.partnership.agreements.update(status=AgreementStatus.VALIDATED.name)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_validated_as_gf(self):
         self.client.force_login(self.user_gf)
-        self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
+        self.partnership.agreements.update(status=AgreementStatus.VALIDATED.name)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/update.html')
@@ -328,14 +328,14 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
 
     def test_post_validated_as_adri(self):
         self.client.force_login(self.user_adri)
-        self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
+        self.partnership.agreements.update(status=AgreementStatus.VALIDATED.name)
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_validated_as_gf(self):
         self.client.force_login(self.user_gf)
-        self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
+        self.partnership.agreements.update(status=AgreementStatus.VALIDATED.name)
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/agreements/delete.html')
         self.assertTemplateUsed(response, 'access_denied.html')

@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from .enums import ContactTitle
+
 __all__ = [
     'Contact',
     'ContactType',
@@ -24,12 +26,6 @@ class Contact(models.Model):
     """
     Une personne avec téléphone / email / etc.
     """
-    TITLE_MISTER = 'mr'
-    TITLE_CHOICES = (
-        (TITLE_MISTER, _('mister')),
-        ('mme', _('madame')),
-    )
-
     type = models.ForeignKey(
         ContactType,
         verbose_name=_('contact_type'),
@@ -41,7 +37,7 @@ class Contact(models.Model):
     title = models.CharField(
         _('contact_title'),
         max_length=50,
-        choices=TITLE_CHOICES,
+        choices=ContactTitle.choices(),
         null=True,
         blank=True,
     )

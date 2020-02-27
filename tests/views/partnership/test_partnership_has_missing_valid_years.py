@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from base.tests.factories.academic_year import AcademicYearFactory, get_current_year
-from partnership.models import PartnershipAgreement
+from partnership.models import AgreementStatus
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipFactory,
@@ -56,7 +56,7 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_missing_before,
             start_academic_year=cls.academic_year_less_2,
             end_academic_year=cls.academic_year_more_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # missing after :
@@ -72,7 +72,7 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_missing_after,
             start_academic_year=cls.academic_year_less_3,
             end_academic_year=cls.current_academic_year,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # missing middle :
@@ -88,13 +88,13 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_missing_middle,
             start_academic_year=cls.academic_year_less_3,
             end_academic_year=cls.academic_year_less_2,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_middle,
             start_academic_year=cls.current_academic_year,
             end_academic_year=cls.academic_year_more_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # missing before middle after :
@@ -110,13 +110,13 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_missing_before_middle_after,
             start_academic_year=cls.academic_year_less_2,
             end_academic_year=cls.academic_year_less_2,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_missing_before_middle_after,
             start_academic_year=cls.current_academic_year,
             end_academic_year=cls.current_academic_year,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # full :
@@ -132,7 +132,7 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_full,
             start_academic_year=cls.academic_year_less_3,
             end_academic_year=cls.academic_year_more_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # with adjacent :
@@ -148,13 +148,13 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_with_adjacent,
             start_academic_year=cls.academic_year_less_3,
             end_academic_year=cls.academic_year_less_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_with_adjacent,
             start_academic_year=cls.current_academic_year,
             end_academic_year=cls.academic_year_more_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
         # with extra agreements before :
@@ -170,7 +170,7 @@ class PartnershipHasMissingValidYearsTest(TestCase):
             partnership=cls.partnership_with_extra_agreements_before,
             start_academic_year=cls.academic_year_less_3,
             end_academic_year=cls.academic_year_more_1,
-            status=PartnershipAgreement.STATUS_VALIDATED,
+            status=AgreementStatus.VALIDATED.name,
         )
 
     def test_no_agreement(self):
