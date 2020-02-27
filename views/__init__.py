@@ -4,13 +4,12 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.db.models import (
-    OuterRef, Prefetch, Q, Subquery,
+    Prefetch,
 )
 from django.http import (
     FileResponse, Http404,
 )
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
@@ -24,13 +23,12 @@ from django.views.generic.edit import (
 from base.models.entity_version import EntityVersion
 from partnership.forms import (
     ContactForm, MediaForm, PartnershipAgreementForm,
-    UCLManagementEntityForm,
 )
 from partnership.models import (
     Partner, Partnership,
-    PartnershipAgreement, UCLManagementEntity,
+    PartnershipAgreement,
 )
-from partnership.utils import academic_years, user_is_adri
+from partnership.utils import academic_years
 from .autocomplete import *
 from .configuration import PartnershipConfigurationUpdateView
 from .export import ExportView
@@ -38,6 +36,7 @@ from .financing import *
 from .partner import *
 from .partnership import *
 from .partnership.mixins import PartnershipListFilterMixin
+from .ucl_management_entity import *
 
 
 class SimilarPartnerView(ListView, PermissionRequiredMixin):
@@ -516,108 +515,3 @@ class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleOb
         response = FileResponse(media.file)
         response['Content-Disposition'] = 'attachment; filename={}'.format(os.path.basename(media.file.name))
         return response
-
-
-# UCLManagementEntities views :
-
-class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    model = UCLManagementEntity
-    template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
-    context_object_name = "ucl_management_entities"
-    login_url = 'access_denied'
-
-    def test_func(self):
-        result = UCLManagementEntity.user_can_list(self.request.user)
-        return result
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['can_create_ucl_management_entity'] = UCLManagementEntity.user_can_create(self.request.user)
-        return context
-
-    def get_queryset(self):
-        queryset = (
-            UCLManagementEntity.objects
-            .annotate(
-                faculty_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('faculty__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-                entity_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('entity__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-            )
-            .order_by('faculty_most_recent_acronym', 'entity_most_recent_acronym')
-            .select_related('academic_responsible', 'administrative_responsible')
-        )
-        if not user_is_adri(self.request.user):
-            queryset = queryset.filter(
-                Q(faculty__partnershipentitymanager__person__user=self.request.user)
-                | Q(faculty__entityversion__parent__partnershipentitymanager__person__user=self.request.user)
-            )
-        return queryset.distinct()
-
-
-class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    model = UCLManagementEntity
-    template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
-    form_class = UCLManagementEntityForm
-    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
-    login_url = 'access_denied'
-
-    def test_func(self):
-        result = UCLManagementEntity.user_can_create(self.request.user)
-        return result
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        messages.success(self.request, _('ucl_management_entity_create_success'))
-        return super().form_valid(form)
-
-
-class UCLManagementEntityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = UCLManagementEntity
-    template_name = "partnerships/ucl_management_entities/uclmanagemententity_update.html"
-    form_class = UCLManagementEntityForm
-    context_object_name = "ucl_management_entity"
-    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
-    login_url = 'access_denied'
-
-    def test_func(self):
-        self.object = self.get_object()
-        result = self.object.user_can_change(self.request.user)
-        return result
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        messages.success(self.request, _('ucl_management_entity_change_success'))
-        return super().form_valid(form)
-
-
-class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = UCLManagementEntity
-    template_name = "partnerships/ucl_management_entities/uclmanagemententity_delete.html"
-    context_object_name = "ucl_management_entity"
-    success_url = reverse_lazy('partnerships:ucl_management_entities:list')
-    login_url = 'access_denied'
-
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/ucl_management_entities/includes/uclmanagemententity_delete_form.html'
-        return self.template_name
-
-    def test_func(self):
-        return self.get_object().user_can_delete(self.request.user)
