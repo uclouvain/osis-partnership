@@ -9,6 +9,9 @@ __all__ = ['PartnershipConfiguration']
 
 
 class PartnershipConfiguration(models.Model):
+    """
+    Configurations diverses concernant les partenariats et modifiable depuis l'interface d'OSIS.
+    """
     DAYS_CHOICES = [(day, day) for day in range(1, 32)]
     MONTHES_CHOICES = (
         (1, _('january')),

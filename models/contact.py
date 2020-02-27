@@ -8,6 +8,9 @@ __all__ = [
 
 
 class ContactType(models.Model):
+    """
+    Type de contact configurable dans l'administration Django.
+    """
     value = models.CharField(max_length=255, unique=True)
 
     class Meta:
@@ -18,6 +21,9 @@ class ContactType(models.Model):
 
 
 class Contact(models.Model):
+    """
+    Une personne avec téléphone / email / etc.
+    """
     TITLE_MISTER = 'mr'
     TITLE_CHOICES = (
         (TITLE_MISTER, _('mister')),

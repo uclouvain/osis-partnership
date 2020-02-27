@@ -9,6 +9,9 @@ __all__ = [
 
 
 class MediaType(models.Model):
+    """
+    Type de média configurable dans l'administration Django.
+    """
     SUMMARY_TABLE = 'summary-table'
 
     code = models.CharField(
@@ -25,6 +28,9 @@ class MediaType(models.Model):
 
 
 class Media(models.Model):
+    """
+    Un fichier uploadé ou un lien.
+    """
     VISIBILITY_PUBLIC = 'public'
     VISIBILITY_STAFF = 'staff'
     VISIBILITY_STAFF_STUDENT = 'staff_student'

@@ -7,6 +7,11 @@ __all__ = ['PartnershipAgreement']
 
 
 class PartnershipAgreement(models.Model):
+    """
+    Accord de partenariat.
+
+    Valable pour un partenariat et une plage d'année académique.
+    """
     STATUS_WAITING = 'waiting'
     STATUS_VALIDATED = 'validated'
     STATUS_REFUSED = 'refused'

@@ -6,6 +6,9 @@ __all__ = ['Financing']
 
 
 class Financing(models.Model):
+    """
+    Un financement pour un/des pays et une année académique.
+    """
     name = models.CharField(_('Name'), max_length=50)
     url = models.URLField(_('url'))
     countries = models.ManyToManyField('reference.Country', verbose_name=_('countries'))
