@@ -33,19 +33,19 @@ class PartnershipsListViewTest(TestCase):
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         self.assertTemplateNotUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
 
     def test_get_list_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnerships_list.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         self.assertTemplateUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
 
 
@@ -123,7 +123,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -131,7 +131,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         del data['status']
         url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': self.partnership_gf.pk})
         response = self.client.post(url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
 class PartnershipAgreementsUpdateViewTest(TestCase):
@@ -217,7 +217,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -226,14 +226,14 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
             'partnership_pk': self.partnership_gf.pk, 'pk': self.partnership_gf.agreements.all()[0].pk
         })
         response = self.client.post(url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_validated_as_adri(self):
         self.client.force_login(self.user_adri)
         self.partnership.agreements.update(status=PartnershipAgreement.STATUS_VALIDATED)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_validated_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -318,13 +318,13 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = {}
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_as_gf(self):
         self.client.force_login(self.user_adri)
         data = {}
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_validated_as_adri(self):
         self.client.force_login(self.user_adri)

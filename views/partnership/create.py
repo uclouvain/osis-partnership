@@ -22,7 +22,7 @@ __all__ = [
 class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
     model = Partnership
     form_class = PartnershipForm
-    template_name = "partnerships/partnership_create.html"
+    template_name = "partnerships/partnership/partnership_create.html"
     login_url = 'access_denied'
 
     def test_func(self):
