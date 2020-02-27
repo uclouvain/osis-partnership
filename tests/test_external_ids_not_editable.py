@@ -2,11 +2,13 @@ from django.test import TestCase
 from django.apps import apps
 
 
-class ExterrnalIdNotEditableTest(TestCase):
-
+class ExternalIdNotEditableTest(TestCase):
     def setUp(self):
         app_name = 'partnership'
-        models_in_partnership_app = [apps.get_model(app_name, model_name) for model_name in apps.all_models[app_name]]
+        models_in_partnership_app = [
+            apps.get_model(app_name, model_name)
+            for model_name in apps.all_models[app_name]
+        ]
         self.model_containing_external_id = [
             model_class for model_class in models_in_partnership_app
             if 'external_id' in [f.name for f in model_class._meta.fields]
