@@ -1,9 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView
 
+from partnership import perms
 from partnership.forms import PartnerForm
-from partnership.models import Partner
-
 from .mixins import PartnerEntityFormMixin, PartnerFormMixin
 
 __all__ = [
@@ -22,7 +21,7 @@ class PartnerCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     login_url = 'access_denied'
 
     def test_func(self):
-        return Partner.user_can_add(self.request.user)
+        return perms.user_can_add_partner(self.request.user)
 
     def post(self, request, *args, **kwargs):
         self.object = None
@@ -34,4 +33,4 @@ class PartnerEntityCreateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
     login_url = 'access_denied'
 
     def test_func(self):
-        return Partner.user_can_add(self.request.user)
+        return perms.user_can_add_partner(self.request.user)

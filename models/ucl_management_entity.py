@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity import Entity
-from partnership.utils import user_is_adri, user_is_gf, user_is_gf_of_faculty
 
 __all__ = ['UCLManagementEntity']
 
@@ -120,31 +119,14 @@ class UCLManagementEntity(models.Model):
             self.is_contact_in_defined() or self.is_contact_out_defined()
         )
 
-    @staticmethod
-    def user_can_list(user):
-        return user_is_adri(user) or user_is_gf(user)
-
-    def user_can_read(self, user):
-        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
-
-    @staticmethod
-    def user_can_create(user):
-        return user_is_adri(user)
-
-    def user_can_change(self, user):
-        return user_is_adri(user) or user_is_gf_of_faculty(user, self.faculty)
-
     def has_linked_partnerships(self):
         partnerships = self.faculty.partnerships
         if self.entity is None:
             return partnerships.filter(ucl_university_labo__isnull=True).exists()
         return partnerships.filter(ucl_university_labo=self.entity).exists()
 
-    def user_can_delete(self, user):
-        return user_is_adri(user) and not self.has_linked_partnerships()
-
     def validate_unique(self, exclude=None):
-        if (self.entity is None):  # and hasattr(self, faculty) and self.faculty is not None):
+        if self.entity is None:  # and hasattr(self, faculty) and self.faculty is not None):
             try:
                 if UCLManagementEntity.objects.exclude(id=self.id).filter(
                         faculty=self.faculty,

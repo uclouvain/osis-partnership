@@ -10,9 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
 from base.models.academic_year import find_academic_years
+from partnership import perms
 from partnership.forms import PartnershipForm
-from partnership.models import Partnership, PartnershipConfiguration, \
-    PartnershipYear
+from partnership.models import (
+    Partnership, PartnershipConfiguration, PartnershipYear,
+)
 from partnership.utils import user_is_adri
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
@@ -32,7 +34,7 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
         return super().dispatch(*args, **kwargs)
 
     def test_func(self):
-        return self.get_object().user_can_change(self.request.user)
+        return perms.user_can_change_partnership(self.request.user, self.object)
 
     @transaction.atomic
     def form_valid(self, form, form_year):

@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
+from partnership import perms
 from partnership.forms import UCLManagementEntityForm
 from partnership.models import UCLManagementEntity
 
@@ -20,8 +21,7 @@ class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, Cre
     login_url = 'access_denied'
 
     def test_func(self):
-        result = UCLManagementEntity.user_can_create(self.request.user)
-        return result
+        return perms.user_can_create_ucl_management_entity(self.request.user)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import OuterRef, Q, Subquery
 from django.views.generic import ListView
 
+from partnership import perms
 from base.models.entity_version import EntityVersion
 from partnership.models import UCLManagementEntity
 from partnership.utils import user_is_adri
@@ -18,12 +19,13 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     login_url = 'access_denied'
 
     def test_func(self):
-        result = UCLManagementEntity.user_can_list(self.request.user)
-        return result
+        return perms.user_can_list_ucl_management_entity(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['can_create_ucl_management_entity'] = UCLManagementEntity.user_can_create(self.request.user)
+        context['can_create_ucl_management_entity'] = perms.user_can_create_ucl_management_entity(
+            self.request.user
+        )
         return context
 
     def get_queryset(self):

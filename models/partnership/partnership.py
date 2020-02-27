@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
 from partnership.utils import (
-    merge_agreement_ranges, user_is_adri, user_is_gf, user_is_gf_of_faculty,
+    merge_agreement_ranges,
 )
 
 __all__ = [
@@ -144,15 +144,6 @@ class Partnership(models.Model):
 
     def get_absolute_url(self):
         return reverse('partnerships:detail', kwargs={'pk': self.pk})
-
-    @staticmethod
-    def user_can_add(user):
-        return user_is_adri(user) or user_is_gf(user)
-
-    def user_can_change(self, user):
-        if user_is_adri(user):
-            return True
-        return user_is_gf_of_faculty(user, self.ucl_university)
 
     @cached_property
     def is_valid(self):

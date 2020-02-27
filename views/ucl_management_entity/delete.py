@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 
+from partnership import perms
 from partnership.models import UCLManagementEntity
 
 __all__ = [
@@ -22,4 +23,4 @@ class UCLManagementEntityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Del
         return self.template_name
 
     def test_func(self):
-        return self.get_object().user_can_delete(self.request.user)
+        return perms.user_can_delete_ucl_management_entity(self.request.user, self.get_object())

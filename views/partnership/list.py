@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView
 
-from partnership.models import Partnership
+from partnership import perms
 from partnership.utils import user_is_adri
 
 from .mixins import PartnershipListFilterMixin
@@ -33,8 +33,9 @@ class PartnershipsListView(PermissionRequiredMixin, PartnershipListFilterMixin, 
                 return 'partnerships/partnerships_list.html'
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super().get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
-        context['can_change_configuration'] = user_is_adri(self.request.user)
-        context['can_add_partnership'] = Partnership.user_can_add(self.request.user)
+        context['can_change_configuration'] = user_is_adri(user)
+        context['can_add_partnership'] = perms.user_can_add_partnership(user)
         return context

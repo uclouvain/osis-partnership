@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
 
+from partnership import perms
 from partnership.forms import PartnerForm
 from partnership.models import Partner
 
@@ -21,8 +22,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
     login_url = 'access_denied'
 
     def test_func(self):
-        self.object = self.get_object()
-        return self.object.user_can_change(self.request.user)
+        return perms.user_can_change_partner(self.request.user, self.get_object())
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -35,4 +35,4 @@ class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPa
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.get_object().user_can_change(self.request.user)
+        return perms.user_can_change_entity(self.request.user, self.get_object())
