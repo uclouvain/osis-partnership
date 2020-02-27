@@ -90,7 +90,7 @@ class PartnershipContactCreateViewTest(TestCase):
             'comment': 'test',
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
 class PartnershipContactUpdateViewTest(TestCase):
@@ -176,7 +176,7 @@ class PartnershipContactUpdateViewTest(TestCase):
             'comment': 'test',
         }
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
 class PartnershipContactDeleteViewTest(TestCase):
@@ -249,4 +249,4 @@ class PartnershipContactDeleteViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = {}
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership_detail.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
