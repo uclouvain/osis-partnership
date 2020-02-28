@@ -21,6 +21,7 @@ from django.views.generic.edit import (
 )
 
 from base.models.entity_version import EntityVersion
+from partnership import perms
 from partnership.forms import (
     ContactForm, MediaForm, PartnershipAgreementForm,
 )
@@ -61,7 +62,7 @@ class PartnerMediaMixin(UserPassesTestMixin):
         return super(PartnerMediaMixin, self).dispatch(request, *args, **kwargs)
 
     def test_func(self):
-        return self.partner.user_can_change(self.request.user)
+        return perms.user_can_change_partner(self.request.user, self.partner)
 
     def get_queryset(self):
         return self.partner.medias.all()
@@ -143,7 +144,7 @@ class PartnershipContactMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
+        return perms.user_can_change_partnership(self.request.user, self.partnership)
 
     def dispatch(self, request, *args, **kwargs):
         self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
@@ -280,7 +281,7 @@ class PartnershipMediaMixin(UserPassesTestMixin):
         return super(PartnershipMediaMixin, self).dispatch(request, *args, **kwargs)
 
     def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
+        return perms.user_can_change_partnership(self.request.user, self.partnership)
 
     def get_queryset(self):
         return self.partnership.medias.all()
@@ -437,7 +438,7 @@ class PartneshipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
+        return perms.user_can_change_partnership(self.request.user, self.partnership)
 
     @transaction.atomic
     def form_valid(self, form, form_media):
@@ -466,7 +467,7 @@ class PartneshipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.get_object().user_can_change(self.request.user)
+        return perms.user_can_change_agreement(self.request.user, self.get_object())
 
     def get_queryset(self):
         return PartnershipAgreement.objects.select_related('start_academic_year', 'end_academic_year')
@@ -493,7 +494,7 @@ class PartneshipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.get_object().user_can_delete(self.request.user)
+        return perms.user_can_delete_agreement(self.request.user, self.get_object())
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -505,7 +506,7 @@ class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleOb
     login_url = 'access_denied'
 
     def test_func(self):
-        return self.partnership.user_can_change(self.request.user)
+        return perms.user_can_change_partnership(self.request.user, self.partnership)
 
     def get(self, request, *args, **kwargs):
         agreement = self.get_object()

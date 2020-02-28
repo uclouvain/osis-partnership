@@ -6,8 +6,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from partnership.utils import user_is_adri, user_is_gf
-
 __all__ = [
     'Partner',
     'PartnerTag',
@@ -188,13 +186,6 @@ class Partner(models.Model):
 
     def get_absolute_url(self):
         return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
-
-    @staticmethod
-    def user_can_add(user):
-        return user_is_adri(user) or user_is_gf(user)
-
-    def user_can_change(self, user):
-        return user_is_adri(user)
 
     @property
     def is_actif(self):

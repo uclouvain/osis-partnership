@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
 from base.models.academic_year import find_academic_years
+from partnership import perms
 from partnership.forms import PartnershipForm
 from partnership.models import Partnership, PartnershipConfiguration
 from partnership.utils import user_is_adri
@@ -26,7 +27,7 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
     login_url = 'access_denied'
 
     def test_func(self):
-        return Partnership.user_can_add(self.request.user)
+        return perms.user_can_add_partnership(self.request.user)
 
     @transaction.atomic
     def form_valid(self, form, form_year):
