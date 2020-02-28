@@ -142,7 +142,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
         return _('partnerships')
 
     def get_xls_filters(self):
-        filters = super(PartnershipExportView, self).get_xls_filters()
+        filters = super().get_xls_filters()
         filters[_('academic_year')] = str(self.academic_year)
         filters.move_to_end(_('academic_year'), last=False)
         return filters
@@ -150,4 +150,4 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
     def get(self, *args, **kwargs):
         configuration = PartnershipConfiguration.get_configuration()
         self.academic_year = configuration.get_current_academic_year_for_creation_modification()
-        return super(PartnershipExportView, self).get(*args, **kwargs)
+        return super().get(*args, **kwargs)

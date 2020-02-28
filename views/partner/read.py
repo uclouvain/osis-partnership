@@ -34,7 +34,7 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
-        context = super(PartnerDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['can_update_partner'] = perms.user_can_change_partner(user, self.object)
         context['can_add_entities'] = perms.user_can_add_partner(user, self.object)
         return context

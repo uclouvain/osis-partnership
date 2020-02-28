@@ -24,7 +24,7 @@ class PartnersListView(PermissionRequiredMixin, PartnersListFilterMixin, ListVie
             return 'partnerships/partners/partners_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PartnersListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['paginate_neighbours'] = self.paginate_neighbours
         context['can_add_partner'] = perms.user_can_add_partner(self.request.user)
         return context
