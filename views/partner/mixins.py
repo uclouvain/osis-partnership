@@ -21,7 +21,7 @@ class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
     login_url = 'access_denied'
 
     def get_form_kwargs(self):
-        kwargs = super(PartnersListFilterMixin, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         if self.request.GET:
             kwargs['data'] = self.request.GET
         return kwargs
@@ -76,9 +76,9 @@ class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
         return queryset.distinct()
 
 
-class PartnerFormMixin(object):
+class PartnerFormMixin:
     def get_form_kwargs(self):
-        kwargs = super(PartnerFormMixin, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
@@ -100,7 +100,7 @@ class PartnerFormMixin(object):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
         kwargs['user_is_adri'] = user_is_adri(self.request.user)
-        return super(PartnerFormMixin, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     @transaction.atomic
     def form_valid(self, form, form_address):
@@ -170,10 +170,10 @@ class PartnerFormMixin(object):
             return self.form_invalid(form, form_address)
 
 
-class PartnerEntityMixin(object):
+class PartnerEntityMixin:
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
-        return super(PartnerEntityMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.partner.entities.all()
@@ -182,7 +182,7 @@ class PartnerEntityMixin(object):
         return self.partner.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = super(PartnerEntityMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['partner'] = self.partner
         return context
 
@@ -196,7 +196,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         return self.template_name
 
     def get_form_kwargs(self):
-        kwargs = super(PartnerEntityFormMixin, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['partner'] = self.partner
         return kwargs
 
@@ -221,4 +221,4 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
     def form_invalid(self, form):
         messages.error(self.request, _('partner_entity_error'))
-        return super(PartnerEntityFormMixin, self).form_invalid(form)
+        return super().form_invalid(form)

@@ -26,7 +26,7 @@ class PartnerUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnerFormMixi
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(PartnerUpdateView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 class PartnerEntityUpdateView(LoginRequiredMixin, PartnerEntityFormMixin, UserPassesTestMixin, UpdateView):

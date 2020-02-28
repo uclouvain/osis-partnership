@@ -26,7 +26,7 @@ __all__ = [
 ]
 
 
-class PartnershipFormMixin(object):
+class PartnershipFormMixin:
     model = Partnership
     form_class = PartnershipForm
     login_url = 'access_denied'

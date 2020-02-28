@@ -135,4 +135,4 @@ class UCLManagementEntity(models.Model):
                     raise ValidationError(_("duplicate_ucl_management_entity_error_with_faculty"))
             except Entity.DoesNotExist:
                 pass
-        super(UCLManagementEntity, self).validate_unique(exclude)
+        super().validate_unique(exclude)

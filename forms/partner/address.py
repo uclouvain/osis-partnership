@@ -23,5 +23,5 @@ class AddressForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(AddressForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['country'].queryset = Country.objects.all().order_by('name')
