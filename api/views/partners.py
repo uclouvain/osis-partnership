@@ -1,13 +1,16 @@
 from django.db import models
-from django.db.models import Value, Count, Exists, OuterRef, Subquery, F
+from django.db.models import Count, Exists, F, OuterRef, Subquery, Value
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from partnership.api.filters import PartnerFilter, PartnershipFilter
-from partnership.api.serializers import PartnerSerializer
-from partnership.models import PartnershipConfiguration, Partner, \
-    PartnershipAgreement, PartnershipYearEducationField, Partnership, PartnershipYear
+from partnership.models import (
+    Partner, Partnership, PartnershipAgreement,
+    PartnershipConfiguration, PartnershipYear, PartnershipYearEducationField,
+    AgreementStatus,
+)
+from ..filters import PartnerFilter, PartnershipFilter
+from ..serializers import PartnerSerializer
 
 
 class PartnersListView(generics.ListAPIView):
@@ -29,7 +32,7 @@ class PartnersListView(generics.ListAPIView):
             has_valid_agreement_in_current_year=Exists(
                 PartnershipAgreement.objects.filter(
                     partnership=OuterRef('pk'),
-                    status=PartnershipAgreement.STATUS_VALIDATED,
+                    status=AgreementStatus.VALIDATED.name,
                     start_academic_year__year__lte=academic_year.year,
                     end_academic_year__year__gte=academic_year.year,
                 )

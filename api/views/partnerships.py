@@ -12,10 +12,14 @@ from rest_framework.permissions import AllowAny
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from partnership.api.filters import PartnershipFilter
-from partnership.api.serializers import PartnershipSerializer
-from partnership.models import Partner, Partnership, PartnershipYearEducationField, PartnershipYear, \
-    PartnershipConfiguration, PartnershipAgreement, Media
+from partnership.models import (
+    Media, Partner, Partnership,
+    PartnershipAgreement, PartnershipConfiguration, PartnershipYear,
+    PartnershipYearEducationField,
+    AgreementStatus,
+)
+from ..filters import PartnershipFilter
+from ..serializers import PartnershipSerializer
 
 
 class PartnershipsMixinView(GenericAPIView):
@@ -121,7 +125,7 @@ class PartnershipsMixinView(GenericAPIView):
                     'agreements',
                     queryset=(
                         PartnershipAgreement.objects
-                        .filter(status=PartnershipAgreement.STATUS_VALIDATED)
+                        .filter(status=AgreementStatus.VALIDATED.name)
                         .filter(
                             start_academic_year__year__lte=academic_year.year,
                             end_academic_year__year__gte=academic_year.year,
@@ -136,7 +140,7 @@ class PartnershipsMixinView(GenericAPIView):
                     AcademicYear.objects
                     .filter(
                         partnership_agreements_end__partnership=OuterRef('pk'),
-                        partnership_agreements_end__status=PartnershipAgreement.STATUS_VALIDATED
+                        partnership_agreements_end__status=AgreementStatus.VALIDATED.name
                     )
                     .order_by('-end_date')
                     .values('year')[:1]
@@ -185,7 +189,7 @@ class PartnershipsMixinView(GenericAPIView):
                 has_valid_agreement_in_current_year=Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('pk'),
-                        status=PartnershipAgreement.STATUS_VALIDATED,
+                        status=AgreementStatus.VALIDATED.name,
                         start_academic_year__year__lte=academic_year.year,
                         end_academic_year__year__gte=academic_year.year,
                     )
