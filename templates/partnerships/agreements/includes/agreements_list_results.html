@@ -42,6 +42,8 @@
   </div>
 
   <div class="col-sm-12 col-md-4">
-    <a href="{% url "partnerships:export_agreements" %}?{{ request.GET.urlencode }}" class="btn btn-default btn-export pull-right">{% trans "agreements_export" %}</a>
+    <a href="{% url "partnerships:export_agreements" %}?{{ request.GET.urlencode }}" class="btn btn-default btn-export pull-right no_spinner">
+        {% trans "agreements_export" %}
+    </a>
   </div>
 </div>
