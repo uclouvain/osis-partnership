@@ -1,19 +1,21 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from collections import OrderedDict
+
 from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import QuerySet
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
-from partnership.views import ExportView
-from .mixins import PartnersListFilterMixin
 
 __all__ = [
     'PartnersExportView',
 ]
 
+from base.models.education_group_year import EducationGroupYear
+from .list import PartnersListView
+from ..export import ExportView
 
-class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, ExportView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+
+class PartnersExportView(ExportView, PartnersListView):
 
     def get_xls_headers(self):
         return [
@@ -64,6 +66,24 @@ class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, Expor
             )
         )
         return queryset.distinct()
+
+    def get_xls_filters(self):
+        filterset = self.get_filterset(self.get_filterset_class())
+        form = filterset.form
+        if form.is_valid():
+            filters = {}
+            for key, value in form.cleaned_data.items():
+                label = form.fields[key].label
+                if not value and not isinstance(value, bool):
+                    continue
+                if isinstance(value, QuerySet):
+                    value = ', '.join(map(str, list(value)))
+                elif isinstance(value, EducationGroupYear):
+                    value = '{0} - {1}'.format(value.acronym, value.title)
+                filters[label] = str(value)
+            filters = OrderedDict(sorted(filters.items(), key=lambda x: x[0]))
+            return filters
+        return OrderedDict()
 
     def get_description(self):
         return _('partners')

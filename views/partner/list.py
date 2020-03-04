@@ -1,30 +1,37 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.views.generic import ListView
+from django.db.models import Count
+from django_filters.views import FilterView
 
+from base.utils.search import SearchMixin
 from partnership import perms
-from .mixins import PartnersListFilterMixin
+from partnership.models import Partner
+from ...api.serializers import PartnerAdminSerializer
+from ...filter import PartnerAdminFilter
 
 __all__ = [
     'PartnersListView',
 ]
 
 
-class PartnersListView(PermissionRequiredMixin, PartnersListFilterMixin, ListView):
+class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
     context_object_name = 'partners'
-    paginate_by = 20
-    paginate_orphans = 2
-    paginate_neighbours = 4
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
+    template_name = 'partnerships/partners/partners_list.html'
+    filterset_class = PartnerAdminFilter
+    serializer_class = PartnerAdminSerializer
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/partners/includes/partners_list_results.html'
-        else:
-            return 'partnerships/partners/partners_list.html'
+    def get_queryset(self):
+        return (
+            Partner.objects.all()
+            .select_related('partner_type', 'contact_address__country')
+            .annotate(partnerships_count=Count('partnerships')).distinct()
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['paginate_neighbours'] = self.paginate_neighbours
         context['can_add_partner'] = perms.user_can_add_partner(self.request.user)
         return context
+
+    def get_paginate_by(self, queryset):
+        return 20
