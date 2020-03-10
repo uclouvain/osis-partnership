@@ -4,6 +4,7 @@ from partnership.models import Partner
 
 __all__ = [
     'PartnerSerializer',
+    'PartnerAdminSerializer',
 ]
 
 
@@ -21,4 +22,16 @@ class PartnerSerializer(serializers.ModelSerializer):
         fields = [
             'uuid', 'name', 'website', 'erasmus_code', 'partner_type',
             'city', 'country', 'country_iso', 'partnerships_count',
+        ]
+
+
+class PartnerAdminSerializer(PartnerSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='partnerships:partners:detail',
+    )
+
+    class Meta:
+        model = Partner
+        fields = PartnerSerializer.Meta.fields + [
+            'is_actif', 'is_valid', 'url', 'id'
         ]

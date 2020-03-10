@@ -3,77 +3,14 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import transaction
-from django.db.models import Count, Q
-from django.db.models.functions import Now
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormMixin
-from django.views.generic.list import MultipleObjectMixin
 
-from partnership.forms import AddressForm, PartnerEntityForm, PartnerFilterForm
+from partnership.forms import AddressForm, PartnerEntityForm
 from partnership.models import Partner, PartnershipConfiguration
 from partnership.utils import user_is_adri
-
-
-class PartnersListFilterMixin(FormMixin, MultipleObjectMixin):
-    form_class = PartnerFilterForm
-    login_url = 'access_denied'
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if self.request.GET:
-            kwargs['data'] = self.request.GET
-        return kwargs
-
-    def filter_queryset(self, queryset):
-        form = self.get_form()
-        if form.is_valid():
-            data = form.cleaned_data
-            if data['name']:
-                queryset = queryset.filter(name__icontains=data['name'])
-            if data['partner_type']:
-                queryset = queryset.filter(partner_type=data['partner_type'])
-            if data['pic_code']:
-                queryset = queryset.filter(pic_code__icontains=data['pic_code'])
-            if data['erasmus_code']:
-                queryset = queryset.filter(erasmus_code__icontains=data['erasmus_code'])
-            if data['city']:
-                queryset = queryset.filter(contact_address__city__icontains=data['city'])
-            if data['country']:
-                queryset = queryset.filter(contact_address__country=data['country'])
-            if data['continent']:
-                queryset = queryset.filter(contact_address__country__continent=data['continent'])
-            if data['is_ies'] is not None:
-                queryset = queryset.filter(is_ies=data['is_ies'])
-            if data['is_valid'] is not None:
-                queryset = queryset.filter(is_valid=data['is_valid'])
-            if data['is_actif'] is not None:
-                if data['is_actif']:
-                    queryset = queryset.filter(
-                        (Q(start_date__isnull=True) & Q(end_date__isnull=True))
-                        | (Q(start_date__lte=Now()) & Q(end_date__gte=Now()))
-                    )
-                else:
-                    queryset = queryset.filter(Q(start_date__gt=Now()) | Q(end_date__lt=Now()))
-            if data['tags']:
-                queryset = queryset.filter(tags__in=data['tags'])
-        return queryset
-
-    def get_ordering(self):
-        return self.request.GET.get('ordering', '-created')
-
-    def get_queryset(self):
-        queryset = (
-            Partner.objects.all()
-            .select_related('partner_type', 'contact_address__country')
-            .annotate(partnerships_count=Count('partnerships'))
-        )
-        queryset = self.filter_queryset(queryset)
-        ordering = self.get_ordering()
-        if ordering:
-            queryset = queryset.order_by(ordering)
-        return queryset.distinct()
 
 
 class PartnerFormMixin:
