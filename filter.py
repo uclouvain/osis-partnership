@@ -11,6 +11,7 @@ from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     AgreementStatus,
     PartnershipYear,
+    Financing,
 )
 
 
@@ -74,6 +75,27 @@ class PartnerAdminFilter(filters.FilterSet):
             return queryset.filter(
                 Q(start_date__gt=Now()) | Q(end_date__lt=Now())
             )
+
+
+class FinancingOrderingFilter(filters.OrderingFilter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        ordering = value[0]
+        if ordering.lstrip('-') in ['financing_name', 'financing_url']:
+            return qs.order_by(ordering, 'name')
+        elif ordering.lstrip('-') == 'name':
+            return qs.order_by(ordering, 'iso_code')
+
+
+class FinancingAdminFilter(filters.FilterSet):
+    ordering = FinancingOrderingFilter(
+        fields=(
+            ('financing_name', 'financing_name'),
+            ('financing_url', 'financing_url'),
+            ('name', 'name'),
+        )
+    )
 
 
 class PartnershipAdminFilter(filters.FilterSet):
