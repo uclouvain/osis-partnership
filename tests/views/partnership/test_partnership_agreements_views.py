@@ -39,14 +39,13 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        self.assertTemplateNotUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_list_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        self.assertTemplateUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
 
 
 class PartnershipAgreementCreateViewTest(TestCase):
