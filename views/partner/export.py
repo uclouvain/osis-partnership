@@ -69,10 +69,3 @@ class PartnersExportView(ExportView, PartnersListView):
 
     def get_title(self):
         return _('partners')
-
-    def get_form(self, form_class=None):
-        return self.filterset.form
-
-    def get(self, request, *args, **kwargs):
-        self.filterset = self.get_filterset(self.get_filterset_class())
-        return super().get(request, *args, **kwargs)

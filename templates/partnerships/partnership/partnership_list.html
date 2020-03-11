@@ -11,7 +11,35 @@
 {% endblock %}
 
 {% block script %}
+  {% if not is_agreements %}
+    {% url "partnerships:list" as url %}
+  {% else %}
+    {% url "partnerships:agreements-list" as url %}
+  {% endif %}
+
+  <script src="{% static "js/osis_datatable.js" %}"></script>
   <script src="{% static "partnerships/list.js" %}"></script>
+  <script>
+      initDataTable('partnershipIds', '{{ url }}', [
+        { name: 'partner', data: 'partner', targets: 0 },
+        { name: 'country', data: 'country', targets: 1 },
+        { name: 'city', data: 'city', targets: 2 },
+        { data: 'supervisor', targets: 3, orderable: false },
+        { name: 'ucl',  data: 'entities_acronyms', targets: 4 },
+        {% if not is_agreements %}
+        { data: 'validity_end', targets: 5, orderable: false },
+        {% else %}
+        { data: 'academic_years', targets: 5, orderable: false },
+        { data: 'status', targets: 6, orderable: false },
+        {% endif %}
+        {
+          data: 'url',
+          targets: {% if not is_agreements %}6{% else %}7{% endif %},
+          orderable: false,
+          render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
+        },
+      ]);
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -60,8 +88,8 @@
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'partnership' %}</a></li>
             </ul>
 
-            <form action="{% url "partnerships:list" %}" id="filter-form" method="get" autocomplete="off">
-              {% csrf_token %}
+            {% with form=filter.form %}
+            <form action="" id="filter-form" method="get" autocomplete="off">
               <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
                   <div class="row">
@@ -199,17 +227,58 @@
               </div>
             </form>
             {{ form.media }}
+            {% endwith %}
           </div>
         </div>
       </div>
       <div id="results">
-        {% if is_agreements %}
-          {% include "partnerships/agreements/includes/agreements_list_results.html" %}
-        {% else %}
-          {% include "partnerships/includes/partnerships_list_results.html" %}
-        {% endif %}
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover" id="result-list">
+            <thead>
+            <tr>
+              {% if is_agreements %}
+                <td>{% trans "partner" %}</td>
+                <td>{% trans "country" %}</td>
+                <td>{% trans "city" %}</td>
+                <td>{% trans "partnership_supervisor" %}</td>
+                <td>{% trans "ucl" %}</td>
+                <td>{% trans "academic_years" %}</td>
+                <td>{% trans "status" %}</td>
+              {% else %}
+                <td>{% trans "partner" %}</td>
+                <td>{% trans "country" %}</td>
+                <td>{% trans "city" %}</td>
+                <td>{% trans "partnership_supervisor" %}</td>
+                <td>{% trans "ucl" %}</td>
+                <td>{% trans "validity_end" %}</td>
+              {% endif %}
+              <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <div class="pull-right">
+            {% if is_agreements %}
+              <a
+                  href="{% url "partnerships:export_agreements" %}"
+                  data-base-href="{% url "partnerships:export_agreements" %}"
+                  class="btn btn-default btn-export pull-right no_spinner"
+              >
+                {% trans "agreements_export" %}
+              </a>
+            {% else %}
+              <a
+                  href="{% url "partnerships:export" %}"
+                  data-base-href="{% url "partnerships:export" %}"
+                  class="btn btn-default btn-export no_spinner pull-right"
+              >
+                {% trans "partnerships_export" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
       </div>
-    </div>
   </div>
   <script rel="stylesheet" src="{% static 'partnerships/reset_form.js' %}" type="text/javascript"></script>
 {% endblock %}

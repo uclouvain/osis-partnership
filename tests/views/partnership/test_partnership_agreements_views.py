@@ -29,7 +29,7 @@ class PartnershipsListViewTest(TestCase):
 
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-        cls.url = reverse('partnerships:list') + '?agreements=1'
+        cls.url = reverse('partnerships:agreements-list')
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
