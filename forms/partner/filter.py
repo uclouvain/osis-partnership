@@ -69,6 +69,7 @@ class PartnerFilterForm(forms.Form):
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
+    ordering = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -80,3 +81,9 @@ class PartnerFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, '---------'),) + tuple((city, city) for city in cities)
+
+    def clean_ordering(self):
+        # Django filters expects a list
+        ordering = self.cleaned_data.get('ordering')
+        if ordering:
+            return [ordering]
