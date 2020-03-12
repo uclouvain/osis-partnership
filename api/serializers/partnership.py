@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from partnership.models import Partnership, MediaType, Financing
 from .contact import ContactSerializer
-from .media import MediaSerializer
+from .media import MediaSerializer, AgreementMediaSerializer
 from .partner import PartnerSerializer
 from .entity import EntitySerializer
 
@@ -124,7 +124,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     def get_bilateral_agreements(self, partnership):
         return [
-            MediaSerializer(agreement.media).data
+            AgreementMediaSerializer(agreement, context=self.context).data
             for agreement in partnership.valid_current_agreements
             if agreement.media.is_visible_in_portal
         ]
