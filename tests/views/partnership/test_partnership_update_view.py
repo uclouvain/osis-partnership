@@ -16,7 +16,8 @@ from partnership.tests.factories import (
     PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
-    UCLManagementEntityFactory
+    UCLManagementEntityFactory,
+    PartnershipTagFactory,
 )
 
 
@@ -275,3 +276,14 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertEqual(response.context_data['partnership'].years.count(), 2)
+
+    def test_post_partnership_as_gs(self):
+        self.client.force_login(self.user_gs)
+        data = {**self.data, **{
+            'tags': [PartnershipTagFactory(value="Foobar").pk],
+            'comment': 'Lorem ipsum',
+        }}
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertContains(response, "Foobar")
+        self.assertContains(response, "Lorem ipsum")
