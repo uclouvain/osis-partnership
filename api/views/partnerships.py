@@ -26,6 +26,12 @@ class PartnershipsMixinView(GenericAPIView):
     serializer_class = PartnershipSerializer
     permission_classes = (AllowAny,)
 
+    def get_serializer_context(self):
+        return {
+            **super().get_serializer_context(),
+            'request': self.request
+        }
+
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
