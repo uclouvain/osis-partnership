@@ -125,13 +125,13 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             ]
 
     def get_description(self):
-        return _('partnerships')
+        return _('Partnerships')
 
     def get_filename(self):
         return now().strftime('partnerships-%Y-%m-%d-%H-%M-%S')
 
     def get_title(self):
-        return _('partnerships')
+        return _('Partnerships')
 
     def get_xls_filters(self):
         filters = super().get_xls_filters()

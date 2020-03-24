@@ -339,7 +339,7 @@ msgstr "Nom de la faculté, de l’entreprise, …"
 msgid "administrative_responsible"
 msgstr "Responsable administratif"
 
-msgid "agreements"
+msgid "Agreements"
 msgstr "Accords"
 
 msgid "agreements_export"
@@ -1038,6 +1038,9 @@ msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
 
 msgid "partnerships"
+msgstr "partenariats"
+
+msgid "Partnerships"
 msgstr "Partenariats"
 
 msgid "partnerships_export"

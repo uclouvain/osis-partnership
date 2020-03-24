@@ -53,10 +53,10 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
             ]
 
     def get_description(self):
-        return _('agreements')
+        return _('Agreements')
 
     def get_filename(self):
         return now().strftime('agreements-%Y-%m-%d-%H-%M-%S')
 
     def get_title(self):
-        return _('agreements')
+        return _('Agreements')
