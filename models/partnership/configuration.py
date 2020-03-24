@@ -40,16 +40,11 @@ class PartnershipConfiguration(models.Model):
         default=12,
     )
 
-    partnership_api_max_date_day = models.IntegerField(
-        _('partnership_api_max_date_day'),
-        choices=DAYS_CHOICES,
-        default=31,
-    )
-
-    partnership_api_max_date_month = models.IntegerField(
-        _('partnership_api_max_date_month'),
-        choices=MONTHS_CHOICES,
-        default=12,
+    partnership_api_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('partnership_api_year'),
+        on_delete=models.PROTECT,
+        null=True,
     )
 
     email_notification_to = models.EmailField(
@@ -60,9 +55,15 @@ class PartnershipConfiguration(models.Model):
     @staticmethod
     def get_configuration():
         try:
-            return PartnershipConfiguration.objects.get()
+            return PartnershipConfiguration.objects.select_related(
+                'partnership_api_year',
+            ).get()
         except PartnershipConfiguration.DoesNotExist:
-            return PartnershipConfiguration.objects.create()
+            # By default, mostly for tests, select the current academic year
+            year = AcademicYear.objects.get(year=date.today().year)
+            return PartnershipConfiguration.objects.create(
+                partnership_api_year=year
+            )
 
     def get_current_academic_year_for_creation_modification(self):
         limit_date = date(
@@ -76,14 +77,4 @@ class PartnershipConfiguration(models.Model):
             return AcademicYear.objects.filter(year=date.today().year + 2).first()
 
     def get_current_academic_year_for_api(self):
-        # TODO: Use event calendar instead of current_academic_year/starting_academic_year
-        return AcademicYear.objects.get(year=2020)  # BUG: OP-348 - dirty fix
-        # limit_date = date(
-        #     date.today().year,
-        #     self.partnership_api_max_date_month,
-        #     self.partnership_api_max_date_day,
-        # )
-        # if date.today() <= limit_date:
-        #     return academic_year.current_academic_year()
-        # else:
-        #     return academic_year.starting_academic_year()
+        return self.partnership_api_year
