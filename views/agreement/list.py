@@ -1,7 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from partnership.utils import user_is_adri
 from ..partnership.list import PartnershipsListView
 from ...api.serializers.agreement import PartnershipAgreementAdminSerializer
 from ...filter import PartnershipAgreementAdminFilter
@@ -21,5 +20,5 @@ class PartnershipAgreementListView(PartnershipsListView):
         context['is_agreements'] = True
         context['url'] = reverse('partnerships:agreements-list')
         context['export_url'] = reverse('partnerships:export_agreements')
-        context['search_button_label'] = _('search_agreements')
+        context['search_button_label'] = _('search_agreement')
         return context

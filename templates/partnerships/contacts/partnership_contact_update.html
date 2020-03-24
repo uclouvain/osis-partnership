@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:detail' pk=partnership.pk %}">{{ partnership }}</a></li>
   <li class="active">{% trans 'partnership_contact_update' %}</li>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% load i18n partnerships static years %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
   <li class="active">{{ partnership }}</li>
 {% endblock %}
 
@@ -275,7 +275,7 @@
       {% endif %}
 
       <!-- Accords -->
-      <h2>{% trans "agreements" %}
+      <h2>{% trans "Agreements" %}
       {% if can_change %}
       <a href="{% url "partnerships:agreements:create" partnership.id %}" class="btn btn-default pull-right">
         <i class="fas fa-fw fa-plus"></i> {% trans "add_partnership_agreements" %}

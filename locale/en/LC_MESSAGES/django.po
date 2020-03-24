@@ -280,6 +280,9 @@ msgid "administrative_responsible"
 msgstr "Administrative responsible"
 
 msgid "agreements"
+msgstr "agreements"
+
+msgid "Agreements"
 msgstr "Agreements"
 
 msgid "agreements_export"
@@ -966,6 +969,9 @@ msgid "partnership_years_show_all_years"
 msgstr "Show all years."
 
 msgid "partnerships"
+msgstr "partnerships"
+
+msgid "Partnerships"
 msgstr "Partnerships"
 
 msgid "partnerships_export"
