@@ -1016,9 +1016,6 @@ msgstr "Search partners"
 msgid "search_partnership"
 msgstr "Search partnership"
 
-msgid "search_partnership_or_agreement"
-msgstr "Search for partnerships or agreements"
-
 msgid "september"
 msgstr "September"
 

@@ -1088,9 +1088,6 @@ msgstr "Rechercher les partenaires"
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
 
-msgid "search_partnership_or_agreement"
-msgstr "Rechercher des partenariats ou des accords"
-
 msgid "september"
 msgstr "Septembre"
 

@@ -11,14 +11,9 @@
 {% endblock %}
 
 {% block script %}
-  {% if not is_agreements %}
-    {% url "partnerships:list" as url %}
-  {% else %}
-    {% url "partnerships:agreements-list" as url %}
-  {% endif %}
-
   <script src="{% static "js/osis_datatable.js" %}"></script>
   <script src="{% static "partnerships/list.js" %}"></script>
+  {% block datatable %}
   <script>
       initDataTable('partnershipIds', '{{ url }}', [
         { name: 'partner', data: 'partner', targets: 0 },
@@ -26,26 +21,24 @@
         { name: 'city', data: 'city', targets: 2 },
         { data: 'supervisor', targets: 3, orderable: false },
         { name: 'ucl',  data: 'entities_acronyms', targets: 4 },
-        {% if not is_agreements %}
         { data: 'validity_end', targets: 5, orderable: false },
-        {% else %}
-        { data: 'academic_years', targets: 5, orderable: false },
-        { data: 'status', targets: 6, orderable: false },
-        {% endif %}
         {
           data: 'url',
-          targets: {% if not is_agreements %}6{% else %}7{% endif %},
+          targets: 6,
           orderable: false,
           render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
         },
       ]);
   </script>
-{% endblock %}
+  {% endblock datatable %}
+{% endblock script %}
 
 {% block content %}
   <div class="page-header">
     <h1>
-      {% trans 'partnerships' %}
+      {% block header_title %}
+        {% trans 'partnerships' %}
+      {% endblock %}
     </h1>
   </div>
 
@@ -74,7 +67,10 @@
               <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
-                <i class="fas fa-filter"></i> <span class="hidden-xs">{% if can_search_agreements %}{% trans "search_partnership_or_agreement" %}{% else %}{% trans "search_partnership" %}{% endif %}</span>
+                <i class="fas fa-filter"></i>
+                <span class="hidden-xs">
+                  {{ search_button_label }}
+                </span>
               </button>
             </div>
           </div>
@@ -220,8 +216,9 @@
                 <div class="col-md-12">
                   <div class="pull-right">
                     <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
-                    <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">{% trans "search_partnership" %}</button>
-                    {% if can_search_agreements %}<button type="submit" class="submit-button btn btn-primary" name="search_agreement" value="search_agreement">{% trans "search_agreement" %}</button>{% endif %}
+                    <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">
+                      {{ search_button_label }}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -236,22 +233,14 @@
           <table class="table table-stripped table-hover" id="result-list">
             <thead>
             <tr>
-              {% if is_agreements %}
-                <td>{% trans "partner" %}</td>
-                <td>{% trans "country" %}</td>
-                <td>{% trans "city" %}</td>
-                <td>{% trans "partnership_supervisor" %}</td>
-                <td>{% trans "ucl" %}</td>
-                <td>{% trans "academic_years" %}</td>
-                <td>{% trans "status" %}</td>
-              {% else %}
+              {% block column_headers %}
                 <td>{% trans "partner" %}</td>
                 <td>{% trans "country" %}</td>
                 <td>{% trans "city" %}</td>
                 <td>{% trans "partnership_supervisor" %}</td>
                 <td>{% trans "ucl" %}</td>
                 <td>{% trans "validity_end" %}</td>
-              {% endif %}
+              {% endblock %}
               <td></td>
             </tr>
             </thead>
@@ -259,23 +248,12 @@
             </tbody>
           </table>
           <div class="pull-right">
-            {% if is_agreements %}
-              <a
-                  href="{% url "partnerships:export_agreements" %}"
-                  data-base-href="{% url "partnerships:export_agreements" %}"
-                  class="btn btn-default btn-export pull-right no_spinner"
-              >
-                {% trans "agreements_export" %}
-              </a>
-            {% else %}
-              <a
-                  href="{% url "partnerships:export" %}"
-                  data-base-href="{% url "partnerships:export" %}"
-                  class="btn btn-default btn-export no_spinner pull-right"
-              >
+            <a href="{{ export_url }}" data-base-href="{{ export_url }}"
+              class="btn btn-default btn-export pull-right no_spinner">
+              {% block export_button_label %}
                 {% trans "partnerships_export" %}
-              </a>
-            {% endif %}
+              {% endblock %}
+            </a>
           </div>
         </div>
       </div>

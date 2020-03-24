@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Subquery, OuterRef
+from django.db.models import OuterRef, Subquery
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
@@ -9,7 +11,7 @@ from base.utils.search import SearchMixin
 from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
 from partnership.filter import PartnershipAdminFilter
-from partnership.models import Partnership, AgreementStatus
+from partnership.models import AgreementStatus, Partnership
 from partnership.utils import user_is_adri, user_is_gf
 
 __all__ = [
@@ -94,7 +96,9 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
         context = super().get_context_data(**kwargs)
         context['can_change_configuration'] = user_is_adri(user)
         context['can_add_partnership'] = perms.user_can_add_partnership(user)
-        context['can_search_agreements'] = user_is_adri(user)
+        context['url'] = reverse('partnerships:list')
+        context['export_url'] = reverse('partnerships:export')
+        context['search_button_label'] = _('search_partnership')
         return context
 
     def get_paginate_by(self, queryset):

@@ -1,0 +1,45 @@
+{% extends "partnerships/partnership/partnership_list.html" %}
+{% load i18n %}
+
+
+{% block breadcrumb %}
+  <li class="active">{% trans 'agreements' %}</li>
+{% endblock %}
+
+{% block header_title %}
+  {% trans 'agreements' %}
+{% endblock %}
+
+{% block export_button_label %}
+  {% trans "agreements_export" %}
+{% endblock %}
+
+{% block datatable %}
+  <script>
+    initDataTable('partnershipIds', '{{ url }}', [
+      { name: 'partner', data: 'partner', targets: 0 },
+      { name: 'country', data: 'country', targets: 1 },
+      { name: 'city', data: 'city', targets: 2 },
+      { data: 'supervisor', targets: 3, orderable: false },
+      { name: 'ucl', data: 'entities_acronyms', targets: 4 },
+      { data: 'academic_years', targets: 5, orderable: false },
+      { data: 'status', targets: 6, orderable: false },
+      {
+        data: 'url',
+        targets: 7,
+        orderable: false,
+        render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
+      },
+    ]);
+  </script>
+{% endblock datatable %}
+
+{% block column_headers %}
+  <td>{% trans "partner" %}</td>
+  <td>{% trans "country" %}</td>
+  <td>{% trans "city" %}</td>
+  <td>{% trans "partnership_supervisor" %}</td>
+  <td>{% trans "ucl" %}</td>
+  <td>{% trans "academic_years" %}</td>
+  <td>{% trans "status" %}</td>
+{% endblock %}
