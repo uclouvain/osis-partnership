@@ -11,13 +11,34 @@
 {% endblock %}
 
 {% block script %}
+  <script src="{% static "js/osis_datatable.js" %}"></script>
   <script src="{% static "partnerships/list.js" %}"></script>
-{% endblock %}
+  {% block datatable %}
+  <script>
+      initDataTable('partnershipIds', '{{ url }}', [
+        { name: 'partner', data: 'partner', targets: 0 },
+        { name: 'country', data: 'country', targets: 1 },
+        { name: 'city', data: 'city', targets: 2 },
+        { data: 'supervisor', targets: 3, orderable: false },
+        { name: 'ucl',  data: 'entities_acronyms', targets: 4 },
+        { data: 'validity_end', targets: 5, orderable: false },
+        {
+          data: 'url',
+          targets: 6,
+          orderable: false,
+          render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
+        },
+      ]);
+  </script>
+  {% endblock datatable %}
+{% endblock script %}
 
 {% block content %}
   <div class="page-header">
     <h1>
-      {% trans 'partnerships' %}
+      {% block header_title %}
+        {% trans 'partnerships' %}
+      {% endblock %}
     </h1>
   </div>
 
@@ -46,7 +67,10 @@
               <button class="btn btn-default" type="button"
                       data-toggle="collapse" data-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
-                <i class="fas fa-filter"></i> <span class="hidden-xs">{% if can_search_agreements %}{% trans "search_partnership_or_agreement" %}{% else %}{% trans "search_partnership" %}{% endif %}</span>
+                <i class="fas fa-filter"></i>
+                <span class="hidden-xs">
+                  {{ search_button_label }}
+                </span>
               </button>
             </div>
           </div>
@@ -60,8 +84,8 @@
               <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'partnership' %}</a></li>
             </ul>
 
-            <form action="{% url "partnerships:list" %}" id="filter-form" method="get" autocomplete="off">
-              {% csrf_token %}
+            {% with form=filter.form %}
+            <form action="" id="filter-form" method="get" autocomplete="off">
               <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
                   <div class="row">
@@ -192,24 +216,47 @@
                 <div class="col-md-12">
                   <div class="pull-right">
                     <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
-                    <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">{% trans "search_partnership" %}</button>
-                    {% if can_search_agreements %}<button type="submit" class="submit-button btn btn-primary" name="search_agreement" value="search_agreement">{% trans "search_agreement" %}</button>{% endif %}
+                    <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">
+                      {{ search_button_label }}
+                    </button>
                   </div>
                 </div>
               </div>
             </form>
             {{ form.media }}
+            {% endwith %}
           </div>
         </div>
       </div>
       <div id="results">
-        {% if is_agreements %}
-          {% include "partnerships/agreements/includes/agreements_list_results.html" %}
-        {% else %}
-          {% include "partnerships/includes/partnerships_list_results.html" %}
-        {% endif %}
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover" id="result-list">
+            <thead>
+            <tr>
+              {% block column_headers %}
+                <td>{% trans "partner" %}</td>
+                <td>{% trans "country" %}</td>
+                <td>{% trans "city" %}</td>
+                <td>{% trans "partnership_supervisor" %}</td>
+                <td>{% trans "ucl" %}</td>
+                <td>{% trans "validity_end" %}</td>
+              {% endblock %}
+              <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <div class="pull-right">
+            <a href="{{ export_url }}" data-base-href="{{ export_url }}"
+              class="btn btn-default btn-export pull-right no_spinner">
+              {% block export_button_label %}
+                {% trans "partnerships_export" %}
+              {% endblock %}
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
   </div>
   <script rel="stylesheet" src="{% static 'partnerships/reset_form.js' %}" type="text/javascript"></script>
 {% endblock %}

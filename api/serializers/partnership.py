@@ -9,6 +9,7 @@ from .entity import EntitySerializer
 
 __all__ = [
     'PartnershipSerializer',
+    'PartnershipAdminSerializer',
 ]
 
 
@@ -270,3 +271,24 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return None
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
+
+
+class PartnershipAdminSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='partnerships:detail',
+    )
+    country = serializers.CharField(
+        source='partner.contact_address.country',
+    )
+    city = serializers.CharField(
+        source='partner.contact_address.city',
+    )
+    supervisor = serializers.CharField(source='get_supervisor')
+    partner = serializers.CharField(source='partner.name')
+
+    class Meta:
+        model = Partnership
+        fields = [
+            'uuid', 'url', 'partner', 'supervisor', 'country', 'city',
+            'entities_acronyms', 'validity_end',
+        ]

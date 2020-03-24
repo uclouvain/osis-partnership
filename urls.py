@@ -43,12 +43,14 @@ from partnership.views import (
     UclUniversityLaboAutocompleteView,
     UniversityOffersAutocompleteFilterView,
     YearsEntityAutocompleteFilterView, PartnershipMediaCreateView,
+    PartnershipAgreementListView,
     PartnershipMediaUpdateView, PartnershipMediaDeleteView, PartnershipMediaDownloadView
 )
 
 app_name = "partnerships"
 urlpatterns = [
     url(r'^$', PartnershipsListView.as_view(), name="list"),
+    url(r'^agreements/$', PartnershipAgreementListView.as_view(), name="agreements-list"),
     url(r'^export/$', PartnershipExportView.as_view(), name="export"),
     url(r'^export_agreements/$', PartnershipAgreementExportView.as_view(), name="export_agreements"),
     url(r'^configuration/$', PartnershipConfigurationUpdateView.as_view(), name='configuration_update'),

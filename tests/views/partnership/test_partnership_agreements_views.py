@@ -15,7 +15,7 @@ from partnership.tests.factories import (
 )
 
 
-class PartnershipsListViewTest(TestCase):
+class PartnershipsAgreementsListViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -24,29 +24,27 @@ class PartnershipsListViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
+        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
 
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-        cls.url = reverse('partnerships:list') + '?agreements=1'
+        cls.url = reverse('partnerships:agreements-list')
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')
+        self.assertTemplateNotUsed(response, 'partnerships/agreements/agreement_list.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        self.assertTemplateNotUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
+        self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
 
     def test_get_list_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        self.assertTemplateUsed(response, 'partnerships/agreements/includes/agreements_list_results.html')
+        self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
 
 
 class PartnershipAgreementCreateViewTest(TestCase):
