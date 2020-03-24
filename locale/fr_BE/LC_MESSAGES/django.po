@@ -908,14 +908,8 @@ msgstr "L'accord finit après le partenariat."
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
-msgid "partnership_api_max_date"
-msgstr "Date après laquelle l'année académique change pour l'API"
-
-msgid "partnership_api_max_date_day"
-msgstr "Date après laquelle l'année académique change pour l'API : jour"
-
-msgid "partnership_api_max_date_month"
-msgstr "Date après laquelle l'année académique change pour l'API : mois"
+msgid "partnership_api_year"
+msgstr "Année académique visible sur l'API"
 
 #, python-format
 msgid ""
