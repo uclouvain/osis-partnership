@@ -1,7 +1,5 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
-from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -11,8 +9,8 @@ from partnership.models import (
     PartnershipAgreement, PartnershipYear, PartnershipConfiguration,
     AgreementStatus,
 )
+from .list import PartnershipsListView
 
-from .mixins import PartnershipListFilterMixin
 from ..export import ExportView
 
 __all__ = [
@@ -20,14 +18,7 @@ __all__ = [
 ]
 
 
-class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin, ExportView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    @cached_property
-    def is_agreements(self):
-        return False
-
+class PartnershipExportView(ExportView, PartnershipsListView):
     def get_xls_headers(self):
         return [
             gettext('id'),
@@ -57,7 +48,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
         ]
 
     def get_xls_data(self):
-        queryset = self.get_queryset()
+        queryset = self.filterset.qs
         queryset = (
             queryset
             .annotate(
@@ -121,7 +112,7 @@ class PartnershipExportView(PermissionRequiredMixin, PartnershipListFilterMixin,
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
-                str(partnership.author.user),
+                str(partnership.author.user) if partnership.author else '',
                 current_year.is_sms if current_year is not None else '',
                 current_year.is_smp if current_year is not None else '',
                 current_year.is_sta if current_year is not None else '',

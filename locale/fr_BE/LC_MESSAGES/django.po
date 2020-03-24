@@ -17,12 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#, python-format
-msgid "%(count)s_result_count"
-msgid_plural "%(count)s_results_count"
-msgstr[0] "%(count)s résultat"
-msgstr[1] "%(count)s résultats"
-
 msgid "Accord de co-diplômation"
 msgstr ""
 
@@ -1093,9 +1087,6 @@ msgstr "Rechercher les partenaires"
 
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
-
-msgid "search_partnership_or_agreement"
-msgstr "Rechercher des partenariats ou des accords"
 
 msgid "september"
 msgstr "Septembre"

@@ -27,7 +27,7 @@ class ExportView(FormMixin, View):
         raise NotImplementedError
 
     def get_xls_filters(self):
-        form = self.get_form()
+        form = self.filterset.form
         if form.is_valid():
             filters = {}
             for key, value in form.cleaned_data.items():
@@ -60,4 +60,5 @@ class ExportView(FormMixin, View):
         return response
 
     def get(self, request, *args, **kwargs):
+        self.filterset = self.get_filterset(self.get_filterset_class())
         return self.generate_xls()

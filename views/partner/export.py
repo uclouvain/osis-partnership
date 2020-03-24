@@ -1,20 +1,16 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
-from partnership.views import ExportView
-from .mixins import PartnersListFilterMixin
+from .list import PartnersListView
+from ..export import ExportView
 
 __all__ = [
     'PartnersExportView',
 ]
 
 
-class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, ExportView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
+class PartnersExportView(ExportView, PartnersListView):
     def get_xls_headers(self):
         return [
             gettext('id'),
@@ -38,7 +34,7 @@ class PartnersExportView(PermissionRequiredMixin, PartnersListFilterMixin, Expor
         ]
 
     def get_xls_data(self):
-        queryset = self.get_queryset()
+        queryset = self.filterset.qs
         queryset = (
             queryset
             .annotate(tags_list=StringAgg('tags__value', ', '))

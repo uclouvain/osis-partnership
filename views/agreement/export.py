@@ -1,27 +1,16 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Prefetch
-from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
 from partnership.utils import academic_years
+from .list import PartnershipAgreementListView
 from ..export import ExportView
-from ..partnership.mixins import PartnershipListFilterMixin
 
 __all__ = ['PartnershipAgreementExportView']
 
 
-class PartnershipAgreementExportView(PermissionRequiredMixin,
-                                     PartnershipListFilterMixin,
-                                     ExportView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    @cached_property
-    def is_agreements(self):
-        return True
-
+class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
     def get_xls_headers(self):
         return [
             gettext('id'),
@@ -38,7 +27,7 @@ class PartnershipAgreementExportView(PermissionRequiredMixin,
         ]
 
     def get_xls_data(self):
-        queryset = self.get_queryset().prefetch_related(
+        queryset = self.filterset.qs.prefetch_related(
             Prefetch(
                 'partnership__ucl_university__entityversion_set',
                 queryset=EntityVersion.objects.order_by('start_date'),

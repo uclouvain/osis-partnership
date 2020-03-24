@@ -259,6 +259,7 @@ class PartnershipFilterForm(forms.Form):
         label=_('comment'),
         required=False,
     )
+    ordering = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -284,3 +285,9 @@ class PartnershipFilterForm(forms.Form):
             for partnership_type in partnership_types
         ], key=lambda x: x[1])
         self.fields['partnership_type'].choices = ((None, _('partnership_type')),) + tuple(choices)
+
+    def clean_ordering(self):
+        # Django filters expects a list
+        ordering = self.cleaned_data.get('ordering')
+        if ordering:
+            return [ordering]
