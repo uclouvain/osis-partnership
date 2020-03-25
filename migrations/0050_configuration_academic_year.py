@@ -15,6 +15,9 @@ def forward(apps, schema_editor):
         config.partnership_api_year = AcademicYear.objects.filter(
             year=datetime.today().year,
         ).first()
+        config.partnership_creation_update_min_year = AcademicYear.objects.filter(
+            year=datetime.today().year + 1,
+        ).first()
         config.save()
 
 
@@ -23,16 +26,21 @@ def backward(apps, schema_editor):
 
     # Configuration.get_configuration() seems unavailable in migrations
     config = Configuration.objects.first()
-    if config and config.partnership_api_year:
-        start_date = config.partnership_api_year.start_date
-        config.partnership_api_max_date_day = start_date.day
-        config.partnership_api_max_date_month = start_date.month
+    if config:
+        if config.partnership_api_year:
+            start_date = config.partnership_api_year.start_date
+            config.partnership_api_max_date_day = start_date.day
+            config.partnership_api_max_date_month = start_date.month
+        if config.partnership_creation_update_min_year:
+            start_date = config.partnership_creation_update_min_year.start_date
+            config.partnership_creation_update_max_date_day = start_date.day
+            config.partnership_creation_update_max_date_month = start_date.month
         config.save()
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('base', '0507_configuration_academic_year'),
+        ('base', '0506_remove_prerequisites_whithout_item'),
         ('partnership', '0049_enums'),
     ]
 
@@ -40,7 +48,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partnershipconfiguration',
             name='partnership_api_year',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='base.AcademicYear', verbose_name='partnership_api_year'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='base.AcademicYear', verbose_name='partnership_api_year', related_name='+'),
+        ),
+        migrations.AddField(
+            model_name='partnershipconfiguration',
+            name='partnership_creation_update_min_year',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='base.AcademicYear', verbose_name='partnership_creation_update_min_year'),
         ),
         migrations.RunPython(forward, backward),
         migrations.RemoveField(
@@ -50,5 +63,13 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='partnershipconfiguration',
             name='partnership_api_max_date_month',
+        ),
+        migrations.RemoveField(
+            model_name='partnershipconfiguration',
+            name='partnership_creation_update_max_date_day',
+        ),
+        migrations.RemoveField(
+            model_name='partnershipconfiguration',
+            name='partnership_creation_update_max_date_month',
         ),
     ]
