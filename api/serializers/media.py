@@ -22,7 +22,11 @@ class AgreementMediaSerializer(serializers.Serializer):
     def get_url(self, agreement):
         media = agreement.media
         if media.file.name:
-            url = reverse('partnerships:agreements:download_media', args=(agreement.partnership_id, agreement.pk))
             # TODO: Fix when authentication is done in ESB (use already X-Forwarded-Host) / Shibb
-            return self.context["request"].META["HTTP_HOST"] + url
+            url = reverse('partnerships:agreements:download_media', args=(agreement.partnership_id, agreement.pk))
+            return '{scheme}://{host}{path}'.format(
+                scheme=self.context["request"].scheme,
+                host=self.context["request"].META["HTTP_HOST"],
+                path=url,
+            )
         return media.url
