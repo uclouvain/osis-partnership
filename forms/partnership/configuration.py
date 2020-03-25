@@ -15,8 +15,7 @@ class PartnershipConfigurationForm(forms.ModelForm):
     class Meta:
         model = PartnershipConfiguration
         fields = [
-            'partnership_creation_update_max_date_day',
-            'partnership_creation_update_max_date_month',
+            'partnership_creation_update_min_year',
             'partnership_api_year',
             'email_notification_to',
         ]
@@ -24,22 +23,9 @@ class PartnershipConfigurationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         current_year = date.today().year
-        self.fields['partnership_api_year'].queryset = AcademicYear.objects.filter(
+        qs = AcademicYear.objects.filter(
             year__gte=current_year,
             year__lte=current_year + 2,
         )
-
-    def clean(self):
-        super().clean()
-        try:
-            date(
-                2001,
-                self.cleaned_data['partnership_creation_update_max_date_month'],
-                self.cleaned_data['partnership_creation_update_max_date_day'],
-            )
-        except ValueError:
-            self.add_error(
-                'partnership_creation_update_max_date_day',
-                ValidationError(_('invalid_partnership_creation_max_date'))
-            )
-        return self.cleaned_data
+        self.fields['partnership_creation_update_min_year'].queryset = qs
+        self.fields['partnership_api_year'].queryset = qs

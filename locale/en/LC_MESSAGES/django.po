@@ -863,11 +863,10 @@ msgstr "Create partnership"
 msgid "partnership_created"
 msgstr "partnership created"
 
-msgid "partnership_creation_update_max_date_day"
-msgstr "Maximum day for creation or update"
-
-msgid "partnership_creation_update_max_date_month"
-msgstr "Maximum month for creation or update"
+msgid "partnership_creation_update_min_year"
+msgstr ""
+"Minimum academic year (included) available to faculty managers for creation "
+"or modification of a partnership"
 
 msgid "partnership_email_notification_to"
 msgstr "Partnership email notification to"

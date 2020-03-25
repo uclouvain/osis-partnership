@@ -931,11 +931,10 @@ msgstr "Créer le partenariat"
 msgid "partnership_created"
 msgstr "Partenariat créé"
 
-msgid "partnership_creation_update_max_date_day"
-msgstr "Jour maximum pour la création ou la modification"
-
-msgid "partnership_creation_update_max_date_month"
-msgstr "Mois maximum pour la création ou la modification"
+msgid "partnership_creation_update_min_year"
+msgstr ""
+"Année académique minimale (inclus) proposée au gestionnaire facultaire pour "
+"la création ou modification d'un partenariat"
 
 msgid "partnership_email_notification_to"
 msgstr "Email destinataire des notifications de créations"
