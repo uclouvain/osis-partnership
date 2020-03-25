@@ -13,6 +13,7 @@ from partnership import perms
 from partnership.forms import PartnershipForm
 from partnership.models import Partnership, PartnershipConfiguration
 from partnership.utils import user_is_adri
+from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
 __all__ = [
@@ -20,7 +21,11 @@ __all__ = [
 ]
 
 
-class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, CreateView):
+class PartnershipCreateView(LoginRequiredMixin,
+                            UserPassesTestMixin,
+                            NotifyAdminMailMixin,
+                            PartnershipFormMixin,
+                            CreateView):
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership/partnership_create.html"
@@ -52,30 +57,13 @@ class PartnershipCreateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
 
         messages.success(self.request, _('partnership_success'))
         if not user_is_adri(self.request.user):
-            send_mail(
-                'OSIS-Partenariats : {} - {}'.format(
-                    _('partnership_created'),
-                    partnership.ucl_university.most_recent_acronym
-                ),
-                render_to_string(
-                    'partnerships/mails/plain_partnership_creation.html',
-                    context={
-                        'user': self.request.user,
-                        'partnership': partnership,
-                    },
-                    request=self.request,
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [PartnershipConfiguration.get_configuration().email_notification_to],
-                html_message=render_to_string(
-                    'partnerships/mails/partnership_creation.html',
-                    context={
-                        'user': self.request.user,
-                        'partnership': partnership,
-                    },
-                    request=self.request,
-                ),
+            title = '{} - {}'.format(
+                _('partnership_created'),
+                partnership.ucl_university.most_recent_acronym
             )
+            self.notify_admin_mail(title, 'partnership_creation.html', {
+                'partnership': partnership,
+            })
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
