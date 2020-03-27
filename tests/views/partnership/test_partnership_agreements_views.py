@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.contrib.auth.models import Permission
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
@@ -122,6 +123,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_post_own_as_gf(self):
         self.client.force_login(self.user_gf)
@@ -130,6 +132,9 @@ class PartnershipAgreementCreateViewTest(TestCase):
         url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': self.partnership_gf.pk})
         response = self.client.post(url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(str(self.user_gf), mail.outbox[0].body)
+        mail.outbox = []
 
 
 class PartnershipAgreementsUpdateViewTest(TestCase):

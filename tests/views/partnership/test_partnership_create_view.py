@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.contrib.auth.models import Permission
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
@@ -122,6 +123,7 @@ class PartnershipCreateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_post_past_start_date_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -165,9 +167,15 @@ class PartnershipCreateViewTest(TestCase):
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(str(self.user_gf), mail.outbox[0].body)
+        mail.outbox = []
 
     def test_post_post_start_date_as_gs(self):
         self.client.force_login(self.user_gs)
         data = self.data
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(str(self.user_gs), mail.outbox[0].body)
+        mail.outbox = []

@@ -5,12 +5,16 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
 from partnership import perms
+from partnership.utils import user_is_adri
 from .mixins import PartnershipAgreementsFormMixin
+from ..mixins import NotifyAdminMailMixin
 
 __all__ = ['PartnershipAgreementCreateView']
 
 
-class PartnershipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView):
+class PartnershipAgreementCreateView(NotifyAdminMailMixin,
+                                     PartnershipAgreementsFormMixin,
+                                     CreateView):
     template_name = 'partnerships/agreements/create.html'
     login_url = 'access_denied'
 
@@ -32,6 +36,16 @@ class PartnershipAgreementCreateView(PartnershipAgreementsFormMixin, CreateView)
         form.save_m2m()
         self.check_dates(agreement)
         messages.success(self.request, _('partnership_agreement_success'))
+
+        # Send notification e-mail when not ADRI
+        if not user_is_adri(self.request.user):
+            title = '{} - {}'.format(
+                _('partnership_agreement_created'),
+                self.partnership.ucl_university.most_recent_acronym
+            )
+            self.notify_admin_mail(title, 'agreement_creation.html', {
+                'partnership': self.partnership,
+            })
         return redirect(self.partnership)
 
     def post(self, request, *args, **kwargs):
