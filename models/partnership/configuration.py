@@ -28,28 +28,20 @@ class PartnershipConfiguration(models.Model):
         (12, _('december')),
     )
 
-    partnership_creation_update_max_date_day = models.IntegerField(
-        _('partnership_creation_update_max_date_day'),
-        choices=DAYS_CHOICES,
-        default=31,
+    partnership_creation_update_min_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('partnership_creation_update_min_year'),
+        on_delete=models.PROTECT,
+        null=True,
+        related_name='+',
     )
 
-    partnership_creation_update_max_date_month = models.IntegerField(
-        _('partnership_creation_update_max_date_month'),
-        choices=MONTHS_CHOICES,
-        default=12,
-    )
-
-    partnership_api_max_date_day = models.IntegerField(
-        _('partnership_api_max_date_day'),
-        choices=DAYS_CHOICES,
-        default=31,
-    )
-
-    partnership_api_max_date_month = models.IntegerField(
-        _('partnership_api_max_date_month'),
-        choices=MONTHS_CHOICES,
-        default=12,
+    partnership_api_year = models.ForeignKey(
+        'base.AcademicYear',
+        verbose_name=_('partnership_api_year'),
+        on_delete=models.PROTECT,
+        null=True,
+        related_name='+',
     )
 
     email_notification_to = models.EmailField(
@@ -60,30 +52,22 @@ class PartnershipConfiguration(models.Model):
     @staticmethod
     def get_configuration():
         try:
-            return PartnershipConfiguration.objects.get()
+            return PartnershipConfiguration.objects.select_related(
+                'partnership_api_year',
+                'partnership_creation_update_min_year',
+            ).get()
         except PartnershipConfiguration.DoesNotExist:
-            return PartnershipConfiguration.objects.create()
+            current_year = date.today().year
+            # By default, mostly for tests, select the logical academic years
+            year = AcademicYear.objects.filter(year=current_year).first()
+            next_year = AcademicYear.objects.filter(year=current_year + 1).first()
+            return PartnershipConfiguration.objects.create(
+                partnership_creation_update_min_year=next_year,
+                partnership_api_year=year,
+            )
 
     def get_current_academic_year_for_creation_modification(self):
-        limit_date = date(
-            date.today().year,
-            self.partnership_creation_update_max_date_month,
-            self.partnership_creation_update_max_date_day,
-        )
-        if date.today() <= limit_date:
-            return AcademicYear.objects.filter(year=date.today().year + 1).first()
-        else:
-            return AcademicYear.objects.filter(year=date.today().year + 2).first()
+        return self.partnership_creation_update_min_year
 
     def get_current_academic_year_for_api(self):
-        # TODO: Use event calendar instead of current_academic_year/starting_academic_year
-        return AcademicYear.objects.get(year=2020)  # BUG: OP-348 - dirty fix
-        # limit_date = date(
-        #     date.today().year,
-        #     self.partnership_api_max_date_month,
-        #     self.partnership_api_max_date_day,
-        # )
-        # if date.today() <= limit_date:
-        #     return academic_year.current_academic_year()
-        # else:
-        #     return academic_year.starting_academic_year()
+        return self.partnership_api_year
