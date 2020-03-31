@@ -1012,9 +1012,6 @@ msgstr "Partnership year {partnership} {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Show all years."
 
-msgid "partnerships"
-msgstr "partnerships"
-
 msgid "Partnerships"
 msgstr "Partnerships"
 
