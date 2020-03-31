@@ -959,14 +959,8 @@ msgstr "L'accord finit après le partenariat."
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
-msgid "partnership_api_max_date"
-msgstr "Date après laquelle l'année académique change pour l'API"
-
-msgid "partnership_api_max_date_day"
-msgstr "Date après laquelle l'année académique change pour l'API : jour"
-
-msgid "partnership_api_max_date_month"
-msgstr "Date après laquelle l'année académique change pour l'API : mois"
+msgid "partnership_api_year"
+msgstr "Année académique visible sur l'API"
 
 #, python-format
 msgid ""
@@ -988,11 +982,10 @@ msgstr "Créer le partenariat"
 msgid "partnership_created"
 msgstr "Partenariat créé"
 
-msgid "partnership_creation_update_max_date_day"
-msgstr "Jour maximum pour la création ou la modification"
-
-msgid "partnership_creation_update_max_date_month"
-msgstr "Mois maximum pour la création ou la modification"
+msgid "partnership_creation_update_min_year"
+msgstr ""
+"Année académique minimale (inclus) proposée au gestionnaire facultaire pour "
+"la création ou modification d'un partenariat"
 
 msgid "partnership_email_notification_to"
 msgstr "Email destinataire des notifications de créations"

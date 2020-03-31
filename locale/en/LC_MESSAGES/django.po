@@ -891,14 +891,8 @@ msgstr "Agreement finishes after the partnership end."
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
-msgid "partnership_api_max_date"
-msgstr "Date after which the academic year rolls for the API"
-
-msgid "partnership_api_max_date_day"
-msgstr "Date after which the academic year rolls for the API: day"
-
-msgid "partnership_api_max_date_month"
-msgstr "Date after which the academic year rolls for the API: month"
+msgid "partnership_api_year"
+msgstr "Visible academic year for API"
 
 #, python-format
 msgid ""
@@ -920,11 +914,10 @@ msgstr "Create partnership"
 msgid "partnership_created"
 msgstr "partnership created"
 
-msgid "partnership_creation_update_max_date_day"
-msgstr "Maximum day for creation or update"
-
-msgid "partnership_creation_update_max_date_month"
-msgstr "Maximum month for creation or update"
+msgid "partnership_creation_update_min_year"
+msgstr ""
+"Minimum academic year (included) available to faculty managers for creation "
+"or modification of a partnership"
 
 msgid "partnership_email_notification_to"
 msgstr "Partnership email notification to"
