@@ -6,6 +6,7 @@ from base.models.academic_year import AcademicYear
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
+from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
@@ -29,20 +30,35 @@ class PartnershipsListViewTest(TestCase):
     def setUpTestData(cls):
         for i in range(15):
             PartnershipFactory()
-        cls.partnership_first_name = PartnershipFactory(partner__name='aaaaaa')
+        cls.partnership_first_name = PartnershipFactory(
+            partner__name='Albania School',
+        )
         # ucl_university
-        cls.ucl_university = EntityFactory()
+        parent = EntityVersionFactory(acronym='AAA').entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=parent,
+            acronym='ZZZ',
+        ).entity
         cls.partnership_ucl_university = PartnershipFactory(ucl_university=cls.ucl_university)
         # ucl_university_labo
         cls.ucl_university_labo = EntityFactory()
-        cls.partnership_ucl_university_labo = PartnershipFactory(ucl_university_labo=cls.ucl_university_labo)
+        cls.partnership_ucl_university_labo = PartnershipFactory(
+            ucl_university=EntityVersionFactory(
+                parent=parent,
+                acronym='AAA',
+            ).entity,
+            ucl_university_labo=cls.ucl_university_labo
+        )
         # university_offer
         cls.university_offer = EducationGroupYearFactory()
         cls.partnership_university_offer = PartnershipFactory()
         partnership_year = PartnershipYearFactory(partnership=cls.partnership_university_offer, academic_year__year=2101)
         partnership_year.offers.add(cls.university_offer)
         # partner
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(
+            contact_address__city='Tirana',
+            contact_address__country__name='Albania',
+        )
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
         # partner_entity
         cls.partner_entity = PartnerEntityFactory()
@@ -53,7 +69,10 @@ class PartnershipsListViewTest(TestCase):
         cls.partner_type = PartnerTypeFactory()
         cls.partnership_partner_type = PartnershipFactory(partner__partner_type=cls.partner_type)
         # city
-        cls.partner_city = PartnerFactory(contact_address__city='foobar')
+        cls.partner_city = PartnerFactory(
+            contact_address__city='Berat',
+            contact_address__country=cls.partner.contact_address.country,
+        )
         cls.partnership_city = PartnershipFactory(partner=cls.partner_city)
         # country
         cls.country = CountryFactory()
@@ -209,6 +228,17 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?ordering=country', follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
+        context = response.context_data
+        self.assertEqual(context['partnerships'][0], self.partnership_city)
+        self.assertEqual(context['partnerships'][1], self.partnership_partner)
+
+    def test_get_list_ordering_ucl(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url + '?ordering=ucl', follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
+        context = response.context_data
+        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
+        self.assertEqual(context['partnerships'][1], self.partnership_ucl_university)
 
     def test_filter_ucl_university(self):
         self.client.force_login(self.user)
@@ -267,7 +297,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_city(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?city=foobar')
+        response = self.client.get(self.url + '?city=Berat')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
