@@ -1,7 +1,10 @@
 from django.conf import settings
 from rest_framework import serializers
 
-from partnership.models import Partnership, MediaType, Financing
+from partnership.models import (
+    Partnership, MediaType, Financing,
+    AgreementStatus,
+)
 from .contact import ContactSerializer
 from .media import MediaSerializer, AgreementMediaSerializer
 from .partner import PartnerSerializer
@@ -117,7 +120,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         if partnership.agreement_status is None:
             return None
         return {
-            'status': partnership.agreement_status,
+            'status': AgreementStatus.get_value(partnership.agreement_status),
             # annotation on the queryset
             'valid_years': partnership.validity_years,
             # annotation on the queryset
