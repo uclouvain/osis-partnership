@@ -53,56 +53,58 @@ class UCLManagementEntityCreateViewTest(TestCase):
             'entity': str(cls.entity.pk),
             'faculty': str(cls.faculty.pk),
         }
+        cls.template_create = 'partnerships/ucl_management_entities/uclmanagemententity_create.html'
+        cls.template_list = 'partnerships/ucl_management_entities/uclmanagemententity_list.html'
 
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateNotUsed(response, self.template_create)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateNotUsed(response, self.template_create)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateNotUsed(response, self.template_create)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed('partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateUsed(response, self.template_create)
 
     def test_post_anonymous(self):
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateNotUsed(response, self.template_list)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_lambda_user(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateNotUsed(response, self.template_list)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_gf_user(self):
         self.client.force_login(self.gf_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateNotUsed(response, self.template_list)
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
+        self.assertTemplateUsed(response, self.template_list)
 
     def test_post_adri_no_value(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.url, data={}, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
-        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateNotUsed(response, self.template_list)
+        self.assertTemplateUsed(response, self.template_create)
 
     def test_post_adri_duplicate_faculty_null_entity(self):
         self.client.force_login(self.adri_user)
@@ -110,5 +112,5 @@ class UCLManagementEntityCreateViewTest(TestCase):
         del data['entity']
         data['faculty'] = self.faculty.pk
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_list.html')
-        self.assertTemplateUsed(response, 'partnerships/ucl_management_entities/uclmanagemententity_create.html')
+        self.assertTemplateNotUsed(response, self.template_list)
+        self.assertTemplateUsed(response, self.template_create)

@@ -46,71 +46,76 @@ class UCLManagementEntityDeleteViewTest(TestCase):
             'partnerships:ucl_management_entities:delete',
             kwargs={"pk": cls.ucl_management_entity_linked.pk},
         )
+        cls.template_name = 'partnerships/ucl_management_entities/uclmanagemententity_delete.html'
 
     def test_get_as_anonymous(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed('access_denied.html')
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
 
     def test_get_as_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.get(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.get(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.get(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.url)
-        self.assertTemplateUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_post_as_anonymous(self):
-        response = self.client.post(self.url)
-        self.assertTemplateUsed('access_denied.html')
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
+        response = self.client.post(self.url, follow=True)
+        self.assertTemplateUsed(response, 'access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
 
     def test_post_as_authenticated(self):
         self.client.force_login(self.lambda_user)
         response = self.client.post(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_as_gf(self):
         self.client.force_login(self.gf_user)
         response = self.client.post(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_as_other_gf(self):
         self.client.force_login(self.other_gf_user)
         response = self.client.post(self.url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_as_adri(self):
         self.client.force_login(self.adri_user)
-        response = self.client.post(self.url)
-        self.assertFalse(UCLManagementEntity.objects.filter(pk=self.ucl_management_entity.pk).exists())
+        self.client.post(self.url)
+        self.assertFalse(UCLManagementEntity.objects.filter(
+            pk=self.ucl_management_entity.pk
+        ))
 
     def test_get_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.linked_url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        self.assertTemplateUsed(response, self.template_name)
+        self.assertTemplateNotUsed(response, 'access_denied.html')
 
     def test_post_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
-        response = self.client.post(self.linked_url)
-        self.assertTemplateNotUsed('partnerships/ucl_management_entity/uclmanagemententity_delete.html')
-        self.assertTemplateUsed('access_denied.html')
+        response = self.client.post(self.linked_url, follow=True)
+        self.assertFalse(UCLManagementEntity.objects.filter(
+            pk=self.ucl_management_entity_linked.pk
+        ))
+        self.assertTemplateNotUsed(response, 'access_denied.html')
