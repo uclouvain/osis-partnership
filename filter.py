@@ -98,14 +98,44 @@ class FinancingAdminFilter(filters.FilterSet):
     )
 
 
+class MultipleOrderingFilter(filters.OrderingFilter):
+    def __init__(self, *args, multiples=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.special_ordering = multiples if multiples is not None else {}
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        ordering = value[0]
+        field = ordering.lstrip('-')
+        if field in self.special_ordering.keys():
+            fields = self.special_ordering[field]
+            return qs.order_by(
+                *['-' + f if ordering[0] == '-' else f for f in fields]
+            )
+        return super().filter(qs, value)
+
+
 class PartnershipAdminFilter(filters.FilterSet):
-    ordering = filters.OrderingFilter(
+    ordering = MultipleOrderingFilter(
         fields=(
             ('partner__name', 'partner'),
-            ('partner__contact_address__country__name', 'country'),
+            ('country', 'country'),
             ('partner__contact_address__city', 'city'),
-            ('ucl_university_parent_most_recent_acronym', 'ucl'),
-        )
+            ('ucl', 'ucl'),
+        ),
+        multiples={
+            'country': [
+                'partner__contact_address__country__name',
+                'partner__contact_address__city',
+                'partner__name'
+            ],
+            'ucl': [
+                'ucl_university_parent_most_recent_acronym',
+                'ucl_university_most_recent_acronym',
+                'ucl_university_labo_most_recent_acronym',
+            ]
+        },
     )
     continent = filters.CharFilter(
         field_name='partner__contact_address__country__continent',
@@ -311,13 +341,25 @@ class PartnershipAdminFilter(filters.FilterSet):
 
 
 class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
-    ordering = filters.OrderingFilter(
+    ordering = MultipleOrderingFilter(
         fields=(
             ('partnership__partner__name', 'partner'),
-            ('partnership__partner__contact_address__country__name', 'country'),
+            ('country', 'country'),
             ('partnership__partner__contact_address__city', 'city'),
-            ('partnership__ucl_university_parent_most_recent_acronym', 'ucl'),
-        )
+            ('ucl', 'ucl'),
+        ),
+        multiples={
+            'country': [
+                'partnership__partner__contact_address__country__name',
+                'partnership__partner__contact_address__city',
+                'partnership__partner__name',
+            ],
+            'ucl': [
+                'partnership_ucl_university_parent_most_recent_acronym',
+                'partnership_ucl_university_most_recent_acronym',
+                'partnership_ucl_university_labo_most_recent_acronym',
+            ]
+        }
     )
 
     @property
