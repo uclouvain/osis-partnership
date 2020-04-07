@@ -44,6 +44,7 @@ class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocompl
     def get_queryset(self):
         faculty = self.forwarded.get('faculty', None)
         if faculty is not None:
+            # FIXME when ucl_university is removed (faculty is the hidden field of PartnershipYearForm, updated by JS)
             qs = Entity.objects.annotate(
                 most_recent_acronym=Subquery(
                     EntityVersion.objects
@@ -93,6 +94,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
         if entities is not None:
             qs = qs.filter(Q(management_entity__in=entities) | Q(administration_entity__in=entities))
         else:
+            # FIXME when ucl_university is removed (faculty is the hidden field of PartnershipYearForm, updated by JS)
             faculty = self.forwarded.get('faculty', None)
             if faculty is not None:
                 qs = qs.filter(

@@ -9,9 +9,6 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
     class Meta:
         model = UCLManagementEntity
 
-    faculty = factory.SubFactory(
-        'base.tests.factories.entity.EntityFactory',
-    )
     entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
     )

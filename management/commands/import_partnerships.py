@@ -2,7 +2,6 @@ import csv
 import os
 from datetime import date
 
-from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
@@ -490,7 +489,6 @@ class Command(ProgressBarMixin, BaseCommand):
                 'academic_responsible': partnership.supervisor,
                 'administrative_responsible': partnership.supervisor,
             },
-            faculty=partnership.ucl_university,
             entity=partnership.ucl_university_labo,
         )
 

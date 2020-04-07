@@ -25,27 +25,23 @@ class PartnerSupervisorFilter(filters.Filter):
             qs.annotate(
                 has_supervisor_with_entity=Exists(
                     UCLManagementEntity.objects.filter(
-                        entity__isnull=False,
                         entity=OuterRef('partnerships__ucl_university_labo'),
-                        faculty=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(
+                has_supervisor_with_faculty=Exists(
                     UCLManagementEntity.objects.filter(
-                        entity__isnull=True,
-                        faculty=OuterRef('partnerships__ucl_university'),
+                        entity=OuterRef('partnerships__ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 )
-            )
-            .filter(
+            ).filter(
                 Q(partnerships__supervisor__uuid=value)
                 | Q(partnerships__supervisor__isnull=True,
                     has_supervisor_with_entity=True)
                 | Q(partnerships__supervisor__isnull=True,
                     partnerships__ucl_university_labo__isnull=True,
-                    has_supervisor_without_entity=True)
+                    has_supervisor_with_faculty=True)
             )
         )
 

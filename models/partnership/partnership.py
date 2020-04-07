@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
 from partnership.models import AgreementStatus
 from partnership.utils import (
     merge_agreement_ranges,
@@ -78,10 +79,13 @@ class Partnership(models.Model):
         verbose_name=_('ucl_university'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to={
-            'entityversion__entity_type': "FACULTY",
-            'faculty_managements__isnull': False,
-        },
+        limit_choices_to=Q(
+            # must be faculty
+            Q(entityversion__entity_type=FACULTY),
+            # and have ucl management, or labos having ucl management
+            Q(uclmanagement_entity__isnull=False)
+            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
+        ),
     )
     ucl_university_labo = models.ForeignKey(
         'base.Entity',
@@ -90,7 +94,13 @@ class Partnership(models.Model):
         related_name='partnerships_labo',
         blank=True,
         null=True,
-        limit_choices_to={'entity_managements__isnull': False}
+        limit_choices_to=Q(
+            # parent must be faculty
+            Q(entityversion__parent__entityversion__entity_type=FACULTY),
+            # and parent or itself have ucl management
+            Q(uclmanagement_entity__isnull=False)
+            | Q(entityversion__parent__uclmanagement_entity__isnull=False),
+        )
     )
     supervisor = models.ForeignKey(
         'base.Person',
@@ -152,7 +162,6 @@ class Partnership(models.Model):
 
     @property
     def validated_agreements(self):
-        from .agreement import PartnershipAgreement
         return self.agreements.filter(status=AgreementStatus.VALIDATED.name)
 
     @cached_property
@@ -225,7 +234,7 @@ class Partnership(models.Model):
     @cached_property
     def has_missing_valid_years(self):
         """ Test if we have PartnershipYear for all of the partnership duration """
-        if (self.end_academic_year is not None and self.start_academic_year is not None):
+        if self.end_academic_year is not None and self.start_academic_year is not None:
             if len(self.valid_agreements_dates_ranges) == 0:
                 return True
             elif len(self.valid_agreements_dates_ranges) > 1:
@@ -315,7 +324,7 @@ class Partnership(models.Model):
     def ucl_management_entity(self):
         from ..ucl_management_entity import UCLManagementEntity
         return UCLManagementEntity.objects.filter(
-            faculty=self.ucl_university,
+            # FIXME: use ucl_entity once available
             entity=self.ucl_university_labo,
         ).select_related(
             'administrative_responsible', 'contact_in_person', 'contact_out_person'

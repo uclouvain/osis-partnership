@@ -155,7 +155,6 @@ class PartnershipYearAdmin(admin.ModelAdmin):
 
 class UCLManagementEntityAdmin(admin.ModelAdmin):
     raw_id_fields = (
-        'faculty',
         'entity',
         'academic_responsible',
         'administrative_responsible',

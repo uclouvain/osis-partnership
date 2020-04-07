@@ -60,7 +60,7 @@ class PartnershipUpdateViewTest(TestCase):
         EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
-        UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
+        UCLManagementEntityFactory(entity=cls.ucl_university_labo)
         cls.ucl_university_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
         cls.ucl_university_labo_not_choice = EntityFactory()

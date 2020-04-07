@@ -54,15 +54,14 @@ def user_is_gf(user):
         return False
 
 
-def user_is_gf_of_faculty(user, faculty):
-    if user_is_gf(user):
-        return User.objects.filter(
-            Q(person__partnershipentitymanager__entity=faculty)
-            | Q(person__partnershipentitymanager__entity__parent_of__entity=faculty),
-            pk=user.pk,
-        ).exists()
-    else:
-        return False
+def user_is_gf_of_faculty(user, entity):
+    return User.objects.filter(
+        Q(pk=user.pk),
+        # entity is a faculty
+        Q(person__partnershipentitymanager__entity=entity)
+        # entity is a labo
+        | Q(person__partnershipentitymanager__entity__parent_of__entity=entity),
+    ).exists()
 
 
 def user_is_in_user_faculty(user, other_user):

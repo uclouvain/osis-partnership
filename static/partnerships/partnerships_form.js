@@ -28,6 +28,7 @@
         $partnerEntityLink.attr('href', $partnerEntityLink.attr('data-href').replace('0', data.id)).removeClass('hidden');
     });
 
+    // FIXME this will need to be updated
     $('input[name="year-faculty"]').val($('select[name="ucl_university"]').val());
     $('select[name="ucl_university"]').change(function() {
         $('input[name="year-faculty"]').val($(this).val());

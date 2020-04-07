@@ -18,8 +18,11 @@ class PartnershipForm(forms.ModelForm):
     ucl_university = EntityChoiceField(
         label=_('ucl_university'),
         queryset=Entity.objects.filter(
-            entityversion__entity_type=FACULTY,
-            faculty_managements__isnull=False,
+            # must be faculty
+            Q(entityversion__entity_type=FACULTY),
+            # and have ucl management, or labos having ucl management
+            Q(uclmanagement_entity__isnull=False)
+            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
         ),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university',
@@ -33,8 +36,12 @@ class PartnershipForm(forms.ModelForm):
     ucl_university_labo = EntityChoiceField(
         label=_('ucl_university_labo'),
         queryset=Entity.objects.filter(
-            entity_managements__isnull=False,
-        ),
+            # parent must be faculty
+            Q(entityversion__parent__entityversion__entity_type=FACULTY),
+            # and parent or itself have ucl management
+            Q(uclmanagement_entity__isnull=False)
+            | Q(entityversion__parent__uclmanagement_entity__isnull=False),
+        ).distinct(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university_labo',
             forward=['ucl_university'],
@@ -103,7 +110,9 @@ class PartnershipForm(forms.ModelForm):
             else:
                 self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
         try:
-            self.fields['partner'].widget.forward.append(forward.Const(self.instance.partner.pk, 'partner_pk'))
+            self.fields['partner'].widget.forward.append(
+                forward.Const(self.instance.partner.pk, 'partner_pk'),
+            )
         except Partner.DoesNotExist:
             pass
 

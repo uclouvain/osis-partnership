@@ -34,7 +34,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
             .annotate(
                 faculty_most_recent_acronym=Subquery(
                     EntityVersion.objects
-                        .filter(entity=OuterRef('faculty__pk'))
+                        .filter(entity=OuterRef('entity__entityversion__parent__pk'))
                         .order_by('-start_date')
                         .values('acronym')[:1]
                 ),
@@ -46,11 +46,21 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
                 ),
             )
             .order_by('faculty_most_recent_acronym', 'entity_most_recent_acronym')
-            .select_related('academic_responsible', 'administrative_responsible')
+            .select_related(
+                'academic_responsible',
+                'administrative_responsible',
+                'contact_in_person',
+                'contact_out_person',
+                'entity',
+            )
         )
         if not user_is_adri(self.request.user):
-            queryset = queryset.filter(
-                Q(faculty__partnershipentitymanager__person__user=self.request.user)
-                | Q(faculty__entityversion__parent__partnershipentitymanager__person__user=self.request.user)
-            )
+            queryset = queryset.filter(Q(**{
+                'entity__entityversion__parent'  # get faculty
+                '__partnershipentitymanager__person__user': self.request.user,
+            }) | Q(**{
+                'entity__entityversion__parent'  # get faculty
+                '__entityversion__parent'  # get sector
+                '__partnershipentitymanager__person__user': self.request.user,
+            }))
         return queryset.distinct()

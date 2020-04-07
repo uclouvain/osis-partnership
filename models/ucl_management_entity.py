@@ -1,25 +1,14 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from base.models.entity import Entity
 
 __all__ = ['UCLManagementEntity']
 
 
 class UCLManagementEntity(models.Model):
-    faculty = models.ForeignKey(
+    entity = models.OneToOneField(
         'base.Entity',
-        verbose_name=_("faculty"),
-        related_name='faculty_managements',
-        on_delete=models.CASCADE,
-    )
-    entity = models.ForeignKey(
-        'base.Entity',
-        null=True,
-        blank=True,
         verbose_name=_("entity"),
-        related_name='entity_managements',
+        related_name='uclmanagement_entity',
         on_delete=models.CASCADE
     )
     academic_responsible = models.ForeignKey(
@@ -92,13 +81,8 @@ class UCLManagementEntity(models.Model):
         default='',
     )
 
-    class Meta:
-        unique_together = ("faculty", "entity")
-
     def __str__(self):
-        if self.entity is None:
-            return str(self.faculty)
-        return ("{} {}".format(self.faculty, self.entity))
+        return str(self.entity)
 
     def is_contact_in_defined(self):
         return (
@@ -120,19 +104,8 @@ class UCLManagementEntity(models.Model):
         )
 
     def has_linked_partnerships(self):
-        partnerships = self.faculty.partnerships
-        if self.entity is None:
-            return partnerships.filter(ucl_university_labo__isnull=True).exists()
-        return partnerships.filter(ucl_university_labo=self.entity).exists()
-
-    def validate_unique(self, exclude=None):
-        if self.entity is None:  # and hasattr(self, faculty) and self.faculty is not None):
-            try:
-                if UCLManagementEntity.objects.exclude(id=self.id).filter(
-                        faculty=self.faculty,
-                        entity__isnull=True,
-                ).exists():
-                    raise ValidationError(_("duplicate_ucl_management_entity_error_with_faculty"))
-            except Entity.DoesNotExist:
-                pass
-        super().validate_unique(exclude)
+        if hasattr(self.entity, 'partnerships'):
+            # That's a faculty
+            return self.entity.partnerships.exists()
+        # That's a labo
+        return self.entity.partnerships_labo.exists()
