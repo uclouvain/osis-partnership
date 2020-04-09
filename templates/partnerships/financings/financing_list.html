@@ -101,7 +101,7 @@
             </tbody>
           </table>
           {% if can_export_financing %}
-            <a class="btn btn-default no_spinner pull-right"
+            <a class="btn btn-default download pull-right"
                href="{% url 'partnerships:financings:export' year=academic_year.year %}">
               {% blocktrans %}export_financings_for_year_{{ academic_year }}{% endblocktrans %}
             </a>
