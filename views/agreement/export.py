@@ -1,8 +1,6 @@
-from django.db.models import Prefetch
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
-from base.models.entity_version import EntityVersion
 from partnership.utils import academic_years
 from .list import PartnershipAgreementListView
 from ..export import ExportView
@@ -27,16 +25,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
         ]
 
     def get_xls_data(self):
-        queryset = self.filterset.qs.prefetch_related(
-            Prefetch(
-                'partnership__ucl_university__entityversion_set',
-                queryset=EntityVersion.objects.order_by('start_date'),
-                to_attr='faculties',
-            ),
-        )
-        for agreement in queryset:
-            faculty = agreement.partnership.ucl_university.faculties[0]
-            entity = agreement.partnership.ucl_university_labo
+        for agreement in self.filterset.qs:
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
                 agreement.pk,
@@ -44,8 +33,8 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
                 str(agreement.partnership.partner.contact_address.country),
                 str(agreement.partnership.partner.contact_address.city),
                 str(agreement.partnership.supervisor),
-                faculty.acronym,
-                entity.most_recent_acronym if entity is not None else '',
+                agreement.partnership_ucl_university_most_recent_acronym,
+                agreement.partnership_ucl_university_labo_most_recent_acronym,
                 years,
                 agreement.start_academic_year.year,
                 agreement.end_academic_year.year + 1,

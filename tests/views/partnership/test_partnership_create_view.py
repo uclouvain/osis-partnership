@@ -5,7 +5,7 @@ from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
@@ -58,15 +58,19 @@ class PartnershipCreateViewTest(TestCase):
 
         # Ucl
         sector = EntityFactory()
+        EntityVersionFactory(entity=sector, entity_type=SECTOR)
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         UCLManagementEntityFactory(entity=cls.ucl_university_labo)
         cls.ucl_university_not_choice = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        EntityVersionFactory(entity=cls.ucl_university_not_choice, entity_type=FACULTY)
         cls.ucl_university_labo_not_choice = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        EntityVersionFactory(
+            entity=cls.ucl_university_labo_not_choice,
+            parent=cls.ucl_university_not_choice,
+        )
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)
@@ -78,8 +82,7 @@ class PartnershipCreateViewTest(TestCase):
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
             'supervisor': '',
-            'ucl_university': cls.ucl_university.pk,
-            'ucl_university_labo': cls.ucl_university_labo.pk,
+            'ucl_entity': cls.ucl_university_labo.pk,
             'university_offers': [cls.university_offer.pk],
             'year-is_sms': True,
             'year-is_smp': False,
@@ -150,7 +153,7 @@ class PartnershipCreateViewTest(TestCase):
     def test_post_ucl_university_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
-        data['ucl_university'] = self.ucl_university_not_choice.pk
+        data['ucl_entity'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
@@ -158,7 +161,7 @@ class PartnershipCreateViewTest(TestCase):
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
-        data['ucl_university_labo'] = self.ucl_university_labo_not_choice.pk
+        data['ucl_entity'] = self.ucl_university_labo_not_choice.pk
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')

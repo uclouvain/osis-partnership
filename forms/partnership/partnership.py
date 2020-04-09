@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity import Entity
-from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from partnership.models import (
     Partner, Partnership,
@@ -18,37 +17,21 @@ __all__ = ['PartnershipForm']
 
 
 class PartnershipForm(forms.ModelForm):
-    ucl_university = EntityChoiceField(
-        label=_('ucl_university'),
+    ucl_entity = EntityChoiceField(
+        label=_('ucl_entity'),
         queryset=Entity.objects.filter(
-            # must be faculty
-            Q(entityversion__entity_type=FACULTY),
-            # and have ucl management, or labos having ucl management
+            # must have ucl_management
             Q(uclmanagement_entity__isnull=False)
-            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
+            # or parent must have ucl management
+            | Q(pk__in=children_of_managed_entities()),
         ),
         widget=autocomplete.ModelSelect2(
-            url='partnerships:autocomplete:ucl_university',
+            url='partnerships:autocomplete:ucl_entity',
             attrs={
                 'class': 'resetting',
                 'data-reset': '#id_ucl_university_labo',
             },
         ),
-    )
-
-    ucl_university_labo = EntityChoiceField(
-        label=_('ucl_university_labo'),
-        queryset=Entity.objects.filter(
-            # must have ucl_management
-            uclmanagement_entity__isnull=False,
-            # or parent must have ucl management
-            pk__in=children_of_managed_entities(),
-        ).distinct(),
-        widget=autocomplete.ModelSelect2(
-            url='partnerships:autocomplete:ucl_university_labo',
-            forward=['ucl_university'],
-        ),
-        required=False,
     )
 
     supervisor = PersonChoiceField(
@@ -66,8 +49,7 @@ class PartnershipForm(forms.ModelForm):
         fields = (
             'partner',
             'partner_entity',
-            'ucl_university',
-            'ucl_university_labo',
+            'ucl_entity',
             'supervisor',
             'comment',
             'tags',
@@ -94,23 +76,24 @@ class PartnershipForm(forms.ModelForm):
             if not user_is_adri(self.user):
 
                 # Restrict fields for GF
-                self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.filter(
-                    Q(partnershipentitymanager__person__user=self.user)
-                    | Q(entityversion__parent__partnershipentitymanager__person__user=self.user),
+                # FIXME hierarchy not flat
+                self.fields['ucl_entity'].queryset = self.fields['ucl_entity'].queryset.filter(
+                    Q(partnershipentitymanager__person=self.user.person)
+                    | Q(entityversion__parent__partnershipentitymanager__person=self.user.person)
+                    | Q(entityversion__parent__entityversion__parent__partnershipentitymanager__person=self.user.person),
                 ).distinct()
 
-                if self.fields['ucl_university'].queryset.count() == 1:
-                    faculty = self.fields['ucl_university'].queryset.first()
+                if self.fields['ucl_entity'].queryset.count() == 1:
+                    faculty = self.fields['ucl_entity'].queryset.first()
                     if faculty is not None:
-                        self.fields['ucl_university'].initial = faculty.pk
-                    self.fields['ucl_university'].disabled = True
+                        self.fields['ucl_entity'].initial = faculty.pk
+                    self.fields['ucl_entity'].disabled = True
 
                 if self.instance.pk is not None:
                     self.fields['partner'].disabled = True
-                    self.fields['ucl_university_labo'].disabled = True
-                    self.fields['ucl_university'].disabled = True
+                    self.fields['ucl_entity'].disabled = True
             else:
-                self.fields['ucl_university'].queryset = self.fields['ucl_university'].queryset.distinct()
+                self.fields['ucl_entity'].queryset = self.fields['ucl_entity'].queryset.distinct()
         try:
             self.fields['partner'].widget.forward.append(
                 forward.Const(self.instance.partner.pk, 'partner_pk'),
@@ -130,15 +113,7 @@ class PartnershipForm(forms.ModelForm):
         super().clean()
         partner = self.cleaned_data.get('partner', None)
         partner_entity = self.cleaned_data.get('partner_entity', None)
-        ucl_university = self.cleaned_data.get('ucl_university', None)
-        ucl_university_labo = self.cleaned_data.get('ucl_university_labo', None)
 
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
-
-        if (
-            ucl_university_labo
-            and not ucl_university_labo.entityversion_set.filter(parent=ucl_university).exists()
-        ):
-            self.add_error('ucl_university_labo', _('invalid_ucl_university_labo'))
         return self.cleaned_data

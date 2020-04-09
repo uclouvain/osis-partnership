@@ -12,8 +12,10 @@ from rest_framework.permissions import AllowAny
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY, SECTOR
+from base.utils.cte import CTESubquery
 from partnership.models import (
-    Media, Partner, Partnership,
+    Financing, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipConfiguration, PartnershipYear,
     PartnershipYearEducationField,
     AgreementStatus,
@@ -35,10 +37,15 @@ class PartnershipsMixinView(GenericAPIView):
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
+        ref = OuterRef('ucl_entity__pk')
+        cte = EntityVersion.objects.with_children(entity_id=ref)
+        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).order_by('-start_date')
+
         return (
             Partnership.objects
             .select_related(
                 'supervisor',
+                'partner_entity',
             ).prefetch_related(
                 'contacts',
                 Prefetch(
@@ -62,26 +69,14 @@ class PartnershipsMixinView(GenericAPIView):
                         .annotate(partnerships_count=Count('partnerships'))
                 ),
                 Prefetch(
-                    'ucl_university',
+                    'ucl_entity',
                     queryset=Entity.objects
-                    .annotate(
-                        most_recent_acronym=Subquery(
-                            EntityVersion.objects
-                                .filter(entity=OuterRef('pk'))
-                                .order_by('-start_date')
-                                .values('acronym')[:1]
-                        ),
-                        most_recent_title=Subquery(
-                            EntityVersion.objects
-                                .filter(entity=OuterRef('pk'))
-                                .order_by('-start_date')
-                                .values('title')[:1]
-                        ),
+                    .select_related(
+                        'uclmanagement_entity__academic_responsible',
+                        'uclmanagement_entity__administrative_responsible',
+                        'uclmanagement_entity__contact_out_person',
+                        'uclmanagement_entity__contact_in_person',
                     )
-                ),
-                Prefetch(
-                    'ucl_university_labo',
-                    queryset=Entity.objects
                     .annotate(
                         most_recent_acronym=Subquery(
                             EntityVersion.objects
@@ -101,6 +96,7 @@ class PartnershipsMixinView(GenericAPIView):
                     'years',
                     queryset=(
                         PartnershipYear.objects
+                        .select_related('academic_year')
                         .prefetch_related(
                             Prefetch(
                                 'entities',
@@ -131,6 +127,7 @@ class PartnershipsMixinView(GenericAPIView):
                     'agreements',
                     queryset=(
                         PartnershipAgreement.objects
+                        .select_related('media')
                         .filter(status=AgreementStatus.VALIDATED.name)
                         .filter(
                             start_academic_year__year__lte=academic_year.year,
@@ -168,23 +165,22 @@ class PartnershipsMixinView(GenericAPIView):
                     .order_by('-end_academic_year__year')
                     .values('status')[:1]
                 ),
-                sector_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
+                sector_most_recent_acronym=CTESubquery(
+                    qs.filter(entity_type=SECTOR).values('acronym')[:1]
                 ),
-                ucl_university_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('ucl_university__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
+                faculty_most_recent_acronym=CTESubquery(
+                    qs.filter(
+                        entity_type=FACULTY,
+                    ).exclude(
+                        entity_id=ref
+                    ).values('acronym')[:1]
                 ),
-                ucl_university_labo_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('ucl_university_labo__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
+                faculty_most_recent_title=CTESubquery(
+                    qs.filter(
+                        entity_type=FACULTY,
+                    ).exclude(
+                        entity_id=ref
+                    ).values('title')[:1]
                 ),
                 has_years_in=Exists(
                     PartnershipYear.objects.filter(
@@ -237,7 +233,19 @@ class PartnershipsMixinView(GenericAPIView):
                             output_field=models.CharField(),
                         )
                     ).values('type_ordered')[:1]
-                )
+                ),
+                funding_name=Subquery(
+                    Financing.objects.filter(
+                        academic_year=academic_year,
+                        countries=OuterRef('partner__contact_address__country_id'),
+                    ).values('name')[:1]
+                ),
+                funding_url=Subquery(
+                    Financing.objects.filter(
+                        academic_year=academic_year,
+                        countries=OuterRef('partner__contact_address__country_id'),
+                    ).values('url')[:1]
+                ),
             )
             .filter(
                 has_years_in=True,

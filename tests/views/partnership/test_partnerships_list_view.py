@@ -39,20 +39,24 @@ class PartnershipsListViewTest(TestCase):
             parent=parent,
             acronym='ZZZ',
         ).entity
-        cls.partnership_ucl_university = PartnershipFactory(ucl_university=cls.ucl_university)
+        cls.partnership_ucl_university = PartnershipFactory(
+            ucl_entity=cls.ucl_university
+        )
         # ucl_university_labo
-        cls.ucl_university_labo = EntityFactory()
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+            acronym='AAA',
+        ).entity
         cls.partnership_ucl_university_labo = PartnershipFactory(
-            ucl_university=EntityVersionFactory(
-                parent=parent,
-                acronym='AAA',
-            ).entity,
-            ucl_university_labo=cls.ucl_university_labo
+            ucl_entity=cls.ucl_university_labo
         )
         # university_offer
         cls.university_offer = EducationGroupYearFactory()
         cls.partnership_university_offer = PartnershipFactory()
-        partnership_year = PartnershipYearFactory(partnership=cls.partnership_university_offer, academic_year__year=2101)
+        partnership_year = PartnershipYearFactory(
+            partnership=cls.partnership_university_offer,
+            academic_year__year=2101,
+        )
         partnership_year.offers.add(cls.university_offer)
         # partner
         cls.partner = PartnerFactory(
@@ -162,7 +166,7 @@ class PartnershipsListViewTest(TestCase):
         # All filters
         country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
         cls.partnership_all_filters = PartnershipFactory(
-            ucl_university_labo=EntityFactory(),
+            ucl_entity=EntityFactory(),
             partner__contact_address__city='all_filters',
             partner__contact_address__country=country,
             comment='all_filters',
@@ -242,7 +246,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_ucl_university(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ucl_university=' + str(self.ucl_university.pk))
+        response = self.client.get(self.url + '?ucl_entity=' + str(self.ucl_university.pk))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -250,7 +254,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_ucl_university_labo(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ucl_university_labo=' + str(self.ucl_university_labo.pk))
+        response = self.client.get(self.url + '?ucl_entity=' + str(self.ucl_university_labo.pk))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -447,8 +451,7 @@ class PartnershipsListViewTest(TestCase):
     def test_all_filters(self):
         self.client.force_login(self.user)
         query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
-            'ucl_university': str(self.partnership_all_filters.ucl_university.pk),
-            'ucl_university_labo': str(self.partnership_all_filters.ucl_university_labo.pk),
+            'ucl_entity': str(self.partnership_all_filters.ucl_entity.pk),
             'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
             'partner': str(self.partnership_all_filters.partner.pk),
             'use_egracons': 'False',

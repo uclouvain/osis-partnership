@@ -41,7 +41,7 @@ class PartnershipAgreementCreateView(NotifyAdminMailMixin,
         if not user_is_adri(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_agreement_created'),
-                self.partnership.ucl_university.most_recent_acronym
+                self.partnership.ucl_entity.most_recent_acronym
             )
             self.notify_admin_mail(title, 'agreement_creation.html', {
                 'partnership': self.partnership,

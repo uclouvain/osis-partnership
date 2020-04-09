@@ -133,10 +133,8 @@ components:
         education_fields:
           - Field 1
           - Field 2
-        ucl_university:
-          title: science
-          acronym: SC
-        ucl_university_labo:
+        ucl_faculty: FIAL
+        ucl_entity:
           title: science
           acronym: SC
         supervisor: John DOE
@@ -215,9 +213,10 @@ components:
         ucl_sector:
           type: string
           description: Acronym of the sector
-        ucl_university:
-          $ref: '#/components/schemas/Entity'
-        ucl_university_labo:
+        ucl_faculty:
+          type: string
+          description: Acronym of the faculty
+        ucl_entity:
           $ref: '#/components/schemas/Entity'
         supervisor:
           type: string
@@ -386,17 +385,10 @@ components:
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    ucl_university:
-      name: ucl_university
+    ucl_entity:
+      name: ucl_entity
       in: query
-      description: The uuid of the faculty
-      schema:
-        type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    ucl_university_labo:
-      name: ucl_university_labo
-      in: query
-      description: The uuid of the faculty's school
+      description: The uuid of the faculty or school
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
@@ -525,14 +517,13 @@ paths:
               - partner
               - country_en
               - city
-              - ucl_university
+              - ucl_entity
               - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
-        - $ref: '#/components/parameters/ucl_university'
-        - $ref: '#/components/parameters/ucl_university_labo'
+        - $ref: '#/components/parameters/ucl_entity'
         - $ref: '#/components/parameters/supervisor'
         - $ref: '#/components/parameters/education_field'
         - $ref: '#/components/parameters/mobility_type'
@@ -579,16 +570,14 @@ paths:
               - partner
               - country_en
               - city
-              - ucl_university
-              - ucl_university_labo
+              - ucl_entity
               - type
               - subject_area
         - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
-        - $ref: '#/components/parameters/ucl_university'
-        - $ref: '#/components/parameters/ucl_university_labo'
+        - $ref: '#/components/parameters/ucl_entity'
         - $ref: '#/components/parameters/supervisor'
         - $ref: '#/components/parameters/education_field'
         - $ref: '#/components/parameters/mobility_type'

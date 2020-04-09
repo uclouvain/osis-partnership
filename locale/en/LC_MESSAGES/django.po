@@ -512,9 +512,6 @@ msgstr "Delete UCLouvain management entity"
 msgid "description"
 msgstr "Description"
 
-msgid "duplicate_ucl_management_entity_error_with_faculty"
-msgstr "Update UCLouvain management entity"
-
 msgid "edit_partnership"
 msgstr "Edit partnership"
 
@@ -571,10 +568,7 @@ msgid "faculty"
 msgstr "Faculty"
 
 msgid "faculty_entity_filter"
-msgstr "Entity"
-
-msgid "faculty_filter"
-msgstr "Faculty"
+msgstr "Faculty or Entity"
 
 msgid "fax"
 msgstr "Fax"
@@ -652,15 +646,6 @@ msgstr "Invalid partner"
 
 msgid "invalid_partner_entity"
 msgstr "Invalid partner entity"
-
-msgid "invalid_partnership_api_max_date"
-msgstr "Invalid date (this cannot be February the 29th)"
-
-msgid "invalid_partnership_creation_max_date"
-msgstr "Invalid date (this cannot be February the 29th)"
-
-msgid "invalid_ucl_university_labo"
-msgstr "Invalid school or laboratory"
 
 msgid "is_actif"
 msgstr "Is active"
@@ -767,9 +752,6 @@ msgstr "Next"
 msgid "no_agreement_yet"
 msgstr "No agreement yet"
 
-msgid "no_country"
-msgstr "No country"
-
 msgid "no_media_yet"
 msgstr "No media yet"
 
@@ -870,9 +852,6 @@ msgstr "Export partners"
 msgid "partnership"
 msgstr "partnership"
 
-msgid "partnerships"
-msgstr "partnerships"
-
 msgid "partnership_agreement_created"
 msgstr "partnership agreement created"
 
@@ -893,14 +872,6 @@ msgstr "Agreement begins before the partnership start."
 
 msgid "partnership_api_year"
 msgstr "Visible academic year for API"
-
-#, python-format
-msgid ""
-"partnership_configuration_creation_modification_max_date_%(min_year)s_"
-"%(max_year)s"
-msgstr ""
-"Maximum date for the creation or update of a partnership in year "
-"%(min_year)s-%(max_year)s."
 
 msgid "partnership_contact_create"
 msgstr "Create partnership contact"
@@ -1116,6 +1087,9 @@ msgstr "Type"
 msgid "ucl"
 msgstr "UCLouvain"
 
+msgid "ucl_entity"
+msgstr "UCLouvain university or School / Laboratory"
+
 msgid "ucl_entity_partner"
 msgstr "UCL entity partner"
 
@@ -1141,9 +1115,6 @@ msgid "ucl_university"
 msgstr "UCLouvain university"
 
 msgid "ucl_university_labo"
-msgstr "School / Laboratory"
-
-msgid "ucl_university_labo_filter"
 msgstr "School / Laboratory"
 
 msgid "university_offers_filter"

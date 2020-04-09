@@ -56,7 +56,7 @@ class PartnershipCreateView(LoginRequiredMixin,
         if not user_is_adri(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_created'),
-                partnership.ucl_university.most_recent_acronym
+                partnership.ucl_entity.most_recent_acronym
             )
             self.notify_admin_mail(title, 'partnership_creation.html', {
                 'partnership': partnership,

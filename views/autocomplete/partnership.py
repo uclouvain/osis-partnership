@@ -75,6 +75,9 @@ class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocompl
 
 
 class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    """
+    Autocomplete for offers on partnership create/update form
+    """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
@@ -94,7 +97,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
         if entities is not None:
             qs = qs.filter(Q(management_entity__in=entities) | Q(administration_entity__in=entities))
         else:
-            # FIXME when ucl_university is removed (faculty is the hidden field of PartnershipYearForm, updated by JS)
+            # faculty is the hidden field of PartnershipYearForm, updated by JS
             faculty = self.forwarded.get('faculty', None)
             if faculty is not None:
                 qs = qs.filter(
@@ -141,10 +144,18 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
 
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
+    """
+    Autocomplete for entities on partnership list filter form
+    """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
         qs = super().get_queryset()
+        ucl_entity = self.forwarded.get('ucl_entity', None)
+        if ucl_entity:
+            qs = qs.filter(entityversion__parent=ucl_entity)
+        else:
+            return qs.none()
         qs = qs.filter(partnerships_years__isnull=False)
         return qs

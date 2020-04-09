@@ -34,7 +34,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         cls.ucl_management_entity_linked = UCLManagementEntityFactory(
             entity=other_faculty,
         )
-        PartnershipFactory(ucl_university=other_faculty, ucl_university_labo=None)
+        PartnershipFactory(ucl_entity=other_faculty)
 
         # Users
         cls.lambda_user = UserFactory()

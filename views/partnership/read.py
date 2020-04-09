@@ -38,8 +38,7 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
         return get_object_or_404(
             Partnership.objects
             .select_related(
-                'partner', 'partner_entity', 'ucl_university',
-                'ucl_university_labo', 'author__user'
+                'partner', 'partner_entity', 'ucl_entity', 'author__user'
             )
             .prefetch_related(
                 'contacts',

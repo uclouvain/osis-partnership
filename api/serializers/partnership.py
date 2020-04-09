@@ -34,8 +34,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
         source='sector_most_recent_acronym',
         allow_null=True,
     )
-    ucl_university = EntitySerializer()
-    ucl_university_labo = EntitySerializer()
+    ucl_faculty = serializers.SerializerMethodField()
+    ucl_entity = EntitySerializer()
     is_sms = serializers.SerializerMethodField()
     is_smp = serializers.SerializerMethodField()
     is_smst = serializers.SerializerMethodField()
@@ -48,7 +48,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.URLField(
-        source='ucl_management_entity.contact_out_url', allow_null=True)
+        source='ucl_entity.uclmanagement_entity.contact_out_url', allow_null=True)
     out_education_levels = serializers.SerializerMethodField()
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
@@ -59,7 +59,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(
-        source='ucl_management_entity.contact_in_url',
+        source='ucl_entity.uclmanagement_entity.contact_in_url',
         allow_null=True,
     )
 
@@ -70,8 +70,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
         fields = [
-            'uuid', 'url', 'partner', 'supervisor', 'ucl_university',
-            'ucl_university_labo',
+            'uuid', 'url', 'partner', 'supervisor', 'ucl_entity',
+            'ucl_faculty',
             'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
             'education_fields', 'status', 'partner_entity', 'medias',
             'bilateral_agreements',
@@ -154,14 +154,16 @@ class PartnershipSerializer(serializers.ModelSerializer):
                 offers.all()]
 
     def get_out_contact(self, partnership):
-        administrative_person = getattr(partnership.ucl_management_entity,
-                                        'administrative_responsible', None)
-        email = getattr(partnership.ucl_management_entity, 'contact_out_email',
-                        None)
+        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+            return {}
+        ume = partnership.ucl_entity.uclmanagement_entity
+        administrative_person = ume.administrative_responsible
+
+        email = ume.contact_out_email
         if email is None:
-            email = getattr(administrative_person, 'email', None)
-        person = getattr(partnership.ucl_management_entity,
-                         'contact_out_person', None)
+            email = administrative_person.email
+
+        person = ume.contact_out_person
         if person is None:
             person = administrative_person
 
@@ -179,18 +181,18 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return contact
 
     def get_out_course_catalogue(self, partnership):
+        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+            return {}
+        ume = partnership.ucl_entity.uclmanagement_entity
+
         return {
             'fr': {
-                'text': getattr(partnership.ucl_management_entity,
-                                'course_catalogue_text_fr', None),
-                'url': getattr(partnership.ucl_management_entity,
-                               'course_catalogue_url_fr', None),
+                'text': ume.course_catalogue_text_fr,
+                'url': ume.course_catalogue_url_fr,
             },
             'en': {
-                'text': getattr(partnership.ucl_management_entity,
-                                'course_catalogue_text_en', None),
-                'url': getattr(partnership.ucl_management_entity,
-                               'course_catalogue_url_en', None),
+                'text': ume.course_catalogue_text_en,
+                'url': ume.course_catalogue_url_en,
             }
         }
 
@@ -211,14 +213,17 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return medias
 
     def get_in_contact(self, partnership):
-        administrative_person = getattr(partnership.ucl_management_entity,
-                                        'administrative_responsible', None)
-        email = getattr(partnership.ucl_management_entity, 'contact_in_email',
-                        None)
+        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+            return None
+
+        ume = partnership.ucl_entity.uclmanagement_entity
+        administrative_person = ume.administrative_responsible
+        email = ume.contact_in_email
+
         if email is None:
             email = getattr(administrative_person, 'email', None)
-        person = getattr(partnership.ucl_management_entity,
-                         'contact_in_person', None)
+        person = ume.contact_in_person
+
         if person is None:
             person = administrative_person
 
@@ -238,25 +243,22 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_funding(self, partnership):
         if not partnership.has_valid_agreement_in_current_year:
             return None
+        if not partnership.current_year_for_api:
+            return None
         if not self._get_current_year_attr(partnership, 'eligible'):
             return None
-        academic_year = self._get_current_year_attr(partnership,
-                                                    'academic_year')
-        try:
-            financing = Financing.objects.get(
-                academic_year=academic_year,
-                countries=partnership.partner.contact_address.country_id,
-            )
-        except Financing.DoesNotExist:
+        if not partnership.funding_name:
             return None
         return {
-            'name': financing.name,
-            'url': financing.url,
+            'name': partnership.funding_name,
+            'url': partnership.funding_url,
         }
 
     def get_staff_contact(self, partnership):
-        administrative_person = getattr(partnership.ucl_management_entity,
-                                        'administrative_responsible', None)
+        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+            return None
+        ume = partnership.ucl_entity.uclmanagement_entity
+        administrative_person = ume.administrative_responsible
         if administrative_person is None:
             return None
         contact = {
@@ -274,6 +276,12 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return None
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
+
+    def get_ucl_faculty(self, partnership):
+        return {
+            'acronym': partnership.faculty_most_recent_acronym,
+            'title': partnership.faculty_most_recent_title,
+        }
 
 
 class PartnershipAdminSerializer(serializers.ModelSerializer):

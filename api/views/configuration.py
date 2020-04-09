@@ -46,27 +46,6 @@ class ConfigurationView(APIView):
         )
         ucl_universities = (
             Entity.objects
-            .prefetch_related(
-                Prefetch(
-                    'parent_of',
-                    queryset=EntityVersion.objects
-                        .filter(entity__partnerships_labo__isnull=False, end_date__isnull=True)
-                        .distinct()
-                ),
-                Prefetch(
-                    'parent_of__entity',
-                    queryset=Entity.objects
-                        .annotate(
-                            most_recent_acronym=Subquery(
-                                EntityVersion.objects
-                                    .filter(entity=OuterRef('pk'))
-                                    .order_by('-start_date')
-                                    .annotate(name=Concat('acronym', Value(' - '), 'title'))
-                                    .values('name')[:1]
-                            ),
-                        )
-                )
-            )
             .annotate(
                 most_recent_acronym=Subquery(
                     EntityVersion.objects
@@ -87,9 +66,9 @@ class ConfigurationView(APIView):
             .distinct()
             .order_by('most_recent_acronym')
         )
-        supervisors = Person.objects.filter(
-            Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
-        ).order_by('last_name', 'first_name').distinct()
+        # supervisors = Person.objects.filter(
+        #     Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
+        # ).order_by('last_name', 'first_name').distinct()
         education_fields = (
             PartnershipYearEducationField.objects
             .filter(partnershipyear__academic_year=current_year)
@@ -108,7 +87,7 @@ class ConfigurationView(APIView):
             'continents': ContinentConfigurationSerializer(continents, many=True).data,
             'partners': PartnerConfigurationSerializer(partners, many=True).data,
             'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
-            'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
+            # 'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
             'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
             'fundings': list(fundings),
         }

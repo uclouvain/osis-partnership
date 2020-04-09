@@ -47,9 +47,9 @@ def limit_choices_to():
     """
     return Q(
         # must have ucl_management
-        uclmanagement_entity__isnull=False,
+        Q(uclmanagement_entity__isnull=False)
         # or parent must have ucl management
-        pk__in=children_of_managed_entities(),
+        | Q(pk__in=children_of_managed_entities()),
     )
 
 
@@ -88,26 +88,11 @@ class Partnership(models.Model):
         blank=True,
         null=True,
     )
-    ucl_university = models.ForeignKey(
+    ucl_entity = models.ForeignKey(
         'base.Entity',
-        verbose_name=_('ucl_university'),
+        verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to=Q(
-            # must be faculty
-            Q(entityversion__entity_type=FACULTY),
-            # and have ucl management, or labos having ucl management
-            Q(uclmanagement_entity__isnull=False)
-            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
-        ),
-    )
-    ucl_university_labo = models.ForeignKey(
-        'base.Entity',
-        verbose_name=_('ucl_university_labo'),
-        on_delete=models.PROTECT,
-        related_name='partnerships_labo',
-        blank=True,
-        null=True,
         limit_choices_to=limit_choices_to,
     )
     supervisor = models.ForeignKey(
@@ -283,37 +268,40 @@ class Partnership(models.Model):
 
     def _get_entities_acronyms_by_annotation(self):
         entities = []
-        if self.ucl_university_parent_most_recent_acronym:
+        if self.ucl_sector_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_parent_most_recent_title,
-                self.ucl_university_parent_most_recent_acronym,
+                self.ucl_sector_most_recent_title,
+                self.ucl_sector_most_recent_acronym,
             ))
-        if self.ucl_university_most_recent_acronym:
+        if self.ucl_faculty_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_most_recent_title,
-                self.ucl_university_most_recent_acronym,
+                self.ucl_faculty_most_recent_title,
+                self.ucl_faculty_most_recent_acronym,
             ))
-        if self.ucl_university_labo_most_recent_acronym:
+        if self.ucl_entity_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_labo_most_recent_title,
-                self.ucl_university_labo_most_recent_acronym,
+                self.ucl_entity_most_recent_title,
+                self.ucl_entity_most_recent_acronym,
             ))
         return mark_safe(' / '.join(entities))
 
     def _get_entities_acronyms(self):
         entities = []
-        university = self.ucl_university.entityversion_set.latest('start_date')
-        if university.parent is not None:
-            parent = university.parent.entityversion_set.latest('start_date')
+        entity = self.ucl_entity.entityversion_set.latest('start_date')
+        # Get the parent entity
+        if entity.parent is not None:
+            parent = entity.parent.entityversion_set.latest('start_date')
             if parent is not None:
+                # Get sector if the parent entity is a faculty
+                if parent.entity_type == FACULTY:
+                    grandparent = parent.parent.entityversion_set.latest('start_date')
+                    if grandparent is not None:
+                        entities.append(grandparent)
                 entities.append(parent)
-        entities.append(university)
-        if self.ucl_university_labo is not None:
-            labo = self.ucl_university_labo.entityversion_set.latest('start_date')
-            entities.append(labo)
+        entities.append(entity)
 
         def add_tooltip(entity):
             if isinstance(entity, EntityVersion):
@@ -332,21 +320,20 @@ class Partnership(models.Model):
     def ucl_management_entity(self):
         from ..ucl_management_entity import UCLManagementEntity
         return UCLManagementEntity.objects.filter(
-            # FIXME: use ucl_entity once available
-            entity=self.ucl_university_labo,
+            entity=self.ucl_entity,
         ).select_related(
             'administrative_responsible', 'contact_in_person', 'contact_out_person'
         ).first()
 
     @cached_property
     def administrative_responsible(self):
-        if self.ucl_management_entity is not None:
-            return self.ucl_management_entity.administrative_responsible
-        return None
+        if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
+            return None
+        return self.ucl_entity.uclmanagement_entity.administrative_responsible
 
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
-        if self.ucl_management_entity is not None:
-            return self.ucl_management_entity.academic_responsible
-        return None
+        if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
+            return None
+        return self.ucl_entity.uclmanagement_entity.academic_responsible
