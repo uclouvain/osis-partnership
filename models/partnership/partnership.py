@@ -10,11 +10,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity_version import EntityVersion
+from base.models.entity_version import (
+    EntityVersion,
+)
 from base.models.enums.entity_type import FACULTY
 from partnership.models import AgreementStatus
 from partnership.utils import (
-    merge_agreement_ranges,
+    children_of_managed_entities, merge_agreement_ranges,
 )
 
 __all__ = [
@@ -37,6 +39,19 @@ class PartnershipTag(models.Model):
 
     def __str__(self):
         return self.value
+
+
+def limit_choices_to():
+    """
+    We need to have this function otherwise there is a circular dependency
+    :return:
+    """
+    return Q(
+        # must have ucl_management
+        uclmanagement_entity__isnull=False,
+        # or parent must have ucl management
+        pk__in=children_of_managed_entities(),
+    )
 
 
 class Partnership(models.Model):
@@ -94,13 +109,7 @@ class Partnership(models.Model):
         related_name='partnerships_labo',
         blank=True,
         null=True,
-        limit_choices_to=Q(
-            # parent must be faculty
-            Q(entityversion__parent__entityversion__entity_type=FACULTY),
-            # and parent or itself have ucl management
-            Q(uclmanagement_entity__isnull=False)
-            | Q(entityversion__parent__uclmanagement_entity__isnull=False),
-        )
+        limit_choices_to=limit_choices_to,
     )
     supervisor = models.ForeignKey(
         'base.Person',

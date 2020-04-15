@@ -8,7 +8,7 @@ from base.models.entity import Entity
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from partnership.models import Partner, Partnership
-from partnership.utils import user_is_adri
+from partnership.utils import children_of_managed_entities, user_is_adri
 from ..fields import EntityChoiceField, PersonChoiceField
 
 __all__ = ['PartnershipForm']
@@ -36,11 +36,10 @@ class PartnershipForm(forms.ModelForm):
     ucl_university_labo = EntityChoiceField(
         label=_('ucl_university_labo'),
         queryset=Entity.objects.filter(
-            # parent must be faculty
-            Q(entityversion__parent__entityversion__entity_type=FACULTY),
-            # and parent or itself have ucl management
-            Q(uclmanagement_entity__isnull=False)
-            | Q(entityversion__parent__uclmanagement_entity__isnull=False),
+            # must have ucl_management
+            uclmanagement_entity__isnull=False,
+            # or parent must have ucl management
+            pk__in=children_of_managed_entities(),
         ).distinct(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_university_labo',

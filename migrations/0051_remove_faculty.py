@@ -4,6 +4,7 @@ import django.db.models.deletion
 from django.db.models import F, OuterRef, Subquery
 
 from base.models.enums.entity_type import FACULTY
+from partnership.models.partnership.partnership import limit_choices_to
 
 
 def forward(apps, schema_editor):
@@ -21,16 +22,21 @@ def backward(apps, schema_editor):
     UCLManagementEntity = apps.get_model('partnership', 'UCLManagementEntity')
     EntityVersion = apps.get_model('base', 'EntityVersion')
 
+    cte = EntityVersion.objects.with_children()
     # Get faculty of entity when entity is a not faculty
     UCLManagementEntity.objects.annotate(
-        entity_type=Subquery(EntityVersion.objects
-            .filter(entity_id=OuterRef('entity_id'))
-            .order_by('-start_date')
-            .values('entity_type')[:1]),
-        replacing_faculty_id=Subquery(EntityVersion.objects
-            .filter(entity__parent_of__entity_id=OuterRef('entity_id'))
-            .order_by('-start_date')
-            .values('entity_id')[:1]),
+        entity_type=Subquery(
+            EntityVersion.objects.filter(
+                entity_id=OuterRef('entity_id'),
+            ).order_by('-start_date').values('entity_type')[:1]),
+        replacing_faculty_id=Subquery(
+            cte.join(EntityVersion, id=cte.col.id).with_cte(cte).annotate(
+                children=cte.col.children,
+            ).filter(
+                entity_type='FACULTY',
+                children__contains_any=OuterRef('entity_id'),
+            ).values('entity_id').distinct()[:1]
+        )
     ).exclude(
         entity_type=FACULTY,
     ).update(
@@ -53,6 +59,7 @@ def backward(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
+        ('base', '0512_cte_manager'),
         ('partnership', '0050_configuration_academic_year'),
     ]
 
@@ -65,7 +72,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partnership',
             name='ucl_university_labo',
-            field=models.ForeignKey(blank=True, limit_choices_to=models.Q(models.Q(entityversion__parent__entityversion__entity_type='FACULTY'), models.Q(('uclmanagement_entity__isnull', False), ('entityversion__parent__uclmanagement_entity__isnull', False), _connector='OR')), null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships_labo', to='base.Entity', verbose_name='ucl_university_labo'),
+            field=models.ForeignKey(blank=True, limit_choices_to=limit_choices_to, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships_labo', to='base.Entity', verbose_name='ucl_university_labo'),
         ),
         migrations.AlterUniqueTogether(
             name='uclmanagemententity',

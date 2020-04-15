@@ -21,6 +21,7 @@ class UCLManagementEntitiesListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         sector = EntityFactory()
+        EntityVersionFactory(entity_type="SECTOR", entity=sector)
         faculty = EntityFactory()
         EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
