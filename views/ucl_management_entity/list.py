@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Func, OuterRef, Q, Subquery
+from django.db.models import Func, OuterRef, Subquery
 from django.views.generic import ListView
 
 from base.models.entity_version import EntityVersion
 from partnership import perms
 from partnership.models import UCLManagementEntity
-from partnership.utils import children_of_managed_entities, user_is_adri
+from partnership.utils import user_is_adri
 
 __all__ = [
     'UCLManagementEntityListView'

@@ -15,9 +15,8 @@ from base.models.entity_version import (
 )
 from base.models.enums.entity_type import FACULTY
 from partnership.models import AgreementStatus
-from partnership.utils import (
-    children_of_managed_entities, merge_agreement_ranges,
-)
+from partnership.utils import merge_agreement_ranges
+from ..ucl_management_entity import children_of_managed_entities
 
 __all__ = [
     'Partnership',

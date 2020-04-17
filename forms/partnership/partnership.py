@@ -7,8 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from base.models.entity import Entity
 from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
-from partnership.models import Partner, Partnership
-from partnership.utils import children_of_managed_entities, user_is_adri
+from partnership.models import (
+    Partner, Partnership,
+    children_of_managed_entities,
+)
+from partnership.utils import user_is_adri
 from ..fields import EntityChoiceField, PersonChoiceField
 
 __all__ = ['PartnershipForm']

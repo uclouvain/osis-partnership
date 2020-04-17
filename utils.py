@@ -2,7 +2,7 @@ from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from django.db.models import Func, Q
+from django.db.models import Q
 
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
@@ -115,15 +115,3 @@ def merge_agreement_ranges(agreements=None):
         elif merged_agreements[-1]['end'] + 1 < a['start']:
             merged_agreements.append(a)
     return merged_agreements
-
-
-def children_of_managed_entities():
-    from partnership.models import UCLManagementEntity
-
-    """ Returns entity ids whose parents have a ucl management associated """
-    cte = EntityVersion.objects.with_children()
-    return cte.join(
-        UCLManagementEntity, entity_id=cte.col.entity_id,
-    ).with_cte(cte).annotate(
-        child_entity_id=Func(cte.col.children, function='unnest'),
-    ).distinct('child_entity_id').values('child_entity_id')
