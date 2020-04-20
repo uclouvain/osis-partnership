@@ -66,8 +66,7 @@ class PartnershipApiViewTest(TestCase):
             status=AgreementStatus.VALIDATED.name,
         )
         cls.management_entity = UCLManagementEntityFactory(
-            faculty=partnership.ucl_university,
-            entity=None,
+            entity=partnership.ucl_university,
             academic_responsible=cls.supervisor_management_entity
         )
         cls.financing = FinancingFactory(academic_year=current_academic_year)

@@ -49,7 +49,10 @@
               {% for ucl_management_entity in ucl_management_entities %}
                 <tr>
                   <td>{{ ucl_management_entity.faculty_most_recent_acronym|default_if_none:"" }}</td>
-                  <td>{{ ucl_management_entity.entity_most_recent_acronym|default_if_none:"" }}</td>
+                  <td>
+                    {% if ucl_management_entity.faculty_most_recent_acronym != ucl_management_entity.entity_most_recent_acronym %}
+                    {{ ucl_management_entity.entity_most_recent_acronym|default_if_none:"" }}
+                  {% endif %}
                   <td>{{ ucl_management_entity.academic_responsible|default_if_none:"" }}{% if ucl_management_entity.academic_responsible.email %} - {{ ucl_management_entity.academic_responsible.email }}{% endif %}</td>
                   <td>{{ ucl_management_entity.administrative_responsible|default_if_none:"" }}{% if ucl_management_entity.administrative_responsible.email  %} - {{ ucl_management_entity.administrative_responsible.email }}{% endif %}</td>
                   <td>

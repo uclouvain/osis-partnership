@@ -6,6 +6,7 @@ __all__ = [
     'EducationGroupYearChoiceSelect',
     'EntityChoiceField',
     'EntityChoiceMultipleField',
+    'PersonChoiceField',
 ]
 
 

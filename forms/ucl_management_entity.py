@@ -48,7 +48,6 @@ class UCLManagementEntityForm(forms.ModelForm):
     class Meta:
         model = UCLManagementEntity
         fields = [
-            'faculty',
             'entity',
             'administrative_responsible',
             'academic_responsible',
@@ -64,16 +63,8 @@ class UCLManagementEntityForm(forms.ModelForm):
             'course_catalogue_url_en',
         ]
         widgets = {
-            'faculty': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:faculty',
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_entity',
-                },
-            ),
             'entity': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:faculty_entity',
-                forward=(forward.Field('faculty', 'ucl_university'),),
             ),
             'contact_in_person': autocomplete.ModelSelect2(
                 url='partnerships:autocomplete:person',
@@ -88,7 +79,6 @@ class UCLManagementEntityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if (self.instance.pk is not None and self.instance.has_linked_partnerships()) or not user_is_adri(self.user):
             self.fields['entity'].disabled = True
-            self.fields['faculty'].disabled = True
         if not user_is_adri(self.user):
             self.fields['academic_responsible'].disabled = True
             self.fields['administrative_responsible'].disabled = True

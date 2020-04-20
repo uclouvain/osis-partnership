@@ -1,17 +1,14 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import redirect
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
 from base.models.academic_year import find_academic_years
 from partnership import perms
 from partnership.forms import PartnershipForm
-from partnership.models import Partnership, PartnershipConfiguration
+from partnership.models import Partnership
 from partnership.utils import user_is_adri
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin

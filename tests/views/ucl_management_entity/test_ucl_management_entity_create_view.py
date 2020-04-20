@@ -38,8 +38,8 @@ class UCLManagementEntityCreateViewTest(TestCase):
         cls.contact_in_person = PersonFactory()
         cls.contact_out_person = PersonFactory()
 
-        # Case for duplicate with null entity:
-        UCLManagementEntityFactory(faculty=cls.faculty, entity=None)
+        # Case for duplicate with faculty:
+        UCLManagementEntityFactory(entity=cls.faculty)
 
         cls.data = {
             'academic_responsible': str(cls.academic_responsible.pk),
@@ -51,7 +51,6 @@ class UCLManagementEntityCreateViewTest(TestCase):
             'contact_out_person': str(cls.contact_out_person.pk),
             'contact_out_url': 'http://bar.fr/bar',
             'entity': str(cls.entity.pk),
-            'faculty': str(cls.faculty.pk),
         }
         cls.template_create = 'partnerships/ucl_management_entities/uclmanagemententity_create.html'
         cls.template_list = 'partnerships/ucl_management_entities/uclmanagemententity_list.html'
@@ -109,8 +108,7 @@ class UCLManagementEntityCreateViewTest(TestCase):
     def test_post_adri_duplicate_faculty_null_entity(self):
         self.client.force_login(self.adri_user)
         data = self.data
-        del data['entity']
-        data['faculty'] = self.faculty.pk
+        data['entity'] = self.faculty.pk
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, self.template_list)
         self.assertTemplateUsed(response, self.template_create)
