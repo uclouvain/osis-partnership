@@ -4,6 +4,9 @@ services:
   - postgresql
 addons:
     postgresql: "9.6"
+    apt:
+      packages:
+      - postgresql-9.6-postgis-2.4
 
 install:
   - export PROJECT_DIR=`pwd`
@@ -29,6 +32,7 @@ before_script:
   - echo "POSTGRES_PASSWORD = ''" >> .env
   - python3 manage.py compilemessages
   - psql -c 'create database osis_local;' -U postgres
+  - psql -c 'create extension postgis;' -U postgres -d osis_local
 
 script:
   - coverage run manage.py test --exclude-tag=selenium partnership
