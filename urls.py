@@ -109,7 +109,6 @@ urlpatterns = [
         url('^partner/$', PartnerAutocompleteView.as_view(), name='partner'),
         url('^partnership/$', PartnershipAutocompleteView.as_view(), name='partnership'),
         url('^partner-entity/$', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
-        url('^faculty/$', FacultyAutocompleteView.as_view(), name='faculty'),
         url('^faculty_entity/$', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
         url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
         url('^ucl_university_labo/$', UclUniversityLaboAutocompleteView.as_view(), name='ucl_university_labo'),

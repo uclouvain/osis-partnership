@@ -16,6 +16,7 @@ __all__ = [
 
 
 class FacultyAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    # FIXME remove or simplify once UclUniversityAutocompleteView is removed
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
@@ -51,6 +52,9 @@ class FacultyAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Query
 
 
 class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    """
+    Autocomplete for entities on UCLManagementEntity form
+    """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
@@ -62,13 +66,6 @@ class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
                     .order_by('-start_date')
                     .values('acronym')[:1]
             ),
-        )
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university:
-            qs = qs.filter(entityversion__parent=ucl_university)
-        else:
-            return Entity.objects.none()
-        qs = qs.annotate(
             is_valid=Exists(
                 EntityVersion.objects
                     .filter(entity=OuterRef('pk'))

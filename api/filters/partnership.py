@@ -17,16 +17,13 @@ class PartnershipSupervisorFilter(filters.Filter):
             qs.annotate(
                 has_supervisor_with_entity=Exists(
                     UCLManagementEntity.objects.filter(
-                        entity__isnull=False,
                         entity=OuterRef('ucl_university_labo'),
-                        faculty=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(
+                has_supervisor_with_faculty=Exists(
                     UCLManagementEntity.objects.filter(
-                        entity__isnull=True,
-                        faculty=OuterRef('ucl_university'),
+                        entity=OuterRef('ucl_university'),
                         academic_responsible__uuid=value,
                     )
                 )
@@ -37,7 +34,7 @@ class PartnershipSupervisorFilter(filters.Filter):
                     has_supervisor_with_entity=True)
                 | Q(supervisor__isnull=True,
                     ucl_university_labo__isnull=True,
-                    has_supervisor_without_entity=True)
+                    has_supervisor_with_faculty=True)
             )
         )
 

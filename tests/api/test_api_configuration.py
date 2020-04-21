@@ -43,7 +43,7 @@ class ConfigurationApiViewTest(TestCase):
             end_academic_year__year=current_academic_year.year + 1,
         )
         UCLManagementEntityFactory(
-            faculty=partnership.ucl_university,
+            entity=partnership.ucl_university,
             academic_responsible=cls.supervisor_management_entity
         )
         financing = FinancingFactory(academic_year=current_academic_year)

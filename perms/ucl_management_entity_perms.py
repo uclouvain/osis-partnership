@@ -10,11 +10,11 @@ __all__ = [
 
 
 def user_can_read_ucl_management_entity(user, ume):
-    return user_is_adri(user) or user_is_gf_of_faculty(user, ume.faculty)
+    return user_is_adri(user) or user_is_gf_of_faculty(user, ume.entity)
 
 
 def user_can_change_ucl_management_entity(user, ume):
-    return user_is_adri(user) or user_is_gf_of_faculty(user, ume.faculty)
+    return user_is_adri(user) or user_is_gf_of_faculty(user, ume.entity)
 
 
 def user_can_delete_ucl_management_entity(user, ume):
