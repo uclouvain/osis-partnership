@@ -3,6 +3,7 @@ from django.db.models import Func, OuterRef, Subquery
 from django.views.generic import ListView
 
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
 from partnership import perms
 from partnership.models import UCLManagementEntity
 from partnership.utils import user_is_adri
@@ -40,7 +41,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
             UCLManagementEntity.objects
             .annotate(
                 faculty_most_recent_acronym=Subquery(
-                    qs.filter(entity_type='FACULTY').values('acronym')[:1]
+                    qs.filter(entity_type=FACULTY).values('acronym')[:1]
                 ),
                 entity_most_recent_acronym=Subquery(
                     EntityVersion.objects
@@ -57,6 +58,7 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
                 'contact_out_person',
                 'entity',
             )
+            .prefetch_related('entity__partnerships')
         )
         if not user_is_adri(self.request.user):
             # get what the user manages

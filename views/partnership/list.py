@@ -6,8 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
-from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.search import SearchMixin
 from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
@@ -43,14 +41,10 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
             partnership_agreements_end__partnership=OuterRef('pk'),
             partnership_agreements_end__status=AgreementStatus.VALIDATED.name,
         ).order_by('-end_date').values('year')[:1])
-        ref = OuterRef('ucl_entity__pk')
-
-        cte = EntityVersion.objects.with_children(entity_id=ref)
-        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).order_by('-start_date')
 
         return (
             Partnership.objects
-            .all()
+            .add_acronyms()
             .select_related(
                 'ucl_entity',
                 'partner__contact_address__country', 'partner_entity',
@@ -58,38 +52,6 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
             )
             .annotate(
                 validity_end_year=validity_end_year,
-                ucl_sector_most_recent_acronym=CTESubquery(
-                    qs.filter(entity_type=SECTOR).values('acronym')[:1]
-                ),
-                ucl_sector_most_recent_title=CTESubquery(
-                    qs.filter(entity_type=SECTOR).values('title')[:1]
-                ),
-                ucl_faculty_most_recent_acronym=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref,
-                    ).values('acronym')[:1]
-                ),
-                ucl_faculty_most_recent_title=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref,
-                    ).values('title')[:1]
-                ),
-                ucl_entity_most_recent_acronym=CTESubquery(
-                    EntityVersion.objects
-                        .filter(entity=ref)
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-                ucl_entity_most_recent_title=CTESubquery(
-                    EntityVersion.objects
-                        .filter(entity=ref)
-                        .order_by('-start_date')
-                        .values('title')[:1]
-                ),
             )
         ).distinct()
 

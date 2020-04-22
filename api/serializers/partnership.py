@@ -31,7 +31,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         allow_null=True,
     )
     ucl_sector = serializers.CharField(
-        source='sector_most_recent_acronym',
+        source='ucl_sector_most_recent_acronym',
         allow_null=True,
     )
     ucl_faculty = serializers.SerializerMethodField()
@@ -277,10 +277,11 @@ class PartnershipSerializer(serializers.ModelSerializer):
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
 
-    def get_ucl_faculty(self, partnership):
+    @staticmethod
+    def get_ucl_faculty(partnership):
         return {
-            'acronym': partnership.faculty_most_recent_acronym,
-            'title': partnership.faculty_most_recent_title,
+            'acronym': partnership.ucl_faculty_most_recent_acronym,
+            'title': partnership.ucl_faculty_most_recent_title,
         }
 
 

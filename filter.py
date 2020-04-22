@@ -365,6 +365,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
 
     @property
     def qs(self):
+        # See also Partnership.objects.add_acronyms()
         ref = OuterRef('partnership__ucl_entity__pk')
 
         cte = EntityVersion.objects.with_children(entity_id=ref)

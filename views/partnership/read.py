@@ -37,8 +37,10 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return get_object_or_404(
             Partnership.objects
+            .add_acronyms()
             .select_related(
-                'partner', 'partner_entity', 'ucl_entity', 'author__user'
+                'partner', 'partner_entity', 'ucl_entity', 'author__user',
+                'supervisor',
             )
             .prefetch_related(
                 'contacts',

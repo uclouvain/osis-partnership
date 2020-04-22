@@ -12,8 +12,6 @@ from rest_framework.permissions import AllowAny
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
-from base.utils.cte import CTESubquery
 from partnership.models import (
     Financing, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipConfiguration, PartnershipYear,
@@ -37,12 +35,9 @@ class PartnershipsMixinView(GenericAPIView):
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
-        ref = OuterRef('ucl_entity__pk')
-        cte = EntityVersion.objects.with_children(entity_id=ref)
-        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).order_by('-start_date')
-
         return (
             Partnership.objects
+            .add_acronyms()
             .select_related(
                 'supervisor',
                 'partner_entity',
@@ -164,23 +159,6 @@ class PartnershipsMixinView(GenericAPIView):
                     )
                     .order_by('-end_academic_year__year')
                     .values('status')[:1]
-                ),
-                sector_most_recent_acronym=CTESubquery(
-                    qs.filter(entity_type=SECTOR).values('acronym')[:1]
-                ),
-                faculty_most_recent_acronym=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref
-                    ).values('acronym')[:1]
-                ),
-                faculty_most_recent_title=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref
-                    ).values('title')[:1]
                 ),
                 has_years_in=Exists(
                     PartnershipYear.objects.filter(
