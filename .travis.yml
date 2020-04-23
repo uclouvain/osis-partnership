@@ -36,6 +36,7 @@ before_script:
 
 script:
   - coverage run manage.py test --exclude-tag=selenium partnership
+  - ./manage.py makemigrations --check partnership
 
 after_success:
  - pip install python-coveralls
