@@ -1,110 +1,36 @@
-from datetime import date
-
-from django.db.models import Exists, OuterRef, Subquery, Q
-
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from .faculty import FacultyAutocompleteView, FacultyEntityAutocompleteView
+from .faculty import FacultyEntityAutocompleteView
 
 __all__ = [
-    'UclUniversityAutocompleteView',
     'UclUniversityAutocompleteFilterView',
-    'UclUniversityLaboAutocompleteView',
-    'UclUniversityLaboAutocompleteFilterView',
+    'UclEntityAutocompleteView',
 ]
 
 
-class UclUniversityAutocompleteView(FacultyAutocompleteView):
+class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     """
-    Autocomplete for faculty entities on Partnership form
-    """
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            # must have ucl management, or labos having ucl management
-            Q(uclmanagement_entity__isnull=False)
-            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
-        )
-
-
-class UclUniversityLaboAutocompleteView(FacultyEntityAutocompleteView):
-    """
-    Autocomplete for labo entities on Partnership form
+    Autocomplete for entities on Partnership form
     """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = Entity.objects.annotate(
-            most_recent_acronym=Subquery(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-            ),
-        )
-        # FIXME ucl_university is related to faculty chosen in PartnershipForm
-        #   this is used by 2 autocompletes, and will need to fetch faculties as well
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university:
-            qs = qs.filter(entityversion__parent=ucl_university)
+        from ...models.partnership.partnership import limit_choices_to
+        return super().get_queryset().filter(limit_choices_to())
+
+
+class UclUniversityAutocompleteFilterView(FacultyEntityAutocompleteView):
+    """
+    Autocomplete for entities on partnership list filter form
+    """
+    login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(partnerships__isnull=False)
+
+    def get_result_label(self, result):
+        if result.entityversion_set:
+            title = result.entityversion_set.latest("start_date").title
         else:
-            return Entity.objects.none()
-        qs = qs.annotate(
-            is_valid=Exists(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .exclude(end_date__lte=date.today())
-            )
-        ).filter(
-            is_valid=True,
-            uclmanagement_entity__isnull=False,
-        )
-        if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        qs = qs.order_by('most_recent_acronym')
-        return qs.distinct()
-
-
-class UclUniversityAutocompleteFilterView(UclUniversityAutocompleteView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        qs = (
-            Entity.objects
-            .annotate(
-                most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-                is_valid=Exists(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('pk'))
-                        .exclude(end_date__lte=date.today())
-                ),
-            )
-            .filter(partnerships__isnull=False, is_valid=True)
-        )
-        if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        qs = qs.order_by('most_recent_acronym')
-        return qs.distinct()
-
-
-class UclUniversityLaboAutocompleteFilterView(UclUniversityLaboAutocompleteView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university:
-            qs = qs.filter(partnerships_labo__ucl_university=ucl_university)
-        else:
-            return Entity.objects.none()
-        return qs.distinct()
+            return result.most_recent_acronym
+        return '{0.most_recent_acronym} - {1}'.format(result, title)

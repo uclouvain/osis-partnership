@@ -2,6 +2,7 @@ import uuid
 from datetime import date
 
 from django.db import models
+from django.db.models import Prefetch
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -199,8 +200,15 @@ class Partner(models.Model):
     @property
     def agreements(self):
         from ..partnership.agreement import PartnershipAgreement
+        from ..partnership.partnership import Partnership
         return (
             PartnershipAgreement.objects
-            .select_related('partnership', 'start_academic_year', 'end_academic_year')
             .filter(partnership__partner=self)
+            .select_related('start_academic_year', 'end_academic_year')
+            .prefetch_related(
+                Prefetch(
+                    'partnership',
+                    queryset=Partnership.objects.add_acronyms()
+                ),
+            )
         )

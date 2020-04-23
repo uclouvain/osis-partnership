@@ -221,8 +221,8 @@ msgid ""
 msgstr ""
 "Bonjour,\n"
 "\n"
-"Un accord pour le partenariat %(partnership)s vient d'être créé par %(person)s "
-"(%(username)s).\n"
+"Un accord pour le partenariat %(partnership)s vient d'être créé par "
+"%(person)s (%(username)s).\n"
 "\n"
 "Vous pouvez y accéder à cette URL :\n"
 "\n"
@@ -574,9 +574,6 @@ msgstr "Supprimer l'entité de gestion UCLouvain"
 msgid "description"
 msgstr "Description"
 
-msgid "duplicate_ucl_management_entity_error_with_faculty"
-msgstr "Une entité de gestion avec cette faculté existe déjà."
-
 msgid "edit_partnership"
 msgstr "Mettre à jour le partenariat"
 
@@ -634,9 +631,6 @@ msgstr "Faculté"
 
 msgid "faculty_entity_filter"
 msgstr "Entité responsable"
-
-msgid "faculty_filter"
-msgstr "Faculté responsable"
 
 msgid "fax"
 msgstr "Fax"
@@ -716,15 +710,6 @@ msgstr "Le partenaire est en cours de validation"
 
 msgid "invalid_partner_entity"
 msgstr "Entité partenaire invalide."
-
-msgid "invalid_partnership_api_max_date"
-msgstr "Date invalide (le 29 février n'est pas autorisé)."
-
-msgid "invalid_partnership_creation_max_date"
-msgstr "Date invalide (le 29 février n'est pas autorisé)."
-
-msgid "invalid_ucl_university_labo"
-msgstr "École / laboratoire invalide."
 
 msgid "is_actif"
 msgstr "Actif"
@@ -833,9 +818,6 @@ msgstr "Suivant"
 
 msgid "no_agreement_yet"
 msgstr "Il n'y a pas encore d'accord."
-
-msgid "no_country"
-msgstr "Pas de pays"
 
 msgid "no_media_yet"
 msgstr "Il n'y a pas encore de média."
@@ -962,14 +944,6 @@ msgstr "L'accord commence avant le partenariat."
 msgid "partnership_api_year"
 msgstr "Année académique visible sur l'API"
 
-#, python-format
-msgid ""
-"partnership_configuration_creation_modification_max_date_%(min_year)s_"
-"%(max_year)s"
-msgstr ""
-"Date maximum pour la création ou la modification d'un partenariat de l'année "
-"%(min_year)s-%(max_year)s."
-
 msgid "partnership_contact_create"
 msgstr "Créer un contact"
 
@@ -1081,9 +1055,6 @@ msgstr "{partnership} pour l'année {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
 
-msgid "partnerships"
-msgstr "partenariats"
-
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
 
@@ -1188,6 +1159,9 @@ msgstr "Type"
 msgid "ucl"
 msgstr "UCLouvain"
 
+msgid "ucl_entity"
+msgstr "Faculté ou entité"
+
 msgid "ucl_entity_partner"
 msgstr "Entité UCLouvain partenaire"
 
@@ -1213,9 +1187,6 @@ msgid "ucl_university"
 msgstr "Faculté"
 
 msgid "ucl_university_labo"
-msgstr "Entité"
-
-msgid "ucl_university_labo_filter"
 msgstr "Entité"
 
 msgid "university_offers_filter"

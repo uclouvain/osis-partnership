@@ -29,8 +29,7 @@ class UclEntityAutocompleteTestCase(TestCase):
         cls.user_gf.user_permissions.add(perm)
         cls.user_other_gf.user_permissions.add(perm)
 
-        cls.university_url = reverse('partnerships:autocomplete:ucl_university')
-        cls.labo_url = reverse('partnerships:autocomplete:ucl_university_labo')
+        cls.url = reverse('partnerships:autocomplete:ucl_entity')
 
         # Ucl
         sector = EntityFactory()
@@ -69,67 +68,51 @@ class UclEntityAutocompleteTestCase(TestCase):
 
     def test_ucl_entity_autocomplete_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.university_url)
-        self.assertFalse(len(response.json()['results']))
-        response = self.client.get(self.labo_url)
-        self.assertFalse(len(response.json()['results']))
+        response = self.client.get(self.url)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))
 
     def test_ucl_entity_autocomplete_adri(self):
         self.client.force_login(self.user_adri)
-        response = self.client.get(self.university_url)
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
-
-        # Must be forwardedd
-        response = self.client.get(self.labo_url)
-        self.assertFalse(len(response.json()['results']))
-
-        response = self.client.get(self.labo_url, {
-            'forward': '{"ucl_university":%s}' % self.ucl_university.pk,
-        })
+        response = self.client.get(self.url)
         results = response.json()['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))
+
+        # Add a management entity on faculty, and we should have 2
+        UCLManagementEntityFactory(entity=self.ucl_university)
+        response = self.client.get(self.url)
+        results = response.json()['results']
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
+        self.assertEqual(results[1]['id'], str(self.ucl_university_labo.pk))
 
     def test_ucl_entity_autocomplete_gf(self):
         self.client.force_login(self.user_gf)
-        response = self.client.get(self.university_url)
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
-
-        response = self.client.get(self.labo_url, {
-            'forward': '{"ucl_university":%s}' % self.ucl_university.pk,
-        })
+        response = self.client.get(self.url)
         results = response.json()['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))
 
+        # Add a management entity on faculty, and we should have 2
+        UCLManagementEntityFactory(entity=self.ucl_university)
+        response = self.client.get(self.url)
+        results = response.json()['results']
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
+        self.assertEqual(results[1]['id'], str(self.ucl_university_labo.pk))
+
     def test_ucl_entity_autocomplete_gs(self):
         self.client.force_login(self.user_gs)
-        response = self.client.get(self.university_url)
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
-
-        response = self.client.get(self.labo_url, {
-            'forward': '{"ucl_university":%s}' % self.ucl_university.pk,
-        })
+        response = self.client.get(self.url)
         results = response.json()['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))
 
     def test_ucl_entity_autocomplete_other_gf(self):
         self.client.force_login(self.user_other_gf)
-        response = self.client.get(self.university_url)
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
-
-        response = self.client.get(self.labo_url, {
-            'forward': '{"ucl_university":%s}' % self.ucl_university.pk,
-        })
+        response = self.client.get(self.url)
         results = response.json()['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))

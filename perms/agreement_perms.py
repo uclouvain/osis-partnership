@@ -19,5 +19,5 @@ def user_can_change_agreement(user, agreement):
         return True
     return (
             agreement.status == AgreementStatus.WAITING.name
-            and user_is_gf_of_faculty(user, agreement.partnership.ucl_university)
+            and user_is_gf_of_faculty(user, agreement.partnership.ucl_entity)
     )

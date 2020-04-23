@@ -111,11 +111,7 @@ class UCLManagementEntity(models.Model):
         )
 
     def has_linked_partnerships(self):
-        if hasattr(self.entity, 'partnerships'):
-            # That's a faculty
-            return self.entity.partnerships.exists()
-        # That's a labo
-        return self.entity.partnerships_labo.exists()
+        return self.entity.partnerships.exists()
 
 
 def children_of_managed_entities():

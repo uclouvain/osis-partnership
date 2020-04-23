@@ -87,8 +87,7 @@ class PartnershipAgreementInline(admin.TabularInline):
 
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = (
-        'ucl_university',
-        'ucl_university_labo',
+        'ucl_entity',
         'supervisor',
         'partner',
         'partner_entity',

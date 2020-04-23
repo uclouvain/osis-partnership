@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
-from base.models.entity_version import EntityVersion
 from base.utils.search import SearchMixin
 from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
@@ -31,9 +30,9 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     def get(self, *args, **kwargs):
         if not self.request.GET and user_is_gf(self.request.user):
             university = self.request.user.person.partnershipentitymanager_set.first().entity
-            if Partnership.objects.filter(ucl_university=university).exists():
+            if Partnership.objects.filter(ucl_entity=university).exists():
                 return HttpResponseRedirect(
-                    '?ucl_university={0}'.format(university.pk)
+                    '?ucl_entity={0}'.format(university.pk)
                 )
         return super().get(*args, **kwargs)
 
@@ -42,52 +41,17 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
             partnership_agreements_end__partnership=OuterRef('pk'),
             partnership_agreements_end__status=AgreementStatus.VALIDATED.name,
         ).order_by('-end_date').values('year')[:1])
+
         return (
             Partnership.objects
-            .all()
+            .add_acronyms()
             .select_related(
-                'ucl_university_labo', 'ucl_university',
+                'ucl_entity',
                 'partner__contact_address__country', 'partner_entity',
                 'supervisor',
             )
             .annotate(
                 validity_end_year=validity_end_year,
-                ucl_university_parent_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                    .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-                ),
-                ucl_university_parent_most_recent_title=Subquery(
-                    EntityVersion.objects
-                    .filter(entity__parent_of__entity=OuterRef('ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('title')[:1]
-                ),
-                ucl_university_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                    .filter(entity=OuterRef('ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-                ),
-                ucl_university_most_recent_title=Subquery(
-                    EntityVersion.objects
-                    .filter(entity=OuterRef('ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('title')[:1]
-                ),
-                ucl_university_labo_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                    .filter(entity=OuterRef('ucl_university_labo__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-                ),
-                ucl_university_labo_most_recent_title=Subquery(
-                    EntityVersion.objects
-                    .filter(entity=OuterRef('ucl_university_labo__pk'))
-                    .order_by('-start_date')
-                    .values('title')[:1]
-                ),
             )
         ).distinct()
 
