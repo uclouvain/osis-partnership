@@ -81,13 +81,6 @@ class ConfigurationApiViewTest(TestCase):
         self.assertIn('ucl_universities', data)
         self.assertEqual(len(data['ucl_universities']), 2)
 
-    # def test_supervisors(self):
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.json()
-    #     self.assertIn('supervisors', data)
-    #     self.assertEqual(len(data['supervisors']), 2)
-
     def test_education_fields(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)

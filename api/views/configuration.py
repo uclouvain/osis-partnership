@@ -1,5 +1,5 @@
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
+from django.db.models import Exists, OuterRef, Prefetch, Subquery, Value
 from django.db.models.functions import Concat
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,12 +7,15 @@ from rest_framework.views import APIView
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.person import Person
-from partnership.api.serializers import ContinentConfigurationSerializer, \
-    PartnerConfigurationSerializer, UCLUniversityConfigurationSerializer, \
-    SupervisorConfigurationSerializer, EducationFieldConfigurationSerializer
-from partnership.models import PartnershipConfiguration, Partner, \
-    PartnershipAgreement, PartnershipYearEducationField, Financing
+from partnership.api.serializers import (
+    ContinentConfigurationSerializer,
+    EducationFieldConfigurationSerializer, PartnerConfigurationSerializer,
+    UCLUniversityConfigurationSerializer,
+)
+from partnership.models import (
+    Financing, Partner, PartnershipAgreement,
+    PartnershipConfiguration, PartnershipYearEducationField,
+)
 from reference.models.continent import Continent
 from reference.models.country import Country
 
@@ -66,9 +69,6 @@ class ConfigurationView(APIView):
             .distinct()
             .order_by('most_recent_acronym')
         )
-        # supervisors = Person.objects.filter(
-        #     Q(management_entities__isnull=False) | Q(partnerships_supervisor__isnull=False)
-        # ).order_by('last_name', 'first_name').distinct()
         education_fields = (
             PartnershipYearEducationField.objects
             .filter(partnershipyear__academic_year=current_year)
@@ -87,7 +87,6 @@ class ConfigurationView(APIView):
             'continents': ContinentConfigurationSerializer(continents, many=True).data,
             'partners': PartnerConfigurationSerializer(partners, many=True).data,
             'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
-            # 'supervisors': SupervisorConfigurationSerializer(supervisors, many=True).data,
             'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
             'fundings': list(fundings),
         }
