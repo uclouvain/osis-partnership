@@ -37,7 +37,7 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         cls.ucl_management_entity_linked = UCLManagementEntityFactory(
             entity=third_faculty,
         )
-        PartnershipFactory(ucl_university=third_faculty)
+        PartnershipFactory(ucl_entity=third_faculty)
 
         cls.url = reverse(
             'partnerships:ucl_management_entities:delete',

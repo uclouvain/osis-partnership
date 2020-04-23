@@ -38,7 +38,7 @@ class PartnersApiViewTest(TestCase):
             supervisor=cls.supervisor_partnership,
             years=[],
             partner__contact_address__country=cls.country,
-            ucl_university_labo=EntityFactory(),
+            ucl_entity=EntityFactory(),
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
@@ -63,7 +63,7 @@ class PartnersApiViewTest(TestCase):
             status=AgreementStatus.VALIDATED.name,
         )
         cls.management_entity = UCLManagementEntityFactory(
-            entity=partnership.ucl_university,
+            entity=partnership.ucl_entity,
             academic_responsible=cls.supervisor_management_entity
         )
         cls.financing = FinancingFactory(academic_year=cls.current_academic_year)
@@ -97,8 +97,8 @@ class PartnersApiViewTest(TestCase):
         data = response.json()
         self.assertEqual(len(data['results']), 2)
 
-    def test_ordering_ucl_university(self):
-        response = self.client.get(self.url + '?ordering=ucl_university')
+    def test_ordering_ucl_entity(self):
+        response = self.client.get(self.url + '?ordering=ucl_entity')
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data['results']), 2)
@@ -143,15 +143,7 @@ class PartnersApiViewTest(TestCase):
 
     def test_filter_ucl_university(self):
         response = self.client.get(self.url, {
-            'ucl_university': self.partnership.ucl_university.uuid,
-        })
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
-
-    def test_filter_ucl_university_labo(self):
-        response = self.client.get(self.url, {
-            'ucl_university_labo': self.partnership.ucl_university_labo.uuid,
+            'ucl_entity': self.partnership.ucl_entity.uuid,
         })
         self.assertEqual(response.status_code, 200)
         data = response.json()

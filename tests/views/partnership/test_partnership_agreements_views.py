@@ -12,7 +12,7 @@ from partnership.models import AgreementStatus, MediaVisibility
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory
+    PartnershipFactory,
 )
 
 
@@ -59,6 +59,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -70,7 +71,10 @@ class PartnershipAgreementCreateViewTest(TestCase):
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         # Misc
         cls.url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': cls.partnership.pk})
         cls.data = {
@@ -148,6 +152,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -161,7 +166,10 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
         # Misc
         cls.url = reverse('partnerships:agreements:update', kwargs={
@@ -257,6 +265,7 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -270,9 +279,15 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
-        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_out_of_date = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_out_of_date)
         # Misc
         cls.url = reverse('partnerships:agreements:delete', kwargs={

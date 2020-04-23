@@ -9,7 +9,7 @@ __all__ = [
 def user_can_change_partnership(user, partnership):
     if user_is_adri(user):
         return True
-    return user_is_gf_of_faculty(user, partnership.ucl_university)
+    return user_is_gf_of_faculty(user, partnership.ucl_entity)
 
 
 def user_can_add_partnership(user, partnership=None):

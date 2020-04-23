@@ -12,8 +12,7 @@ class Command(ProgressBarMixin, BaseCommand):
         entities = UCLManagementEntity.objects.all()
         for i, management_entity in enumerate(entities):
             Partnership.objects.filter(
-                Q(ucl_university=management_entity.entity_id)
-                | Q(ucl_university_labo=management_entity.entity_id),
+                ucl_entity=management_entity.entity_id,
                 supervisor=management_entity.academic_responsible_id,
             ).update(supervisor=None)
             self.print_progress_bar(i + 1, total)

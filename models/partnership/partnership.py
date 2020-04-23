@@ -13,7 +13,8 @@ from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import (
     EntityVersion,
 )
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
+from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus
 from partnership.utils import merge_agreement_ranges
 from ..ucl_management_entity import children_of_managed_entities
@@ -40,6 +41,49 @@ class PartnershipTag(models.Model):
         return self.value
 
 
+class PartnershipQuerySet(models.QuerySet):
+    def add_acronyms(self):
+        ref = models.OuterRef('ucl_entity__pk')
+
+        cte = EntityVersion.objects.with_children(entity_id=ref)
+        qs = cte.join(
+            EntityVersion, id=cte.col.id
+        ).with_cte(cte).order_by('-start_date')
+
+        last_version = EntityVersion.objects.filter(
+            entity=ref
+        ).order_by('-start_date')
+
+        return self.annotate(
+            ucl_sector_most_recent_acronym=CTESubquery(
+                qs.filter(entity_type=SECTOR).values('acronym')[:1]
+            ),
+            ucl_sector_most_recent_title=CTESubquery(
+                qs.filter(entity_type=SECTOR).values('title')[:1]
+            ),
+            ucl_faculty_most_recent_acronym=CTESubquery(
+                qs.filter(
+                    entity_type=FACULTY,
+                ).exclude(
+                    entity_id=ref,
+                ).values('acronym')[:1]
+            ),
+            ucl_faculty_most_recent_title=CTESubquery(
+                qs.filter(
+                    entity_type=FACULTY,
+                ).exclude(
+                    entity_id=ref,
+                ).values('title')[:1]
+            ),
+            ucl_entity_most_recent_acronym=CTESubquery(
+                last_version.values('acronym')[:1]
+            ),
+            ucl_entity_most_recent_title=CTESubquery(
+                last_version.values('title')[:1]
+            ),
+        )
+
+
 def limit_choices_to():
     """
     We need to have this function otherwise there is a circular dependency
@@ -47,9 +91,9 @@ def limit_choices_to():
     """
     return Q(
         # must have ucl_management
-        uclmanagement_entity__isnull=False,
+        Q(uclmanagement_entity__isnull=False)
         # or parent must have ucl management
-        pk__in=children_of_managed_entities(),
+        | Q(pk__in=children_of_managed_entities()),
     )
 
 
@@ -88,26 +132,11 @@ class Partnership(models.Model):
         blank=True,
         null=True,
     )
-    ucl_university = models.ForeignKey(
+    ucl_entity = models.ForeignKey(
         'base.Entity',
-        verbose_name=_('ucl_university'),
+        verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to=Q(
-            # must be faculty
-            Q(entityversion__entity_type=FACULTY),
-            # and have ucl management, or labos having ucl management
-            Q(uclmanagement_entity__isnull=False)
-            | Q(parent_of__entity__uclmanagement_entity__isnull=False),
-        ),
-    )
-    ucl_university_labo = models.ForeignKey(
-        'base.Entity',
-        verbose_name=_('ucl_university_labo'),
-        on_delete=models.PROTECT,
-        related_name='partnerships_labo',
-        blank=True,
-        null=True,
         limit_choices_to=limit_choices_to,
     )
     supervisor = models.ForeignKey(
@@ -151,6 +180,8 @@ class Partnership(models.Model):
         editable=False,
         null=True,
     )
+
+    objects = PartnershipQuerySet.as_manager()
 
     class Meta:
         ordering = ('-created',)
@@ -274,79 +305,48 @@ class Partnership(models.Model):
 
     @cached_property
     def entities_acronyms(self):
-        """ Get a string of the entities acronyms with tooltips with the title """
-        try:
-            # Try with annotation first to not do another request
-            return self._get_entities_acronyms_by_annotation()
-        except AttributeError:
-            return self._get_entities_acronyms()
-
-    def _get_entities_acronyms_by_annotation(self):
+        """
+        The following attributes come from add_acronyms() annotations
+        """
         entities = []
-        if self.ucl_university_parent_most_recent_acronym:
+        if self.ucl_sector_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_parent_most_recent_title,
-                self.ucl_university_parent_most_recent_acronym,
+                self.ucl_sector_most_recent_title,
+                self.ucl_sector_most_recent_acronym,
             ))
-        if self.ucl_university_most_recent_acronym:
+        if self.ucl_faculty_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_most_recent_title,
-                self.ucl_university_most_recent_acronym,
+                self.ucl_faculty_most_recent_title,
+                self.ucl_faculty_most_recent_acronym,
             ))
-        if self.ucl_university_labo_most_recent_acronym:
+        if self.ucl_entity_most_recent_acronym:
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_university_labo_most_recent_title,
-                self.ucl_university_labo_most_recent_acronym,
+                self.ucl_entity_most_recent_title,
+                self.ucl_entity_most_recent_acronym,
             ))
         return mark_safe(' / '.join(entities))
-
-    def _get_entities_acronyms(self):
-        entities = []
-        university = self.ucl_university.entityversion_set.latest('start_date')
-        if university.parent is not None:
-            parent = university.parent.entityversion_set.latest('start_date')
-            if parent is not None:
-                entities.append(parent)
-        entities.append(university)
-        if self.ucl_university_labo is not None:
-            labo = self.ucl_university_labo.entityversion_set.latest('start_date')
-            entities.append(labo)
-
-        def add_tooltip(entity):
-            if isinstance(entity, EntityVersion):
-                entity_string = entity.acronym
-            else:
-                entity_string = str(entity)
-            return format_html(
-                '<abbr title="{0}">{1}</abbr>',
-                entity.title,
-                entity_string,
-            )
-
-        return mark_safe(' / '.join(map(add_tooltip, entities)))
 
     @cached_property
     def ucl_management_entity(self):
         from ..ucl_management_entity import UCLManagementEntity
         return UCLManagementEntity.objects.filter(
-            # FIXME: use ucl_entity once available
-            entity=self.ucl_university_labo,
+            entity=self.ucl_entity,
         ).select_related(
             'administrative_responsible', 'contact_in_person', 'contact_out_person'
         ).first()
 
     @cached_property
     def administrative_responsible(self):
-        if self.ucl_management_entity is not None:
-            return self.ucl_management_entity.administrative_responsible
-        return None
+        if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
+            return None
+        return self.ucl_entity.uclmanagement_entity.administrative_responsible
 
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
-        if self.ucl_management_entity is not None:
-            return self.ucl_management_entity.academic_responsible
-        return None
+        if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
+            return None
+        return self.ucl_entity.uclmanagement_entity.academic_responsible

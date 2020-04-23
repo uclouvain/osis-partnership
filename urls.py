@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 
 from partnership.views import (
-    EntityAutocompleteView, FacultyAutocompleteView,
+    EntityAutocompleteView,
     FacultyEntityAutocompleteView,
     FinancingExportView, FinancingImportView,
     FinancingListView,
@@ -38,9 +38,7 @@ from partnership.views import (
     UCLManagementEntityListView,
     UCLManagementEntityUpdateView,
     UclUniversityAutocompleteFilterView,
-    UclUniversityAutocompleteView,
-    UclUniversityLaboAutocompleteFilterView,
-    UclUniversityLaboAutocompleteView,
+    UclEntityAutocompleteView,
     UniversityOffersAutocompleteFilterView,
     YearsEntityAutocompleteFilterView, PartnershipMediaCreateView,
     PartnershipAgreementListView,
@@ -110,8 +108,7 @@ urlpatterns = [
         url('^partnership/$', PartnershipAutocompleteView.as_view(), name='partnership'),
         url('^partner-entity/$', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         url('^faculty_entity/$', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
-        url('^ucl_university/$', UclUniversityAutocompleteView.as_view(), name='ucl_university'),
-        url('^ucl_university_labo/$', UclUniversityLaboAutocompleteView.as_view(), name='ucl_university_labo'),
+        url('^ucl_entity/$', UclEntityAutocompleteView.as_view(), name='ucl_entity'),
         url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
         url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
@@ -127,14 +124,9 @@ urlpatterns = [
             name='partner_entity_partnerships_filter',
         ),
         url(
-            r'^ucl_university_filter/$',
+            r'^ucl_entity_filter/$',
             UclUniversityAutocompleteFilterView.as_view(),
-            name='ucl_university_filter',
-        ),
-        url(
-            r'^ucl_university_labo_filter/$',
-            UclUniversityLaboAutocompleteFilterView.as_view(),
-            name='ucl_university_labo_filter',
+            name='ucl_entity_filter',
         ),
         url('^years_entity_filter/$', YearsEntityAutocompleteFilterView.as_view(), name='years_entity_filter'),
         url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
