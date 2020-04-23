@@ -16,7 +16,7 @@ from partnership.tests.factories import (
     PartnershipEntityManagerFactory,
     PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
-    UCLManagementEntityFactory
+    UCLManagementEntityFactory,
 )
 from reference.tests.factories.country import CountryFactory
 

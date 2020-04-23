@@ -1,14 +1,16 @@
 from dal import autocomplete, forward
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Func, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
 from base.models.person import Person
+from base.utils.cte import CTESubquery
 from partnership.models import (
     Partner, Partnership,
-    children_of_managed_entities,
+    PartnershipEntityManager, children_of_managed_entities,
 )
 from partnership.utils import user_is_adri
 from ..fields import EntityChoiceField, PersonChoiceField
@@ -24,7 +26,7 @@ class PartnershipForm(forms.ModelForm):
             Q(uclmanagement_entity__isnull=False)
             # or parent must have ucl management
             | Q(pk__in=children_of_managed_entities()),
-        ),
+        ).distinct(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_entity',
             attrs={
@@ -72,28 +74,32 @@ class PartnershipForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if self.user is not None:
-            if not user_is_adri(self.user):
 
-                # Restrict fields for GF
-                # FIXME hierarchy not flat
-                self.fields['ucl_entity'].queryset = self.fields['ucl_entity'].queryset.filter(
-                    Q(partnershipentitymanager__person=self.user.person)
-                    | Q(entityversion__parent__partnershipentitymanager__person=self.user.person)
-                    | Q(entityversion__parent__entityversion__parent__partnershipentitymanager__person=self.user.person),
-                ).distinct()
+        field = self.fields['ucl_entity']
+        if not user_is_adri(self.user):
+            # Get all children entities which have a PartnershipEntityManager
+            cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
+            qs = cte.join(
+                PartnershipEntityManager, entity_id=cte.col.entity_id
+            ).with_cte(cte).filter(person=self.user.person).annotate(
+                child_entity_id=Func(cte.col.children, function='unnest'),
+            )
 
-                if self.fields['ucl_entity'].queryset.count() == 1:
-                    faculty = self.fields['ucl_entity'].queryset.first()
-                    if faculty is not None:
-                        self.fields['ucl_entity'].initial = faculty.pk
-                    self.fields['ucl_entity'].disabled = True
+            # Restrict fields for GF and GS
+            field.queryset = field.queryset.filter(
+                pk__in=CTESubquery(qs.values('child_entity_id'))
+            ).distinct()
 
-                if self.instance.pk is not None:
-                    self.fields['partner'].disabled = True
-                    self.fields['ucl_entity'].disabled = True
-            else:
-                self.fields['ucl_entity'].queryset = self.fields['ucl_entity'].queryset.distinct()
+            if field.queryset.count() == 1:
+                faculty = field.queryset.first()
+                if faculty is not None:
+                    field.initial = faculty.pk
+                field.disabled = True
+
+            if self.instance.pk is not None:
+                self.fields['partner'].disabled = True
+                field.disabled = True
+
         try:
             self.fields['partner'].widget.forward.append(
                 forward.Const(self.instance.partner.pk, 'partner_pk'),
