@@ -15,13 +15,13 @@ from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipFactory,
     PartnershipTagFactory,
-    PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     PartnerTagFactory, PartnerTypeFactory
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnershipsListViewTest(TestCase):
@@ -95,7 +95,7 @@ class PartnershipsListViewTest(TestCase):
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
         cls.partnership_partner_tags = PartnershipFactory(partner=partner_tag)
         # education_field
-        cls.education_field = PartnershipYearEducationFieldFactory()
+        cls.education_field = DomainIscedFactory()
         partnership_year = PartnershipYearFactory(academic_year__year=2120)
         partnership_year.education_fields.add(cls.education_field)
         cls.partnership_education_field = PartnershipFactory(years=[partnership_year])
@@ -190,7 +190,7 @@ class PartnershipsListViewTest(TestCase):
             academic_year__year=2160,
         )
         partnership_year.offers.add(EducationGroupYearFactory())
-        cls.all_education_field = PartnershipYearEducationFieldFactory()
+        cls.all_education_field = DomainIscedFactory()
         partnership_year.education_fields.add(cls.all_education_field)
         cls.all_education_level = PartnershipYearEducationLevelFactory()
         partnership_year.education_levels.add(cls.all_education_level)

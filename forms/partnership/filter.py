@@ -9,12 +9,13 @@ from base.models.entity import Entity
 from base.models.person import Person
 from partnership.models import (
     Address, Partner, PartnerEntity, PartnerTag, PartnerType, PartnershipTag,
-    PartnershipYear, PartnershipYearEducationField,
+    PartnershipYear,
     PartnershipYearEducationLevel,
     PartnershipType,
 )
 from reference.models.continent import Continent
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
 
@@ -166,7 +167,7 @@ class PartnershipFilterForm(forms.Form):
 
     education_field = forms.ModelChoiceField(
         label=_('education_field'),
-        queryset=PartnershipYearEducationField.objects.filter(partnershipyear__isnull=False).distinct(),
+        queryset=DomainIsced.objects.filter(partnershipyear__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )

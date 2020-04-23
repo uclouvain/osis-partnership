@@ -13,10 +13,11 @@ from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (
     Address, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipYear,
-    PartnershipYearEducationField, PartnerType,
+    PartnerType,
     UCLManagementEntity, MediaVisibility, PartnershipType, AgreementStatus,
 )
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 
 COUNTRIES_OLD_TO_ISO = {
     'ZA': 'ZA',
@@ -398,9 +399,9 @@ class Command(ProgressBarMixin, BaseCommand):
         code = code.rjust(4, '0')
         if code not in self.education_fields:
             try:
-                ed_field = PartnershipYearEducationField.objects.get(code=code)
+                ed_field = DomainIsced.objects.get(code=code)
                 self.education_fields[code] = ed_field
-            except PartnershipYearEducationField.DoesNotExist:
+            except DomainIsced.DoesNotExist:
                 self.write_error('Unknown education field {code}'.format(
                     code=code)
                 )

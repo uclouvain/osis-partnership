@@ -4,10 +4,14 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.person import PersonFactory
 from partnership.models import PartnershipConfiguration
-from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
-    PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
+from partnership.tests.factories import (
+    FinancingFactory, PartnerFactory,
+    PartnershipAgreementFactory, PartnershipFactory, PartnershipYearFactory,
+    UCLManagementEntityFactory,
+)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class ConfigurationApiViewTest(TestCase):
@@ -28,7 +32,7 @@ class ConfigurationApiViewTest(TestCase):
             partnership=partnership,
             academic_year=current_academic_year,
         )
-        year.education_fields.add(PartnershipYearEducationFieldFactory())
+        year.education_fields.add(DomainIscedFactory())
         PartnershipAgreementFactory(
             partnership=partnership,
             start_academic_year=current_academic_year,
