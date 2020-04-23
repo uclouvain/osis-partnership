@@ -19,11 +19,11 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         sector = EntityFactory()
+        EntityVersionFactory(entity=sector)
         faculty = EntityFactory()
         EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
-        EntityVersionFactory(entity_type="FACULTY", entity=faculty)
-        EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
+        EntityVersionFactory(entity=other_faculty, entity_type=FACULTY)
 
         cls.ucl_management_entity = UCLManagementEntityFactory(entity=faculty)
         cls.other_ucl_management_entity = UCLManagementEntityFactory(
@@ -44,7 +44,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         cls.gs_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.gs_user, entity=sector)
         cls.gf_user = UserFactory()
-        entity_manager = PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 

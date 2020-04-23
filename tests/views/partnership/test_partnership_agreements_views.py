@@ -12,7 +12,7 @@ from partnership.models import AgreementStatus, MediaVisibility
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory
+    PartnershipFactory,
 )
 
 
@@ -59,6 +59,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -151,6 +152,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -263,6 +265,7 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
