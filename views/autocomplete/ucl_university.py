@@ -1,5 +1,4 @@
 from .faculty import FacultyEntityAutocompleteView
-from ...models.partnership.partnership import limit_choices_to
 
 __all__ = [
     'UclUniversityAutocompleteFilterView',
@@ -15,6 +14,7 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
+        from ...models.partnership.partnership import limit_choices_to
         return super().get_queryset().filter(limit_choices_to())
 
 
