@@ -7,9 +7,10 @@ from partnership.utils import academic_years
 
 
 class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
+    url = serializers.HyperlinkedRelatedField(
         view_name='partnerships:detail',
-        source='partnership'
+        source='partnership',
+        read_only=True,
     )
     country = serializers.CharField(
         source='partnership.partner.contact_address.country',
