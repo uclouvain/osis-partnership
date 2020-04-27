@@ -69,9 +69,14 @@ class PartnershipForm(forms.ModelForm):
             'tags': autocomplete.Select2Multiple(),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, partnership_type=None, *args, **kwargs):
+        """
+        :type partnership_type: partnership.models.PartnershipType
+        """
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        if partnership_type:
+            self.instance.partnership_type = partnership_type.name
 
         field = self.fields['ucl_entity']
         field.queryset = field.queryset.filter(

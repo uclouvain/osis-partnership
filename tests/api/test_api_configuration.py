@@ -27,7 +27,10 @@ class ConfigurationApiViewTest(TestCase):
         cls.supervisor_partnership = PersonFactory()
         cls.supervisor_management_entity = PersonFactory()
 
-        partnership = PartnershipFactory(supervisor=cls.supervisor_partnership, years=[])
+        partnership = PartnershipFactory(
+            supervisor=cls.supervisor_partnership,
+            years=[]
+        )
         year = PartnershipYearFactory(
             partnership=partnership,
             academic_year=current_academic_year,

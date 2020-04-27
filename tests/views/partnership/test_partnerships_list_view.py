@@ -118,10 +118,11 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_is_stt = PartnershipFactory()
         PartnershipYearFactory(partnership=cls.partnership_is_stt, is_stt=True, academic_year__year=2153)
         # partnership_type
-        cls.partnership_type = PartnershipFactory()
+        cls.partnership_type = PartnershipFactory(
+            partnership_type=PartnershipType.GENERAL.name,
+        )
         PartnershipYearFactory(
             partnership=cls.partnership_type,
-            partnership_type=PartnershipType.CODIPLOMATION.name,
             academic_year__year=2154,
         )
         # tags
@@ -175,6 +176,7 @@ class PartnershipsListViewTest(TestCase):
         labo = EntityVersionFactory(acronym='ZZZ', parent=faculty.entity)
         cls.partnership_all_filters = PartnershipFactory(
             ucl_entity=labo.entity,
+            partnership_type=PartnershipType.PROJECT.name,
             partner__contact_address__city='all_filters',
             partner__contact_address__country=country,
             comment='all_filters',
@@ -186,7 +188,6 @@ class PartnershipsListViewTest(TestCase):
             is_smp=False,
             is_sta=False,
             is_stt=False,
-            partnership_type=PartnershipType.AUTRE.name,
             academic_year__year=2160,
         )
         partnership_year.offers.add(EducationGroupYearFactory())
@@ -393,7 +394,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.CODIPLOMATION.name)
+        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.GENERAL.name)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -478,7 +479,7 @@ class PartnershipsListViewTest(TestCase):
             'is_smp': 'False',
             'is_sta': 'False',
             'is_stt': 'False',
-            'partnership_type': PartnershipType.AUTRE.name,
+            'partnership_type': PartnershipType.PROJECT.name,
             'tags': str(self.partnership_all_filters.tags.first().pk),
             'comment': 'all_filters',
             'partnership_in': str(AcademicYear.objects.get(year=2125).pk),

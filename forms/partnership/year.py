@@ -7,7 +7,7 @@ from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from partnership.models import (
-    Partnership, PartnershipConfiguration, PartnershipYear, PartnershipType,
+    Partnership, PartnershipConfiguration, PartnershipYear,
 )
 from partnership.utils import user_is_adri
 from ..fields import (
@@ -62,7 +62,6 @@ class PartnershipYearForm(forms.ModelForm):
     class Meta:
         model = PartnershipYear
         fields = (
-            'partnership_type',
             'education_fields',
             'education_levels',
             'entities',
@@ -82,8 +81,6 @@ class PartnershipYearForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['partnership_type'].initial = PartnershipType.MOBILITY.name
-        self.fields['partnership_type'].disabled = True
         current_academic_year = (
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
         )

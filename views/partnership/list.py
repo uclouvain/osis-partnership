@@ -10,7 +10,7 @@ from base.utils.search import SearchMixin
 from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
 from partnership.filter import PartnershipAdminFilter
-from partnership.models import AgreementStatus, Partnership
+from partnership.models import AgreementStatus, Partnership, PartnershipType
 from partnership.utils import user_is_adri, user_is_gf
 
 __all__ = [
@@ -29,6 +29,7 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
 
     def get(self, *args, **kwargs):
         if not self.request.GET and user_is_gf(self.request.user):
+            # FIXME is it to enforce ucl_entity? Should be done in search form
             university = self.request.user.person.partnershipentitymanager_set.first().entity
             if Partnership.objects.filter(ucl_entity=university).exists():
                 return HttpResponseRedirect(
@@ -59,7 +60,10 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
         user = self.request.user
         context = super().get_context_data(**kwargs)
         context['can_change_configuration'] = user_is_adri(user)
-        context['can_add_partnership'] = perms.user_can_add_partnership(user)
+        context['can_add_partnership'] = any([
+            t for t in PartnershipType
+            if perms.user_can_add_partnership(user, t)]
+        )
         context['url'] = reverse('partnerships:list')
         context['export_url'] = reverse('partnerships:export')
         context['search_button_label'] = _('search_partnership')

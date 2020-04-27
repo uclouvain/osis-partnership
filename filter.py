@@ -176,7 +176,6 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='years__is_stt',
         widget=CustomNullBooleanSelect(),
     )
-    partnership_type = filters.CharFilter(field_name='years__partnership_type')
     partnership_in = filters.CharFilter(method='filter_partnership_in')
     partnership_ending_in = filters.CharFilter(
         method='filter_partnership_ending_in'
@@ -196,6 +195,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         model = Partnership
         fields = [
             'ordering',
+            'partnership_type',
             'partner_type',
             'ucl_entity',
             'education_level',

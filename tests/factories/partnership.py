@@ -1,6 +1,6 @@
 import factory
 
-from partnership.models import Partnership, PartnershipTag
+from partnership.models import Partnership, PartnershipTag, PartnershipType
 from .contact import ContactFactory
 from .partner import PartnerEntityFactory, PartnerFactory
 from .partnership_year import PartnershipYearFactory
@@ -27,6 +27,7 @@ class PartnershipFactory(factory.DjangoModelFactory):
         PartnerEntityFactory,
         partner=factory.SelfAttribute('..partner'),
     )
+    partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',

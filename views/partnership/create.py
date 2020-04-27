@@ -3,19 +3,45 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 
 from base.models.academic_year import find_academic_years
 from partnership import perms
 from partnership.forms import PartnershipForm
-from partnership.models import Partnership
+from partnership.models import Partnership, PartnershipType
 from partnership.utils import user_is_adri
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
 __all__ = [
     'PartnershipCreateView',
+    'PartnershipTypeChooseView',
 ]
+
+
+class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
+                                TemplateView):
+    template_name = 'partnerships/partnership/type_choose.html'
+    login_url = 'access_denied'
+
+    def test_func(self):
+        return bool(self.extra_context['types'])
+
+    def dispatch(self, request, *args, **kwargs):
+        # Get all types the user can create
+        types = [t for t in PartnershipType
+                 if perms.user_can_add_partnership(request.user, t)]
+        self.extra_context = {'types': types}
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # Redirect if there is only one type
+        types = self.extra_context['types']
+        if len(types) == 1:
+            return redirect('partnerships:create', type=types[0])
+
+        # Display template
+        return super().get(request, *args, **kwargs)
 
 
 class PartnershipCreateView(LoginRequiredMixin,
@@ -29,7 +55,9 @@ class PartnershipCreateView(LoginRequiredMixin,
     login_url = 'access_denied'
 
     def test_func(self):
-        return perms.user_can_add_partnership(self.request.user)
+        return perms.user_can_add_partnership(
+            self.request.user, self.kwargs['type'],
+        )
 
     @transaction.atomic
     def form_valid(self, form, form_year):

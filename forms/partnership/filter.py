@@ -9,7 +9,6 @@ from base.models.entity import Entity
 from base.models.person import Person
 from partnership.models import (
     Address, Partner, PartnerEntity, PartnerTag, PartnerType, PartnershipTag,
-    PartnershipYear,
     PartnershipYearEducationLevel,
     PartnershipType,
 )
@@ -257,19 +256,6 @@ class PartnershipFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
-        # Partnership types
-        partnership_types = (
-            PartnershipYear.objects
-                .values_list('partnership_type', flat=True)
-                .order_by('partnership_type')
-                .distinct('partnership_type')
-        )
-        types_dict = dict(PartnershipType.choices())
-        choices = sorted([
-            (partnership_type, types_dict.get(partnership_type, partnership_type))
-            for partnership_type in partnership_types
-        ], key=lambda x: x[1])
-        self.fields['partnership_type'].choices = ((None, _('partnership_type')),) + tuple(choices)
 
     def clean_ordering(self):
         # Django filters expects a list

@@ -17,16 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "Accord de co-diplômation"
-msgstr ""
-
-msgid "Accord de co-tutelle"
-msgstr ""
-
-msgid "Accord spécifique"
-msgstr ""
-
-msgid "Accord-cadre"
+msgid "Accord général de collaboration"
 msgstr ""
 
 msgid "Accreditation, _(certification or qualification body"
@@ -42,16 +33,10 @@ msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
 msgid "Are you sure you want to delete this contact?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce contact?"
 
-msgid "Autre"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Counsellzing body"
-msgstr ""
-
-msgid "Déclaration d’intention"
 msgstr ""
 
 msgid "EU-wide network"
@@ -293,10 +278,19 @@ msgstr ""
 msgid "Other"
 msgstr "Autre"
 
+msgid "Partenariat de co-organisation de doctorat"
+msgstr ""
+
+msgid "Partenariat de co-organisation de formation"
+msgstr ""
+
+msgid "Partenariat de mobilité"
+msgstr ""
+
 msgid "Partnerships"
 msgstr "Partenariats"
 
-msgid "Projet Fonds d’appuie à l’internationnalisation"
+msgid "Projet financé"
 msgstr ""
 
 msgid "Regional Public body"
@@ -413,6 +407,10 @@ msgstr "Août"
 
 msgid "author"
 msgstr "Auteur"
+
+#, python-format
+msgid "can change %(type)s"
+msgstr ""
 
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
