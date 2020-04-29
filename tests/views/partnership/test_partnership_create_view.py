@@ -2,6 +2,7 @@ from datetime import date
 
 from django.contrib.auth.models import Permission
 from django.core import mail
+from django.forms import ModelChoiceField
 from django.test import TestCase
 from django.urls import reverse
 
@@ -63,7 +64,9 @@ class PartnershipCreateViewTest(TestCase):
         EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
-        UCLManagementEntityFactory(entity=cls.ucl_university_labo)
+        UCLManagementEntityFactory(entity=cls.ucl_university)
+        UCLManagementEntityFactory()
+
         cls.ucl_university_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_not_choice, entity_type=FACULTY)
         cls.ucl_university_labo_not_choice = EntityFactory()
@@ -82,7 +85,7 @@ class PartnershipCreateViewTest(TestCase):
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
             'supervisor': '',
-            'ucl_entity': cls.ucl_university_labo.pk,
+            'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
             'year-is_sms': True,
             'year-is_smp': False,
@@ -154,17 +157,17 @@ class PartnershipCreateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data
         data['ucl_entity'] = self.ucl_university_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
         data['ucl_entity'] = self.ucl_university_labo_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)

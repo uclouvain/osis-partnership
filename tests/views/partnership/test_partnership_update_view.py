@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Permission
+from django.forms import ModelChoiceField
 from django.test import TestCase
 from django.urls import reverse
 
@@ -62,6 +63,7 @@ class PartnershipUpdateViewTest(TestCase):
         UCLManagementEntityFactory(entity=cls.ucl_university)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        UCLManagementEntityFactory(entity=cls.ucl_university_labo)
         cls.ucl_university_not_choice = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_not_choice, entity_type=FACULTY)
         cls.ucl_university_labo_not_choice = EntityFactory()
@@ -151,19 +153,19 @@ class PartnershipUpdateViewTest(TestCase):
             data['comment'],
         )
         self.assertEqual(
-            str(partnership.partner.pk),
+            str(partnership.partner_id),
             str(data['partner']),
         )
         self.assertEqual(
-            str(partnership.partner_entity.pk),
+            str(partnership.partner_entity_id),
             str(data['partner_entity']),
         )
         self.assertEqual(
-            str(partnership.supervisor.pk if partnership.supervisor is not None else None),
+            str(partnership.supervisor_id if partnership.supervisor is not None else None),
             str(data['supervisor'] if data['supervisor'] is not '' else None),
         )
         self.assertEqual(
-            str(partnership.ucl_entity.pk),
+            str(partnership.ucl_entity_id),
             str(data['ucl_entity']),
         )
         self.assertEqual(
@@ -256,17 +258,17 @@ class PartnershipUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['ucl_entity'] = self.ucl_university_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_invalid_ucl_university_labo(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['ucl_entity'] = self.ucl_university_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_post_end_date(self):
         self.client.force_login(self.user_adri)

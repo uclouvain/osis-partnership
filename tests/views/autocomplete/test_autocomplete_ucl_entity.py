@@ -2,9 +2,10 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY, SCHOOL
+from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory, UCLManagementEntityFactory,
@@ -15,6 +16,7 @@ class UclEntityAutocompleteTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
+        PersonFactory(user=cls.user)
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
@@ -33,6 +35,11 @@ class UclEntityAutocompleteTestCase(TestCase):
 
         # Ucl
         sector = EntityFactory()
+        EntityVersionFactory(
+            entity=sector,
+            entity_type=SECTOR,
+            acronym='A',
+        )
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(
             entity=cls.ucl_university,
@@ -70,8 +77,7 @@ class UclEntityAutocompleteTestCase(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
         results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], str(self.ucl_university_labo.pk))
+        self.assertEqual(len(results), 0)
 
     def test_ucl_entity_autocomplete_adri(self):
         self.client.force_login(self.user_adri)
