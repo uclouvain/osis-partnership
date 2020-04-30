@@ -8,6 +8,7 @@ from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.tests.factories import PartnershipYearFactory
 
 
 class YearEntitiesAutocompleteTestCase(TestCase):
@@ -19,7 +20,11 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         cls.user.user_permissions.add(perm)
 
         cls.url = reverse(
-            'partnerships:autocomplete:partnership_year_entities')
+            'partnerships:autocomplete:partnership_year_entities'
+        )
+        cls.filter_url = reverse(
+            'partnerships:autocomplete:years_entity_filter'
+        )
 
         # Ucl
         cls.sector = EntityFactory()
@@ -95,3 +100,23 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         # with query on AA
         response = self.client.get(self.url, forward(self.labo, q='AA'))
         self.assertEqual(len(response.json()['results']), 2)
+
+    def test_filter(self):
+        self.client.force_login(self.user)
+
+        # No entity, no result
+        response = self.client.get(self.filter_url)
+        self.assertEqual(len(response.json()['results']), 0)
+
+        def forward(entity, **kwargs):
+            return {'forward': json.dumps({'ucl_entity': entity.pk}), **kwargs}
+
+        # No partnerhsip, no result
+        response = self.client.get(self.filter_url, forward(self.ucl_university))
+        self.assertEqual(len(response.json()['results']), 0)
+
+        # Partnerhsip, result
+        partnerhsip_year = PartnershipYearFactory()
+        partnerhsip_year.entities.add(self.labo)
+        response = self.client.get(self.filter_url, forward(self.ucl_university))
+        self.assertEqual(len(response.json()['results']), 1)

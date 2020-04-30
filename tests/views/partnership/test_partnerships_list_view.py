@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.models.academic_year import AcademicYear
-from base.models.enums.entity_type import SCHOOL
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -34,9 +34,10 @@ class PartnershipsListViewTest(TestCase):
             partner__name='Albania School',
         )
         # ucl_university
-        parent = EntityVersionFactory(acronym='AAA').entity
+        parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
         cls.ucl_university = EntityVersionFactory(
             parent=parent,
+            entity_type=FACULTY,
             acronym='ZZZ',
         ).entity
         cls.partnership_ucl_university = PartnershipFactory(
@@ -165,8 +166,15 @@ class PartnershipsListViewTest(TestCase):
         )
         # All filters
         country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
+        sector = EntityVersionFactory(acronym='ZZZ', entity_type=SECTOR)
+        faculty = EntityVersionFactory(
+            acronym='ZZZ',
+            entity_type=FACULTY,
+            parent=sector.entity,
+        )
+        labo = EntityVersionFactory(acronym='ZZZ', parent=faculty.entity)
         cls.partnership_all_filters = PartnershipFactory(
-            ucl_entity=EntityVersionFactory(entity_type=SCHOOL).entity,
+            ucl_entity=labo.entity,
             partner__contact_address__city='all_filters',
             partner__contact_address__country=country,
             comment='all_filters',
