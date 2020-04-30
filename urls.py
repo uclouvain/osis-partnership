@@ -136,7 +136,11 @@ urlpatterns = [
             UclUniversityAutocompleteFilterView.as_view(),
             name='ucl_entity_filter',
         ),
-        url('^years_entity_filter/$', YearsEntityAutocompleteFilterView.as_view(), name='years_entity_filter'),
+        url(
+            '^years_entity_filter/$',
+            YearsEntityAutocompleteFilterView.as_view(),
+            name='years_entity_filter'
+        ),
         url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
     ], 'partnerships'), namespace='autocomplete')),
 ]

@@ -174,15 +174,18 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
     """
     Autocomplete for entities on partnership list filter form
     """
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
     def get_queryset(self):
-        qs = super().get_queryset()
-        ucl_entity = self.forwarded.get('ucl_entity', None)
-        if ucl_entity:
-            qs = qs.filter(entityversion__parent=ucl_entity)
-        else:
-            return qs.none()
-        qs = qs.filter(partnerships_years__isnull=False)
-        return qs
+        entity = self.forwarded.get('ucl_entity', None)
+        if entity is None:
+            return Entity.objects.none()
+
+        # Get all children of faculty
+        faculty = get_faculty_id(entity)
+        cte = EntityVersion.objects.with_parents(entity=faculty)
+        qs = cte.queryset().with_cte(cte).values('entity_id')
+
+        # Must have partnership_years associated
+        return super().get_queryset().filter(
+            partnerships_years__isnull=False,
+            pk__in=qs,
+        )

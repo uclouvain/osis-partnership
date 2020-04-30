@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Q, Exists, OuterRef, Max, Subquery, Case, When
+from django.db.models import Exists, Max, OuterRef, Q
 from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
@@ -13,7 +13,6 @@ from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     AgreementStatus,
     PartnershipYear,
-    Financing,
 )
 
 
@@ -146,6 +145,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='partner__contact_address__country',
     )
     city = filters.CharFilter(field_name='partner__contact_address__city')
+    ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
     partner_type = filters.CharFilter(field_name='partner__partner_type')
     education_level = filters.CharFilter(field_name='years__education_levels')
     education_field = filters.CharFilter(field_name='years__education_fields')
@@ -235,6 +235,16 @@ class PartnershipAdminFilter(filters.FilterSet):
             queryset = queryset.filter(
                 Q(years__entities=value) | Q(years__entities__isnull=True)
             )
+        return queryset
+
+    @staticmethod
+    def filter_ucl_entity(queryset, name, value):
+        if value:
+            # Allow all children of entity too
+            cte = EntityVersion.objects.with_parents(entity_id=value.pk)
+            qs = cte.queryset().with_cte(cte).values('entity_id')
+
+            queryset = queryset.filter(ucl_entity__in=qs)
         return queryset
 
     @staticmethod
