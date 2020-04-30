@@ -109,8 +109,16 @@ urlpatterns = [
         url('^partner-entity/$', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         url('^faculty_entity/$', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
         url('^ucl_entity/$', UclEntityAutocompleteView.as_view(), name='ucl_entity'),
-        url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
-        url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
+        url(
+            '^partnership_year_entities/$',
+            PartnershipYearEntitiesAutocompleteView.as_view(),
+            name='partnership_year_entities',
+        ),
+        url(
+            '^partnership_year_offers/$',
+            PartnershipYearOffersAutocompleteView.as_view(),
+            name='partnership_year_offers',
+        ),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url(
