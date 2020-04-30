@@ -29,13 +29,10 @@ def get_faculty_id(entity_id):
     :param entity_id:
     :return: faculty_id
     """
-    faculty = entity_id
-    entity_version = EntityVersion.objects.filter(
-        entity=entity_id
-    ).order_by('-start_date').first()
-    if entity_version and entity_version.entity_type != FACULTY:
-        faculty = entity_version.parent_id
-    return faculty
+    cte = EntityVersion.objects.with_children(entity=entity_id)
+    return cte.join(EntityVersion, id=cte.col.id).with_cte(cte).filter(
+        entity_type=FACULTY
+    ).values_list('entity_id', flat=True).first()
 
 
 class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
