@@ -3,9 +3,9 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.models.academic_year import AcademicYear
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
@@ -34,9 +34,10 @@ class PartnershipsListViewTest(TestCase):
             partner__name='Albania School',
         )
         # ucl_university
-        parent = EntityVersionFactory(acronym='AAA').entity
+        parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
         cls.ucl_university = EntityVersionFactory(
             parent=parent,
+            entity_type=FACULTY,
             acronym='ZZZ',
         ).entity
         cls.partnership_ucl_university = PartnershipFactory(
@@ -165,8 +166,15 @@ class PartnershipsListViewTest(TestCase):
         )
         # All filters
         country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
+        sector = EntityVersionFactory(acronym='ZZZ', entity_type=SECTOR)
+        faculty = EntityVersionFactory(
+            acronym='ZZZ',
+            entity_type=FACULTY,
+            parent=sector.entity,
+        )
+        labo = EntityVersionFactory(acronym='ZZZ', parent=faculty.entity)
         cls.partnership_all_filters = PartnershipFactory(
-            ucl_entity=EntityFactory(),
+            ucl_entity=labo.entity,
             partner__contact_address__city='all_filters',
             partner__contact_address__country=country,
             comment='all_filters',
@@ -211,26 +219,26 @@ class PartnershipsListViewTest(TestCase):
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url, follow=True)
+        response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     def test_get_list_pagination(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?page=1', follow=True)
+        response = self.client.get(self.url + '?page=1')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 20)
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=partner__name', follow=True)
+        response = self.client.get(self.url + '?ordering=partner__name')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(context['partnerships'][0], self.partnership_first_name)
 
     def test_get_list_ordering_country(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=country', follow=True)
+        response = self.client.get(self.url + '?ordering=country')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(context['partnerships'][0], self.partnership_city)
@@ -238,7 +246,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_get_list_ordering_ucl(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=ucl', follow=True)
+        response = self.client.get(self.url + '?ordering=ucl')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
@@ -246,11 +254,15 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_ucl_university(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ucl_entity=' + str(self.ucl_university.pk))
+        response = self.client.get(self.url, {
+            'ucl_entity': self.ucl_university.pk,
+            'ordering': 'ucl',
+        })
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university)
+        self.assertEqual(len(context['partnerships']), 2)
+        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
+        self.assertEqual(context['partnerships'][1], self.partnership_ucl_university)
 
     def test_filter_ucl_university_labo(self):
         self.client.force_login(self.user)

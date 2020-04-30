@@ -19,7 +19,7 @@ __all__ = ['PartnershipYearForm']
 
 class PartnershipYearForm(forms.ModelForm):
     # Used for the dal forward
-    faculty = forms.CharField(required=False, widget=forms.HiddenInput())
+    entity = forms.CharField(required=False, widget=forms.HiddenInput())
 
     start_academic_year = forms.ModelChoiceField(
         label=_('start_academic_year'),
@@ -44,7 +44,7 @@ class PartnershipYearForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_entities',
-            forward=['faculty'],
+            forward=['entity'],
         ),
     )
 
@@ -55,7 +55,7 @@ class PartnershipYearForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_offers',
-            forward=['faculty', 'entities', 'education_levels'],
+            forward=['entity', 'entities', 'education_levels'],
         ),
     )
 

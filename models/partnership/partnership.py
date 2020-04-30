@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.db.models import Max, Min, Q
+from django.db.models import Max, Min
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -17,7 +17,6 @@ from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus
 from partnership.utils import merge_agreement_ranges
-from ..ucl_management_entity import children_of_managed_entities
 
 __all__ = [
     'Partnership',
@@ -84,19 +83,6 @@ class PartnershipQuerySet(models.QuerySet):
         )
 
 
-def limit_choices_to():
-    """
-    We need to have this function otherwise there is a circular dependency
-    :return:
-    """
-    return Q(
-        # must have ucl_management
-        Q(uclmanagement_entity__isnull=False)
-        # or parent must have ucl management
-        | Q(pk__in=children_of_managed_entities()),
-    )
-
-
 class Partnership(models.Model):
     """
     Le modèle principal représentant un partenariat.
@@ -137,7 +123,6 @@ class Partnership(models.Model):
         verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
-        limit_choices_to=limit_choices_to,
     )
     supervisor = models.ForeignKey(
         'base.Person',

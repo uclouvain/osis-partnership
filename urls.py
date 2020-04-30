@@ -109,8 +109,16 @@ urlpatterns = [
         url('^partner-entity/$', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         url('^faculty_entity/$', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
         url('^ucl_entity/$', UclEntityAutocompleteView.as_view(), name='ucl_entity'),
-        url('^partnership_year_entities/$', PartnershipYearEntitiesAutocompleteView.as_view(), name='partnership_year_entities'),
-        url('^partnership_year_offers/$', PartnershipYearOffersAutocompleteView.as_view(), name='partnership_year_offers'),
+        url(
+            '^partnership_year_entities/$',
+            PartnershipYearEntitiesAutocompleteView.as_view(),
+            name='partnership_year_entities',
+        ),
+        url(
+            '^partnership_year_offers/$',
+            PartnershipYearOffersAutocompleteView.as_view(),
+            name='partnership_year_offers',
+        ),
         url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url(
@@ -128,7 +136,11 @@ urlpatterns = [
             UclUniversityAutocompleteFilterView.as_view(),
             name='ucl_entity_filter',
         ),
-        url('^years_entity_filter/$', YearsEntityAutocompleteFilterView.as_view(), name='years_entity_filter'),
+        url(
+            '^years_entity_filter/$',
+            YearsEntityAutocompleteFilterView.as_view(),
+            name='years_entity_filter'
+        ),
         url('^offers_filter/$', UniversityOffersAutocompleteFilterView.as_view(), name='university_offers_filter'),
     ], 'partnerships'), namespace='autocomplete')),
 ]

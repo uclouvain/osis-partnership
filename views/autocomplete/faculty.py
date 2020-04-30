@@ -20,18 +20,14 @@ class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
+        last_version = EntityVersion.objects.filter(
+            entity=OuterRef('pk')
+        ).order_by('-start_date')
+
         qs = Entity.objects.annotate(
-            most_recent_acronym=Subquery(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
-            ),
-            is_valid=Exists(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .exclude(end_date__lte=date.today())
-            )
+            most_recent_acronym=Subquery(last_version.values('acronym')[:1]),
+            most_recent_title=Subquery(last_version.values('title')[:1]),
+            is_valid=Exists(last_version.exclude(end_date__lte=date.today())),
         ).filter(is_valid=True)
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)
@@ -39,5 +35,4 @@ class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
         return qs.distinct()
 
     def get_result_label(self, result):
-        title = result.entityversion_set.latest("start_date").title
-        return '{0.most_recent_acronym} - {1}'.format(result, title)
+        return '{0.most_recent_acronym} - {0.most_recent_title}'.format(result)

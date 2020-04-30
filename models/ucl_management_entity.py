@@ -1,12 +1,9 @@
 from django.db import models
-from django.db.models import Func
 from django.utils.translation import gettext_lazy as _
 
 from django_cte import CTEManager
 
-from base.models.entity_version import EntityVersion
-
-__all__ = ['UCLManagementEntity', 'children_of_managed_entities']
+__all__ = ['UCLManagementEntity']
 
 
 class UCLManagementEntity(models.Model):
@@ -112,15 +109,3 @@ class UCLManagementEntity(models.Model):
 
     def has_linked_partnerships(self):
         return self.entity.partnerships.exists()
-
-
-def children_of_managed_entities():
-    """ Returns entity ids whose parents have a ucl management associated """
-    from partnership.models import UCLManagementEntity
-
-    cte = EntityVersion.objects.with_children()
-    return cte.join(
-        UCLManagementEntity, entity_id=cte.col.entity_id,
-    ).with_cte(cte).annotate(
-        child_entity_id=Func(cte.col.children, function='unnest'),
-    ).distinct('child_entity_id').values('child_entity_id')

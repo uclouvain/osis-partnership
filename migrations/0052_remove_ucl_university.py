@@ -3,7 +3,6 @@ import django
 from django.db import migrations, models
 from django.db.models import F, Subquery, OuterRef
 
-from partnership.models.partnership.partnership import limit_choices_to
 from base.models.enums.entity_type import FACULTY
 
 
@@ -79,7 +78,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partnership',
             name='ucl_entity',
-            field=models.ForeignKey(limit_choices_to=limit_choices_to, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='base.Entity', verbose_name='ucl_entity'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='base.Entity', verbose_name='ucl_entity'),
         ),
         migrations.RemoveField(
             model_name='partnership',

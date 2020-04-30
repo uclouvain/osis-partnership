@@ -4,7 +4,6 @@ import django.db.models.deletion
 from django.db.models import F, OuterRef, Subquery
 
 from base.models.enums.entity_type import FACULTY
-from partnership.models.partnership.partnership import limit_choices_to
 
 
 def forward(apps, schema_editor):
@@ -72,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partnership',
             name='ucl_university_labo',
-            field=models.ForeignKey(blank=True, limit_choices_to=limit_choices_to, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships_labo', to='base.Entity', verbose_name='ucl_university_labo'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships_labo', to='base.Entity', verbose_name='ucl_university_labo'),
         ),
         migrations.AlterUniqueTogether(
             name='uclmanagemententity',
