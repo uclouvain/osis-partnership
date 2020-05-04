@@ -314,21 +314,6 @@ class Partnership(models.Model):
             ))
         return mark_safe(' / '.join(entities))
 
-    @cached_property
-    def ucl_management_entity(self):
-        from ..ucl_management_entity import UCLManagementEntity
-        return UCLManagementEntity.objects.filter(
-            entity=self.ucl_entity,
-        ).select_related(
-            'administrative_responsible', 'contact_in_person', 'contact_out_person'
-        ).first()
-
-    @cached_property
-    def administrative_responsible(self):
-        if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
-            return None
-        return self.ucl_entity.uclmanagement_entity.administrative_responsible
-
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
