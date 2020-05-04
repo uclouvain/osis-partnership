@@ -43,6 +43,7 @@ class Media(models.Model):
     )
     url = models.URLField(
         _('url'),
+        max_length=1000,
         help_text=_('media_file_or_url'),
         blank=True,
         null=True,
