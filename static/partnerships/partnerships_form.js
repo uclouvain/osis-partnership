@@ -21,9 +21,9 @@
         $partnerEntityLink.attr('href', $partnerEntityLink.attr('data-href').replace('0', data.id)).removeClass('hidden');
     });
 
-    $('input[name="year-faculty"]').val($('select[name="ucl_entity"]').val());
+    $('input[name="year-entity"]').val($('select[name="ucl_entity"]').val());
     $('select[name="ucl_entity"]').change(function() {
-        $('input[name="year-faculty"]').val($(this).val());
+        $('input[name="year-entity"]').val($(this).val());
         $('select[name="year-entities"]').val([]).trigger('change');
         $('select[name="year-offers"]').val([]).trigger('change');
     });
