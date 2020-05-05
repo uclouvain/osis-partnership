@@ -90,14 +90,14 @@ class UCLManagementEntity(models.Model):
 
     def is_contact_in_defined(self):
         return (
-            self.contact_in_person is not None
+            self.contact_in_person_id is not None
             or self.contact_in_email is not None
             or self.contact_in_url is not None
         )
 
     def is_contact_out_defined(self):
         return (
-            self.contact_out_person is not None
+            self.contact_out_person_id is not None
             or self.contact_out_email is not None
             or self.contact_out_url is not None
         )
