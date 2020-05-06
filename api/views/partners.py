@@ -1,14 +1,17 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import Count, Exists, F, OuterRef, Subquery, Value
+from django.utils.translation import get_language
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
-    PartnershipConfiguration, PartnershipYear, PartnershipYearEducationField,
+    PartnershipConfiguration, PartnershipYear,
     AgreementStatus,
 )
+from reference.models.domain_isced import DomainIsced
 from ..filters import PartnerFilter, PartnershipFilter
 from ..serializers import PartnerSerializer
 
@@ -64,6 +67,7 @@ class PartnersListView(generics.ListAPIView):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
         partnerships_queryset = self.get_partnerships_count_subquery(academic_year)
 
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return (
             Partner.objects
             .select_related('partner_type', 'contact_address__country')
@@ -77,13 +81,13 @@ class PartnersListView(generics.ListAPIView):
                     )
                 ),
                 subject_area_ordered=Subquery(  # For ordering only
-                    PartnershipYearEducationField.objects
+                    DomainIsced.objects
                     .filter(
                         partnershipyear__academic_year=academic_year,
                         partnershipyear__partnership__partner=OuterRef('pk'),
                     )
-                    .order_by('label')
-                    .values('label')[:1]
+                    .order_by(label)
+                    .values(label)[:1]
                 ),
                 partnerships_count=Subquery(
                     partnerships_queryset,

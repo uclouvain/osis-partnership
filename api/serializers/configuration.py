@@ -2,9 +2,10 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField
+from partnership.models import Partner
 from reference.models.continent import Continent
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 
 __all__ = [
     'CountryConfigurationSerializer',
@@ -74,8 +75,8 @@ class SupervisorConfigurationSerializer(serializers.ModelSerializer):
 
 class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField()
+    label = serializers.CharField(source='title_en')
 
     class Meta:
-        model = PartnershipYearEducationField
+        model = DomainIsced
         fields = ['value', 'label']

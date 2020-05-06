@@ -8,11 +8,12 @@ from partnership.models import AgreementStatus, PartnershipConfiguration
 from partnership.tests.factories import (
     FinancingFactory, PartnerFactory,
     PartnershipAgreementFactory, PartnershipFactory,
-    PartnershipYearEducationFieldFactory, PartnershipYearFactory,
+    PartnershipYearFactory,
     UCLManagementEntityFactory,
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnershipApiViewTest(TestCase):
@@ -47,7 +48,7 @@ class PartnershipApiViewTest(TestCase):
             academic_year=current_academic_year,
             is_smp=True,
         )
-        cls.education_field = PartnershipYearEducationFieldFactory()
+        cls.education_field = DomainIscedFactory()
         year.education_fields.add(cls.education_field)
         PartnershipAgreementFactory(
             partnership=cls.partnership,

@@ -1,0 +1,138 @@
+is_ares;code;title_en;title_fr
+;0110;Education, not further defined;Enseignement, non défini précisément
+ARES;0111;Education science;Sciences de l'éducation
+;0112;Training for pre-school teachers;Formation pour les enseignants d'école maternelle
+;0113;Teacher training without subject specialization;Formation des enseignants
+ARES;0114;Teacher training with subject specialization;Formation des enseignants avec spécialisation
+;0119;Education, not elsewhere classified;Enseignement, non classé ailleurs
+;0188;Education, inter-disciplinary programmes;Programmes inter-disciplinaires et qualifications en lien avec l'enseignement
+;0210;Arts, not further defined;Arts, non défini précisément
+;0211;Audio-visual techniques and media production;Techniques audio-visuelles et des médias
+;0212;Fashion, interior and industrial design;Mode, design d'intérieur et design industriel
+;0213;Fine arts;Les beaux arts
+;0214;Handicrafts;Artisanat
+ARES;0215;Music and performing arts;Musique, théâtre, danse, cirque
+;0219;Arts, not elsewhere classified;Arts, non classé ailleurs
+;0220;Humanities (except languages), not further defined;Sciences humaines (sauf langues), pas plus défini
+ARES;0221;Religion and theology;Religion et théologie
+ARES;0222;History and archaeology;Histoire et archéologie
+ARES;0223;Philosophy and ethics;Philosophie et morale
+;0229;Humanities (except languages), not elsewhere classified;Sciences humaines (sauf langues), non classé ailleurs
+ARES;0230;Languages;Langues
+ARES;0231;Language acquisition;Acquisition d'une langue
+ARES;0232;Literature and linguistics;Littérature et linguistique
+;0239;Languages, not elsewhere classified;Langues, non classé ailleurs
+;0288;Arts and humanities, inter-disciplinary programmes;Arts et sciences humaines, cursus interdisciplinaires
+ARES;0310;Social and behavioural sciences;Sciences sociales et du comportement
+ARES;0311;Economics;Économie
+ARES;0312;Political sciences and civics;Sciences politiques et éducation civique
+ARES;0313;Psychology;Psychologie
+ARES;0314;Sociology and cultural studies;Sociologie et études culturelles
+ARES;0318;Social and behavioural sciences;Sciences sociales et du comportement
+;0319;Social and behavioural sciences, not elsewhere classified;Sciences sociales et comportementales, non classé ailleurs
+;0320;Journalism and information, not further defined;Journalisme et information, non défini précisément
+ARES;0321;Journalism and reporting;Journalisme et reportage
+;0322;Library, information and archival studies;Libraire, documentaliste, archiviste
+;0329;Journalism and information, not elsewhere classified;Journalisme et information, non classé ailleurs
+;0388;Social sciences, journalism and information, inter-disciplinary programmes;Sciences sociales, journalisme et information, cursus interdisciplinaires
+;0410;Business and administration, not further defined;Monde des affaires et administration, non défini précisément
+;0411;Accounting and taxation;Comptabilité et fiscalité
+;0412;Finance, banking and insurance;Finances, Banques et Assurances
+ARES;0413;Management and administration;Gestion et administration
+ARES;0414;Marketing and advertising;Marketing et publicité
+;0415;Secretarial and office work;Travail de secrétariat et de bureau
+;0416;Wholesale and retail sales;Vente en gros et au détail
+;0417;Work skills;Compétences professionnelles
+;0419;Business and administration, not elsewhere classified;Monde des affaires et administration, non classé ailleurs
+ARES;0421;Law;Droit
+;0429;Law, not elsewhere classified;Droit, non classé ailleurs
+;0488;Business, administration and law, inter-disciplinary programmes;Cursus qualifiants interdisciplinaires en affaires, administration et droit
+;0510;Biological and related sciences, not further defined;Biologie et sciences connexes, non défini précisément
+ARES;0511;Biology;Biologie
+;0512;Biochemistry;Biochimie
+ARES;0518;Biological and related sciences;Sciences biologiques et apparentées
+;0519;Biological and related sciences, not elsewhere classifed;Biologie, non classé ailleurs
+;0520;Environment, not further defined;Sciences environnementales, non défini précisément
+ARES;0521;Environmental sciences;Sciences environnementales
+ARES;0522;Natural environments and wildlife;Environnements naturels et faune et flore
+;0529;Environment, not elsewhere classified;Environnement, non classé ailleurs
+;0530;Physical sciences, not further defined;Sciences physiques, non défini précisément
+ARES;0531;Chemistry;Chimie
+ARES;0532;Earth sciences;Sciences de la terre
+ARES;0533;Physics;Physique
+;0539;Physical sciences, not elsewhere classified;Physique, non classé ailleurs
+;0540;Mathematics and statistics, not further defined;Mathématiques et statistiques, non défini précisément
+ARES;0541;Mathematics;Mathématiques
+ARES;0542;Statistics;Statistiques
+;0549;Mathematics and statistics, not elsewhere classified;Mathématiques et statistiques, non classé ailleurs
+;0588;Natural sciences, mathematics and statistics, inter-disciplinary programmes;Cursus qualifiants interdisciplinaires en sciences naturelles, mathématiques et statistiques
+;0610;Information and Communication Technologies (ICTs), not further defined;Technologie de l'information et de la communication (TICs), non défini précisément
+;0611;Computer use;Utilisation de l'informatique
+ARES;0612;Database and network design and administration;Conception et administration de bases de données et de réseau
+ARES;0613;Software and applications development and analysis;Développement et analyse de logiciels et d'applications
+;0619;Information and Communication Technologies (ICTs), not elsewhere classified;Technologie de l'information et de la communication (TICs), non classé ailleurs
+;0688;Information and Communication Technologies (ICTs), inter-disciplinary programmes;Cursus interdisciplinaires Information et Technologies de communication
+ARES;0710;Engineering and engineering trades;Ingénierie et techniques apparentées
+ARES;0711;Chemical engineering and processes;Ingénierie chimique et processus
+;0712;Environmental protection technology;Technologie de la protection de l'environnement
+ARES;0713;Electricity and energy;Électricité et énergie
+ARES;0714;Electronics and automation;Électronique et automatisation
+ARES;0715;Mechanics and metal trades;Mécanique et techniques apparentées
+;0716;Motor vehicles, ships and aircraft;Véhicules à moteur, bateaux et aéronefs
+ARES;0719;Engineering and engineering trades;Ingénierie et techniques apparentées
+;0720;Manufacturing and processing, not further defined;Industries de transformation et de traitement, non défini précisément
+ARES;0721;Food processing;Traitement des aliments
+;0722;Materials (glass, paper, plastic and wood);Matériaux (verre, papier, plastique et bois)
+;0723;Textiles (clothes, footwear and leather);Textiles (vêtements, chaussures et cuir)
+;0724;Mining and extraction;Exploitation minière et extraction
+;0729;Manufacturing and processing, not elsewhere classified;Industries de transformation et de traitement, non classé ailleurs
+;0730;Architecture and construction, not further defined;Architecture et bâtiment, non défini précisément
+ARES;0731;Architecture and town planning;Architecture et urbanisme
+ARES;0732;Building and civil engineering;Construction et génie civil
+;0739;Architecture and construction, not elsewhere classified;Architecture et bâtiment, non classé ailleurs
+;0788;Engineering, manufacturing and construction, inter-disciplinary programmes;
+;0810;Agriculture, not further defined;Agriculture, non défini précisément
+ARES;0811;Crop and livestock production;Culture et élevage
+;0812;Horticulture;Horticulture
+;0819;Agriculture, not elsewhere classified;Agriculture, non classé ailleurs
+;0821;Forestry;Sylviculture
+;0829;Forestry, not elsewhere classified;Sylviculture, non classé ailleurs
+;0831;Fisheries;Pêche
+;0839;Fisheries, not elsewhere classified;Pêche, non classé ailleurs
+ARES;0841;Veterinary;Sciences vétérinaires
+;0849;Veterinary, not elsewhere classified;Sciences vétérinaires, non classé ailleurs
+;0888;Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes;Cursus qualifiants interdisciplinaires en agriculture, sylviculture, pêche et vétérinaire
+ARES;0899;Agriculture, forestry, fisheries and veterinary;Agriculture, sylviculture et halieutique et sciences vétérinaires
+;0910;Health, not further defined;Santé, non défini précisément
+ARES;0911;Dental studies;Études dentaires
+ARES;0912;Medicine;Médecine
+;0913;Nursing and midwifery;Soins infirmiers et formation de sages-femmes
+;0914;Medical diagnostic and treatment technology;Diagnostic médical et technologie de traitement
+ARES;0915;Therapy and rehabilitation;Thérapie et rééducation
+ARES;0916;Pharmacy;Pharmacie
+;0917;Traditional and complementary medicine and therapy;Médecine et thérapies traditionnelles et complémentaires
+ARES;0919;Health;Santé
+;0920;Welfare, not further defined;Bien-être, non défini précisément
+;0921;Care of the elderly and of disabled adults;Soins gérontologiques et aux adultes handicapés
+;0922;Child care and youth services;Soins aux enfants et à la jeunesse
+ARES;0923;Social work and counselling;Travail social et orientation
+;0929;Welfare, not elsewhere classified;Bien-être, non classé ailleurs
+;0988;Health and Welfare, inter-disciplinary programmes;Santé et bien-être, programmes interdisciplinaire
+;1010;Personal services, not further defined;Services à la personne, non défini précisément
+;1011;Domestic services;Services domestiques
+;1012;Hair and beauty services;Services de soins de beauté et de coiffure
+;1013;Hotel, restaurants and catering;Hôtellerie et services de restauration
+ARES;1014;Sports;Sports
+;1015;Travel, tourism and leisure;Voyage, tourisme et loisirs
+;1019;Personal services, not elsewhere classified;Services à la personne, non classé ailleurs
+;1020;Hygiene and occupational health services, not further defined;Hygiène et santé au travail
+;1021;Community sanitation;Salubrité publique
+ARES;1022;Occupational health and safety;Santé et sécurité au travail
+;1029;Hygiene and occupational health services, not elsewhere classified;Hygiène et santé au travail, non classé ailleurs
+;1030;Security services, not further defined;Services de sûreté, non défini précisément
+;1031;Military and defence;Sécurité militaire et défense
+;1032;Protection of persons and property;Protection des biens et des personnes
+;1039;Security services, not elsewhere classified;Services de sûreté, non classé ailleurs
+;1041;Transport services;Services de transport
+;1049;Transport services, not elsewhere classified;Services de transport, non classé ailleurs
+;1088;Services, inter-disciplinary programmes;Service, programmes interdisciplinaires

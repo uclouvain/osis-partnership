@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.db import models
 from django.db.models.aggregates import Count
 from django.db.models.expressions import Subquery, OuterRef, Value, Exists, Case, When, F
 from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
+from django.utils.translation import get_language
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
@@ -15,9 +17,9 @@ from base.models.entity_version import EntityVersion
 from partnership.models import (
     Financing, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipConfiguration, PartnershipYear,
-    PartnershipYearEducationField,
     AgreementStatus,
 )
+from reference.models.domain_isced import DomainIsced
 from ..filters import PartnershipFilter
 from ..serializers import PartnershipSerializer
 
@@ -35,6 +37,7 @@ class PartnershipsMixinView(GenericAPIView):
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return (
             Partnership.objects
             .add_acronyms()
@@ -175,13 +178,13 @@ class PartnershipsMixinView(GenericAPIView):
                     )
                 ),
                 subject_area_ordered=Subquery(  # For ordering only
-                    PartnershipYearEducationField.objects
+                    DomainIsced.objects
                     .filter(
                         partnershipyear__academic_year=academic_year,
                         partnershipyear__partnership=OuterRef('pk'),
                     )
-                    .order_by('label')
-                    .values('label')[:1]
+                    .order_by(label)
+                    .values(label)[:1]
                 ),
                 type_ordered=Subquery(  # For ordering only
                     PartnershipYear.objects

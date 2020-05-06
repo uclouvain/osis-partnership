@@ -14,10 +14,11 @@ from partnership.api.serializers import (
 )
 from partnership.models import (
     Financing, Partner, PartnershipAgreement,
-    PartnershipConfiguration, PartnershipYearEducationField,
+    PartnershipConfiguration,
 )
 from reference.models.continent import Continent
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 
 
 class ConfigurationView(APIView):
@@ -70,10 +71,10 @@ class ConfigurationView(APIView):
             .order_by('most_recent_acronym')
         )
         education_fields = (
-            PartnershipYearEducationField.objects
+            DomainIsced.objects
             .filter(partnershipyear__academic_year=current_year)
             .distinct()
-            .values('uuid', 'label')
+            .values('uuid', 'title_en')
         )
         fundings = (
              Financing.objects

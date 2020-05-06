@@ -2,7 +2,7 @@ from django.conf import settings
 from rest_framework import serializers
 
 from partnership.models import (
-    Partnership, MediaType, Financing,
+    Partnership, MediaType,
     AgreementStatus,
 )
 from .contact import ContactSerializer
@@ -113,7 +113,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
                                                        'education_fields')
         if education_fields is None:
             return None
-        return ['{0} ({1})'.format(field.label, field.code) for field in
+        return ['{0} ({1})'.format(field.title_en, field.code) for field in
                 education_fields.all()]
 
     def get_status(self, partnership):
