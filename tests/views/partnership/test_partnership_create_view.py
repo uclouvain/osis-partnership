@@ -15,11 +15,11 @@ from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnerEntityFactory, PartnerFactory,
     PartnershipEntityManagerFactory,
-    PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
     UCLManagementEntityFactory,
 )
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnershipCreateViewTest(TestCase):
@@ -52,7 +52,7 @@ class PartnershipCreateViewTest(TestCase):
         AcademicYearFactory(year=year + 1)
         AcademicYearFactory(year=year + 2)
 
-        cls.education_field = PartnershipYearEducationFieldFactory()
+        cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
 
         cls.url = reverse('partnerships:create')

@@ -28,7 +28,7 @@ class PartnershipYear(models.Model):
         related_name='+',
     )
     education_fields = models.ManyToManyField(
-        'partnership.PartnershipYearEducationField',
+        'reference.DomainIsced',
         verbose_name=_('partnership_year_education_fields'),
         blank=False,
     )

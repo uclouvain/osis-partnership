@@ -7,7 +7,6 @@ from django.urls import reverse
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
-    PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
 )
 
@@ -21,10 +20,6 @@ class YearOffersAutocompleteTestCase(TestCase):
         cls.university_offer = EducationGroupYearFactory(
             joint_diploma=True,
         )
-
-        # education_field
-        cls.education_field = PartnershipYearEducationFieldFactory()
-        EducationGroupYearFactory()
 
         # education_level
         cls.education_level = PartnershipYearEducationLevelFactory()
