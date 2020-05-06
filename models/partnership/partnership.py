@@ -15,7 +15,7 @@ from base.models.entity_version import (
 )
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
-from partnership.models import AgreementStatus
+from partnership.models import AgreementStatus, PartnershipType
 from partnership.utils import merge_agreement_ranges
 
 __all__ = [
@@ -92,6 +92,12 @@ class Partnership(models.Model):
         editable=False,
         unique=True,
         db_index=True,
+    )
+
+    partnership_type = models.CharField(
+        _('partnership_type'),
+        max_length=255,
+        choices=PartnershipType.choices(),
     )
 
     external_id = models.CharField(
@@ -172,6 +178,9 @@ class Partnership(models.Model):
         ordering = ('-created',)
         permissions = (
             ('can_access_partnerships', _('can_access_partnerships')),
+        ) + tuple(
+            ('change_%s' % t, _('can change %(type)s') % {'type': t})
+            for t in PartnershipType.get_names()
         )
 
     def __str__(self):

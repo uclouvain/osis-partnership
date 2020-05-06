@@ -4,7 +4,6 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
-from partnership.models import PartnershipType
 
 __all__ = [
     'PartnershipYear',
@@ -57,11 +56,6 @@ class PartnershipYear(models.Model):
     is_smst = models.BooleanField(_('is_smst'), default=False, blank=True)
     is_sta = models.BooleanField(_('is_sta'), default=False, blank=True)
     is_stt = models.BooleanField(_('is_stt'), default=False, blank=True)
-    partnership_type = models.CharField(
-        _('partnership_type'),
-        max_length=255,
-        choices=PartnershipType.choices(),
-    )
     eligible = models.BooleanField(
         _('eligible'),
         default=True,
