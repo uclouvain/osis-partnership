@@ -46,7 +46,6 @@ class PartnershipFormMixin:
         kwargs = self.get_form_kwargs()
         kwargs['prefix'] = 'year'
         partnership = kwargs['instance']
-        del kwargs['partnership_type']
         if partnership is not None:
             configuration = PartnershipConfiguration.get_configuration()
             current_academic_year = configuration.get_current_academic_year_for_creation_modification()
@@ -59,7 +58,12 @@ class PartnershipFormMixin:
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['partnership_type'] = self.kwargs.get('type')
+
+        partnership_type = self.kwargs.get('type')
+        kwargs['partnership_type'] = (
+            partnership_type.name if partnership_type
+            else kwargs['instance'].partnership_type
+        )
         return kwargs
 
     def get_context_data(self, **kwargs):

@@ -111,12 +111,29 @@
   <div class="col-xs-12 col-sm-12">
     {% bootstrap_field form_year.end_academic_year %}
   </div>
-  {% if form_year.eligible %}
-  <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.eligible %}
-  </div>
-  {% endif %}
 </div>
+
+{% if form.partnership_type.value == 'MOBILITY' and form_year.eligible %}
+  <h3>{% trans "partnership_funding" %}</h3>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12">
+      {% bootstrap_field form_year.eligible %}
+    </div>
+
+    <div class="col-xs-12 col-sm-12">
+      {% bootstrap_field form_year.funding_type %}
+    </div>
+  </div>
+{% elif form.partnership_type.value == 'PROJECT' %}
+  <h3>{% trans "partnership_funding" %}</h3>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12">
+      {% bootstrap_field form_year.funding_type %}
+    </div>
+  </div>
+{% endif %}
 
 {{ form.media }}
 {{ form_year.media }}

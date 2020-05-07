@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from osis_role.contrib.admin import EntityRoleModelAdmin
-from partnership.models import *
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
+from partnership.models import *
 
 
 class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
@@ -113,9 +113,25 @@ class ValueAdmin(admin.ModelAdmin):
 
 
 class FinancingAdmin(admin.ModelAdmin):
-    fields = ('name', 'url', 'countries', 'academic_year')
-    search_fields = ('name', 'countries__name',)
-    list_filter = ('name', 'academic_year')
+    list_display = ('type', 'academic_year')
+    search_fields = ('type__name', 'countries__name',)
+    list_filter = ('type__name', 'academic_year')
+
+
+class FundingTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url', 'program')
+    search_fields = ('name',)
+    list_filter = ('program__name', 'program__source__name')
+
+
+class FundingProgramAdmin(admin.ModelAdmin):
+    list_display = ('name', 'source')
+    search_fields = ('name',)
+    list_filter = ('source__name',)
+
+
+class FundingSourceAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
 
 
 class MediaAdmin(admin.ModelAdmin):
@@ -158,6 +174,9 @@ admin.site.register(PartnershipTag)
 admin.site.register(PartnershipYearEducationLevel)
 admin.site.register(Partnership, PartnershipAdmin)
 admin.site.register(Financing, FinancingAdmin)
+admin.site.register(FundingType, FundingTypeAdmin)
+admin.site.register(FundingProgram, FundingProgramAdmin)
+admin.site.register(FundingSource, FundingSourceAdmin)
 admin.site.register(Media, MediaAdmin)
 admin.site.register(ContactType)
 admin.site.register(MediaType)

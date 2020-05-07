@@ -1,6 +1,5 @@
 from django.db.models import OuterRef, Subquery
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, resolve_url
 from django.views.generic.edit import FormMixin
 from django_filters.views import FilterView
 
@@ -30,23 +29,23 @@ class FinancingListView(PermissionRequiredMixin, SearchMixin, FormMixin, FilterV
     permission_required = 'partnership.export_financing'
 
     def dispatch(self, *args, year=None, **kwargs):
-        if year is None:
-            configuration = PartnershipConfiguration.get_configuration()
-            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
-        else:
-            self.academic_year = get_object_or_404(AcademicYear, year=year)
+        self.academic_year = get_object_or_404(AcademicYear, year=year)
 
-        if self.request.method == "POST":
-            self.import_form = FinancingImportForm(self.request.POST, self.request.FILES)
-            self.form = FinancingFilterForm(self.request.POST)
-        else:
-            self.import_form = FinancingImportForm(initial={'import_academic_year': self.academic_year})
-            self.form = FinancingFilterForm(initial={'year': self.academic_year})
+        self.import_form = FinancingImportForm(
+            self.request.POST or None,
+            self.request.FILES or None,
+            initial={'import_academic_year': self.academic_year},
+        )
+        self.form = FinancingFilterForm(
+            self.request.POST or None,
+            initial={'year': self.academic_year},
+        )
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         if self.form.is_valid():
             return self.form_valid(self.form)
+        self.object_list = []
         return self.form_invalid(self.form)
 
     def get_context_data(self, **kwargs):
@@ -55,33 +54,25 @@ class FinancingListView(PermissionRequiredMixin, SearchMixin, FormMixin, FilterV
         context['academic_year'] = self.academic_year
         return context
 
-    def get_success_url(self):
-        return reverse('partnerships:financings:list', kwargs={'year': self.academic_year.year})
+    def get_success_url(self, year=None):
+        return resolve_url('partnerships:financings:list', year=year)
 
     def get_queryset(self):
-        return (
-            Country.objects
-            .annotate(
-                financing_name=Subquery(
-                    Financing.objects
-                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
-                        .values('name')[:1]
-                ),
-                financing_url=Subquery(
-                    Financing.objects
-                        .filter(countries=OuterRef('pk'), academic_year=self.academic_year)
-                        .values('url')[:1]
-                ),
-            )
-            .distinct()
+        qs = Financing.objects.filter(
+            countries=OuterRef('pk'),
+            academic_year=self.academic_year,
         )
+        return Country.objects.annotate(
+            financing_name=Subquery(qs.values('type__name')[:1]),
+            financing_url=Subquery(qs.values('type__url')[:1]),
+        ).distinct()
 
     def form_valid(self, form):
-        self.academic_year = form.cleaned_data.get('year', None)
-        if self.academic_year is None:
+        academic_year = form.cleaned_data.get('year', None)
+        if academic_year is None:
             configuration = PartnershipConfiguration.get_configuration()
-            self.academic_year = configuration.get_current_academic_year_for_creation_modification()
-        return redirect(self.get_success_url())
+            academic_year = configuration.get_current_academic_year_for_creation_modification()
+        return redirect(self.get_success_url(academic_year.year))
 
     def get_paginate_by(self, queryset):
         return self.paginate_by

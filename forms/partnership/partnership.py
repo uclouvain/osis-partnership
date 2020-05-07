@@ -71,20 +71,14 @@ class PartnershipForm(forms.ModelForm):
 
     def __init__(self, partnership_type=None, *args, **kwargs):
         """
-        :type partnership_type: partnership.models.PartnershipType
+        :type partnership_type: str
         """
         self.user = kwargs.pop('user', None)
 
-        # Initialise partnership_type for a creation
-        if partnership_type:
-            partnership_type = partnership_type.name
-            kwargs['initial']['partnership_type'] = partnership_type
+        # Initialise partnership_type for creation
+        kwargs['initial']['partnership_type'] = partnership_type
 
         super().__init__(*args, **kwargs)
-
-        # Get partnership_type from instance for an update
-        if self.instance.partnership_type:
-            partnership_type = self.instance.partnership_type
 
         # Dynamically process form given partnership type
         if hasattr(self, 'process_' + partnership_type.lower()):

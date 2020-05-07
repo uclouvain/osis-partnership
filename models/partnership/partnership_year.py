@@ -61,6 +61,13 @@ class PartnershipYear(models.Model):
         default=True,
         blank=True,
     )
+    funding_type = models.ForeignKey(
+        'partnership.FundingType',
+        verbose_name=_('funding_type'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+    )
 
     class Meta:
         unique_together = ('partnership', 'academic_year')

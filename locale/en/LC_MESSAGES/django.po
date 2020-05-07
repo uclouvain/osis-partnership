@@ -627,6 +627,18 @@ msgstr "Function"
 msgid "funding"
 msgstr "Funding"
 
+msgid "funding_program"
+msgstr "Funding program"
+
+msgid "funding_source"
+msgstr "Funding source"
+
+msgid "funding_type"
+msgstr "Funding type"
+
+msgid "help_text_funding_type"
+msgstr "Specify funding if different from the default computed funding."
+
 msgid "id"
 msgstr "ID"
 
@@ -904,6 +916,9 @@ msgstr "Partnership ending in"
 
 msgid "partnership_error"
 msgstr "Error while saving the partnership"
+
+msgid "partnership_funding"
+msgstr "Funding"
 
 msgid "partnership_in"
 msgstr "Partnership valid in"

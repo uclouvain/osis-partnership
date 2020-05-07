@@ -88,7 +88,9 @@
             <th>{% trans "education_levels" %}</th>
             <th>{% trans "partnership_year_entities" %}</th>
             <th>{% trans "partnership_year_offers" %}</th>
-            <th>{% trans "financing" %}</th>
+            {% if partnership.partnership_type in 'MOBILITY,PROJECT' %}
+              <th>{% trans "financing" %}</th>
+            {% endif %}
             <th>{% trans "is_valid" %}</th>
           </tr>
         </thead>
@@ -124,14 +126,24 @@
               </ul>
               {% endif %}
             </td>
+            {% if partnership.partnership_type == 'MOBILITY' %}
             <td>
               {% if partnership_year.is_valid and partnership_year.eligible %}
                 <i class="fas fa-check text-success"></i>
-                {{ partnership_year.get_financing.name|default_if_none:"" }}
+                {% if partnership_year.funding_type_id %}
+                  {{ partnership_year.funding_type }}
+                {% else %}
+                  {{ partnership_year.get_financing.name|default_if_none:"" }}
+                {% endif %}
               {% else %}
                 <i class="fas fa-times text-danger"></i>
               {% endif %}
             </td>
+            {% elif partnership.partnership_type == 'PROJECT' %}
+            <td>
+              {{ partnership_year.funding_type }}
+            </td>
+            {% endif %}
             <td><i class="fas {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i></td>
           </tr>
           {% endfor %}
