@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n partnerships static years %}
+{% load i18n partnerships static years getattr %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
@@ -98,7 +98,9 @@
             <td>{{ partnership_year.get_partnership_type_display }}</td>
             <td>
               <ul class="list-unstyled">
-                {% for education_field in partnership_year.education_fields.all %}<li><strong>{{ education_field.code }}</strong> - {{ education_field.label }}</li>{% endfor %}
+                {% for education_field in partnership_year.education_fields.all %}
+                  <li><strong>{{ education_field.code }}</strong> - {{ education_field|getattr:domain_title }}</li>
+                {% endfor %}
               </ul>
             </td>
             <td>{{ partnership_year.planned_activity }}</td>
