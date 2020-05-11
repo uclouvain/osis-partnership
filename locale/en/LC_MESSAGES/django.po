@@ -467,6 +467,9 @@ msgstr "Link to course catalogue in english"
 msgid "course_catalogue_url_fr"
 msgstr "Link course catalogue in french"
 
+msgid "create_a"
+msgstr "Create a"
+
 msgid "create_contact"
 msgstr "create contact"
 

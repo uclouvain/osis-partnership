@@ -528,6 +528,9 @@ msgstr "Lien pour le catalogue de formation en anglais"
 msgid "course_catalogue_url_fr"
 msgstr "Lien pour le catalogue de formation en français"
 
+msgid "create_a"
+msgstr "Créer un"
+
 msgid "create_contact"
 msgstr "Créer le contact"
 
