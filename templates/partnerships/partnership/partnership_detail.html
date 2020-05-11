@@ -43,6 +43,8 @@
       <div class="row">
         <div class="col-sm-12 col-md-12">
           <dl class="dl-horizontal">
+            <dt>{% trans "partnership_type" %}</dt>
+            <dd>{{ partnership.get_partnership_type_display }}</dd>
             <dt>{% trans "partner" %}</dt>
             <dd>
               <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
@@ -80,7 +82,6 @@
         <thead>
           <tr>
             <th></th>
-            <th>{% trans "partnership_type" %}</th>
             <th>{% trans "education_fields" %}</th>
             <th>{% trans "planned_activity" %}</th>
             <th>{% trans "education_levels" %}</th>
@@ -95,7 +96,6 @@
           <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
               {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}>
             <th>{{ partnership_year.academic_year }}</th>
-            <td>{{ partnership_year.get_partnership_type_display }}</td>
             <td>
               <ul class="list-unstyled">
                 {% for education_field in partnership_year.education_fields.all %}<li><strong>{{ education_field.code }}</strong> - {{ education_field.label }}</li>{% endfor %}
