@@ -57,11 +57,20 @@ class UCLUniversityLaboConfigurationSerializer(serializers.ModelSerializer):
 
 class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField(source='most_recent_acronym')
+    label = serializers.SerializerMethodField()
 
     class Meta:
         model = Entity
         fields = ['value', 'label']
+
+    @staticmethod
+    def get_label(result):
+        acronyms = filter(None, [
+            result.sector_acronym,
+            result.faculty_acronym,
+            result.most_recent_acronym,
+        ])
+        return '{} - {}'.format(' / '.join(acronyms), result.most_recent_title)
 
 
 class SupervisorConfigurationSerializer(serializers.ModelSerializer):
