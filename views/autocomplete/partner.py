@@ -12,6 +12,7 @@ __all__ = [
 
 
 class EntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    # FIXME : doesn't not seem to be used
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
