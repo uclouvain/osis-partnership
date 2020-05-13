@@ -264,6 +264,14 @@ class PartnershipsListViewTest(TestCase):
         self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
         self.assertEqual(context['partnerships'][1], self.partnership_ucl_university)
 
+        response = self.client.get(self.url, {
+            'ucl_entity': self.ucl_university.pk,
+            'ucl_entity_exact': True,
+        })
+        context = response.context_data
+        self.assertEqual(len(context['partnerships']), 1)
+        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university)
+
     def test_filter_ucl_university_labo(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?ucl_entity=' + str(self.ucl_university_labo.pk))
