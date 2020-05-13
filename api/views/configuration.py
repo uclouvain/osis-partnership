@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
+from django.utils.translation import get_language
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -89,11 +91,13 @@ class ConfigurationView(APIView):
                 'most_recent_acronym',
             )
         )
+
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         education_fields = (
             DomainIsced.objects
             .filter(partnershipyear__academic_year=current_year)
             .distinct()
-            .values('uuid', 'title_en')
+            .values('uuid', label)
         )
         fundings = (
              Financing.objects

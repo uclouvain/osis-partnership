@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.utils.translation import get_language
 from rest_framework import serializers
 
 from base.models.entity import Entity
@@ -84,8 +86,13 @@ class SupervisorConfigurationSerializer(serializers.ModelSerializer):
 
 class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField(source='title_en')
+    label = serializers.SerializerMethodField()
 
     class Meta:
         model = DomainIsced
         fields = ['value', 'label']
+
+    @staticmethod
+    def get_label(result):
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
+        return result[label]

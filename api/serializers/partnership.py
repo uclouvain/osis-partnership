@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import get_language
 from rest_framework import serializers
 
 from partnership.models import (
@@ -109,12 +110,13 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return self._get_current_year_attr(partnership, 'is_stt')
 
     def get_education_fields(self, partnership):
-        education_fields = self._get_current_year_attr(partnership,
-                                                       'education_fields')
+        education_fields = self._get_current_year_attr(partnership, 'education_fields')
         if education_fields is None:
             return None
-        return ['{0} ({1})'.format(field.title_en, field.code) for field in
-                education_fields.all()]
+
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
+        return [('{0.%s} ({0.code})' % label).format(field)
+                for field in education_fields.all()]
 
     def get_status(self, partnership):
         if partnership.agreement_status is None:
