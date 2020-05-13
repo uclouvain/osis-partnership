@@ -91,7 +91,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
 
         qs = EducationGroupYear.objects.filter(
             joint_diploma=True,
-            # academic_year=next_academic_year,
+            academic_year=next_academic_year,
             education_group_type__partnership_education_levels__in=education_levels,
         ).select_related('academic_year')
 
