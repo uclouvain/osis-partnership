@@ -147,7 +147,7 @@ class PartnershipAdminFilter(filters.FilterSet):
     city = filters.CharFilter(field_name='partner__contact_address__city')
     ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
-    ucl_entity_exact = filters.BooleanFilter(method=lambda qs, *_: qs)
+    ucl_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
     partner_type = filters.CharFilter(field_name='partner__partner_type')
     education_level = filters.CharFilter(field_name='years__education_levels')
     education_field = filters.CharFilter(field_name='years__education_fields')
@@ -241,13 +241,13 @@ class PartnershipAdminFilter(filters.FilterSet):
 
     def filter_ucl_entity(self, queryset, name, value):
         if value:
-            if self.form.cleaned_data.get('ucl_entity_exact', False):
-                queryset = queryset.filter(ucl_entity=value)
-            else:
+            if self.form.cleaned_data.get('ucl_entity_with_child', False):
                 # Allow all children of entity too
                 cte = EntityVersion.objects.with_parents(entity_id=value.pk)
                 qs = cte.queryset().with_cte(cte).values('entity_id')
                 queryset = queryset.filter(ucl_entity__in=qs)
+            else:
+                queryset = queryset.filter(ucl_entity=value)
 
         return queryset
 

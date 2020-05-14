@@ -38,7 +38,7 @@ class PartnershipFilterForm(forms.Form):
             },
         ),
     )
-    ucl_entity_exact = forms.BooleanField(
+    ucl_entity_with_child = forms.BooleanField(
         label=_('Include subordinate entities'),
         required=False,
     )

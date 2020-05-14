@@ -256,6 +256,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'ucl_entity': self.ucl_university.pk,
+            'ucl_entity_with_child': True,
             'ordering': 'ucl',
         })
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
@@ -266,7 +267,7 @@ class PartnershipsListViewTest(TestCase):
 
         response = self.client.get(self.url, {
             'ucl_entity': self.ucl_university.pk,
-            'ucl_entity_exact': True,
+            'ucl_entity_with_child': False,
         })
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
