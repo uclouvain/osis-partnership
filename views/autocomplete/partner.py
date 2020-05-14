@@ -1,28 +1,12 @@
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
-from base.models.entity import Entity
 from partnership.models import Partner, PartnerEntity
 
 __all__ = [
-    'EntityAutocompleteView',
     'PartnerAutocompleteView',
     'PartnerEntityAutocompleteView',
 ]
-
-
-class EntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
-    # FIXME : doesn't not seem to be used
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        qs = Entity.objects.prefetch_related('entityversion_set').all()
-        if self.q:
-            qs = qs.filter(
-                entityversion__acronym__icontains=self.q
-            )
-        return qs.distinct()
 
 
 class PartnerAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
