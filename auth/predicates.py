@@ -1,7 +1,10 @@
+from datetime import date
+
 import rules
+from django.db.models import Q
 
 from partnership.utils import (
-    user_is_adri, user_is_gf, user_is_gf_of_faculty,
+    user_is_gf, user_is_gf_of_faculty,
     user_is_in_user_faculty,
 )
 
@@ -13,14 +16,19 @@ def is_validated(user, agreement):
 
 
 @rules.predicate
-def is_waiting(user, agreement):
+def is_agreement_waiting(user, agreement):
     from partnership.models import AgreementStatus
     return agreement.status == AgreementStatus.WAITING.name
 
 
-@rules.predicate
-def is_adri(user):
-    return user_is_adri(user)
+@rules.predicate(bind=True)
+def is_linked_to_adri_entity(self, user):
+    return self.context['role_qs'].filter(
+        Q(entity__entityversion__end_date__gte=date.today())
+        | Q(entity__entityversion__end_date__isnull=True),
+        entity__entityversion__start_date__lte=date.today(),
+        entity__entityversion__acronym='ADRI',
+    ).exists()
 
 
 @rules.predicate

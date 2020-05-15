@@ -4,8 +4,8 @@ from django_cte import CTEManager
 
 from osis_role.contrib.models import EntityRoleModel
 from partnership.auth.predicates import (
-    has_children, has_partnerships, is_adri, is_faculty_manager,
-    is_in_same_faculty_as_author, is_mobility, is_validated, is_waiting,
+    has_children, has_partnerships, is_linked_to_adri_entity, is_faculty_manager,
+    is_in_same_faculty_as_author, is_mobility, is_validated, is_agreement_waiting,
     manage_type,
 )
 
@@ -25,15 +25,15 @@ class PartnershipEntityManager(EntityRoleModel):
 
     @classmethod
     def rule_set(cls):
-        can_change_agreement = is_adri | (is_waiting & is_faculty_manager)
+        can_change_agreement = is_linked_to_adri_entity | (is_agreement_waiting & is_faculty_manager)
         return rules.RuleSet({
             # Partnership
             'partnership.add_partnership': (
-                    (is_mobility & (is_adri | is_faculty_manager))
+                    (is_mobility & (is_linked_to_adri_entity | is_faculty_manager))
                     | manage_type
             ),
             'partnership.change_partnership': (
-                    (is_mobility & (is_adri | is_faculty_manager))
+                    (is_mobility & (is_linked_to_adri_entity | is_faculty_manager))
                     | manage_type
             ),
 
@@ -42,25 +42,25 @@ class PartnershipEntityManager(EntityRoleModel):
             'partnership.delete_agreement': ~is_validated & can_change_agreement,
 
             # UCLManagementEntity
-            'partnership.view_uclmanagemententity': is_adri | is_faculty_manager,
-            'partnership.list_uclmanagemententity': is_adri | is_faculty_manager,
-            'partnership.add_uclmanagemententity': is_adri,
-            'partnership.change_uclmanagemententity': is_adri | is_faculty_manager,
-            'partnership.delete_uclmanagemententity': is_adri & ~has_partnerships,
+            'partnership.view_uclmanagemententity': is_linked_to_adri_entity | is_faculty_manager,
+            'partnership.list_uclmanagemententity': is_linked_to_adri_entity | is_faculty_manager,
+            'partnership.add_uclmanagemententity': is_linked_to_adri_entity,
+            'partnership.change_uclmanagemententity': is_linked_to_adri_entity | is_faculty_manager,
+            'partnership.delete_uclmanagemententity': is_linked_to_adri_entity & ~has_partnerships,
 
             # Financing
-            'partnership.import_financing': is_adri,
-            'partnership.export_financing': is_adri,
+            'partnership.import_financing': is_linked_to_adri_entity,
+            'partnership.export_financing': is_linked_to_adri_entity,
 
             # Partner
-            'partnership.add_partner': is_adri | is_faculty_manager,
-            'partnership.change_partner': is_adri,
+            'partnership.add_partner': is_linked_to_adri_entity | is_faculty_manager,
+            'partnership.change_partner': is_linked_to_adri_entity,
 
             # PartnerEntity
-            'partnership.add_partnerentity': is_adri | is_faculty_manager,
-            'partnership.change_partnerentity': is_adri | is_in_same_faculty_as_author,
+            'partnership.add_partnerentity': is_linked_to_adri_entity | is_faculty_manager,
+            'partnership.change_partnerentity': is_linked_to_adri_entity | is_in_same_faculty_as_author,
             'partnership.delete_partnerentity': (
-                    (is_adri | is_in_same_faculty_as_author)
+                    (is_linked_to_adri_entity | is_in_same_faculty_as_author)
                     & ~has_partnerships
                     & ~has_children
             ),
