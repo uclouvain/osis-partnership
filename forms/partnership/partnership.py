@@ -10,8 +10,8 @@ from base.models.person import Person
 from base.utils.cte import CTESubquery
 from partnership.models import (
     Partner, Partnership,
-    PartnershipEntityManager,
 )
+from ...auth.roles.partnership_manager import PartnershipEntityManager
 from partnership.utils import user_is_adri
 from ..fields import EntityChoiceField, PersonChoiceField
 

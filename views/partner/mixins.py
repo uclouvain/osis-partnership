@@ -8,12 +8,18 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormMixin
 
-from partnership.forms import AddressForm, PartnerEntityForm
+from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.forms import AddressForm, PartnerEntityForm, PartnerForm
 from partnership.models import Partner, PartnershipConfiguration
 from partnership.utils import user_is_adri
 
 
-class PartnerFormMixin:
+class PartnerFormMixin(PermissionRequiredMixin):
+    form_class = PartnerForm
+    context_object_name = 'partner'
+    prefix = 'partner'
+    login_url = 'access_denied'
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
@@ -107,7 +113,9 @@ class PartnerFormMixin:
             return self.form_invalid(form, form_address)
 
 
-class PartnerEntityMixin:
+class PartnerEntityMixin(PermissionRequiredMixin):
+    login_url = 'access_denied'
+
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
         return super().dispatch(request, *args, **kwargs)
@@ -126,6 +134,7 @@ class PartnerEntityMixin:
 
 class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
     form_class = PartnerEntityForm
+    context_object_name = 'partner_entity'
 
     def get_template_names(self):
         if self.request.is_ajax():

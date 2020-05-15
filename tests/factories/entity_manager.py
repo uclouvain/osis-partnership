@@ -1,6 +1,6 @@
 import factory
 
-from partnership.models import PartnershipEntityManager
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 
 __all__ = ['PartnershipEntityManagerFactory']
 

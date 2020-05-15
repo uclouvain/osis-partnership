@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Q
@@ -10,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
 from base.models.academic_year import find_academic_years
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import PartnershipForm
 from partnership.models import (
     Partnership, PartnershipConfiguration, PartnershipYear,
@@ -23,18 +22,16 @@ __all__ = [
 ]
 
 
-class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, UpdateView):
+class PartnershipUpdateView(PermissionRequiredMixin, PartnershipFormMixin, UpdateView):
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership/partnership_update.html"
     login_url = 'access_denied'
+    permission_required = 'partnership.change_partnership'
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
-
-    def test_func(self):
-        return perms.user_can_change_partnership(self.request.user, self.object)
 
     @transaction.atomic
     def form_valid(self, form, form_year):

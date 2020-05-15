@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n partnerships static years %}
+{% load i18n partnerships static years osis_role %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
@@ -20,6 +20,7 @@
 {% endblock %}
 
 {% block content %}
+  {% has_perm 'partnership.change_partnership' user partnership as can_change %}
   <div class="page-header">
     <h1>{{ partnership }}</h1>
   </div>

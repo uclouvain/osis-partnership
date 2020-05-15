@@ -7,7 +7,6 @@ from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
 from base.utils.search import SearchMixin
-from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
 from partnership.filter import PartnershipAdminFilter
 from partnership.models import AgreementStatus, Partnership, PartnershipType
@@ -62,7 +61,7 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
         context['can_change_configuration'] = user_is_adri(user)
         context['can_add_partnership'] = any([
             t for t in PartnershipType
-            if perms.user_can_add_partnership(user, t)]
+            if user.has_perm('partnership.add_partnership', t)]
         )
         context['url'] = reverse('partnerships:list')
         context['export_url'] = reverse('partnerships:export')

@@ -1,10 +1,9 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Func, OuterRef, Subquery
 from django.views.generic import ListView
 
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.models import UCLManagementEntity
 from partnership.utils import user_is_adri
 
@@ -13,21 +12,12 @@ __all__ = [
 ]
 
 
-class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class UCLManagementEntityListView(PermissionRequiredMixin, ListView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_list.html"
     context_object_name = "ucl_management_entities"
     login_url = 'access_denied'
-
-    def test_func(self):
-        return perms.user_can_list_ucl_management_entity(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['can_create_ucl_management_entity'] = perms.user_can_create_ucl_management_entity(
-            self.request.user
-        )
-        return context
+    permission_required = 'partnership.view_uclmanagemententity'
 
     def get_queryset(self):
         cte = EntityVersion.objects.with_children()

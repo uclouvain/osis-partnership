@@ -1,7 +1,9 @@
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import current_academic_year
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import (
     PartnershipForm, PartnershipYearForm
 )
@@ -10,8 +12,29 @@ from partnership.models import (
 )
 
 __all__ = [
+    'PartnershipRelatedMixin',
     'PartnershipFormMixin',
 ]
+
+
+class PartnershipRelatedMixin(PermissionRequiredMixin):
+    login_url = 'access_denied'
+    permission_required = 'partnership.change_partnership'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_permission_object(self):
+        return self.partnership
+
+    def get_success_url(self):
+        return self.partnership.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['partnership'] = self.partnership
+        return context
 
 
 class PartnershipFormMixin:

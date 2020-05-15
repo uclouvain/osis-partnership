@@ -54,7 +54,8 @@ def user_is_gf(user):
 
 
 def user_is_gf_of_faculty(user, entity):
-    from partnership.models import PartnershipEntityManager
+    from partnership.auth.roles.partnership_manager import \
+        PartnershipEntityManager
 
     # Get all parents entities which have a PartnershipEntityManager
     # with this person

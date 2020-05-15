@@ -7,7 +7,6 @@ from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
 from base.utils.search import SearchMixin
-from partnership import perms
 from partnership.api.serializers.financing import FinancingSerializer
 from partnership.filter import FinancingAdminFilter
 from partnership.forms import FinancingFilterForm, FinancingImportForm
@@ -58,8 +57,6 @@ class FinancingListView(UserPassesTestMixin, SearchMixin, FormMixin, FilterView)
         user = self.request.user
         context = super().get_context_data(**kwargs)
         context['import_form'] = self.import_form
-        context['can_import_financing'] = perms.user_can_import_financing(user)
-        context['can_export_financing'] = perms.user_can_export_financing(user)
         context['academic_year'] = self.academic_year
         return context
 

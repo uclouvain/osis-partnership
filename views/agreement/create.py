@@ -4,7 +4,6 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
-from partnership import perms
 from partnership.utils import user_is_adri
 from .mixins import PartnershipAgreementsFormMixin
 from ..mixins import NotifyAdminMailMixin
@@ -16,10 +15,9 @@ class PartnershipAgreementCreateView(NotifyAdminMailMixin,
                                      PartnershipAgreementsFormMixin,
                                      CreateView):
     template_name = 'partnerships/agreements/create.html'
-    login_url = 'access_denied'
 
-    def test_func(self):
-        return perms.user_can_change_partnership(self.request.user, self.partnership)
+    def get_permission_object(self):
+        return self.partnership
 
     @transaction.atomic
     def form_valid(self, form, form_media):

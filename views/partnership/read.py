@@ -3,7 +3,6 @@ from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 
-from partnership import perms
 from partnership.models import (
     Media, Partnership, PartnershipAgreement, PartnershipYear,
 )
@@ -22,9 +21,6 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['can_change'] = perms.user_can_change_partnership(
-            self.request.user, self.object
-        )
         if self.object.current_year is None:
             context['show_more_year_link'] = self.object.years.count() > 1
         else:
