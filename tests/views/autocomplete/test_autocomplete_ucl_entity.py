@@ -130,8 +130,8 @@ class UclEntityAutocompleteTestCase(TestCase):
         results = response.json()['results']
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
-        self.assertEqual(results[1]['id'], str(self.ucl_university_labo.pk))
-        self.assertEqual(results[2]['id'], str(self.ucl_university_2.pk))
+        self.assertEqual(results[1]['id'], str(self.ucl_university_2.pk))
+        self.assertEqual(results[2]['id'], str(self.ucl_university_labo.pk))
         self.assertEqual(results[3]['id'], str(self.ucl_university_labo_2.pk))
 
     def test_ucl_entity_autocomplete_other_gs(self):

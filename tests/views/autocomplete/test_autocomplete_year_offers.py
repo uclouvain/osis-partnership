@@ -4,6 +4,7 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
+from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
@@ -19,6 +20,7 @@ class YearOffersAutocompleteTestCase(TestCase):
         # university_offer
         cls.university_offer = EducationGroupYearFactory(
             joint_diploma=True,
+            academic_year=AcademicYearFactory.produce_in_future(quantity=3)[-1]
         )
 
         # education_level

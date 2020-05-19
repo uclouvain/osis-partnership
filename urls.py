@@ -1,49 +1,6 @@
 from django.conf.urls import include, url
 
-from partnership.views import (
-    EntityAutocompleteView,
-    FacultyEntityAutocompleteView,
-    FinancingExportView, FinancingImportView,
-    FinancingListView,
-    PartnerAutocompletePartnershipsFilterView,
-    PartnerAutocompleteView, PartnerCreateView,
-    PartnerDetailView,
-    PartnerEntityAutocompletePartnershipsFilterView,
-    PartnerEntityAutocompleteView,
-    PartnerEntityCreateView,
-    PartnerEntityDeleteView,
-    PartnerEntityUpdateView, PartnerMediaCreateView,
-    PartnerMediaDeleteView,
-    PartnerMediaDownloadView,
-    PartnerMediaUpdateView, PartnersExportView,
-    PartnershipAgreementExportView,
-    PartnershipAgreementMediaDownloadView,
-    PartnershipAutocompleteView,
-    PartnershipContactCreateView,
-    PartnershipContactDeleteView,
-    PartnershipContactUpdateView,
-    PartnershipCreateView, PartnershipDetailView,
-    PartnershipExportView, PartnershipsListView,
-    PartnershipUpdateView,
-    PartnershipYearEntitiesAutocompleteView,
-    PartnershipYearOffersAutocompleteView,
-    PartnersListView, PartnerUpdateView,
-    PartnershipAgreementCreateView,
-    PartnershipAgreementDeleteView,
-    PartnershipAgreementUpdateView,
-    PartnershipConfigurationUpdateView,
-    PersonAutocompleteView, SimilarPartnerView,
-    UCLManagementEntityCreateView,
-    UCLManagementEntityDeleteView,
-    UCLManagementEntityListView,
-    UCLManagementEntityUpdateView,
-    UclUniversityAutocompleteFilterView,
-    UclEntityAutocompleteView,
-    UniversityOffersAutocompleteFilterView,
-    YearsEntityAutocompleteFilterView, PartnershipMediaCreateView,
-    PartnershipAgreementListView,
-    PartnershipMediaUpdateView, PartnershipMediaDeleteView, PartnershipMediaDownloadView
-)
+from .views import *
 
 app_name = "partnerships"
 urlpatterns = [
@@ -119,7 +76,6 @@ urlpatterns = [
             PartnershipYearOffersAutocompleteView.as_view(),
             name='partnership_year_offers',
         ),
-        url('^entity/$', EntityAutocompleteView.as_view(), name='entity'),
         # Partnerships filter
         url(
             r'^partner-partnerships-filter/$',
