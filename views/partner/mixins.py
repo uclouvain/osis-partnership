@@ -9,9 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormMixin
 
 from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import AddressForm, PartnerEntityForm, PartnerForm
 from partnership.models import Partner, PartnershipConfiguration
-from partnership.utils import user_is_adri
 
 
 class PartnerFormMixin(PermissionRequiredMixin):
@@ -42,7 +42,6 @@ class PartnerFormMixin(PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
-        kwargs['user_is_adri'] = user_is_adri(self.request.user)
         return super().get_context_data(**kwargs)
 
     @transaction.atomic
@@ -56,7 +55,7 @@ class PartnerFormMixin(PermissionRequiredMixin):
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if is_create and not user_is_adri(self.request.user):
+        if is_create and not is_linked_to_adri_entity(self.request.user):
             send_mail(
                 'OSIS-Partenariats : {} - {}'.format(_('partner_created'), partner.name),
                 render_to_string(

@@ -36,17 +36,19 @@ class PartnershipCreateViewTest(TestCase):
         cls.country = CountryFactory()
         cls.user_other_gf = UserFactory()
         cls.user_2_types = UserFactory()
-
-        perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(perm)
-        cls.user_adri.user_permissions.add(perm)
-        cls.user_gs.user_permissions.add(perm)
-        cls.user_gf.user_permissions.add(perm)
-        cls.user_other_gf.user_permissions.add(perm)
-        cls.user_2_types.user_permissions.add(perm)
-        cls.user_2_types.user_permissions.add(
-            Permission.objects.get(codename='change_GENERAL')
+        PartnershipEntityManagerFactory(
+            entity=entity_version.entity,
+            person__user=cls.user_2_types,
+            scopes=[PartnershipType.MOBILITY.name, PartnershipType.GENERAL.name]
         )
+
+        access_perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(access_perm)
+        cls.user_adri.user_permissions.add(access_perm)
+        cls.user_gs.user_permissions.add(access_perm)
+        cls.user_gf.user_permissions.add(access_perm)
+        cls.user_other_gf.user_permissions.add(access_perm)
+        cls.user_2_types.user_permissions.add(access_perm)
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)

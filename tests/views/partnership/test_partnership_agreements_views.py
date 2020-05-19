@@ -63,10 +63,11 @@ class PartnershipAgreementCreateViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(perm)
+        cls.user_adri.user_permissions.add(perm)
+        cls.user_gf.user_permissions.add(perm)
+        cls.user_other_gf.user_permissions.add(perm)
 
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)

@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
-from partnership.utils import user_is_adri
+from partnership.auth.predicates import is_linked_to_adri_entity
 from .mixins import PartnershipAgreementsFormMixin
 from ..mixins import NotifyAdminMailMixin
 
@@ -36,7 +36,7 @@ class PartnershipAgreementCreateView(NotifyAdminMailMixin,
         messages.success(self.request, _('partnership_agreement_success'))
 
         # Send notification e-mail when not ADRI
-        if not user_is_adri(self.request.user):
+        if not is_linked_to_adri_entity(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_agreement_created'),
                 self.partnership.ucl_entity.most_recent_acronym

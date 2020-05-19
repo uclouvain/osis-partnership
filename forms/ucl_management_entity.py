@@ -1,10 +1,10 @@
-from dal import autocomplete, forward
+from dal import autocomplete
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from base.models.person import Person
 from partnership.models import UCLManagementEntity
-from partnership.utils import user_is_adri
+from partnership.auth.predicates import is_linked_to_adri_entity
 from .fields import PersonChoiceField
 
 __all__ = ['UCLManagementEntityForm']
@@ -79,8 +79,8 @@ class UCLManagementEntityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if (self.instance.pk is not None
                 and self.instance.entity.partnerships.exists()
-                or not user_is_adri(self.user)):
+                or not is_linked_to_adri_entity(self.user)):
             self.fields['entity'].disabled = True
-        if not user_is_adri(self.user):
+        if not is_linked_to_adri_entity(self.user):
             self.fields['academic_responsible'].disabled = True
             self.fields['administrative_responsible'].disabled = True

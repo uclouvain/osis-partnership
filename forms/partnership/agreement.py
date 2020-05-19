@@ -2,8 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import PartnershipAgreement
-from partnership.utils import user_is_adri
 
 __all__ = ['PartnershipAgreementForm']
 
@@ -22,7 +22,7 @@ class PartnershipAgreementForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        if not user_is_adri(user):
+        if not is_linked_to_adri_entity(user):
             del self.fields['status']
 
     def clean(self):

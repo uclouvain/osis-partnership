@@ -10,11 +10,11 @@ from django.views.generic import UpdateView
 
 from base.models.academic_year import find_academic_years
 from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import PartnershipForm
 from partnership.models import (
-    Partnership, PartnershipConfiguration, PartnershipYear,
+    Partnership, PartnershipConfiguration, PartnershipType, PartnershipYear,
 )
-from partnership.utils import user_is_adri
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
 __all__ = [
@@ -38,7 +38,7 @@ class PartnershipUpdateView(PermissionRequiredMixin, PartnershipFormMixin, Updat
         partnership = form.save()
 
         if (form_year.cleaned_data['end_academic_year'] != self.object.end_academic_year
-                and not user_is_adri(self.request.user)):
+                and not is_linked_to_adri_entity(self.request.user)):
             send_mail(
                 'OSIS-Partenariats : {}'.format(
                     _('partnership_end_year_updated_{partner}_{faculty}').format(

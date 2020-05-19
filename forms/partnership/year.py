@@ -6,10 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import (
     Partnership, PartnershipConfiguration, PartnershipYear,
 )
-from partnership.utils import user_is_adri
 from ..fields import (
     EducationGroupYearChoiceSelect, EntityChoiceMultipleField,
 )
@@ -84,7 +84,7 @@ class PartnershipYearForm(forms.ModelForm):
         current_academic_year = (
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
         )
-        is_adri = user_is_adri(self.user)
+        is_adri = is_linked_to_adri_entity(self.user)
         if not is_adri:
             del self.fields['eligible']
             if current_academic_year is not None:

@@ -7,9 +7,9 @@ from django.views.generic import CreateView, TemplateView
 
 from base.models.academic_year import find_academic_years
 from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import PartnershipForm
 from partnership.models import Partnership, PartnershipType
-from partnership.utils import user_is_adri
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
@@ -79,7 +79,7 @@ class PartnershipCreateView(PermissionRequiredMixin,
             form_year.save_m2m()
 
         messages.success(self.request, _('partnership_success'))
-        if not user_is_adri(self.request.user):
+        if not is_linked_to_adri_entity(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_created'),
                 partnership.ucl_entity.most_recent_acronym

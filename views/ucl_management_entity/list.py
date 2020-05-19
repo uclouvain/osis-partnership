@@ -4,8 +4,8 @@ from django.views.generic import ListView
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import UCLManagementEntity
-from partnership.utils import user_is_adri
 
 __all__ = [
     'UCLManagementEntityListView'
@@ -50,7 +50,7 @@ class UCLManagementEntityListView(PermissionRequiredMixin, ListView):
             )
             .prefetch_related('entity__partnerships')
         )
-        if not user_is_adri(self.request.user):
+        if not is_linked_to_adri_entity(self.request.user):
             # get what the user manages
             person = self.request.user.person
             entities_managed_by_user = person.partnershipentitymanager_set.values('entity_id')

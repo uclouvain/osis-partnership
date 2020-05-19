@@ -2,7 +2,6 @@ import codecs
 import csv
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import transaction
@@ -12,9 +11,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin, ProcessFormView
 
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import FinancingImportForm
 from partnership.models import Financing, PartnershipConfiguration
-from partnership.utils import user_is_adri
 from reference.models.country import Country
 
 __all__ = [
@@ -22,13 +21,11 @@ __all__ = [
 ]
 
 
-class FinancingImportView(LoginRequiredMixin, UserPassesTestMixin, TemplateResponseMixin, FormMixin, ProcessFormView):
+class FinancingImportView(PermissionRequiredMixin, TemplateResponseMixin, FormMixin, ProcessFormView):
     form_class = FinancingImportForm
     template_name = "partnerships/financings/financing_import.html"
     login_url = 'access_denied'
-
-    def test_func(self):
-        return user_is_adri(self.request.user)
+    permission_required = 'partnership.import_financing'
 
     def get_success_url(self, academic_year=None):
         if academic_year is None:

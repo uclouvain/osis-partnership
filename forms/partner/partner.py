@@ -4,8 +4,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import Partner
-from partnership.utils import user_is_adri
 
 __all__ = ['PartnerForm']
 
@@ -73,7 +73,7 @@ class PartnerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        if not user_is_adri(user):
+        if not is_linked_to_adri_entity(user):
             del self.fields['is_valid']
             del self.fields['partner_code']
         if self.instance.pk is not None:
