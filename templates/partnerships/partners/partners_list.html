@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% load bootstrap3 i18n static osis_role %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
@@ -51,6 +51,7 @@
 </div>
 
 {% url 'organization_edit' organization_id=organization.id as url_identification_edit %}
+{% has_perm 'partnership.add_partner' user as can_add_partner %}
 
 <div class="panel panel-default">
   <div class="panel-body">

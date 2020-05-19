@@ -1,27 +1,6 @@
-from datetime import date
-
 from django.contrib.auth import get_user_model
-from django.db.models import Q
 
 from base.models.entity_version import EntityVersion
-from base.models.person import Person
-
-
-def user_is_adri(user):
-    # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
-    try:
-        return (
-            user
-            .person
-            .partnershipentitymanager_set
-            .filter(Q(entity__entityversion__end_date__gte=date.today())
-                    | Q(entity__entityversion__end_date__isnull=True),
-                    entity__entityversion__start_date__lte=date.today())
-            .filter(entity__entityversion__acronym='ADRI')
-            .exists()
-        )
-    except (Person.DoesNotExist, AttributeError):
-        return False
 
 
 def get_adri_users():
@@ -38,47 +17,6 @@ def get_user_faculties(user):
 
 def get_adri_emails():
     return get_adri_users().values_list('email', flat=True)
-
-
-def user_is_gf(user):
-    # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
-    try:
-        return (
-            user
-            .person
-            .partnershipentitymanager_set.all()
-            .exists()
-        )
-    except Person.DoesNotExist:
-        return False
-
-
-def user_is_gf_of_faculty(user, entity):
-    from partnership.models import PartnershipEntityManager
-
-    # Get all parents entities which have a PartnershipEntityManager
-    # with this person
-    cte = EntityVersion.objects.with_children(entity=entity)
-    return hasattr(user, 'person') and cte.join(
-        PartnershipEntityManager, entity_id=cte.col.entity_id
-    ).with_cte(cte).filter(person=user.person).exists()
-
-
-def user_is_in_user_faculty(user, other_user):
-    # FIXME THIS SHOULD BE MOVED TO THE User OR Person MODEL
-    try:
-        return (
-            user
-            .person
-            .partnershipentitymanager_set
-            .filter(
-                Q(entity__partnershipentitymanager__person__user=other_user)
-                | Q(entity__parent_of__entity__partnershipentitymanager__person__user=other_user)
-            )
-            .exists()
-        )
-    except Person.DoesNotExist:
-        return False
 
 
 def academic_years(start_academic_year, end_academic_year):

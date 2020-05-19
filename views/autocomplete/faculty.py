@@ -2,7 +2,7 @@ from datetime import date
 
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Subquery
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion

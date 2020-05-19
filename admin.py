@@ -1,17 +1,12 @@
 from django.contrib import admin
 
-from partnership.models import (
-    Address, Contact, ContactType, Financing,
-    Media, Partner, PartnerEntity, Partnership,
-    PartnershipAgreement, PartnershipEntityManager,
-    PartnershipTag, PartnershipYear,
-    PartnershipYearEducationLevel, PartnerTag,
-    PartnerType, UCLManagementEntity, MediaType
-)
+from osis_role.contrib.admin import EntityRoleModelAdmin
+from partnership.models import *
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 
 
-class PartnershipEntityManagerAdmin(admin.ModelAdmin):
-    list_display = ('person', 'entity')
+class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
+    list_display = ('person', 'entity', 'scopes')
     search_fields = ['person__first_name', 'person__last_name', 'entity__entityversion__acronym']
     raw_id_fields = ('person', 'entity',)
 

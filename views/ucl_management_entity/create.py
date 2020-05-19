@@ -1,10 +1,9 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView
 
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import UCLManagementEntityForm
 from partnership.models import UCLManagementEntity
 
@@ -13,15 +12,13 @@ __all__ = [
 ]
 
 
-class UCLManagementEntityCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class UCLManagementEntityCreateView(PermissionRequiredMixin, CreateView):
     model = UCLManagementEntity
     template_name = "partnerships/ucl_management_entities/uclmanagemententity_create.html"
     form_class = UCLManagementEntityForm
     success_url = reverse_lazy('partnerships:ucl_management_entities:list')
     login_url = 'access_denied'
-
-    def test_func(self):
-        return perms.user_can_create_ucl_management_entity(self.request.user)
+    permission_required = 'partnership.add_uclmanagemententity'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

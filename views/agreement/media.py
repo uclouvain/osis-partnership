@@ -4,7 +4,6 @@ from django.http import FileResponse, Http404
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 
-from partnership import perms
 from .mixins import PartnershipAgreementsMixin
 
 __all__ = ['PartnershipAgreementMediaDownloadView']
@@ -12,9 +11,6 @@ __all__ = ['PartnershipAgreementMediaDownloadView']
 
 class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleObjectMixin, View):
     login_url = 'access_denied'
-
-    def test_func(self):
-        return perms.user_can_change_partnership(self.request.user, self.partnership)
 
     def get(self, request, *args, **kwargs):
         agreement = self.get_object()

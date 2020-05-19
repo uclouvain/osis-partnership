@@ -4,7 +4,6 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
-from partnership import perms
 from partnership.models import PartnershipAgreement
 from .mixins import PartnershipAgreementsFormMixin
 
@@ -14,9 +13,6 @@ __all__ = ['PartnershipAgreementUpdateView']
 class PartnershipAgreementUpdateView(PartnershipAgreementsFormMixin, UpdateView):
     template_name = 'partnerships/agreements/update.html'
     login_url = 'access_denied'
-
-    def test_func(self):
-        return perms.user_can_change_agreement(self.request.user, self.get_object())
 
     def get_queryset(self):
         return PartnershipAgreement.objects.select_related(

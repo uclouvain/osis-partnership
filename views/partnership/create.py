@@ -6,10 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, TemplateView
 
 from base.models.academic_year import find_academic_years
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import PartnershipForm
 from partnership.models import Partnership, PartnershipType
-from partnership.utils import user_is_adri
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
@@ -30,7 +30,7 @@ class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
     def dispatch(self, request, *args, **kwargs):
         # Get all types the user can create
         types = [t for t in PartnershipType
-                 if perms.user_can_add_partnership(request.user, t)]
+                 if request.user.has_perm('partnership.add_partnership', t)]
         self.extra_context = {'types': types}
         return super().dispatch(request, *args, **kwargs)
 
@@ -44,8 +44,7 @@ class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
         return super().get(request, *args, **kwargs)
 
 
-class PartnershipCreateView(LoginRequiredMixin,
-                            UserPassesTestMixin,
+class PartnershipCreateView(PermissionRequiredMixin,
                             NotifyAdminMailMixin,
                             PartnershipFormMixin,
                             CreateView):
@@ -53,11 +52,10 @@ class PartnershipCreateView(LoginRequiredMixin,
     form_class = PartnershipForm
     template_name = "partnerships/partnership/partnership_create.html"
     login_url = 'access_denied'
+    permission_required = 'partnership.add_partnership'
 
-    def test_func(self):
-        return perms.user_can_add_partnership(
-            self.request.user, self.kwargs['type'],
-        )
+    def get_permission_object(self):
+        return self.kwargs['type']
 
     @transaction.atomic
     def form_valid(self, form, form_year):
@@ -81,7 +79,7 @@ class PartnershipCreateView(LoginRequiredMixin,
             form_year.save_m2m()
 
         messages.success(self.request, _('partnership_success'))
-        if not user_is_adri(self.request.user):
+        if not is_linked_to_adri_entity(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_created'),
                 partnership.ucl_entity.most_recent_acronym

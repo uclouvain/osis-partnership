@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Q
@@ -10,12 +9,12 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
 from base.models.academic_year import find_academic_years
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import PartnershipForm
 from partnership.models import (
-    Partnership, PartnershipConfiguration, PartnershipYear,
+    Partnership, PartnershipConfiguration, PartnershipType, PartnershipYear,
 )
-from partnership.utils import user_is_adri
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
 __all__ = [
@@ -23,25 +22,23 @@ __all__ = [
 ]
 
 
-class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, PartnershipFormMixin, UpdateView):
+class PartnershipUpdateView(PermissionRequiredMixin, PartnershipFormMixin, UpdateView):
     model = Partnership
     form_class = PartnershipForm
     template_name = "partnerships/partnership/partnership_update.html"
     login_url = 'access_denied'
+    permission_required = 'partnership.change_partnership'
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(*args, **kwargs)
-
-    def test_func(self):
-        return perms.user_can_change_partnership(self.request.user, self.object)
 
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save()
 
         if (form_year.cleaned_data['end_academic_year'] != self.object.end_academic_year
-                and not user_is_adri(self.request.user)):
+                and not is_linked_to_adri_entity(self.request.user)):
             send_mail(
                 'OSIS-Partenariats : {}'.format(
                     _('partnership_end_year_updated_{partner}_{faculty}').format(

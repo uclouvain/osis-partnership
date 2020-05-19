@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load partnerships i18n static years %}
+{% load partnerships i18n static years osis_role %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
@@ -19,6 +19,9 @@
 <div class="page-header">
   <h1>{{ partner }}</h1>
 </div>
+
+  {% has_perm 'partnership.change_partner' user partner as can_update_partner %}
+  {% has_perm 'partnership.add_partnerentity' user partner as can_add_entities %}
 
 <div class="panel panel-default">
   <div class="panel-body">
@@ -155,19 +158,21 @@
     </div>
 
     {% for entity in partner.entities.all %}
+    {% has_perm 'partnership.change_partnerentity' user entity as can_change_partner_entity %}
+    {% has_perm 'partnership.delete_partnerentity' user entity as can_delete_partner_entity %}
     <div class="partner-entity">
       <div class="row">
         <div class="col-sm-12 col-md-6">
           <h3 id="partner-entity-{{ entity.id }}">
             {{ entity }}
 
-            {% if user|can_change_partner_entity:entity %}
+            {% if can_change_partner_entity %}
             <div class="btn-group">
               <a href="{% url "partnerships:partners:entities:update" partner.id entity.id %}"
                  class="btn btn-default">
                 <i class="fas fa-pencil-alt fa-fw"></i>
               </a>
-              {% if user|can_delete_partner_entity:entity %}
+              {% if can_delete_partner_entity %}
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>

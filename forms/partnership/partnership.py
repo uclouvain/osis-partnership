@@ -8,11 +8,9 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from base.utils.cte import CTESubquery
-from partnership.models import (
-    Partner, Partnership,
-    PartnershipEntityManager,
-)
-from partnership.utils import user_is_adri
+from partnership.models import Partner, Partnership
+from partnership.auth.predicates import is_linked_to_adri_entity
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from ..fields import EntityChoiceField, PersonChoiceField
 
 __all__ = ['PartnershipForm']
@@ -83,7 +81,7 @@ class PartnershipForm(forms.ModelForm):
             self.get_entities_condition(self.user)
         ).distinct()
 
-        if not user_is_adri(self.user):
+        if not is_linked_to_adri_entity(self.user):
             # Restrict fields for GF and GS
             if field.queryset.count() == 1:
                 field.initial = field.queryset.first().pk
@@ -113,7 +111,7 @@ class PartnershipForm(forms.ModelForm):
         # Must have UCL management entity
         conditions = Q(uclmanagement_entity__isnull=False)
 
-        if not user_is_adri(user):
+        if not is_linked_to_adri_entity(user):
             # Get children entities which user has a PartnershipEntityManager
             cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
             qs = cte.join(

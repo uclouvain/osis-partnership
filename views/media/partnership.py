@@ -13,20 +13,17 @@ __all__ = [
 ]
 
 
-class PartnershipMediaCreateView(LoginRequiredMixin, PartnershipMediaFormMixin, CreateView):
+class PartnershipMediaCreateView(PartnershipMediaFormMixin, CreateView):
     template_name = 'partnerships/medias/partnership_media_create.html'
-    login_url = 'access_denied'
 
 
-class PartnershipMediaUpdateView(LoginRequiredMixin, PartnershipMediaFormMixin, UpdateView):
+class PartnershipMediaUpdateView(PartnershipMediaFormMixin, UpdateView):
     template_name = 'partnerships/medias/partnership_media_update.html'
     context_object_name = 'media'
-    login_url = 'access_denied'
 
 
-class PartnershipMediaDeleteView(LoginRequiredMixin, PartnershipMediaMixin, DeleteView):
+class PartnershipMediaDeleteView(PartnershipMediaMixin, DeleteView):
     template_name = 'partnerships/medias/partnership_media_delete.html'
-    login_url = 'access_denied'
 
     def get_template_names(self):
         if self.request.is_ajax():

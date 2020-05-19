@@ -10,9 +10,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity_version import (
-    EntityVersion,
-)
+from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus, PartnershipType
@@ -178,9 +176,6 @@ class Partnership(models.Model):
         ordering = ('-created',)
         permissions = (
             ('can_access_partnerships', _('can_access_partnerships')),
-        ) + tuple(
-            ('change_%s' % t, _('can change %(type)s') % {'type': t})
-            for t in PartnershipType.get_names()
         )
 
     def __str__(self):

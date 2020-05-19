@@ -8,7 +8,6 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import Partnership, PartnershipType
 from partnership.tests.factories import (
@@ -34,7 +33,12 @@ class PartnershipUpdateViewTest(TestCase):
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
-        cls.user_project = PersonFactory().user
+        cls.user_project = UserFactory()
+        PartnershipEntityManagerFactory(
+            entity=entity_version.entity,
+            person__user=cls.user_project,
+            scopes=[PartnershipType.PROJECT.name]
+        )
 
         access_perm = Permission.objects.get(name='can_access_partnerships')
         cls.user.user_permissions.add(access_perm)
@@ -42,10 +46,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.user_gs.user_permissions.add(access_perm)
         cls.user_gf.user_permissions.add(access_perm)
         cls.user_other_gf.user_permissions.add(access_perm)
-        cls.user_project.user_permissions.add(
-            access_perm,
-            Permission.objects.get(codename='change_PROJECT')
-        )
+        cls.user_project.user_permissions.add(access_perm)
 
         # Dates :
         cls.partner = PartnerFactory()

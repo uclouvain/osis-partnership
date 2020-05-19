@@ -7,11 +7,13 @@ from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
 from base.utils.search import SearchMixin
-from partnership import perms
 from partnership.api.serializers import PartnershipAdminSerializer
+from partnership.auth.predicates import (
+    is_faculty_manager,
+    is_linked_to_adri_entity,
+)
 from partnership.filter import PartnershipAdminFilter
 from partnership.models import AgreementStatus, Partnership, PartnershipType
-from partnership.utils import user_is_adri, user_is_gf
 
 __all__ = [
     'PartnershipsListView',
@@ -28,7 +30,7 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     cache_search = False
 
     def get(self, *args, **kwargs):
-        if not self.request.GET and user_is_gf(self.request.user):
+        if not self.request.GET and is_faculty_manager(self.request.user):
             # FIXME is it to enforce ucl_entity? Should be done in search form
             university = self.request.user.person.partnershipentitymanager_set.first().entity
             if Partnership.objects.filter(ucl_entity=university).exists():
@@ -59,10 +61,10 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super().get_context_data(**kwargs)
-        context['can_change_configuration'] = user_is_adri(user)
+        context['can_change_configuration'] = is_linked_to_adri_entity(user)
         context['can_add_partnership'] = any([
             t for t in PartnershipType
-            if perms.user_can_add_partnership(user, t)]
+            if user.has_perm('partnership.add_partnership', t)]
         )
         context['url'] = reverse('partnerships:list')
         context['export_url'] = reverse('partnerships:export')

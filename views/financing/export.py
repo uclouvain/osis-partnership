@@ -1,14 +1,13 @@
 import csv
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
 from base.models.academic_year import AcademicYear
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.models import Financing, PartnershipConfiguration
-from partnership.utils import user_is_adri
 from reference.models.country import Country
 
 __all__ = [
@@ -16,11 +15,9 @@ __all__ = [
 ]
 
 
-class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
+class FinancingExportView(PermissionRequiredMixin, View):
     login_url = 'access_denied'
-
-    def test_func(self):
-        return user_is_adri(self.request.user)
+    permission_required = 'partnership.export_financing'
 
     def get_csv_data(self, academic_year):
         countries = Country.objects.all().order_by('name').prefetch_related(
