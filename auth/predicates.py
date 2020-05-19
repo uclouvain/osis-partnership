@@ -5,7 +5,7 @@ from django.db.models import Q
 
 
 @rules.predicate
-def is_validated(user, agreement):
+def is_agreement_validated(user, agreement):
     from partnership.models import AgreementStatus
     return agreement.status == AgreementStatus.VALIDATED.name
 
@@ -60,14 +60,7 @@ def is_faculty_manager_for_agreement(self, user, agreement):
 
 @rules.predicate(bind=True)
 def is_faculty_manager_for_ume(self, user, ucl_management_entity):
-    from partnership.auth.roles.partnership_manager import PartnershipEntityManager
-    if self.context:
-        qs = self.context['role_qs']
-    else:
-        qs = PartnershipEntityManager.objects.filter(
-            person=getattr(user, 'person', None)
-        )
-    return ucl_management_entity.entity_id in qs.get_entities_ids()
+    return ucl_management_entity.entity_id in self.context['role_qs'].get_entities_ids()
 
 
 @rules.predicate(bind=True)
@@ -77,16 +70,6 @@ def is_in_same_faculty_as_author(self, user, entity):
         Q(entity__partnershipentitymanager__person__user=other_user)
         | Q(entity__parent_of__entity__partnershipentitymanager__person__user=other_user)
     ).exists()
-
-
-@rules.predicate
-def is_mobility(user, obj):
-    from partnership.models import Partnership, PartnershipType
-
-    if isinstance(obj, Partnership):
-        return obj.partnership_type == PartnershipType.MOBILITY.name
-    elif isinstance(obj, PartnershipType):
-        return obj == PartnershipType.MOBILITY
 
 
 @rules.predicate
@@ -105,11 +88,9 @@ def entity_has_children(user, entity):
 
 
 @rules.predicate(bind=True)
-def partnership_type_allowed_for_user_scope(self, user, partnership_type=None):
-    if partnership_type:
-        return any(partnership_type.name in role_row.scopes
-                   for role_row in self.context['role_qs'])
-    return None
+def partnership_type_allowed_for_user_scope(self, user, partnership_type):
+    return any(partnership_type.name in role_row.scopes
+               for role_row in self.context['role_qs'])
 
 
 @rules.predicate(bind=True)

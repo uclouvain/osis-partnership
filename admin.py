@@ -6,7 +6,7 @@ from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 
 
 class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
-    list_display = ('person', 'entity')
+    list_display = ('person', 'entity', 'scopes')
     search_fields = ['person__first_name', 'person__last_name', 'entity__entityversion__acronym']
     raw_id_fields = ('person', 'entity',)
 

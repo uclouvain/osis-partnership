@@ -48,7 +48,8 @@ class PartnershipEntityManager(EntityRoleModel):
 
             # PartnershipAgreement
             'partnership.change_agreement': can_change_agreement,
-            'partnership.delete_agreement': ~is_validated & can_change_agreement,
+            'partnership.delete_agreement':
+                ~is_agreement_validated & can_change_agreement,
 
             # UCLManagementEntity
             'partnership.view_uclmanagemententity':
