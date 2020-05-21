@@ -6,9 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, TemplateView
 
 from base.models.academic_year import find_academic_years
-from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
-from partnership.forms import PartnershipForm
 from partnership.models import Partnership, PartnershipType
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
@@ -44,17 +42,16 @@ class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
         return super().get(request, *args, **kwargs)
 
 
-class PartnershipCreateView(PermissionRequiredMixin,
-                            NotifyAdminMailMixin,
+class PartnershipCreateView(NotifyAdminMailMixin,
                             PartnershipFormMixin,
                             CreateView):
     model = Partnership
-    form_class = PartnershipForm
     template_name = "partnerships/partnership/partnership_create.html"
     login_url = 'access_denied'
     permission_required = 'partnership.add_partnership'
 
     def get_permission_object(self):
+        self.partnership_type = self.kwargs['type'].name
         return self.kwargs['type']
 
     @transaction.atomic
@@ -62,13 +59,27 @@ class PartnershipCreateView(PermissionRequiredMixin,
         partnership = form.save(commit=False)
         partnership.author = self.request.user.person
 
+        if partnership.partnership_type in PartnershipType.with_synced_dates():
+            start_academic_year = form_year.cleaned_data['start_academic_year']
+            end_academic_year = form_year.cleaned_data['end_academic_year']
+            partnership.start_date = start_academic_year.start_date
+            partnership.end_date = end_academic_year.end_date
+        else:
+            years = find_academic_years(
+                # We need academic years surrounding this time range
+                start_date=partnership.end_date,
+                end_date=partnership.start_date,
+            )
+            start_academic_year = years.first()
+            end_academic_year = years.last()
+
         # Resume saving
         partnership.save()
         form.save_m2m()
 
         # Create years
-        start_year = form_year.cleaned_data['start_academic_year'].year
-        end_year = form_year.cleaned_data['end_academic_year'].year
+        start_year = start_academic_year.year
+        end_year = end_academic_year.year
         academic_years = find_academic_years(start_year=start_year, end_year=end_year)
         for academic_year in academic_years:
             partnership_year = form_year.save(commit=False)
