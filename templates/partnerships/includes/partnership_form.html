@@ -88,30 +88,51 @@
   </div>
 </div>
 
-<h3>{% trans "partnership_when" %}</h3>
+{# Type relies on academic years #}
+{% if form_year.end_academic_year %}
+  <h3>{% trans "partnership_when" %}</h3>
 
-<div class="row">
-  {% if form_year.start_academic_year %}
-  <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.start_academic_year %}
+  <div class="row">
+    {% if form_year.start_academic_year %}
+      <div class="col-xs-12 col-sm-12">
+        {% bootstrap_field form_year.start_academic_year %}
+      </div>
+    {% else %}
+      <div class="col-xs-12 col-sm-12">
+        <dl>
+          <dt>{% trans "start_academic_year" %}</dt>
+          <dd>{{ object.start_academic_year }}</dd>
+        </dl>
+      </div>
+    {% endif %}
+    {% if form_year.from_academic_year %}
+      <div class="col-xs-12 col-sm-12">
+        <dl>
+          <dt>{% trans "current_academic_year" %}</dt>
+          <dd>{{ current_academic_year }}</dd>
+        </dl>
+      </div>
+      <div class="col-xs-12 col-sm-12">
+        {% bootstrap_field form_year.from_academic_year %}
+      </div>
+    {% endif %}
+    <div class="col-xs-12 col-sm-12">
+      {% bootstrap_field form_year.end_academic_year %}
+    </div>
   </div>
-  {% else %}
-  <div class="col-xs-12 col-sm-12">
-    <dl><dt>{% trans "start_academic_year" %}</dt><dd>{{ object.start_academic_year }}</dd></dl>
+{% else %}
+  {# Type relies on dates #}
+  <h3>{% trans "partnership_duration" %}</h3>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      {% bootstrap_field form.start_date %}
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      {% bootstrap_field form.end_date %}
+    </div>
   </div>
-  {% endif %}
-  {% if form_year.from_academic_year %}
-  <div class="col-xs-12 col-sm-12">
-    <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
-  </div>
-  <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.from_academic_year %}
-  </div>
-  {% endif %}
-  <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.end_academic_year %}
-  </div>
-</div>
+{% endif %}
 
 {% if form.partnership_type.value == 'MOBILITY' and form_year.eligible %}
   <h3>{% trans "partnership_funding" %}</h3>

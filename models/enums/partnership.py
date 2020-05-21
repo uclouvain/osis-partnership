@@ -9,3 +9,7 @@ class PartnershipType(ChoiceEnum):
     COURSE = _('Partenariat de co-organisation de formation')
     DOCTORATE = _('Partenariat de co-organisation de doctorat')
     PROJECT = _('Projet financé')
+
+    @classmethod
+    def with_synced_dates(cls):
+        return [PartnershipType.MOBILITY.name, PartnershipType.COURSE.name]

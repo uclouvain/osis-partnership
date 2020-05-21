@@ -5,7 +5,7 @@ from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.models.enums.partnership import PartnershipType
 from .faculty import FacultyEntityAutocompleteView
-from ...forms import PartnershipForm
+from ...forms import PartnershipMobilityForm
 
 __all__ = [
     'UclUniversityAutocompleteFilterView',
@@ -31,7 +31,7 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
 
         if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:
             queryset = queryset.filter(
-                PartnershipForm.get_entities_condition(self.request.user)
+                PartnershipMobilityForm.get_entities_condition(self.request.user)
             )
 
         return queryset.annotate(
