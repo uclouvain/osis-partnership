@@ -57,12 +57,26 @@
             </dd>
 
             {% with partnership.get_supervisor as supervisor %}
-            <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %} {% if partnership.supervisor is None %}({% trans "partnership_supervisor_from_entity_management" %}){% endif %}{% endif %}</dd>
+              <dt>{% trans "partnership_supervisor" %}</dt>
+              <dd>
+                {% if supervisor %}
+                  {{ supervisor }}
+                  {% if supervisor.email %} - {{ supervisor.email }}{% endif %}
+                  {% if partnership.supervisor is None %}
+                    ({% trans "partnership_supervisor_from_entity_management" %})
+                  {% endif %}
+                {% endif %}</dd>
             {% endwith %}
 
-            <dt>{% trans "administrative_responsible" %}</dt>
-            <dd>{{ partnership.administrative_responsible|default_if_none:"" }}{% if partnership.administrative_responsible %} - {{ partnership.administrative_responsible.email }}{% endif %}</dd>
+            {% with partnership.ucl_entity.uclmanagement_entity as ume %}
+              <dt>{% trans "administrative_responsible" %}</dt>
+              <dd>
+                {{ ume.administrative_responsible|default_if_none:"" }}
+                {% if ume.administrative_responsible.email %} -
+                  {{ ume.administrative_responsible.email }}
+                {% endif %}
+              </dd>
+            {% endwith %}
 
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>{% academic_dates start_date=partnership.start_date end_date=partnership.end_date %}</dd>
