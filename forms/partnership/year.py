@@ -56,13 +56,9 @@ class PartnershipYearBaseForm(forms.ModelForm):
             'education_levels',
             'entities',
             'offers',
-            'is_sms',
-            'is_smp',
-            'is_smst',
-            'is_sta',
-            'is_stt',
             'eligible',
             'funding_type',
+            'missions',
         )
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
@@ -74,6 +70,16 @@ class PartnershipYearBaseForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
+
+        # Fill the missions field according to the current type
+        field_missions = self.fields['missions']
+        field_missions.queryset = field_missions.queryset.filter(
+            types__contains=[self.partnership_type],
+        )
+        # If only one mission available, force it
+        if len(field_missions.queryset) == 1:
+            field_missions.initial = field_missions.queryset.first().pk
+            field_missions.disabled = True
 
     def clean(self):
         super().clean()
@@ -146,6 +152,11 @@ class PartnershipYearGeneralForm(PartnershipYearBaseForm):
 class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
+            'is_sms',
+            'is_smp',
+            'is_smst',
+            'is_sta',
+            'is_stt',
             'funding_type',
         )
         widgets = {

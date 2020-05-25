@@ -1,11 +1,14 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import Subquery, OuterRef
+from django.db.models import OuterRef, Subquery
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
+from ..enums.partnership import PartnershipType
 
 __all__ = [
+    'PartnershipMission',
     'PartnershipYear',
 ]
 
@@ -68,6 +71,7 @@ class PartnershipYear(models.Model):
         related_name='years',
         null=True,
     )
+    missions = models.ManyToManyField('partnership.PartnershipMission')
 
     class Meta:
         unique_together = ('partnership', 'academic_year')
@@ -75,7 +79,10 @@ class PartnershipYear(models.Model):
         verbose_name = _('partnership_year')
 
     def __str__(self):
-        return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
+        return _('partnership_year_{partnership}_{year}').format(
+            partnership=self.partnership,
+            year=self.academic_year,
+        )
 
     @property
     def has_sm(self):
@@ -134,3 +141,17 @@ class PartnershipYear(models.Model):
                 academic_year=self.academic_year,
             ).first()
         )
+
+
+class PartnershipMission(models.Model):
+    label = models.CharField(max_length=100)
+    code = models.CharField(max_length=100, unique=True)
+    types = ArrayField(
+        models.CharField(max_length=50, choices=PartnershipType.choices()),
+    )
+
+    class Meta:
+        verbose_name = _('partnership_mission')
+
+    def __str__(self):
+        return "{} - {}".format(self.code, self.label)
