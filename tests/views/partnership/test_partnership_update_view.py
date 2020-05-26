@@ -24,11 +24,10 @@ from partnership.tests.factories import (
     PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
-    PartnershipTagFactory,
+    PartnershipMissionFactory, PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
-    PartnershipMissionFactory,
 )
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -70,6 +69,11 @@ class PartnershipUpdateViewTest(TestCase):
         cls.from_academic_year = AcademicYearFactory(year=2151)
         cls.end_academic_year = AcademicYearFactory(year=2152)
         cls.academic_year_2153 = AcademicYearFactory(year=2153)
+
+        # Initialize config
+        PartnershipConfiguration.objects.update(
+            partnership_creation_update_min_year_id=cls.academic_year_2149.pk
+        )
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()

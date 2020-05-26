@@ -4,10 +4,16 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
+from base.models.enums.entity_type import (
+    DOCTORAL_COMMISSION,
+    FACULTY,
+    SCHOOL,
+    SECTOR,
+)
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import PartnershipType
 from partnership.tests.factories import PartnershipYearFactory
 
 
@@ -32,6 +38,13 @@ class YearEntitiesAutocompleteTestCase(TestCase):
             entity=cls.sector,
             entity_type=SECTOR,
             acronym='A',
+        )
+        cls.commission = EntityFactory()
+        EntityVersionFactory(
+            entity=cls.commission,
+            parent=cls.sector,
+            entity_type=DOCTORAL_COMMISSION,
+            acronym='DA',
         )
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(
@@ -100,6 +113,13 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         # with query on AA
         response = self.client.get(self.url, forward(self.labo, q='AA'))
         self.assertEqual(len(response.json()['results']), 2)
+
+        # with doctorate type
+        response = self.client.get(self.url, {'forward': json.dumps({
+            'entity': self.sector.pk,
+            'partnership_type': PartnershipType.DOCTORATE.name,
+        })})
+        self.assertEqual(len(response.json()['results']), 1)
 
     def test_filter(self):
         self.client.force_login(self.user)

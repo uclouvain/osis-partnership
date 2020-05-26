@@ -128,6 +128,32 @@ class PartnershipYearWithoutDatesForm(PartnershipYearBaseForm):
         required=True,
     )
 
+    def __init__(self, partnership_type=None, *args, **kwargs):
+        super().__init__(partnership_type, *args, **kwargs)
+
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.partnership_creation_update_min_year
+
+        is_adri = is_linked_to_adri_entity(self.user)
+        if self.instance.partnership_id:
+            # Update
+            partnership = self.instance.partnership
+            if (current_academic_year is not None
+                    and current_academic_year.year > partnership.end_academic_year.year):
+                self.fields['end_academic_year'].initial = current_academic_year
+            else:
+                self.fields['end_academic_year'].initial = partnership.end_academic_year
+            if is_adri or partnership_type != PartnershipType.MOBILITY.name:
+                self.fields['start_academic_year'].initial = partnership.start_academic_year
+            else:
+                del self.fields['start_academic_year']
+            self.fields['from_academic_year'].initial = current_academic_year
+        else:
+            # Create
+            self.fields['start_academic_year'].initial = current_academic_year
+            del self.fields['from_academic_year']
+            self.fields['end_academic_year'].initial = current_academic_year
+
     def clean(self):
         super().clean()
         data = self.cleaned_data
@@ -204,27 +230,11 @@ class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
                 future_academic_years = AcademicYear.objects.filter(
                     year__gte=current_academic_year.year
                 )
-                self.fields['start_academic_year'].queryset = future_academic_years
-                self.fields['from_academic_year'].queryset = future_academic_years
+                if 'start_academic_year' in self.fields:
+                    self.fields['start_academic_year'].queryset = future_academic_years
+                if 'from_academic_year' in self.fields:
+                    self.fields['from_academic_year'].queryset = future_academic_years
                 self.fields['end_academic_year'].queryset = future_academic_years
-
-        if self.instance.partnership_id:
-            # Update
-            if (current_academic_year is not None
-                    and current_academic_year.year > self.instance.partnership.end_academic_year.year):
-                self.fields['end_academic_year'].initial = current_academic_year
-            else:
-                self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
-            if is_adri:
-                self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
-            else:
-                del self.fields['start_academic_year']
-            self.fields['from_academic_year'].initial = current_academic_year
-        else:
-            # Create
-            self.fields['start_academic_year'].initial = current_academic_year
-            del self.fields['from_academic_year']
-            self.fields['end_academic_year'].initial = current_academic_year
 
     def clean(self):
         super().clean()
@@ -278,7 +288,7 @@ class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearB
         fixed_level = PartnershipYearEducationLevel.objects.filter(
             education_group_types__name=TrainingType.PHD.name,
         ).first()
-        self.fields['education_levels'].initial = fixed_level.pk
+        self.fields['education_levels'].initial = [fixed_level.pk]
         self.fields['education_levels'].disabled = True
 
         self.fields['entities'].label = _("partnership_doctorate_years_entity")
