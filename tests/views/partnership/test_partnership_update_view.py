@@ -188,7 +188,7 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
 
     def test_get_end_date_too_early(self):
-        self.client.force_login(self.user_adri)
+        self.client.force_login(self.user_gf)
 
         prev_value = PartnershipConfiguration.get_configuration().partnership_creation_update_min_year_id
 

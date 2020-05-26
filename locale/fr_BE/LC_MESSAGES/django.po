@@ -36,6 +36,9 @@ msgstr "Êtes-vous sûr de vouloir supprimer ce contact?"
 msgid "Cancel"
 msgstr "Annuler"
 
+msgid "Coordinator"
+msgstr "Coordinateur"
+
 msgid "Counsellzing body"
 msgstr ""
 
@@ -289,6 +292,9 @@ msgstr ""
 
 msgid "Partenariat de mobilité"
 msgstr ""
+
+msgid "Partner"
+msgstr "Partenaire"
 
 msgid "Partnership manager"
 msgstr "Gestionnaire de partenariat"
@@ -1102,11 +1108,20 @@ msgstr "Entités concernées"
 msgid "partnership_year_entities_help_text"
 msgstr "Si non précisé alors toutes les entités seront concernées."
 
+msgid "partnership_year_id_number"
+msgstr "N° d'identification du projet"
+
 msgid "partnership_year_offers"
 msgstr "Formations principalement concernées"
 
 msgid "partnership_year_offers_help_text"
 msgstr "Si non précisé alors toutes les formations seront concernées."
+
+msgid "partnership_year_project_title"
+msgstr "Intitulé du projet"
+
+msgid "partnership_year_ucl_status"
+msgstr "Statut UCLouvain"
 
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"

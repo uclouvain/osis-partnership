@@ -36,6 +36,9 @@ msgstr "Are you sure you want to delete this contact?"
 msgid "Cancel"
 msgstr "Cancel"
 
+msgid "Coordinator"
+msgstr ""
+
 msgid "Counsellzing body"
 msgstr ""
 
@@ -230,6 +233,9 @@ msgstr ""
 
 msgid "Partenariat de mobilité"
 msgstr ""
+
+msgid "Partner"
+msgstr "Partner"
 
 msgid "Partnership manager"
 msgstr ""
@@ -1030,11 +1036,20 @@ msgstr "Partnership year entities"
 msgid "partnership_year_entities_help_text"
 msgstr "If none selected, then all entities will be concerned"
 
+msgid "partnership_year_id_number"
+msgstr "Project identification number"
+
 msgid "partnership_year_offers"
 msgstr "Offers"
 
 msgid "partnership_year_offers_help_text"
 msgstr "If none selected, then all offers will be concerned"
+
+msgid "partnership_year_project_title"
+msgstr "Project title"
+
+msgid "partnership_year_ucl_status"
+msgstr "UCLouvain status"
 
 #, python-brace-format
 msgid "partnership_year_{partnership}_{year}"

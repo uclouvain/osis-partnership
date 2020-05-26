@@ -305,6 +305,9 @@ class PartnershipYearProjectForm(PartnershipYearBaseForm):
         fields = PartnershipYearBaseForm.Meta.fields + (
             'funding_type',
             'description',
+            'id_number',
+            'project_title',
+            'ucl_status',
         )
         widgets = {
             **PartnershipYearBaseForm.Meta.widgets,

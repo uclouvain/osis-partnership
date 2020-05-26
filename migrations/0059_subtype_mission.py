@@ -16,6 +16,29 @@ class Migration(migrations.Migration):
             name='description',
             field=models.TextField(blank=True, default='', verbose_name='partnership_year_description'),
         ),
+        migrations.AddField(
+            model_name='partnershipyear',
+            name='id_number',
+            field=models.CharField(default='', max_length=200, verbose_name='partnership_year_id_number'),
+        ),
+        migrations.AddField(
+            model_name='partnershipyear',
+            name='project_title',
+            field=models.CharField(default='', max_length=200, verbose_name='partnership_year_project_title'),
+        ),
+        migrations.AddField(
+            model_name='partnershipyear',
+            name='ucl_status',
+            field=models.CharField(
+                choices=[
+                    ('coordinator', 'Coordinator'),
+                    ('partner', 'Partner'),
+                ],
+                default='',
+                max_length=20,
+                verbose_name='partnership_year_ucl_status',
+            ),
+        ),
         migrations.CreateModel(
             name='PartnershipMission',
             fields=[
