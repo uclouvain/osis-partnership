@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.contrib.auth.models import Permission
 from django.core import mail
@@ -11,12 +11,13 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipType
 from partnership.tests.factories import (
-    FundingTypeFactory, PartnerEntityFactory, PartnerFactory,
+    PartnerEntityFactory,
+    PartnerFactory,
     PartnershipEntityManagerFactory,
+    PartnershipMissionFactory,
     PartnershipYearEducationLevelFactory,
     UCLManagementEntityFactory,
 )
@@ -110,6 +111,7 @@ class PartnershipCreateViewTest(TestCase):
             'year-offers': [],
             'year-start_academic_year': cls.start_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
+            'year-missions': [PartnershipMissionFactory().pk],
         }
 
     def test_get_view_anonymous(self):

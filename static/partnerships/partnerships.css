@@ -87,3 +87,9 @@ ul.tags-list li {
 .small-textarea textarea {
   height: 6em;
 }
+
+#id_year-subtype .radio,
+#id_year-missions .checkbox
+{
+  margin-right: 3em;
+}

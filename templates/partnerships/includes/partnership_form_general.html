@@ -56,13 +56,16 @@
     {% bootstrap_field form_year.education_fields %}
   </div>
   <div class="col-xs-12">
+    {% bootstrap_field form_year.subtype field_class="form-inline" %}
+  </div>
+  <div class="col-xs-12">
     {% bootstrap_field form_year.education_levels %}
   </div>
   <div class="col-xs-12">
-    {% bootstrap_field form_year.entities %}
+    {% bootstrap_field form_year.missions field_class="form-inline" %}
   </div>
   <div class="col-xs-12">
-    {% bootstrap_field form_year.offers %}
+    {% bootstrap_field form_year.description %}
   </div>
 </div>
 

@@ -11,10 +11,20 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='partnershipyear',
+            name='description',
+            field=models.TextField(blank=True, default='', verbose_name='partnership_year_description'),
+        ),
         migrations.CreateModel(
             name='PartnershipMission',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID',
+                )),
                 ('label', models.CharField(max_length=100)),
                 ('code', models.CharField(max_length=100, unique=True)),
                 ('types', django.contrib.postgres.fields.ArrayField(
@@ -28,8 +38,8 @@ class Migration(migrations.Migration):
                         ],
                         max_length=50,
                     ),
-                    size=None),
-                ),
+                    size=None,
+                )),
             ],
             options={
                 'verbose_name': 'partnership_mission',
@@ -38,6 +48,50 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partnershipyear',
             name='missions',
-            field=models.ManyToManyField(to='partnership.PartnershipMission'),
+            field=models.ManyToManyField(
+                to='partnership.PartnershipMission',
+                verbose_name='partnership_missions',
+            ),
+        ),
+        migrations.CreateModel(
+            name='PartnershipSubtype',
+            fields=[
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID',
+                )),
+                ('label', models.CharField(max_length=100)),
+                ('code', models.CharField(max_length=100, unique=True)),
+                ('types', django.contrib.postgres.fields.ArrayField(
+                    base_field=models.CharField(
+                        choices=[
+                            ('GENERAL', 'Accord général de collaboration'),
+                            ('MOBILITY', 'Partenariat de mobilité'),
+                            ('COURSE', 'Partenariat de co-organisation de formation'),
+                            ('DOCTORATE', 'Partenariat de co-organisation de doctorat'),
+                            ('PROJECT', 'Projet financé'),
+                        ],
+                        max_length=50,
+                    ),
+                    size=None,
+                )),
+                ('is_active', models.BooleanField(default=True, verbose_name='is_active')),
+            ],
+            options={
+                'verbose_name': 'partnership_subtype',
+            },
+        ),
+        migrations.AddField(
+            model_name='partnershipyear',
+            name='subtype',
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='years',
+                to='partnership.PartnershipSubtype',
+                verbose_name='partnership_subtype',
+            ),
         ),
     ]

@@ -42,6 +42,9 @@ msgstr ""
 msgid "EU-wide network"
 msgstr ""
 
+msgid "End date must be after start date"
+msgstr ""
+
 msgid "European NGO"
 msgstr ""
 
@@ -228,6 +231,12 @@ msgstr ""
 msgid "Partenariat de mobilité"
 msgstr ""
 
+msgid "Partnership manager"
+msgstr ""
+
+msgid "Partnership managers"
+msgstr ""
+
 msgid "Partnerships"
 msgstr "Partnerships"
 
@@ -347,10 +356,6 @@ msgstr "August"
 
 msgid "author"
 msgstr "Author"
-
-#, python-format
-msgid "can change %(type)s"
-msgstr ""
 
 msgid "can_access_partners"
 msgstr "Can access partners"
@@ -543,6 +548,9 @@ msgstr "Email"
 msgid "end_academic_year"
 msgstr "End academic year"
 
+msgid "end_date"
+msgstr "End date"
+
 msgid "entities"
 msgstr "Entities"
 
@@ -589,16 +597,16 @@ msgstr "File or URL required"
 msgid "financing"
 msgstr "Financing"
 
-#, python-brace-format
-msgid "financing_country_not_imported_{country}"
-msgstr "Unknown country {country}."
-
 msgid "financing_csv_file_invalid_extension"
 msgstr "Please import a csv file."
 
 #, python-brace-format
 msgid "financing_url_invalid_{country}_{url}"
 msgstr "Invalid url {url} for country {country}."
+
+#, python-brace-format
+msgid "financing_{field}_not_imported_{value}"
+msgstr "Unknown value {value} for field {field}."
 
 msgid "financings"
 msgstr "Financings"
@@ -662,6 +670,9 @@ msgstr "Invalid partner entity"
 
 msgid "is_actif"
 msgstr "Is active"
+
+msgid "is_active"
+msgstr "Active"
 
 msgid "is_ies"
 msgstr "Is IES"
@@ -903,8 +914,17 @@ msgstr ""
 "Minimum academic year (included) available to faculty managers for creation "
 "or modification of a partnership"
 
+msgid "partnership_doctorate_years_entity"
+msgstr "Doctorate commission for domain"
+
+msgid "partnership_duration"
+msgstr "Partnership duration"
+
 msgid "partnership_email_notification_to"
 msgstr "Partnership email notification to"
+
+msgid "partnership_end_date"
+msgstr "End date"
 
 #, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
@@ -935,11 +955,32 @@ msgstr "Partnership media successfully saved"
 msgid "partnership_missing_valid_years"
 msgstr "This partnership is missing valid years"
 
+msgid "partnership_mission"
+msgstr "Missions or thematic"
+
+msgid "partnership_missions"
+msgstr "Missions or thematic"
+
 msgid "partnership_not_valid_in"
 msgstr "Partnership not valid in"
 
+msgid "partnership_start_date"
+msgstr "Start date"
+
 msgid "partnership_subject"
 msgstr "Partnership subject"
+
+msgid "partnership_subtype"
+msgstr "Partnership subtype"
+
+msgid "partnership_subtype_agreement"
+msgstr "Agreement type"
+
+msgid "partnership_subtype_course"
+msgstr "Co-organisation type"
+
+msgid "partnership_subtype_doctorate"
+msgstr "Doctorate co-organisation type"
 
 msgid "partnership_success"
 msgstr "Partnership saved successfully"
@@ -973,6 +1014,9 @@ msgstr "Partnership with {partner}"
 
 msgid "partnership_year"
 msgstr "Partnership year"
+
+msgid "partnership_year_description"
+msgstr "Description"
 
 msgid "partnership_year_education_fields"
 msgstr "Partnership year education fields"
@@ -1060,6 +1104,9 @@ msgstr "Society"
 
 msgid "start_academic_year"
 msgstr "Start academic year"
+
+msgid "start_date"
+msgstr "Start date"
 
 msgid "start_date_after_end_date"
 msgstr "The end date is before the start date."

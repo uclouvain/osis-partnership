@@ -42,6 +42,9 @@ msgstr ""
 msgid "EU-wide network"
 msgstr ""
 
+msgid "End date must be after start date"
+msgstr ""
+
 msgid "European NGO"
 msgstr ""
 
@@ -287,6 +290,12 @@ msgstr ""
 msgid "Partenariat de mobilité"
 msgstr ""
 
+msgid "Partnership manager"
+msgstr "Gestionnaire de partenariat"
+
+msgid "Partnership managers"
+msgstr "Gestionnaires de partenariat"
+
 msgid "Partnerships"
 msgstr "Partenariats"
 
@@ -407,10 +416,6 @@ msgstr "Août"
 
 msgid "author"
 msgstr "Auteur"
-
-#, python-format
-msgid "can change %(type)s"
-msgstr ""
 
 msgid "can_access_partners"
 msgstr "Peux accéder aux partenaires"
@@ -605,6 +610,9 @@ msgstr "Email"
 msgid "end_academic_year"
 msgstr "Année académique de fin"
 
+msgid "end_date"
+msgstr "Date de fin"
+
 msgid "entities"
 msgstr "Entités"
 
@@ -651,16 +659,16 @@ msgstr "Un fichier ou une URL est requis."
 msgid "financing"
 msgstr "Financement"
 
-#, python-brace-format
-msgid "financing_country_not_imported_{country}"
-msgstr "Pays {country} non importé (code inconnu)"
-
 msgid "financing_csv_file_invalid_extension"
 msgstr "Merci d'importer un fichier CSV."
 
 #, python-brace-format
 msgid "financing_url_invalid_{country}_{url}"
 msgstr "Pays {country} : URL “{url}” invalide."
+
+#, python-brace-format
+msgid "financing_{field}_not_imported_{value}"
+msgstr "Valeur {value} du champ {field} non importée"
 
 msgid "financings"
 msgstr "Financements"
@@ -725,6 +733,9 @@ msgid "invalid_partner_entity"
 msgstr "Entité partenaire invalide."
 
 msgid "is_actif"
+msgstr "Actif"
+
+msgid "is_active"
 msgstr "Actif"
 
 msgid "is_ies"
@@ -974,8 +985,17 @@ msgstr ""
 "Année académique minimale (inclus) proposée au gestionnaire facultaire pour "
 "la création ou modification d'un partenariat"
 
+msgid "partnership_doctorate_years_entity"
+msgstr "Commission doctorale de domaine concernée"
+
+msgid "partnership_duration"
+msgstr "Durée du partenariat"
+
 msgid "partnership_email_notification_to"
 msgstr "Email destinataire des notifications de créations"
+
+msgid "partnership_end_date"
+msgstr "Date de fin"
 
 #, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
@@ -1007,11 +1027,32 @@ msgstr "Média sauvegardé avec succès."
 msgid "partnership_missing_valid_years"
 msgstr "Il manque des accords validés pour ce partenariat."
 
+msgid "partnership_mission"
+msgstr "Missions et thématique"
+
+msgid "partnership_missions"
+msgstr "Missions et thématique"
+
 msgid "partnership_not_valid_in"
 msgstr "Partenariats dont les accords ne sont pas validés en"
 
+msgid "partnership_start_date"
+msgstr "Date de début"
+
 msgid "partnership_subject"
 msgstr "Objet du partenariat"
+
+msgid "partnership_subtype"
+msgstr "Sous-typologie de partenariat"
+
+msgid "partnership_subtype_agreement"
+msgstr "Type d'accord"
+
+msgid "partnership_subtype_course"
+msgstr "Type de co-organisation"
+
+msgid "partnership_subtype_doctorate"
+msgstr "Type de co-organisation doctorat"
 
 msgid "partnership_success"
 msgstr "Partenariat sauvegardé avec succès."
@@ -1045,6 +1086,9 @@ msgstr "Partenariat avec {partner}"
 
 msgid "partnership_year"
 msgstr "Année de partenariat"
+
+msgid "partnership_year_description"
+msgstr "Descriptif"
 
 msgid "partnership_year_education_fields"
 msgstr "Domaines d'études"
@@ -1132,6 +1176,9 @@ msgstr "Société"
 
 msgid "start_academic_year"
 msgstr "Année académique de début"
+
+msgid "start_date"
+msgstr "Date de début"
 
 msgid "start_date_after_end_date"
 msgstr "La date de début se situe après la date de fin."

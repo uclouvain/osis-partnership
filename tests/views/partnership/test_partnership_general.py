@@ -18,8 +18,12 @@ from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory, PartnershipYearEducationLevelFactory,
-    PartnershipYearFactory, UCLManagementEntityFactory,
+    PartnershipFactory,
+    PartnershipMissionFactory,
+    PartnershipSubtypeFactory,
+    PartnershipYearEducationLevelFactory,
+    PartnershipYearFactory,
+    UCLManagementEntityFactory,
 )
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -81,6 +85,8 @@ class PartnershipCreateGeneralViewTest(TestCase):
             'year-entities': [],
             'year-offers': [],
             'year-funding_type': FundingTypeFactory().pk,
+            'year-missions': PartnershipMissionFactory().pk,
+            'year-subtype': PartnershipSubtypeFactory().pk,
         }
 
     def test_get_view_as_adri(self):
@@ -178,6 +184,11 @@ class PartnershipUpdateGeneralViewTest(TestCase):
             'year-entities': [],
             'year-offers': [],
             'year-funding_type': FundingTypeFactory().pk,
+            'year-missions': [
+                PartnershipMissionFactory().pk,
+                PartnershipMissionFactory().pk,
+            ],
+            'year-subtype': PartnershipSubtypeFactory().pk,
         }
 
     def test_get_own_partnership_as_adri(self):

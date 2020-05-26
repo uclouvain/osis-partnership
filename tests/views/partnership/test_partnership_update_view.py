@@ -28,6 +28,7 @@ from partnership.tests.factories import (
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
+    PartnershipMissionFactory,
 )
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -132,6 +133,7 @@ class PartnershipUpdateViewTest(TestCase):
             'year-start_academic_year': cls.start_academic_year.pk,
             'year-from_academic_year': cls.from_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
+            'year-missions': [PartnershipMissionFactory().pk],
         }
 
     def test_get_partnership_as_anonymous(self):

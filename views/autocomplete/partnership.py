@@ -7,9 +7,13 @@ from django.db.models import Exists, OuterRef, Q, Subquery
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY
 from partnership.models import (
-    Partner, PartnerEntity, Partnership, PartnershipConfiguration,
+    Partner,
+    PartnerEntity,
+    Partnership,
+    PartnershipConfiguration,
+    PartnershipType,
 )
 from .faculty import FacultyEntityAutocompleteView
 
@@ -66,8 +70,13 @@ class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocompl
         if entity_id is None:
             return Entity.objects.none()
 
-        # Get faculty (entity if faculty, or parent if not faculty)
-        faculty = get_faculty_id(entity_id)
+        partnership_type = self.forwarded.get('partnership_type', None)
+        if partnership_type == PartnershipType.DOCTORATE.name:
+            # No need to filter on faculty for this type
+            faculty = entity_id
+        else:
+            # Get faculty (entity if faculty, or parent if not faculty)
+            faculty = get_faculty_id(entity_id)
 
         latest = EntityVersion.objects.filter(
             entity=OuterRef('pk')
@@ -83,6 +92,10 @@ class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocompl
         ).annotate(
             is_valid=Exists(latest.exclude(end_date__lte=date.today()))
         ).filter(is_valid=True).order_by('most_recent_acronym')
+
+        if partnership_type == PartnershipType.DOCTORATE.name:
+            # Only return doctoral commissions for this type
+            qs = qs.filter(entityversion__entity_type=DOCTORAL_COMMISSION)
 
         if self.q:
             qs = qs.filter(most_recent_acronym__icontains=self.q)

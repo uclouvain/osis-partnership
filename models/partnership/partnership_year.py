@@ -9,6 +9,7 @@ from ..enums.partnership import PartnershipType
 
 __all__ = [
     'PartnershipMission',
+    'PartnershipSubtype',
     'PartnershipYear',
 ]
 
@@ -71,7 +72,22 @@ class PartnershipYear(models.Model):
         related_name='years',
         null=True,
     )
-    missions = models.ManyToManyField('partnership.PartnershipMission')
+    missions = models.ManyToManyField(
+        'partnership.PartnershipMission',
+        verbose_name=_('partnership_missions'),
+    )
+    subtype = models.ForeignKey(
+        'partnership.PartnershipSubtype',
+        verbose_name=_('partnership_subtype'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+    )
+    description = models.TextField(
+        _('partnership_year_description'),
+        default='',
+        blank=True,
+    )
 
     class Meta:
         unique_together = ('partnership', 'academic_year')
@@ -152,6 +168,21 @@ class PartnershipMission(models.Model):
 
     class Meta:
         verbose_name = _('partnership_mission')
+
+    def __str__(self):
+        return "{} - {}".format(self.code, self.label)
+
+
+class PartnershipSubtype(models.Model):
+    label = models.CharField(max_length=100)
+    code = models.CharField(max_length=100, unique=True)
+    types = ArrayField(
+        models.CharField(max_length=50, choices=PartnershipType.choices()),
+    )
+    is_active = models.BooleanField(_('is_active'), default=True)
+
+    class Meta:
+        verbose_name = _('partnership_subtype')
 
     def __str__(self):
         return "{} - {}".format(self.code, self.label)
