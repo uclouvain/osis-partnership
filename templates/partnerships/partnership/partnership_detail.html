@@ -62,10 +62,12 @@
                 {% if supervisor %}
                   {{ supervisor }}
                   {% if supervisor.email %} - {{ supervisor.email }}{% endif %}
+                  {# Display a tip about the supervisor not being specified #}
                   {% if partnership.supervisor is None %}
                     ({% trans "partnership_supervisor_from_entity_management" %})
                   {% endif %}
-                {% endif %}</dd>
+                {% endif %}
+              </dd>
             {% endwith %}
 
             {% with partnership.ucl_entity.uclmanagement_entity as ume %}
