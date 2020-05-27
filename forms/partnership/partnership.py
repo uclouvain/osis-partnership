@@ -33,7 +33,6 @@ class PartnershipForm(forms.ModelForm):
 
     supervisor = PersonChoiceField(
         label=_('partnership_supervisor'),
-        required=False,
         queryset=Person.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:person',
@@ -114,6 +113,8 @@ class PartnershipForm(forms.ModelForm):
             self.fields['partner'].widget.forward.append(
                 forward.Const(self.instance.partner_id, 'partner_pk'),
             )
+
+        self.fields['supervisor'].required = False
 
     @classmethod
     def get_entities_condition(cls, user):
