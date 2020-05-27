@@ -23,6 +23,7 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
+        kwargs['partnership'] = self.partnership
         return kwargs
 
     def get_form_media(self):
@@ -31,6 +32,7 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
         if self.object is not None:
             kwargs['instance'] = self.object.media
         del kwargs['user']
+        del kwargs['partnership']
         form = MediaForm(**kwargs)
         del form.fields['type']
         return form
