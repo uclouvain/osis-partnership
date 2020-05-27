@@ -105,6 +105,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.other_url = resolve_url('partnerships:update', pk=cls.other_partnership.pk)
 
         cls.data = {
+            'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,

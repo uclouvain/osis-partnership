@@ -8,9 +8,9 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from base.utils.cte import CTESubquery
-from partnership.models import Partner, Partnership
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
+from partnership.models import Partnership
 from ..fields import EntityChoiceField, PersonChoiceField
 
 __all__ = ['PartnershipForm']
@@ -27,6 +27,7 @@ class PartnershipForm(forms.ModelForm):
                 'class': 'resetting',
                 'data-reset': '#id_ucl_university_labo',
             },
+            forward=['partnership_type'],
         ),
     )
 
@@ -45,6 +46,7 @@ class PartnershipForm(forms.ModelForm):
     class Meta:
         model = Partnership
         fields = (
+            'partnership_type',
             'partner',
             'partner_entity',
             'ucl_entity',
@@ -65,6 +67,7 @@ class PartnershipForm(forms.ModelForm):
                 forward=['partner'],
             ),
             'tags': autocomplete.Select2Multiple(),
+            'partnership_type': forms.HiddenInput(),
         }
 
     def __init__(self, partnership_type=None, *args, **kwargs):
@@ -72,10 +75,26 @@ class PartnershipForm(forms.ModelForm):
         :type partnership_type: partnership.models.PartnershipType
         """
         self.user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        if partnership_type:
-            self.instance.partnership_type = partnership_type.name
 
+        # Initialise partnership_type for a creation
+        if partnership_type:
+            partnership_type = partnership_type.name
+            kwargs['initial']['partnership_type'] = partnership_type
+
+        super().__init__(*args, **kwargs)
+
+        # Get partnership_type from instance for an update
+        if self.instance.partnership_type:
+            partnership_type = self.instance.partnership_type
+
+        # Dynamically process form given partnership type
+        if hasattr(self, 'process_' + partnership_type.lower()):
+            getattr(self, 'process_' + partnership_type.lower())()
+
+    def process_mobility(self):
+        """
+        Custom handling for PartnershipType.MOBILITY
+        """
         field = self.fields['ucl_entity']
         field.queryset = field.queryset.filter(
             self.get_entities_condition(self.user)
@@ -91,12 +110,10 @@ class PartnershipForm(forms.ModelForm):
                 self.fields['partner'].disabled = True
                 field.disabled = True
 
-        try:
+        if self.instance.partner_id:
             self.fields['partner'].widget.forward.append(
-                forward.Const(self.instance.partner.pk, 'partner_pk'),
+                forward.Const(self.instance.partner_id, 'partner_pk'),
             )
-        except Partner.DoesNotExist:
-            pass
 
     @classmethod
     def get_entities_condition(cls, user):

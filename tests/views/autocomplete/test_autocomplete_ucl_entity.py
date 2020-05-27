@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
@@ -99,6 +101,8 @@ class UclEntityAutocompleteTestCase(TestCase):
         )
         UCLManagementEntityFactory(entity=cls.ucl_university_labo_3)
 
+        cls.data = {'forward': json.dumps({'partnership_type': 'MOBILITY'})}
+
         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=cls.sector)
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university_2)
@@ -106,19 +110,19 @@ class UclEntityAutocompleteTestCase(TestCase):
 
     def test_ucl_entity_autocomplete_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 0)
 
     def test_ucl_entity_autocomplete_adri(self):
         self.client.force_login(self.user_adri)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 6)
 
     def test_ucl_entity_autocomplete_gf(self):
         self.client.force_login(self.user_gf)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
@@ -126,7 +130,7 @@ class UclEntityAutocompleteTestCase(TestCase):
 
     def test_ucl_entity_autocomplete_gs(self):
         self.client.force_login(self.user_gs)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]['id'], str(self.ucl_university.pk))
@@ -136,7 +140,7 @@ class UclEntityAutocompleteTestCase(TestCase):
 
     def test_ucl_entity_autocomplete_other_gs(self):
         self.client.force_login(self.other_gs)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['id'], str(self.ucl_university_3.pk))
@@ -144,8 +148,17 @@ class UclEntityAutocompleteTestCase(TestCase):
 
     def test_ucl_entity_autocomplete_other_gf(self):
         self.client.force_login(self.user_other_gf)
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, self.data)
         results = response.json()['results']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['id'], str(self.ucl_university_2.pk))
         self.assertEqual(results[1]['id'], str(self.ucl_university_labo_2.pk))
+
+    def test_other_type(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.url,
+            data={'forward': json.dumps({'partnership_type': 'GENERAL'})},
+        )
+        results = response.json()['results']
+        self.assertEqual(len(results), 9)

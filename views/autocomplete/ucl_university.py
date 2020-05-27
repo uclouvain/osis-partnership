@@ -3,6 +3,7 @@ from django.db.models import OuterRef
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
+from partnership.models.enums.partnership import PartnershipType
 from .faculty import FacultyEntityAutocompleteView
 from ...forms import PartnershipForm
 
@@ -20,15 +21,20 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
         # Get entities with their sector and faculty (if exists)
         cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
         qs = cte.join(
             EntityVersion, id=cte.col.id
         ).with_cte(cte).order_by('-start_date')
 
-        return super().get_queryset().filter(
-            PartnershipForm.get_entities_condition(self.request.user)
-        ).annotate(
+        if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:
+            queryset = queryset.filter(
+                PartnershipForm.get_entities_condition(self.request.user)
+            )
+
+        return queryset.annotate(
             sector_acronym=CTESubquery(
                 qs.filter(entity_type=SECTOR).values('acronym')[:1]
             ),

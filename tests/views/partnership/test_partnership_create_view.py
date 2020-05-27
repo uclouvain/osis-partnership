@@ -94,6 +94,7 @@ class PartnershipCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_2_types, entity=cls.ucl_university)
 
         cls.data = {
+            'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
