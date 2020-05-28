@@ -15,9 +15,16 @@ __all__ = [
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
-    template_name = 'partnerships/partnership/partnership_detail.html'
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
+
+    def get_template_names(self):
+        return [
+            'partnerships/partnership/partnership_detail_{}.html'.format(
+                self.object.partnership_type.lower()
+            ),
+            'partnerships/partnership/partnership_detail.html',
+        ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

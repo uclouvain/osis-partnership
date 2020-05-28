@@ -64,7 +64,6 @@ class FinancingImportView(PermissionRequiredMixin, TemplateResponseMixin, FormMi
         results = defaultdict(lambda: {
             'countries': [],
             'url': '',
-            # program: None
         })
 
         # Skip first line (headers)
