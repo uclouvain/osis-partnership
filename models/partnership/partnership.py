@@ -192,6 +192,8 @@ class Partnership(models.Model):
 
     @cached_property
     def is_valid(self):
+        if self.partnership_type == PartnershipType.PROJECT.name:
+            return True
         return self.validated_agreements.exists()
 
     @property
