@@ -15,7 +15,7 @@
   </div>
   <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code">{% if partnership %}{{ partnership.partner.pic_code|default_if_none:"" }}{% endif %}</dd></dl></div>
   <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "erasmus_code" %}</dt><dd id="partner-erasmus-code">{% if partnership %}{{ partnership.partner.erasmus_code|default_if_none:"" }}{% endif %}</dd></dl></div>
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     <div class="form-group">
       <label class="control-label" for="{{ form.partner_entity.id_for_label }}">{% trans "partner_entity_inside_partner" %}</label>
       {% bootstrap_field form.partner_entity label=false %}
@@ -25,24 +25,19 @@
     </div>
   </div>
 </div>
+
 <h2>{% trans 'ucl_entity_partner' %}</h2>
 <div class="row">
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form.ucl_entity %}
   </div>
-</div>
-<div class="row">
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form.supervisor %}
   </div>
-</div>
-<div class="row">
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form.tags %}
   </div>
-</div>
-<div class="row">
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form.comment %}
   </div>
 </div>
@@ -52,39 +47,17 @@
 {{ form_year.entity }}
 
 <div class="row">
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.education_fields %}
   </div>
-</div>
-<h4>{% trans "planned_activity" %}</h4>
-<div class="row" id="partnership-form-sm-inputs">
-  <div class="col-xs-12 col-sm-4">
-    {% bootstrap_field form_year.is_sms %}
-  </div>
-  <div class="col-xs-12 col-sm-4">
-    {% bootstrap_field form_year.is_smp %}
-  </div>
-  <div class="col-xs-12 col-sm-4">
-    {% bootstrap_field form_year.is_smst %}
-  </div>
-</div>
-<div class="row collapse{% if form_year.is_sms.value or form_year.is_smp.value or form_year.is_smst.value %} in{% endif %}" id="partnership-form-sm-details">
-  <div class="col-xs-12 col-sm-12 required_field">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.education_levels %}
   </div>
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.entities %}
   </div>
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.offers %}
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-12 col-sm-6">
-    {% bootstrap_field form_year.is_sta %}
-  </div>
-  <div class="col-xs-12 col-sm-6">
-    {% bootstrap_field form_year.is_stt %}
   </div>
 </div>
 
@@ -92,30 +65,33 @@
 
 <div class="row">
   {% if form_year.start_academic_year %}
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.start_academic_year %}
   </div>
   {% else %}
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     <dl><dt>{% trans "start_academic_year" %}</dt><dd>{{ object.start_academic_year }}</dd></dl>
   </div>
   {% endif %}
   {% if form_year.from_academic_year %}
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
   </div>
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.from_academic_year %}
   </div>
   {% endif %}
-  <div class="col-xs-12 col-sm-12">
+  <div class="col-xs-12">
     {% bootstrap_field form_year.end_academic_year %}
   </div>
-  {% if form_year.eligible %}
-  <div class="col-xs-12 col-sm-12">
-    {% bootstrap_field form_year.eligible %}
+</div>
+
+<h3>{% trans "partnership_funding" %}</h3>
+
+<div class="row">
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.funding_type %}
   </div>
-  {% endif %}
 </div>
 
 {{ form.media }}

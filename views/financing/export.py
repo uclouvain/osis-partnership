@@ -23,8 +23,9 @@ class FinancingExportView(PermissionRequiredMixin, View):
         countries = Country.objects.all().order_by('name').prefetch_related(
             Prefetch(
                 'financing_set',
-                queryset=Financing.objects.prefetch_related(
-                    'academic_year'
+                queryset=Financing.objects.select_related(
+                    'academic_year',
+                    'type__program__source'
                 ).filter(academic_year=academic_year)
             )
         )
@@ -33,17 +34,21 @@ class FinancingExportView(PermissionRequiredMixin, View):
                 for financing in country.financing_set.all():
                     row = {
                         'country': country.iso_code,
-                        'name': financing.name,
-                        'url': financing.url,
                         'country_name': country.name,
+                        'name': financing.type.name,
+                        'url': financing.type.url,
+                        'program': financing.type.program,
+                        'source': financing.type.program.source,
                     }
                     yield row
             else:
                 row = {
                     'country': country.iso_code,
+                    'country_name': country.name,
                     'name': '',
                     'url': '',
-                    'country_name': country.name,
+                    'program': '',
+                    'source': '',
                 }
                 yield row
 
@@ -59,7 +64,7 @@ class FinancingExportView(PermissionRequiredMixin, View):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
 
-        fieldnames = ['country_name', 'country', 'name', 'url']
+        fieldnames = ['country_name', 'country', 'name', 'url', 'program', 'source']
         wr = csv.DictWriter(response, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
         wr.writeheader()
         for row in self.get_csv_data(academic_year=self.academic_year):

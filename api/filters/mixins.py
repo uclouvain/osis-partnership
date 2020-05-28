@@ -1,6 +1,6 @@
 from django_filters.fields import ModelMultipleChoiceField
 
-from partnership.models import PartnershipConfiguration, Financing
+from partnership.models import FundingType, PartnershipConfiguration
 
 
 class FundingFilterMixin:
@@ -12,8 +12,6 @@ class FundingFilterMixin:
 
     def get_queryset(self, request):
         current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
-        return (
-            Financing.objects
-                .filter(academic_year=current_year)
-                .distinct()
-        )
+        return FundingType.objects.filter(
+            financing__academic_year=current_year,
+        ).distinct()

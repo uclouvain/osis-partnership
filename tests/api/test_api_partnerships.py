@@ -186,7 +186,7 @@ class PartnershipApiViewTest(TestCase):
         self.assertEqual(len(data['results']), 1)
 
     def test_filter_funding(self):
-        response = self.client.get(self.url + '?funding=' + self.financing.name)
+        response = self.client.get(self.url + '?funding=' + self.financing.type.name)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data['results']), 1)

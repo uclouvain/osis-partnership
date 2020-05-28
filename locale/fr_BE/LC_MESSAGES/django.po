@@ -691,6 +691,18 @@ msgstr "Fonction"
 msgid "funding"
 msgstr "Financement"
 
+msgid "funding_program"
+msgstr "Programme de financement"
+
+msgid "funding_source"
+msgstr "Source de financement"
+
+msgid "funding_type"
+msgstr "Type de financement"
+
+msgid "help_text_funding_type"
+msgstr "Spécifier si différent du financement calculé par défaut."
+
 msgid "id"
 msgstr "ID"
 
@@ -976,6 +988,9 @@ msgstr "Partenariats arrivant à échéance en"
 
 msgid "partnership_error"
 msgstr "Erreur lors de la sauvegarde du partenariat."
+
+msgid "partnership_funding"
+msgstr "Financement"
 
 msgid "partnership_in"
 msgstr "Partenariats en cours en"

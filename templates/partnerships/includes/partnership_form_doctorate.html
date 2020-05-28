@@ -1,0 +1,93 @@
+{% load bootstrap3 i18n static %}
+
+{% bootstrap_form_errors form %}
+{% bootstrap_form_errors form_year %}
+{{ form.partnership_type }}
+
+<h2>{% trans 'partner_university' %}</h2>
+<div class="row row-fluid">
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group required_field">
+      <label class="control-label" for="{{ form.partner.id_for_label }}">{% trans "Name" %}</label>
+      {% bootstrap_field form.partner label=false %}
+      {% if form.instance.pk is None %}<a href="{% url "partnerships:partners:create" %}" target="_blank">{% trans "add_partner" %}</a>{% endif %}
+    </div>
+  </div>
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "pic_code" %}</dt><dd id="partner-pic-code">{% if partnership %}{{ partnership.partner.pic_code|default_if_none:"" }}{% endif %}</dd></dl></div>
+  <div class="col-xs-6 col-sm-3"><dl><dt>{% trans "erasmus_code" %}</dt><dd id="partner-erasmus-code">{% if partnership %}{{ partnership.partner.erasmus_code|default_if_none:"" }}{% endif %}</dd></dl></div>
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label class="control-label" for="{{ form.partner_entity.id_for_label }}">{% trans "partner_entity_inside_partner" %}</label>
+      {% bootstrap_field form.partner_entity label=false %}
+      <a href="{% if partnership %}{% url "partnerships:partners:entities:create" partnership.partner.pk %}{% else %}#{% endif %}"
+         class="{% if not partnership %}hidden{% endif %}"
+         id="partner-entity-create-link" data-href="{% url "partnerships:partners:entities:create" 0 %}" target="_blank">{% trans "add_partner_entity" %}</a>
+    </div>
+  </div>
+</div>
+
+<h2>{% trans 'ucl_entity_partner' %}</h2>
+<div class="row">
+  <div class="col-xs-12">
+    {% bootstrap_field form.ucl_entity %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.supervisor %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.tags %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.comment %}
+  </div>
+</div>
+
+<h2>{% trans "partnership_subject" %}</h2>
+
+{{ form_year.entity }}
+
+<div class="row">
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.education_fields %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.education_levels %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.entities %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.offers %}
+  </div>
+</div>
+
+<h3>{% trans "partnership_when" %}</h3>
+
+<div class="row">
+  {% if form_year.start_academic_year %}
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.start_academic_year %}
+  </div>
+  {% else %}
+  <div class="col-xs-12">
+    <dl><dt>{% trans "start_academic_year" %}</dt><dd>{{ object.start_academic_year }}</dd></dl>
+  </div>
+  {% endif %}
+  {% if form_year.from_academic_year %}
+  <div class="col-xs-12">
+    <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.from_academic_year %}
+  </div>
+  {% endif %}
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.end_academic_year %}
+  </div>
+</div>
+
+{{ form.media }}
+{{ form_year.media }}
+
+<script src="{% static 'partnerships/reset_form.js' %}" type="text/javascript"></script>
+<script src="{% static 'partnerships/partnerships_form.js' %}" type="text/javascript"></script>

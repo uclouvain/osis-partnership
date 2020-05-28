@@ -72,21 +72,29 @@ class PartnershipYearForm(forms.ModelForm):
             'is_sta',
             'is_stt',
             'eligible',
+            'funding_type',
         )
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
             'education_levels': autocomplete.ModelSelect2Multiple(),
+            'eligible': forms.HiddenInput(),
+            'funding_type': forms.HiddenInput(),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, partnership_type=None, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+
+        # Dynamically process form given partnership type
+        if hasattr(self, 'process_' + partnership_type.lower()):
+            getattr(self, 'process_' + partnership_type.lower())()
+
         current_academic_year = (
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
         )
+        # FIXME what to do of the following when not mobility?
         is_adri = is_linked_to_adri_entity(self.user)
         if not is_adri:
-            del self.fields['eligible']
             if current_academic_year is not None:
                 future_academic_years = AcademicYear.objects.filter(year__gte=current_academic_year.year)
                 self.fields['start_academic_year'].queryset = future_academic_years
@@ -110,21 +118,43 @@ class PartnershipYearForm(forms.ModelForm):
             del self.fields['from_academic_year']
             self.fields['end_academic_year'].initial = current_academic_year
 
+    def process_mobility(self):
+        """
+        Process form for PartnershipType.MOBILITY
+        """
+        self.fields['eligible'].widget = forms.CheckboxInput()
+        self.fields['funding_type'].widget = autocomplete.ModelSelect2()
+        self.fields['funding_type'].help_text = _('help_text_funding_type')
+        self.fields['funding_type'].required = False
+
+        if not is_linked_to_adri_entity(self.user):
+            del self.fields['eligible']
+
+    def process_project(self):
+        """
+        Process form for PartnershipType.PROJECT
+        """
+        self.fields['funding_type'].widget = autocomplete.ModelSelect2(
+            choices=self.fields['funding_type'].choices
+        )
+
     def clean(self):
         super().clean()
-        if self.cleaned_data['is_sms'] or self.cleaned_data['is_smp']:
-            if not self.cleaned_data['education_levels']:
+        data = self.cleaned_data
+
+        if data['is_sms'] or data['is_smp']:
+            if not data['education_levels']:
                 self.add_error(
                     'education_levels',
                     ValidationError(_('education_levels_empty_errors')),
                 )
         else:
-            self.cleaned_data['education_levels'] = []
-            self.cleaned_data['entities'] = []
-            self.cleaned_data['offers'] = []
-        start_academic_year = self.cleaned_data.get('start_academic_year', None)
-        from_academic_year = self.cleaned_data.get('from_academic_year', None)
-        end_academic_year = self.cleaned_data.get('end_academic_year', None)
+            data['education_levels'] = []
+            data['entities'] = []
+            data['offers'] = []
+        start_academic_year = data.get('start_academic_year', None)
+        from_academic_year = data.get('from_academic_year', None)
+        end_academic_year = data.get('end_academic_year', None)
         if start_academic_year is not None:
             if start_academic_year.year > end_academic_year.year:
                 self.add_error(
@@ -141,4 +171,4 @@ class PartnershipYearForm(forms.ModelForm):
                 'from_academic_year',
                 ValidationError(_('from_date_after_end_date')),
             )
-        return self.cleaned_data
+        return data

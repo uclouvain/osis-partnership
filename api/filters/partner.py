@@ -77,7 +77,7 @@ class PartnerFundingFilter(FundingFilterMixin, filters.ModelMultipleChoiceFilter
             return qs
         filter_qs = Q()
         for funding in value:
-            filter_qs |= Q(pk=funding.pk)
+            filter_qs |= Q(type_id=funding.pk)
         return (
             qs
             .annotate(
