@@ -70,6 +70,9 @@ class PartnershipFormMixin:
         if 'form_year' not in kwargs:
             kwargs['form_year'] = self.get_form_year()
         kwargs['current_academic_year'] = current_academic_year()
+        kwargs['form_template'] = "partnerships/includes/partnership_form_{}.html".format(
+            self.get_form_kwargs().get('partnership_type')
+        )
 
         return super().get_context_data(**kwargs)
 
