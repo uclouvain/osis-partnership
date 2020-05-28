@@ -72,13 +72,8 @@ class PartnershipUpdateView(PartnershipFormMixin,
 
         # Update years
         if partnership.partnership_type in PartnershipType.with_synced_dates():
-            start_academic_year = year_data.get('start_academic_year', None)
-            from_year = year_data.get('from_academic_year', None)
+            from_year = year_data['from_academic_year'].year
             end_year = year_data['end_academic_year'].year
-            if from_year is None:
-                from_year = start_academic_year.year
-            else:
-                from_year = from_year.year
 
             academic_years = find_academic_years(
                 start_year=from_year,
