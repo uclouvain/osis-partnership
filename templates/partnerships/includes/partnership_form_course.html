@@ -70,21 +70,27 @@
 
 <div class="row">
   {% if form_year.start_academic_year %}
-  <div class="col-xs-12">
-    {% bootstrap_field form_year.start_academic_year %}
-  </div>
+    <div class="col-xs-12">
+      {% bootstrap_field form_year.start_academic_year %}
+    </div>
   {% else %}
-  <div class="col-xs-12">
-    <dl><dt>{% trans "start_academic_year" %}</dt><dd>{{ object.start_academic_year }}</dd></dl>
-  </div>
+    <div class="col-xs-12">
+      <dl>
+        <dt>{% trans "start_academic_year" %}</dt>
+        <dd>{{ object.start_academic_year }}</dd>
+      </dl>
+    </div>
   {% endif %}
   {% if form_year.from_academic_year %}
-  <div class="col-xs-12">
-    <dl><dt>{% trans "current_academic_year" %}</dt><dd>{{ current_academic_year }}</dd></dl>
-  </div>
-  <div class="col-xs-12">
-    {% bootstrap_field form_year.from_academic_year %}
-  </div>
+    <div class="col-xs-12">
+      <dl>
+        <dt>{% trans "current_academic_year" %}</dt>
+        <dd>{{ current_academic_year }}</dd>
+      </dl>
+    </div>
+    <div class="col-xs-12">
+      {% bootstrap_field form_year.from_academic_year %}
+    </div>
   {% endif %}
   <div class="col-xs-12">
     {% bootstrap_field form_year.end_academic_year %}

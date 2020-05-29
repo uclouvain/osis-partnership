@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth.models import Permission
 from django.core import mail
@@ -11,15 +11,15 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipType
 from partnership.tests.factories import (
-    PartnerEntityFactory, PartnerFactory,
+    FundingTypeFactory, PartnerEntityFactory, PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipYearEducationLevelFactory,
     UCLManagementEntityFactory,
 )
-from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
@@ -33,7 +33,6 @@ class PartnershipCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
-        cls.country = CountryFactory()
         cls.user_other_gf = UserFactory()
         cls.user_2_types = UserFactory()
         PartnershipEntityManagerFactory(

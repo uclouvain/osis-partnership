@@ -28,6 +28,7 @@ class PartnershipHasMissingValidYearsTest(TestCase):
         cls.partnership_missing_middle = PartnershipFactory()
         cls.partnership_missing_before_middle_after = PartnershipFactory()
         cls.partnership_full = PartnershipFactory()
+        cls.partnership_no_years = PartnershipFactory(years=[])
         cls.partnership_with_adjacent = PartnershipFactory()
         cls.partnership_with_extra_agreements_before = PartnershipFactory()
         cls.partnership_with_extra_agreements_after = PartnershipFactory()
@@ -178,6 +179,9 @@ class PartnershipHasMissingValidYearsTest(TestCase):
 
     def test_full(self):
         self.assertFalse(self.partnership_full.has_missing_valid_years)
+
+    def test_no_years(self):
+        self.assertFalse(self.partnership_no_years.has_missing_valid_years)
 
     def test_missing_before(self):
         self.assertTrue(self.partnership_missing_before.has_missing_valid_years)

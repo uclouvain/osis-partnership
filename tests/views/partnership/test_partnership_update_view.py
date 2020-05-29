@@ -1,7 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import Permission
+from django.core import mail
 from django.forms import ModelChoiceField
 from django.shortcuts import resolve_url
 from django.test import TestCase
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -9,15 +14,20 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import Partnership, PartnershipType
+from partnership.models import (
+    Partnership,
+    PartnershipConfiguration,
+    PartnershipType,
+)
 from partnership.tests.factories import (
-    PartnerEntityFactory, PartnerFactory,
+    PartnerEntityFactory,
+    PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
+    PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
-    PartnershipTagFactory,
 )
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -171,6 +181,28 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.get(self.other_url)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
 
+    def test_get_end_date_too_early(self):
+        self.client.force_login(self.user_adri)
+
+        prev_value = PartnershipConfiguration.get_configuration().partnership_creation_update_min_year_id
+
+        # Put config year too far
+        PartnershipConfiguration.objects.update(
+            partnership_creation_update_min_year_id=self.academic_year_2153.pk,
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(
+            response.context['form_year'].fields['end_academic_year'].initial,
+            self.academic_year_2153,
+        )
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
+
+        # Put back config
+        PartnershipConfiguration.objects.update(
+            partnership_creation_update_min_year_id=prev_value,
+        )
+
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = self.data
@@ -283,6 +315,16 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertEqual(response.context_data['partnership'].years.count(), 4)
 
+    def test_post_notify_new_end_date(self):
+        self.client.force_login(self.user_gf)
+        data = self.data.copy()
+        data['year-end_academic_year'] = str(self.academic_year_2153.pk)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(str(self.user_gf), mail.outbox[0].body)
+        mail.outbox = []
+
     def test_post_invalid_ucl_university(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
@@ -290,6 +332,42 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.post(self.url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
         self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
+
+    def test_post_invalid_levels(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-education_levels'] = []
+        response = self.client.post(self.url, data=data)
+        msg = _('education_levels_empty_errors')
+        self.assertFormError(response, 'form_year', 'education_levels', msg)
+
+    def test_post_invalid_years(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['year-end_academic_year'] = self.start_academic_year.pk
+        data['year-start_academic_year'] = self.end_academic_year.pk
+        response = self.client.post(self.url, data=data)
+        msg = _('start_date_after_end_date')
+        self.assertFormError(response, 'form_year', 'start_academic_year', msg)
+        msg = _('start_date_after_from_date')
+        self.assertFormError(response, 'form_year', 'start_academic_year', msg)
+        msg = _('from_date_after_end_date')
+        self.assertFormError(response, 'form_year', 'from_academic_year', msg)
+
+    def test_post_invalid_partner(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        partner = PartnerFactory(end_date=timezone.now() - timedelta(days=1))
+        data['partner'] = partner.pk
+        response = self.client.post(self.url, data=data)
+        msg = _('partnership_inactif_partner_error')
+        self.assertFormError(response, 'form', 'partner', msg)
+
+        data = self.data.copy()
+        data['partner_entity'] = PartnerEntityFactory().pk
+        response = self.client.post(self.url, data=data)
+        msg = _('invalid_partner_entity')
+        self.assertFormError(response, 'form', 'partner_entity', msg)
 
     def test_post_invalid_ucl_university_labo(self):
         self.client.force_login(self.user_adri)

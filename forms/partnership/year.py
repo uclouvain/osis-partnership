@@ -8,34 +8,24 @@ from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import (
-    Partnership, PartnershipConfiguration, PartnershipYear,
+    PartnershipConfiguration, PartnershipYear,
 )
 from ..fields import (
     EducationGroupYearChoiceSelect, EntityChoiceMultipleField,
 )
 
-__all__ = ['PartnershipYearForm']
+__all__ = [
+    'PartnershipYearGeneralForm',
+    'PartnershipYearMobilityForm',
+    'PartnershipYearCourseForm',
+    'PartnershipYearDoctorateForm',
+    'PartnershipYearProjectForm',
+]
 
 
-class PartnershipYearForm(forms.ModelForm):
+class PartnershipYearBaseForm(forms.ModelForm):
     # Used for the dal forward
     entity = forms.CharField(required=False, widget=forms.HiddenInput())
-
-    start_academic_year = forms.ModelChoiceField(
-        label=_('start_academic_year'),
-        queryset=AcademicYear.objects.all(),
-        required=True,
-    )
-    from_academic_year = forms.ModelChoiceField(
-        label=_('from_academic_year'),
-        queryset=AcademicYear.objects.all(),
-        required=True,
-    )
-    end_academic_year = forms.ModelChoiceField(
-        label=_('end_academic_year'),
-        queryset=AcademicYear.objects.all(),
-        required=True,
-    )
 
     entities = EntityChoiceMultipleField(
         label=_('partnership_year_entities'),
@@ -78,65 +68,12 @@ class PartnershipYearForm(forms.ModelForm):
             'education_fields': autocomplete.ModelSelect2Multiple(),
             'education_levels': autocomplete.ModelSelect2Multiple(),
             'eligible': forms.HiddenInput(),
-            'funding_type': forms.HiddenInput(),
         }
 
     def __init__(self, partnership_type=None, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
-
-        # Dynamically process form given partnership type
-        if hasattr(self, 'process_' + partnership_type.lower()):
-            getattr(self, 'process_' + partnership_type.lower())()
-
-        current_academic_year = (
-            PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        )
-        # FIXME what to do of the following when not mobility?
-        is_adri = is_linked_to_adri_entity(self.user)
-        if not is_adri:
-            if current_academic_year is not None:
-                future_academic_years = AcademicYear.objects.filter(year__gte=current_academic_year.year)
-                self.fields['start_academic_year'].queryset = future_academic_years
-                self.fields['from_academic_year'].queryset = future_academic_years
-                self.fields['end_academic_year'].queryset = future_academic_years
-        try:
-            # Update
-            if (current_academic_year is not None
-                    and current_academic_year.year > self.instance.partnership.end_academic_year.year):
-                self.fields['end_academic_year'].initial = current_academic_year
-            else:
-                self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
-            if is_adri:
-                self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
-            else:
-                del self.fields['start_academic_year']
-            self.fields['from_academic_year'].initial = current_academic_year
-        except Partnership.DoesNotExist:
-            # Create
-            self.fields['start_academic_year'].initial = current_academic_year
-            del self.fields['from_academic_year']
-            self.fields['end_academic_year'].initial = current_academic_year
-
-    def process_mobility(self):
-        """
-        Process form for PartnershipType.MOBILITY
-        """
-        self.fields['eligible'].widget = forms.CheckboxInput()
-        self.fields['funding_type'].widget = autocomplete.ModelSelect2()
-        self.fields['funding_type'].help_text = _('help_text_funding_type')
-        self.fields['funding_type'].required = False
-
-        if not is_linked_to_adri_entity(self.user):
-            del self.fields['eligible']
-
-    def process_project(self):
-        """
-        Process form for PartnershipType.PROJECT
-        """
-        self.fields['funding_type'].widget = autocomplete.ModelSelect2(
-            choices=self.fields['funding_type'].choices
-        )
 
     def clean(self):
         super().clean()
@@ -152,6 +89,34 @@ class PartnershipYearForm(forms.ModelForm):
             data['education_levels'] = []
             data['entities'] = []
             data['offers'] = []
+
+        return data
+
+
+class PartnershipYearWithoutDatesForm(PartnershipYearBaseForm):
+    """
+    The duration of the partnership is encoded through academic_years
+    """
+    start_academic_year = forms.ModelChoiceField(
+        label=_('start_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    from_academic_year = forms.ModelChoiceField(
+        label=_('from_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    end_academic_year = forms.ModelChoiceField(
+        label=_('end_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+
+    def clean(self):
+        super().clean()
+        data = self.cleaned_data
+
         start_academic_year = data.get('start_academic_year', None)
         from_academic_year = data.get('from_academic_year', None)
         end_academic_year = data.get('end_academic_year', None)
@@ -172,3 +137,78 @@ class PartnershipYearForm(forms.ModelForm):
                 ValidationError(_('from_date_after_end_date')),
             )
         return data
+
+
+class PartnershipYearGeneralForm(PartnershipYearBaseForm):
+    pass
+
+
+class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
+    class Meta(PartnershipYearBaseForm.Meta):
+        fields = PartnershipYearBaseForm.Meta.fields + (
+            'funding_type',
+        )
+        widgets = {
+            **PartnershipYearBaseForm.Meta.widgets,
+            'funding_type': autocomplete.ModelSelect2(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['funding_type'].help_text = _('help_text_funding_type')
+        self.fields['funding_type'].required = False
+
+        self.fields['eligible'].widget = forms.CheckboxInput()
+
+        is_adri = is_linked_to_adri_entity(self.user)
+
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.partnership_creation_update_min_year
+        if not is_adri:
+            del self.fields['eligible']
+
+            if current_academic_year is not None:
+                future_academic_years = AcademicYear.objects.filter(
+                    year__gte=current_academic_year.year
+                )
+                self.fields['start_academic_year'].queryset = future_academic_years
+                self.fields['from_academic_year'].queryset = future_academic_years
+                self.fields['end_academic_year'].queryset = future_academic_years
+
+        if self.instance.partnership_id:
+            # Update
+            if (current_academic_year is not None
+                    and current_academic_year.year > self.instance.partnership.end_academic_year.year):
+                self.fields['end_academic_year'].initial = current_academic_year
+            else:
+                self.fields['end_academic_year'].initial = self.instance.partnership.end_academic_year
+            if is_adri:
+                self.fields['start_academic_year'].initial = self.instance.partnership.start_academic_year
+            else:
+                del self.fields['start_academic_year']
+            self.fields['from_academic_year'].initial = current_academic_year
+        else:
+            # Create
+            self.fields['start_academic_year'].initial = current_academic_year
+            del self.fields['from_academic_year']
+            self.fields['end_academic_year'].initial = current_academic_year
+
+
+class PartnershipYearCourseForm(PartnershipYearBaseForm):
+    pass
+
+
+class PartnershipYearDoctorateForm(PartnershipYearBaseForm):
+    pass
+
+
+class PartnershipYearProjectForm(PartnershipYearBaseForm):
+    class Meta(PartnershipYearBaseForm.Meta):
+        fields = PartnershipYearBaseForm.Meta.fields + (
+            'funding_type',
+        )
+        widgets = {
+            **PartnershipYearBaseForm.Meta.widgets,
+            'funding_type': autocomplete.ModelSelect2(),
+        }

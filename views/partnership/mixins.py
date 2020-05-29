@@ -1,12 +1,11 @@
+import importlib
+
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import current_academic_year
 from osis_role.contrib.views import PermissionRequiredMixin
-from partnership.forms import (
-    PartnershipForm, PartnershipYearForm
-)
 from partnership.models import (
     Partnership, PartnershipConfiguration
 )
@@ -37,10 +36,16 @@ class PartnershipRelatedMixin(PermissionRequiredMixin):
         return context
 
 
-class PartnershipFormMixin:
+class PartnershipFormMixin(PermissionRequiredMixin):
     model = Partnership
-    form_class = PartnershipForm
     login_url = 'access_denied'
+    partnership_type = ''
+
+    def get_form_class(self):
+        module = importlib.import_module('partnership.forms')
+        return getattr(module, 'Partnership{}Form'.format(
+            self.partnership_type.capitalize()
+        ))
 
     def get_form_year(self):
         kwargs = self.get_form_kwargs()
@@ -53,17 +58,17 @@ class PartnershipFormMixin:
             if kwargs['instance'] is None:
                 # No current year for this partnership, get the last available
                 kwargs['instance'] = partnership.years.last()
-        return PartnershipYearForm(**kwargs)
+
+        module = importlib.import_module('partnership.forms')
+        klass = getattr(module, 'PartnershipYear{}Form'.format(
+            kwargs['partnership_type'].capitalize()
+        ))
+        return klass(**kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-
-        partnership_type = self.kwargs.get('type')
-        kwargs['partnership_type'] = (
-            partnership_type.name if partnership_type
-            else kwargs['instance'].partnership_type
-        )
+        kwargs['partnership_type'] = self.partnership_type
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -86,5 +91,4 @@ class PartnershipFormMixin:
         form_year_is_valid = form_year.is_valid()
         if form.is_valid() and form_year_is_valid:
             return self.form_valid(form, form_year)
-        else:
-            return self.form_invalid(form, form_year)
+        return self.form_invalid(form, form_year)
