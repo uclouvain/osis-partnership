@@ -145,6 +145,16 @@ class PartnershipAgreementCreateViewTest(TestCase):
         self.assertIn(str(self.user_gf), mail.outbox[0].body)
         mail.outbox = []
 
+    def test_post_invalid_dates(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['start_academic_year'], data['end_academic_year'] = (
+            # Flip the two
+            data['end_academic_year'], data['start_academic_year']
+        )
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTrue(response.context['form'].errors)
+
 
 class PartnershipAgreementGeneralCreateViewTest(TestCase):
     @classmethod

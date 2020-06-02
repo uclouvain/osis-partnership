@@ -1,7 +1,12 @@
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 
-from partnership.forms import MediaForm, PartnershipAgreementForm
+from partnership.forms import (
+    MediaForm,
+    PartnershipAgreementWithAcademicYearsForm,
+    PartnershipAgreementWithDatesForm,
+)
+from partnership.models import PartnershipType
 from partnership.views.partnership.mixins import PartnershipRelatedMixin
 
 
@@ -13,7 +18,14 @@ class PartnershipAgreementsMixin(PartnershipRelatedMixin):
 
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
-    form_class = PartnershipAgreementForm
+    def get_form_class(self):
+        if self.partnership.partnership_type in [
+            PartnershipType.GENERAL.name,
+            PartnershipType.COURSE.name,
+            PartnershipType.DOCTORATE.name,
+        ]:
+            return PartnershipAgreementWithDatesForm
+        return PartnershipAgreementWithAcademicYearsForm
 
     def get_template_names(self):
         if self.request.is_ajax():
@@ -23,7 +35,6 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['partnership'] = self.partnership
         return kwargs
 
     def get_form_media(self):
@@ -32,7 +43,6 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
         if self.object is not None:
             kwargs['instance'] = self.object.media
         del kwargs['user']
-        del kwargs['partnership']
         form = MediaForm(**kwargs)
         del form.fields['type']
         return form
