@@ -3,10 +3,12 @@ from datetime import date, timedelta
 from django.contrib.auth.models import Permission
 from django.shortcuts import resolve_url
 from django.test import TestCase
-from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
+from base.models.enums.education_group_types import TrainingType
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.education_group_type import EducationGroupTypeFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -14,21 +16,20 @@ from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipType
 from partnership.tests.factories import (
-    FundingTypeFactory,
     PartnerEntityFactory,
     PartnerFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory,
+    PartnershipFactory, PartnershipYearEducationLevelFactory,
+    PartnershipYearFactory, UCLManagementEntityFactory,
+)
+from partnership.tests.factories.partnership_year import (
     PartnershipMissionFactory,
     PartnershipSubtypeFactory,
-    PartnershipYearEducationLevelFactory,
-    PartnershipYearFactory,
-    UCLManagementEntityFactory,
 )
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
-class PartnershipCreateGeneralViewTest(TestCase):
+class PartnershipCreateDoctorateViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -36,7 +37,7 @@ class PartnershipCreateGeneralViewTest(TestCase):
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
             person__user=cls.user,
-            scopes=[PartnershipType.GENERAL.name]
+            scopes=[PartnershipType.DOCTORATE.name]
         )
         access_perm = Permission.objects.get(name='can_access_partnerships')
         cls.user.user_permissions.add(access_perm)
@@ -48,26 +49,29 @@ class PartnershipCreateGeneralViewTest(TestCase):
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
+        cls.education_level.education_group_types.add(
+            EducationGroupTypeFactory(name=TrainingType.PHD.name)
+        )
 
-        cls.url = resolve_url('partnerships:create',
-                              type=PartnershipType.GENERAL)
+        cls.url = reverse(
+            'partnerships:create',
+            kwargs={'type': PartnershipType.DOCTORATE},
+        )
 
         # Ucl
         sector = EntityFactory()
         EntityVersionFactory(entity=sector, entity_type=SECTOR)
         cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector,
-                             entity_type=FACULTY)
+        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo,
-                             parent=cls.ucl_university)
+        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
         UCLManagementEntityFactory(entity=cls.ucl_university)
 
-        cls.university_offer = EducationGroupYearFactory(
-            administration_entity=cls.ucl_university_labo)
+
+        cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
         cls.data = {
-            'partnership_type': PartnershipType.GENERAL.name,
+            'partnership_type': PartnershipType.DOCTORATE.name,
             'comment': '',
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
@@ -76,15 +80,9 @@ class PartnershipCreateGeneralViewTest(TestCase):
             'university_offers': [cls.university_offer.pk],
             'start_date': date.today(),
             'end_date': date.today() + timedelta(days=365),
-            'year-is_sms': True,
-            'year-is_smp': False,
-            'year-is_sta': True,
-            'year-is_stt': False,
             'year-education_fields': [cls.education_field.pk],
-            'year-education_levels': [cls.education_level.pk],
             'year-entities': [],
             'year-offers': [],
-            'year-funding_type': FundingTypeFactory().pk,
             'year-missions': PartnershipMissionFactory().pk,
             'year-subtype': PartnershipSubtypeFactory().pk,
         }
@@ -92,32 +90,15 @@ class PartnershipCreateGeneralViewTest(TestCase):
     def test_get_view_as_adri(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(
-            response,
-            'partnerships/partnership/partnership_create.html',
-        )
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post(self):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateUsed(
-            response,
-            'partnerships/partnership/partnership_detail.html',
-        )
-
-    def test_post_bad_dates(self):
-        self.client.force_login(self.user)
-        data = self.data.copy()
-        data['start_date'] = data['end_date']
-        data['end_date'] = date.today()
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertIn(
-            _("End date must be after start date"),
-            response.context['form'].errors['__all__'],
-        )
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
 
-class PartnershipUpdateGeneralViewTest(TestCase):
+class PartnershipUpdateDoctorateViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -125,7 +106,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
             person__user=cls.user,
-            scopes=[PartnershipType.GENERAL.name]
+            scopes=[PartnershipType.DOCTORATE.name]
         )
 
         access_perm = Permission.objects.get(name='can_access_partnerships')
@@ -142,6 +123,9 @@ class PartnershipUpdateGeneralViewTest(TestCase):
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
+        cls.education_level.education_group_types.add(
+            EducationGroupTypeFactory(name=TrainingType.PHD.name)
+        )
 
         # Ucl
         sector = EntityFactory()
@@ -154,7 +138,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         UCLManagementEntityFactory(entity=cls.ucl_university_labo)
 
         cls.partnership = PartnershipFactory(
-            partnership_type=PartnershipType.GENERAL.name,
+            partnership_type=PartnershipType.DOCTORATE.name,
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user.person,
@@ -175,15 +159,9 @@ class PartnershipUpdateGeneralViewTest(TestCase):
             'ucl_entity': cls.ucl_university_labo.pk,
             'start_date': cls.from_academic_year.start_date,
             'end_date': cls.end_academic_year.end_date,
-            'year-is_sms': True,
-            'year-is_smp': False,
-            'year-is_sta': True,
-            'year-is_stt': False,
             'year-education_fields': [cls.education_field.pk],
-            'year-education_levels': [cls.education_level.pk],
             'year-entities': [],
             'year-offers': [],
-            'year-funding_type': FundingTypeFactory().pk,
             'year-missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,

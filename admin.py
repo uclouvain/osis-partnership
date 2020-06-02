@@ -1,4 +1,7 @@
+from django import forms
 from django.contrib import admin
+from django.contrib.postgres.fields import ArrayField
+from django.utils.translation import gettext_lazy as _
 
 from osis_role.contrib.admin import EntityRoleModelAdmin
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
@@ -156,6 +159,43 @@ class PartnershipYearAdmin(admin.ModelAdmin):
     )
 
 
+class TypeField(forms.CheckboxSelectMultiple):
+    def format_value(self, value):
+        if isinstance(value, str):
+            value = value.split(',')
+        return super().format_value(value)
+
+
+class PartnershipTypeListFilter(admin.SimpleListFilter):
+    title = _('partnership_type')
+    parameter_name = 'type'
+
+    def lookups(self, request, model_admin):
+        return PartnershipType.choices()
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(types__contains=[self.value()])
+
+
+class PartnershipMissionAdmin(admin.ModelAdmin):
+    list_display = ('code', 'label', 'type_values')
+    formfield_overrides = {
+        ArrayField: {'widget': TypeField(choices=PartnershipType.choices())}
+    }
+    list_filter = (PartnershipTypeListFilter, )
+
+    def type_values(self, obj):
+        return ", ".join(str(PartnershipType.get_value(k)) for k in obj.types)
+
+    type_values.short_description = _('partnership_type')
+
+
+class PartnershipSubtypeAdmin(PartnershipMissionAdmin):
+    list_display = PartnershipMissionAdmin.list_display + ('is_active',)
+    list_filter = (PartnershipTypeListFilter, 'is_active')
+
+
 class UCLManagementEntityAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'entity',
@@ -184,3 +224,5 @@ admin.site.register(Contact, ContactAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(UCLManagementEntity, UCLManagementEntityAdmin)
 admin.site.register(PartnershipYear, PartnershipYearAdmin)
+admin.site.register(PartnershipMission, PartnershipMissionAdmin)
+admin.site.register(PartnershipSubtype, PartnershipSubtypeAdmin)

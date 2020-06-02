@@ -1,8 +1,16 @@
 import factory
 
-from partnership.models import PartnershipYear
+from partnership.models import (
+    PartnershipMission,
+    PartnershipSubtype,
+    PartnershipType, PartnershipYear,
+)
 
-__all__ = ['PartnershipYearFactory']
+__all__ = [
+    'PartnershipMissionFactory',
+    'PartnershipSubtypeFactory',
+    'PartnershipYearFactory',
+]
 
 
 class PartnershipYearFactory(factory.DjangoModelFactory):
@@ -15,3 +23,19 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
         year=2020,  # BUG: OP-348 - dirty fix
     )
     partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
+
+
+class PartnershipMissionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipMission
+
+    types = PartnershipType.get_names()
+    code = factory.Faker('word')
+
+
+class PartnershipSubtypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = PartnershipSubtype
+
+    types = PartnershipType.get_names()
+    code = factory.Faker('word')

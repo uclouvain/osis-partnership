@@ -24,7 +24,7 @@ from partnership.tests.factories import (
     PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
-    PartnershipTagFactory,
+    PartnershipMissionFactory, PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
@@ -69,6 +69,11 @@ class PartnershipUpdateViewTest(TestCase):
         cls.from_academic_year = AcademicYearFactory(year=2151)
         cls.end_academic_year = AcademicYearFactory(year=2152)
         cls.academic_year_2153 = AcademicYearFactory(year=2153)
+
+        # Initialize config
+        PartnershipConfiguration.objects.update(
+            partnership_creation_update_min_year_id=cls.academic_year_2149.pk
+        )
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
@@ -132,6 +137,7 @@ class PartnershipUpdateViewTest(TestCase):
             'year-start_academic_year': cls.start_academic_year.pk,
             'year-from_academic_year': cls.from_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
+            'year-missions': [PartnershipMissionFactory().pk],
         }
 
     def test_get_partnership_as_anonymous(self):
@@ -182,7 +188,7 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
 
     def test_get_end_date_too_early(self):
-        self.client.force_login(self.user_adri)
+        self.client.force_login(self.user_gf)
 
         prev_value = PartnershipConfiguration.get_configuration().partnership_creation_update_min_year_id
 
