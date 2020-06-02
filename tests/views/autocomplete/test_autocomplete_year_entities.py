@@ -114,7 +114,10 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         response = self.client.get(self.url, forward(self.labo, q='AA'))
         self.assertEqual(len(response.json()['results']), 2)
 
-        # with doctorate type
+    def test_year_entities_autocomplete_doctorate(self):
+        self.client.force_login(self.user)
+
+        # with doctorate type specified, should return doctorate commissions
         response = self.client.get(self.url, {'forward': json.dumps({
             'entity': self.sector.pk,
             'partnership_type': PartnershipType.DOCTORATE.name,
