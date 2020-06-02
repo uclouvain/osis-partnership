@@ -299,10 +299,11 @@ class PartnershipAdminSerializer(serializers.ModelSerializer):
     )
     supervisor = serializers.CharField(source='get_supervisor')
     partner = serializers.CharField(source='partner.name')
+    type = serializers.CharField(source='get_partnership_type_display')
 
     class Meta:
         model = Partnership
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'country', 'city',
-            'entities_acronyms', 'validity_end',
+            'entities_acronyms', 'validity_end', 'type'
         ]

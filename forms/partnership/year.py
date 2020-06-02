@@ -1,6 +1,7 @@
 from dal import autocomplete
 from dal.forward import Const
 from django import forms
+from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -85,8 +86,9 @@ class PartnershipYearBaseForm(forms.ModelForm):
         )
         # If only one mission available, force it
         if len(field_missions.queryset) == 1:
-            field_missions.initial = [field_missions.queryset.first().pk]
+            field_missions.initial = field_missions.queryset
             field_missions.widget = forms.MultipleHiddenInput()
+            field_missions.disabled = True
 
 
 class PartnershipYearSubtypeMixin:

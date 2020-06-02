@@ -22,6 +22,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
     def get_xls_headers(self):
         return [
             gettext('id'),
+            gettext('partnership_type'),
             gettext('partner'),
             gettext('partner_code'),
             gettext('erasmus_code'),
@@ -97,6 +98,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
 
             yield [
                 partnership.pk,
+                partnership.get_partnership_type_display(),
                 str(partnership.partner),
                 str(partnership.partner.partner_code) if partnership.partner.partner_code is not None else '',
                 str(partnership.partner.erasmus_code) if partnership.partner.erasmus_code is not None else '',

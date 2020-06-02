@@ -178,7 +178,19 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='years__is_stt',
         widget=CustomNullBooleanSelect(),
     )
+    is_smst = filters.BooleanFilter(
+        field_name='years__is_smst',
+        widget=CustomNullBooleanSelect(),
+    )
+    funding_type = filters.ModelChoiceFilter(field_name='years__funding_type')
+    funding_program = filters.ModelChoiceFilter(
+        field_name='years__funding_type__program',
+    )
+    funding_source = filters.ModelChoiceFilter(
+        field_name='years__funding_type__program__source',
+    )
     partnership_in = filters.CharFilter(method='filter_partnership_in')
+    subtype = filters.CharFilter(field_name='years__subtype')
     partnership_ending_in = filters.CharFilter(
         method='filter_partnership_ending_in'
     )
@@ -217,6 +229,10 @@ class PartnershipAdminFilter(filters.FilterSet):
             'is_smp',
             'is_sta',
             'is_stt',
+            'is_smst',
+            'funding_type',
+            'funding_program',
+            'funding_source',
             'partnership_type',
             'supervisor',
             'tags',
@@ -228,8 +244,21 @@ class PartnershipAdminFilter(filters.FilterSet):
             'comment',
         ]
 
-    def get_form_class(self):
-        return PartnershipFilterForm
+    @property
+    def form(self):
+        if not hasattr(self, '_form'):
+            if self.is_bound:
+                self._form = PartnershipFilterForm(
+                    self.data,
+                    user=self.request.user,
+                    prefix=self.form_prefix,
+                )
+            else:
+                self._form = PartnershipFilterForm(
+                    user=self.request.user,
+                    prefix=self.form_prefix,
+                )
+        return self._form
 
     @staticmethod
     def filter_years_entity(queryset, name, value):

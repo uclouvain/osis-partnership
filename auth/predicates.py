@@ -89,8 +89,14 @@ def entity_has_children(user, entity):
 
 @rules.predicate(bind=True)
 def partnership_type_allowed_for_user_scope(self, user, partnership_type):
-    return any(partnership_type.name in role_row.scopes
-               for role_row in self.context['role_qs'])
+    from .roles.partnership_manager import PartnershipEntityManager
+    if self.context:
+        qs = self.context['role_qs']
+    else:
+        qs = PartnershipEntityManager.objects.filter(
+            person=getattr(user, 'person', None)
+        )
+    return any(partnership_type.name in role_row.scopes for role_row in qs)
 
 
 @rules.predicate(bind=True)

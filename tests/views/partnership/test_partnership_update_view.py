@@ -100,15 +100,16 @@ class PartnershipUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
+        mission = PartnershipMissionFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user_gf.person,
             years=[
-                PartnershipYearFactory(academic_year=cls.start_academic_year),
-                PartnershipYearFactory(academic_year=cls.from_academic_year),
-                PartnershipYearFactory(academic_year=cls.end_academic_year),
+                PartnershipYearFactory(academic_year=cls.start_academic_year, missions=[mission]),
+                PartnershipYearFactory(academic_year=cls.from_academic_year, missions=[mission]),
+                PartnershipYearFactory(academic_year=cls.end_academic_year, missions=[mission]),
             ],
             ucl_entity=cls.ucl_university,
         )
@@ -137,7 +138,6 @@ class PartnershipUpdateViewTest(TestCase):
             'year-start_academic_year': cls.start_academic_year.pk,
             'year-from_academic_year': cls.from_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
-            'year-missions': [PartnershipMissionFactory().pk],
         }
 
     def test_get_partnership_as_anonymous(self):

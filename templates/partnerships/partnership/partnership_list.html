@@ -22,9 +22,10 @@
         { data: 'supervisor', targets: 3, orderable: false },
         { name: 'ucl',  data: 'entities_acronyms', targets: 4 },
         { data: 'validity_end', targets: 5, orderable: false },
+        { data: 'type', targets: 6, orderable: false },
         {
           data: 'url',
-          targets: 6,
+          targets: 7,
           orderable: false,
           render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
         },
@@ -146,9 +147,12 @@
                   </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
-                  <div class="row">
+                  <div class="row collapse in" id="all-types">
                     <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.partnership_type %}
+                    </div>
+                    <div class="col-sm-12 col-md-6 collapse fade in" id="subtype-field">
+                      {% bootstrap_field form.subtype %}
                     </div>
                   </div>
                   <div class="row">
@@ -159,18 +163,32 @@
                       {% bootstrap_field form.supervisor %}
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-sm-12 col-md-3">
+                  <div class="row collapse fade in" id="mobility-fields">
+                    <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.is_sms %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.is_smp %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.is_sta %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-6">
                       {% bootstrap_field form.is_stt %}
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                      {% bootstrap_field form.is_smst %}
+                    </div>
+                  </div>
+                  <div class="row collapse fade in" id="project-fields">
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.funding_source %}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.funding_program %}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      {% bootstrap_field form.funding_type %}
                     </div>
                   </div>
                   <div class="row">
@@ -240,6 +258,7 @@
                 <td>{% trans "partnership_supervisor" %}</td>
                 <td>{% trans "ucl" %}</td>
                 <td>{% trans "validity_end" %}</td>
+                <td>{% trans "type" %}</td>
               {% endblock %}
               <td></td>
             </tr>

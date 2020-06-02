@@ -11,13 +11,16 @@ from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
 from partnership.tests.factories import (
-    PartnerEntityFactory, PartnerFactory,
+    PartnerEntityFactory,
+    PartnerFactory,
+    PartnerTagFactory,
+    PartnerTypeFactory,
     PartnershipAgreementFactory,
+    PartnershipEntityManagerFactory,
     PartnershipFactory,
     PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
-    PartnerTagFactory, PartnerTypeFactory
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
@@ -209,7 +212,12 @@ class PartnershipsListViewTest(TestCase):
         AcademicYearFactory(year=2126)
 
         cls.user = UserFactory()
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(perm)
+        PartnershipEntityManagerFactory(person__user=cls.user, scopes=[
+            PartnershipType.GENERAL.name,
+            PartnershipType.MOBILITY.name,
+        ])
         cls.url = reverse('partnerships:list')
 
     def test_get_list_anonymous(self):

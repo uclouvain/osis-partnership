@@ -645,7 +645,7 @@ msgid "faculty"
 msgstr "Faculté"
 
 msgid "faculty_entity_filter"
-msgstr "Entité responsable"
+msgstr "Institut, Faculté ou Administration responsable"
 
 msgid "fax"
 msgstr "Fax"

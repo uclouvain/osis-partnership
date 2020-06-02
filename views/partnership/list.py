@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import OuterRef, Subquery
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
@@ -8,10 +7,7 @@ from django_filters.views import FilterView
 from base.models.academic_year import AcademicYear
 from base.utils.search import SearchMixin
 from partnership.api.serializers import PartnershipAdminSerializer
-from partnership.auth.predicates import (
-    is_faculty_manager,
-    is_linked_to_adri_entity,
-)
+from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.filter import PartnershipAdminFilter
 from partnership.models import AgreementStatus, Partnership, PartnershipType
 
@@ -28,16 +24,6 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     serializer_class = PartnershipAdminSerializer
     filterset_class = PartnershipAdminFilter
     cache_search = False
-
-    def get(self, *args, **kwargs):
-        if not self.request.GET and is_faculty_manager(self.request.user):
-            # FIXME is it to enforce ucl_entity? Should be done in search form
-            university = self.request.user.person.partnershipentitymanager_set.first().entity
-            if Partnership.objects.filter(ucl_entity=university).exists():
-                return HttpResponseRedirect(
-                    '?ucl_entity={0}'.format(university.pk)
-                )
-        return super().get(*args, **kwargs)
 
     def get_queryset(self):
         validity_end_year = Subquery(AcademicYear.objects.filter(

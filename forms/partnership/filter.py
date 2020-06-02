@@ -8,15 +8,24 @@ from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.person import Person
 from partnership.models import (
-    Address, Partner, PartnerEntity, PartnerTag, PartnerType, PartnershipTag,
-    PartnershipYearEducationLevel,
+    Address,
+    FundingProgram, FundingSource, FundingType, Partner,
+    PartnerEntity,
+    PartnerTag,
+    PartnerType,
+    PartnershipSubtype, PartnershipTag,
     PartnershipType,
+    PartnershipYearEducationLevel,
 )
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
 from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
+from ...auth.predicates import (
+    is_faculty_manager,
+    partnership_type_allowed_for_user_scope,
+)
 
 __all__ = ['PartnershipFilterForm']
 
@@ -194,9 +203,37 @@ class PartnershipFilterForm(forms.Form):
         widget=CustomNullBooleanSelect(),
         required=False,
     )
+    is_smst = forms.NullBooleanField(
+        label=_('is_smst'),
+        widget=CustomNullBooleanSelect(),
+        required=False,
+    )
     partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
-        choices=((None, '---------'),) + PartnershipType.choices(),
+        required=False,
+    )
+    subtype = forms.ModelChoiceField(
+        label=_('partnership_subtype'),
+        queryset=PartnershipSubtype.objects.filter(years__isnull=False).distinct(),
+        required=False,
+    )
+    funding_type = forms.ModelChoiceField(
+        label=_('funding_type'),
+        queryset=FundingType.objects.filter(years__isnull=False).distinct(),
+        required=False,
+    )
+    funding_program = forms.ModelChoiceField(
+        label=_('funding_program'),
+        queryset=FundingProgram.objects.filter(
+            fundingtype__years__isnull=False,
+        ).distinct(),
+        required=False,
+    )
+    funding_source = forms.ModelChoiceField(
+        label=_('funding_source'),
+        queryset=FundingSource.objects.filter(
+            fundingprogram__fundingtype__years__isnull=False,
+        ).distinct(),
         required=False,
     )
     supervisor = forms.ModelChoiceField(
@@ -250,7 +287,9 @@ class PartnershipFilterForm(forms.Form):
     ordering = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+
         # Cities
         cities = (
             Address.objects
@@ -260,6 +299,23 @@ class PartnershipFilterForm(forms.Form):
             .distinct('city')
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
+
+        # Make types available according to perms
+        choices = []
+        for scope in PartnershipType:
+            if partnership_type_allowed_for_user_scope(user, scope):
+                choices.append((scope.name, scope.value))
+        if len(choices) == 1:
+            self.fields['partnership_type'].widget = forms.HiddenInput()
+            self.fields['partnership_type'].initial = choices[0][0]
+        else:
+            choices = [(None, '---------')] + choices
+        self.fields['partnership_type'].choices = choices
+
+        # Init ucl_entity for faculty manager
+        if is_faculty_manager(user):
+            university = user.person.partnershipentitymanager_set.first().entity_id
+            self.fields['ucl_entity'].initial = university
 
     def clean_ordering(self):
         # Django filters expects a list

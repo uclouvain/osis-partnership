@@ -1,6 +1,6 @@
+from partnership.models.enums.partnership import PartnershipType
 from .faculty import FacultyEntityAutocompleteView
 from ...forms import PartnershipMobilityForm
-from ...models import PartnershipType
 
 __all__ = [
     'UclUniversityAutocompleteFilterView',
