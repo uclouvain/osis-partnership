@@ -1,7 +1,12 @@
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 
-from partnership.forms import MediaForm, PartnershipAgreementForm
+from partnership.forms import (
+    MediaForm,
+    PartnershipAgreementWithAcademicYearsForm,
+    PartnershipAgreementWithDatesForm,
+)
+from partnership.models import PartnershipType
 from partnership.views.partnership.mixins import PartnershipRelatedMixin
 
 
@@ -13,7 +18,14 @@ class PartnershipAgreementsMixin(PartnershipRelatedMixin):
 
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
-    form_class = PartnershipAgreementForm
+    def get_form_class(self):
+        if self.partnership.partnership_type in [
+            PartnershipType.GENERAL.name,
+            PartnershipType.COURSE.name,
+            PartnershipType.DOCTORATE.name,
+        ]:
+            return PartnershipAgreementWithDatesForm
+        return PartnershipAgreementWithAcademicYearsForm
 
     def get_template_names(self):
         if self.request.is_ajax():
