@@ -10,6 +10,7 @@ from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
+from osis_common.decorators.download import set_download_cookie
 from partnership import perms
 from partnership.forms import MediaForm
 from partnership.models import Partner, Partnership
@@ -122,6 +123,7 @@ class PartnershipMediaFormMixin(PartnershipMediaMixin, FormMixin):
 
 
 class MediaDownloadMixin(SingleObjectMixin, View):
+    @set_download_cookie
     def get(self, request, *args, **kwargs):
         media = self.get_object()
         if media.file is None:

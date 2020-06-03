@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 
 from base.models.academic_year import AcademicYear
+from osis_common.decorators.download import set_download_cookie
 from partnership.models import Financing, PartnershipConfiguration
 from partnership.utils import user_is_adri
 from reference.models.country import Country
@@ -50,6 +51,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
                 }
                 yield row
 
+    @set_download_cookie
     def get(self, *args, year=None, **kwargs):
         if year is None:
             configuration = PartnershipConfiguration.get_configuration()
