@@ -25,6 +25,7 @@ class PartnershipContactCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -37,7 +38,10 @@ class PartnershipContactCreateViewTest(TestCase):
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         # Misc
         cls.url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': cls.partnership.pk})
 
@@ -105,6 +109,7 @@ class PartnershipContactUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -117,7 +122,10 @@ class PartnershipContactUpdateViewTest(TestCase):
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         # Misc
         cls.url = reverse('partnerships:contacts:update', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
@@ -190,6 +198,7 @@ class PartnershipContactDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -202,7 +211,10 @@ class PartnershipContactDeleteViewTest(TestCase):
         date_ok = date.today() + timedelta(days=365)
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         # Misc
         cls.url = reverse('partnerships:contacts:delete', kwargs={
             'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk

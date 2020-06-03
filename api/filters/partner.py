@@ -25,27 +25,14 @@ class PartnerSupervisorFilter(filters.Filter):
             qs.annotate(
                 has_supervisor_with_entity=Exists(
                     UCLManagementEntity.objects.filter(
-                        entity__isnull=False,
-                        entity=OuterRef('partnerships__ucl_university_labo'),
-                        faculty=OuterRef('partnerships__ucl_university'),
+                        entity=OuterRef('partnerships__ucl_entity'),
                         academic_responsible__uuid=value,
                     )
                 ),
-                has_supervisor_without_entity=Exists(
-                    UCLManagementEntity.objects.filter(
-                        entity__isnull=True,
-                        faculty=OuterRef('partnerships__ucl_university'),
-                        academic_responsible__uuid=value,
-                    )
-                )
-            )
-            .filter(
+            ).filter(
                 Q(partnerships__supervisor__uuid=value)
                 | Q(partnerships__supervisor__isnull=True,
                     has_supervisor_with_entity=True)
-                | Q(partnerships__supervisor__isnull=True,
-                    partnerships__ucl_university_labo__isnull=True,
-                    has_supervisor_without_entity=True)
             )
         )
 
@@ -112,7 +99,7 @@ class PartnerFilter(filters.FilterSet):
             ('name', 'partner'),
             ('contact_address__country__iso_code', 'country_en'),
             ('contact_address__city', 'city'),
-            ('partnerships__ucl_university', 'ucl_university'),
+            ('partnerships__ucl_entity', 'ucl_entity'),
             ('subject_area_ordered', 'subject_area'),
         )
     )
@@ -129,12 +116,8 @@ class PartnerFilter(filters.FilterSet):
         lookup_expr='iexact',
     )
     partner = filters.UUIDFilter(field_name='uuid')
-    ucl_university = filters.UUIDFilter(
-        field_name='partnerships__ucl_university__uuid',
-        distinct=True,
-    )
-    ucl_university_labo = filters.UUIDFilter(
-        field_name='partnerships__ucl_university_labo__uuid',
+    ucl_entity = filters.UUIDFilter(
+        field_name='partnerships__ucl_entity__uuid',
         distinct=True,
     )
 
@@ -150,6 +133,6 @@ class PartnerFilter(filters.FilterSet):
         fields = [
             'ordering',
             'continent', 'country', 'city', 'partner',
-            'ucl_university', 'ucl_university_labo',
+            'ucl_entity',
             'supervisor', 'education_field', 'mobility_type',
         ]

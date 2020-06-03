@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import Func, OuterRef, Subquery
 from django.views.generic import ListView
 
-from partnership import perms
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
+from partnership import perms
 from partnership.models import UCLManagementEntity
 from partnership.utils import user_is_adri
 
@@ -29,14 +30,18 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
         return context
 
     def get_queryset(self):
+        cte = EntityVersion.objects.with_children()
+        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).annotate(
+            children=cte.col.children,
+        ).filter(
+            children__contains_any=OuterRef('entity__pk'),
+        )
+
         queryset = (
             UCLManagementEntity.objects
             .annotate(
                 faculty_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('faculty__pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
+                    qs.filter(entity_type=FACULTY).values('acronym')[:1]
                 ),
                 entity_most_recent_acronym=Subquery(
                     EntityVersion.objects
@@ -46,11 +51,29 @@ class UCLManagementEntityListView(LoginRequiredMixin, UserPassesTestMixin, ListV
                 ),
             )
             .order_by('faculty_most_recent_acronym', 'entity_most_recent_acronym')
-            .select_related('academic_responsible', 'administrative_responsible')
+            .select_related(
+                'academic_responsible',
+                'administrative_responsible',
+                'contact_in_person',
+                'contact_out_person',
+                'entity',
+            )
+            .prefetch_related('entity__partnerships')
         )
         if not user_is_adri(self.request.user):
+            # get what the user manages
+            person = self.request.user.person
+            entities_managed_by_user = person.partnershipentitymanager_set.values('entity_id')
+
+            # get the children
+            qs = cte.queryset().with_cte(cte).filter(
+                entity__in=entities_managed_by_user
+            ).annotate(
+                child_entity_id=Func(cte.col.children, function='unnest'),
+            ).distinct('child_entity_id').values('child_entity_id')
+
+            # check if entity is part of entity the user manages
             queryset = queryset.filter(
-                Q(faculty__partnershipentitymanager__person__user=self.request.user)
-                | Q(faculty__entityversion__parent__partnershipentitymanager__person__user=self.request.user)
+                entity__in=qs,
             )
         return queryset.distinct()

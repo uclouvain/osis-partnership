@@ -19,16 +19,22 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         sector = EntityFactory()
+        EntityVersionFactory(entity=sector)
         faculty = EntityFactory()
         EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
-        EntityVersionFactory(entity_type="FACULTY", entity=faculty)
-        EntityVersionFactory(entity_type="FACULTY", entity=other_faculty)
+        EntityVersionFactory(entity=other_faculty, entity_type=FACULTY)
 
-        cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
-        cls.other_ucl_management_entity = UCLManagementEntityFactory(faculty=other_faculty)
-        cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=other_faculty, entity=None)
-        PartnershipFactory(ucl_university=other_faculty, ucl_university_labo=None)
+        cls.ucl_management_entity = UCLManagementEntityFactory(entity=faculty)
+        cls.other_ucl_management_entity = UCLManagementEntityFactory(
+            entity=EntityVersionFactory(
+                parent=other_faculty,
+            ).entity,
+        )
+        cls.ucl_management_entity_linked = UCLManagementEntityFactory(
+            entity=other_faculty,
+        )
+        PartnershipFactory(ucl_entity=other_faculty)
 
         # Users
         cls.lambda_user = UserFactory()
@@ -38,7 +44,7 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         cls.gs_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.gs_user, entity=sector)
         cls.gf_user = UserFactory()
-        entity_manager = PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
@@ -74,7 +80,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
             'contact_out_person': str(cls.contact_out_person.pk),
             'contact_out_url': 'http://bar.fr/bar',
             'entity': str(cls.entity.pk),
-            'faculty': str(cls.faculty.pk),
         }
 
     def test_get_view_anonymous(self):
@@ -126,7 +131,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         data['academic_responsible'] = self.ucl_management_entity.academic_responsible.pk
         data['administrative_responsible'] = self.ucl_management_entity.administrative_responsible.pk
         data['entity'] = self.ucl_management_entity.entity.pk
-        data['faculty'] = self.ucl_management_entity.faculty.pk
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(
             response,
@@ -144,10 +148,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         self.assertEqual(
             ucl_management_entity.entity.pk,
             data['entity'],
-        )
-        self.assertEqual(
-            ucl_management_entity.faculty.pk,
-            data['faculty'],
         )
         self.assertEqual(
             ucl_management_entity.contact_in_email,
@@ -180,7 +180,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         data['academic_responsible'] = self.ucl_management_entity.academic_responsible.pk
         data['administrative_responsible'] = self.ucl_management_entity.administrative_responsible.pk
         data['entity'] = self.ucl_management_entity.entity.pk
-        data['faculty'] = self.ucl_management_entity.faculty.pk
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(
             response,
@@ -198,10 +197,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
         self.assertEqual(
             ucl_management_entity.entity.pk,
             data['entity'],
-        )
-        self.assertEqual(
-            ucl_management_entity.faculty.pk,
-            data['faculty'],
         )
         self.assertEqual(
             ucl_management_entity.contact_in_email,
@@ -227,7 +222,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
             ucl_management_entity.contact_out_url,
             data['contact_out_url']
         )
-
 
     def test_post_view_other_gf_user(self):
         self.client.force_login(self.other_gf_user)
@@ -286,10 +280,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
             self.data['contact_out_url']
         )
         self.assertEqual(
-            str(ucl_management_entity.faculty.pk),
-            self.data['faculty']
-        )
-        self.assertEqual(
             str(ucl_management_entity.entity.pk),
             self.data['entity']
         )
@@ -297,8 +287,6 @@ class UCLManagementEntityUpdateViewTest(TestCase):
     def test_post_view_with_linked_adri_user(self):
         self.client.force_login(self.adri_user)
         data = self.data.copy()
-        del data['entity']
-        del data['faculty']
         response = self.client.post(self.linked_url, data=data, follow=True)
         self.assertTemplateUsed(
             response,

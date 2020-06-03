@@ -45,7 +45,8 @@ class PartnershipUpdateView(LoginRequiredMixin, UserPassesTestMixin, Partnership
             send_mail(
                 'OSIS-Partenariats : {}'.format(
                     _('partnership_end_year_updated_{partner}_{faculty}').format(
-                        partner=partnership.partner, faculty=partnership.ucl_university.most_recent_acronym
+                        partner=partnership.partner,
+                        faculty=partnership.ucl_entity.most_recent_acronym,
                     )
                 ),
                 render_to_string(

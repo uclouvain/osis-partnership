@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load i18n partnerships static years %}
+{% load i18n partnerships static years getattr %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
@@ -51,18 +51,34 @@
               {% if not partnership.partner.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
             </dd>
 
-            <dt>{% trans "ucl_university" %}</dt>
+            <dt>{% trans "ucl_entity" %}</dt>
             <dd>
               {{ partnership.entities_acronyms }}
             </dd>
 
             {% with partnership.get_supervisor as supervisor %}
-            <dt>{% trans "partnership_supervisor" %}</dt>
-            <dd>{% if supervisor %}{{ supervisor }}{% if supervisor.email %} - {{ supervisor.email }}{% endif %} {% if partnership.supervisor is None %}({% trans "partnership_supervisor_from_entity_management" %}){% endif %}{% endif %}</dd>
+              <dt>{% trans "partnership_supervisor" %}</dt>
+              <dd>
+                {% if supervisor %}
+                  {{ supervisor }}
+                  {% if supervisor.email %} - {{ supervisor.email }}{% endif %}
+                  {# Display a tip about the supervisor not being specified #}
+                  {% if partnership.supervisor is None %}
+                    ({% trans "partnership_supervisor_from_entity_management" %})
+                  {% endif %}
+                {% endif %}
+              </dd>
             {% endwith %}
 
-            <dt>{% trans "administrative_responsible" %}</dt>
-            <dd>{{ partnership.administrative_responsible|default_if_none:"" }}{% if partnership.administrative_responsible %} - {{ partnership.administrative_responsible.email }}{% endif %}</dd>
+            {% with partnership.ucl_entity.uclmanagement_entity as ume %}
+              <dt>{% trans "administrative_responsible" %}</dt>
+              <dd>
+                {{ ume.administrative_responsible|default_if_none:"" }}
+                {% if ume.administrative_responsible.email %} -
+                  {{ ume.administrative_responsible.email }}
+                {% endif %}
+              </dd>
+            {% endwith %}
 
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>{% academic_dates start_date=partnership.start_date end_date=partnership.end_date %}</dd>
@@ -98,7 +114,9 @@
             <td>{{ partnership_year.get_partnership_type_display }}</td>
             <td>
               <ul class="list-unstyled">
-                {% for education_field in partnership_year.education_fields.all %}<li><strong>{{ education_field.code }}</strong> - {{ education_field.label }}</li>{% endfor %}
+                {% for education_field in partnership_year.education_fields.all %}
+                  <li><strong>{{ education_field.code }}</strong> - {{ education_field|getattr:domain_title }}</li>
+                {% endfor %}
               </ul>
             </td>
             <td>{{ partnership_year.planned_activity }}</td>
@@ -230,49 +248,51 @@
         {% endfor %}
       </div>
 
-      {% if partnership.ucl_management_entity is not None and partnership.ucl_management_entity.are_contacts_defined %}
+      {% with management_entity=partnership.ucl_entity.uclmanagement_entity %}
+      {% if management_entity and management_entity.are_contacts_defined %}
         <h2>{% trans "ucl_management_entity_contacts" %}</h2>
         <div class="row">
-          {% if partnership.ucl_management_entity.is_contact_in_defined %}
-            <div class="{% if partnership.ucl_management_entity.is_contact_out_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
+          {% if management_entity.is_contact_in_defined %}
+            <div class="{% if management_entity.is_contact_out_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
               <h4>{% trans "contact_in" %}</h4>
               <dl class="dl-horizontal">
-                {% if partnership.ucl_management_entity.contact_in_person is not None %}
+                {% if management_entity.contact_in_person is not None %}
                   <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ partnership.ucl_management_entity.contact_in_person }}{% if partnership.ucl_management_entity.contact_in_person %} - {{ partnership.ucl_management_entity.contact_in_person.email }}{% endif %}</dd>
+                  <dd>{{ management_entity.contact_in_person }}{% if management_entity.contact_in_person %} - {{ management_entity.contact_in_person.email }}{% endif %}</dd>
                 {% endif %}
-                {% if partnership.ucl_management_entity.contact_in_email is not None %}
+                {% if management_entity.contact_in_email is not None %}
                   <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_in_email }}">{{ partnership.ucl_management_entity.contact_in_email }}</a></dd>
+                  <dd><a href="mailto:{{ management_entity.contact_in_email }}">{{ management_entity.contact_in_email }}</a></dd>
                 {% endif %}
-                {% if partnership.ucl_management_entity.contact_in_url is not None %}
+                {% if management_entity.contact_in_url is not None %}
                   <dt>{% trans 'portal' %}</dt>
-                  <dd><a href="{{ partnership.ucl_management_entity.contact_in_url }}" target="_blank">{{ partnership.ucl_management_entity.contact_in_url}}</a></dd>
+                  <dd><a href="{{ management_entity.contact_in_url }}" target="_blank">{{ management_entity.contact_in_url}}</a></dd>
                 {% endif %}
               </dl>
             </div>
           {% endif %}
-          {% if partnership.ucl_management_entity.is_contact_out_defined %}
-            <div class="{% if partnership.ucl_management_entity.is_contact_in_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
+          {% if management_entity.is_contact_out_defined %}
+            <div class="{% if management_entity.is_contact_in_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
               <h4>{% trans "contact_out" %}</h4>
               <dl class="dl-horizontal">
-                {% if partnership.ucl_management_entity.contact_out_person is not None %}
+                {% if management_entity.contact_out_person is not None %}
                   <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ partnership.ucl_management_entity.contact_out_person }}{% if partnership.ucl_management_entity.contact_out_person %} - {{ partnership.ucl_management_entity.contact_out_person.email }}{% endif %}</dd>
+                  <dd>{{ management_entity.contact_out_person }}{% if management_entity.contact_out_person %} - {{ management_entity.contact_out_person.email }}{% endif %}</dd>
                 {% endif %}
-                {% if partnership.ucl_management_entity.contact_out_email is not None %}
+                {% if management_entity.contact_out_email is not None %}
                   <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ partnership.ucl_management_entity.contact_out_email }}">{{ partnership.ucl_management_entity.contact_out_email }}</a></dd>
+                  <dd><a href="mailto:{{ management_entity.contact_out_email }}">{{ management_entity.contact_out_email }}</a></dd>
                 {% endif %}
-                {% if partnership.ucl_management_entity.contact_out_url is not None %}
+                {% if management_entity.contact_out_url is not None %}
                   <dt>{% trans 'portal' %}</dt>
-                  <dd><a href="{{ partnership.ucl_management_entity.contact_out_url }}" target="_blank">{{ partnership.ucl_management_entity.contact_out_url }}</a></dd>
+                  <dd><a href="{{ management_entity.contact_out_url }}" target="_blank">{{ management_entity.contact_out_url }}</a></dd>
                 {% endif %}
               </dl>
             </div>
           {% endif %}
         </div>
       {% endif %}
+      {% endwith %}
 
       <!-- Accords -->
       <h2>{% trans "Agreements" %}

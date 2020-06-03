@@ -1,8 +1,10 @@
 import django_filters as filters
-from django.db.models import Q, Exists, OuterRef, Max, Subquery
+from django.db.models import Exists, Max, OuterRef, Q
 from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY, SECTOR
+from base.utils.cte import CTESubquery
 from partnership.forms import (
     PartnerFilterForm, PartnershipFilterForm,
     CustomNullBooleanSelect,
@@ -11,7 +13,6 @@ from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     AgreementStatus,
     PartnershipYear,
-    Financing,
 )
 
 
@@ -131,9 +132,9 @@ class PartnershipAdminFilter(filters.FilterSet):
                 'partner__name'
             ],
             'ucl': [
-                'ucl_university_parent_most_recent_acronym',
-                'ucl_university_most_recent_acronym',
-                'ucl_university_labo_most_recent_acronym',
+                'ucl_sector_most_recent_acronym',
+                'ucl_faculty_most_recent_acronym',
+                'ucl_entity_most_recent_acronym',
             ]
         },
     )
@@ -144,6 +145,9 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='partner__contact_address__country',
     )
     city = filters.CharFilter(field_name='partner__contact_address__city')
+    ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
+    # This is a noop filter, as its logic is in filter_ucl_entity()
+    ucl_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
     partner_type = filters.CharFilter(field_name='partner__partner_type')
     education_level = filters.CharFilter(field_name='years__education_levels')
     education_field = filters.CharFilter(field_name='years__education_fields')
@@ -195,8 +199,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         fields = [
             'ordering',
             'partner_type',
-            'ucl_university',
-            'ucl_university_labo',
+            'ucl_entity',
             'education_level',
             'years_entity',
             'university_offer',
@@ -234,6 +237,18 @@ class PartnershipAdminFilter(filters.FilterSet):
             queryset = queryset.filter(
                 Q(years__entities=value) | Q(years__entities__isnull=True)
             )
+        return queryset
+
+    def filter_ucl_entity(self, queryset, name, value):
+        if value:
+            if self.form.cleaned_data.get('ucl_entity_with_child', False):
+                # Allow all children of entity too
+                cte = EntityVersion.objects.with_parents(entity_id=value.pk)
+                qs = cte.queryset().with_cte(cte).values('entity_id')
+                queryset = queryset.filter(ucl_entity__in=qs)
+            else:
+                queryset = queryset.filter(ucl_entity=value)
+
         return queryset
 
     @staticmethod
@@ -355,44 +370,63 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
                 'partnership__partner__name',
             ],
             'ucl': [
-                'partnership_ucl_university_parent_most_recent_acronym',
-                'partnership_ucl_university_most_recent_acronym',
-                'partnership_ucl_university_labo_most_recent_acronym',
+                'partnership_ucl_sector_most_recent_acronym',
+                'partnership_ucl_faculty_most_recent_acronym',
+                'partnership_ucl_entity_most_recent_acronym',
             ]
         }
     )
 
     @property
     def qs(self):
+        # See also Partnership.objects.add_acronyms()
+        ref = OuterRef('partnership__ucl_entity__pk')
+
+        cte = EntityVersion.objects.with_children(entity_id=ref)
+        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).order_by('-start_date')
+
         queryset = (
             PartnershipAgreement.objects
             .annotate(
                 # Used for ordering
-                partnership_ucl_university_parent_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                    .filter(entity__parent_of__entity=OuterRef('partnership__ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
+                partnership_ucl_sector_most_recent_acronym=CTESubquery(
+                    qs.filter(entity_type=SECTOR).values('acronym')[:1]
                 ),
-                partnership_ucl_university_most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                    .filter(entity=OuterRef('partnership__ucl_university__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
+                partnership_ucl_sector_most_recent_title=CTESubquery(
+                    qs.filter(entity_type=SECTOR).values('title')[:1]
                 ),
-                partnership_ucl_university_labo_most_recent_acronym=Subquery(
+                partnership_ucl_faculty_most_recent_acronym=CTESubquery(
+                    qs.filter(
+                        entity_type=FACULTY,
+                    ).exclude(
+                        entity_id=ref,
+                    ).values('acronym')[:1]
+                ),
+                partnership_ucl_faculty_most_recent_title=CTESubquery(
+                    qs.filter(
+                        entity_type=FACULTY,
+                    ).exclude(
+                        entity_id=ref,
+                    ).values('title')[:1]
+                ),
+                partnership_ucl_entity_most_recent_acronym=CTESubquery(
                     EntityVersion.objects
-                    .filter(entity=OuterRef('partnership__ucl_university_labo__pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
+                        .filter(entity=ref)
+                        .order_by('-start_date')
+                        .values('acronym')[:1]
+                ),
+                partnership_ucl_entity_most_recent_title=CTESubquery(
+                    EntityVersion.objects
+                        .filter(entity=ref)
+                        .order_by('-start_date')
+                        .values('title')[:1]
                 ),
             ).filter(
                 partnership__in=super().qs
             ).select_related(
                 'partnership__partner__contact_address__country',
                 'partnership__supervisor',
-                'partnership__ucl_university',
-                'partnership__ucl_university_labo',
+                'partnership__ucl_entity',
                 'start_academic_year',
                 'end_academic_year',
             )

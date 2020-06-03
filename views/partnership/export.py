@@ -102,9 +102,11 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(partnership.partner.erasmus_code) if partnership.partner.erasmus_code is not None else '',
                 str(partnership.partner.pic_code) if partnership.partner.pic_code is not None else '',
                 str(partnership.partner_entity) if partnership.partner_entity else None,
-                str(partnership.ucl_university_most_recent_acronym),
-                str(partnership.ucl_university_labo_most_recent_acronym)
-                    if partnership.ucl_university_labo_most_recent_acronym is not None else '',
+                str(partnership.ucl_faculty_most_recent_acronym)
+                    if partnership.ucl_faculty_most_recent_acronym is not None
+                    else partnership.ucl_entity_most_recent_acronym,
+                str(partnership.ucl_entity_most_recent_acronym)
+                    if partnership.ucl_faculty_most_recent_acronym is not None else '',
                 str(partnership.supervisor) if partnership.supervisor is not None else '',
                 ', '.join(map(lambda x: x.most_recent_acronym, current_year.entities.all()))
                     if current_year is not None else '',

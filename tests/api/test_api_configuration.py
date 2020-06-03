@@ -1,13 +1,19 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from partnership.models import PartnershipConfiguration
-from partnership.tests.factories import PartnershipFactory, PartnerFactory, UCLManagementEntityFactory, \
-    PartnershipYearFactory, PartnershipAgreementFactory, PartnershipYearEducationFieldFactory, FinancingFactory
+from partnership.tests.factories import (
+    FinancingFactory, PartnerFactory,
+    PartnershipAgreementFactory, PartnershipFactory, PartnershipYearFactory,
+    UCLManagementEntityFactory,
+)
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class ConfigurationApiViewTest(TestCase):
@@ -28,14 +34,21 @@ class ConfigurationApiViewTest(TestCase):
             partnership=partnership,
             academic_year=current_academic_year,
         )
-        year.education_fields.add(PartnershipYearEducationFieldFactory())
+        education_field = DomainIscedFactory(title_en='foo', title_fr='bar')
+        year.education_fields.add(education_field)
         PartnershipAgreementFactory(
             partnership=partnership,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
         )
 
-        partnership = PartnershipFactory(years=[])
+        parent = EntityVersionFactory(acronym="SSH", entity_type=SECTOR)
+        partnership = PartnershipFactory(
+            years=[],
+            ucl_entity=EntityVersionFactory(
+                acronym="FIAL", entity_type=FACULTY, parent=parent.entity,
+            ).entity,
+        )
         PartnershipYearFactory(partnership=partnership, academic_year=current_academic_year)
         PartnershipAgreementFactory(
             partnership=partnership,
@@ -43,7 +56,7 @@ class ConfigurationApiViewTest(TestCase):
             end_academic_year__year=current_academic_year.year + 1,
         )
         UCLManagementEntityFactory(
-            faculty=partnership.ucl_university,
+            entity=partnership.ucl_entity,
             academic_responsible=cls.supervisor_management_entity
         )
         financing = FinancingFactory(academic_year=current_academic_year)
@@ -80,13 +93,7 @@ class ConfigurationApiViewTest(TestCase):
         data = response.json()
         self.assertIn('ucl_universities', data)
         self.assertEqual(len(data['ucl_universities']), 2)
-
-    def test_supervisors(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn('supervisors', data)
-        self.assertEqual(len(data['supervisors']), 2)
+        self.assertIn("SSH / FIAL -", data['ucl_universities'][0]['label'])
 
     def test_education_fields(self):
         response = self.client.get(self.url)
@@ -94,6 +101,16 @@ class ConfigurationApiViewTest(TestCase):
         data = response.json()
         self.assertIn('education_fields', data)
         self.assertEqual(len(data['education_fields']), 1)
+
+    def test_get_label_case_language_in_english(self):
+        response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='en')
+        data = response.json()
+        self.assertEqual(data['education_fields'][0]['label'], 'foo')
+
+    def test_get_label_case_language_in_french(self):
+        response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='fr')
+        data = response.json()
+        self.assertEqual(data['education_fields'][0]['label'], 'bar')
 
     def test_fundings(self):
         response = self.client.get(self.url)

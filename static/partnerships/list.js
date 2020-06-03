@@ -13,7 +13,7 @@ function renderBool (data) {
 }
 
 function initDataTable (storageKey, url, columnDefs, extra) {
-    initializeDataTable('filter-form', 'result-list', 'partnershipIds', null, null, url, columnDefs, {
+    initializeDataTable('filter-form', 'result-list', 'partnershipIds', null, null, url, columnDefs, $.extend({}, {
         // Pagination
         paging: true,
         lengthChange: false,
@@ -52,7 +52,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
                 last: '<i class="fas fa-step-forward"></i>',
             },
         },
-    });
+    }, extra));
 }
 
 (function ($) {

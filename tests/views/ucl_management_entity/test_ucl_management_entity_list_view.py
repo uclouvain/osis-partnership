@@ -15,10 +15,13 @@ OTHER_GF_UME_NUMBER = 7
 
 
 class UCLManagementEntitiesListViewTest(TestCase):
-
+    """
+    Tests UCLManagementEntityListView
+    """
     @classmethod
     def setUpTestData(cls):
         sector = EntityFactory()
+        EntityVersionFactory(entity_type="SECTOR", entity=sector)
         faculty = EntityFactory()
         EntityVersionFactory(entity=faculty, parent=sector, entity_type=FACULTY)
         other_faculty = EntityFactory()
@@ -38,9 +41,16 @@ class UCLManagementEntitiesListViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
         for i in range(GF_UME_NUMBER):
-            UCLManagementEntityFactory(faculty=faculty)
+            entity = EntityFactory()
+            EntityVersionFactory(entity=entity, parent=faculty)
+            UCLManagementEntityFactory(entity=entity)
         for i in range(OTHER_GF_UME_NUMBER):
-            UCLManagementEntityFactory(faculty=other_faculty)
+            UCLManagementEntityFactory(
+                entity=EntityVersionFactory(
+                    entity=EntityFactory(),
+                    parent=other_faculty,
+                ).entity,
+            )
 
         cls.url = reverse('partnerships:ucl_management_entities:list')
 

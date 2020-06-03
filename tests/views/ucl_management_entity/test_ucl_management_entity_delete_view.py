@@ -33,9 +33,11 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         cls.other_gf_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 
-        cls.ucl_management_entity = UCLManagementEntityFactory(faculty=faculty)
-        cls.ucl_management_entity_linked = UCLManagementEntityFactory(faculty=third_faculty)
-        PartnershipFactory(ucl_university=third_faculty)
+        cls.ucl_management_entity = UCLManagementEntityFactory(entity=faculty)
+        cls.ucl_management_entity_linked = UCLManagementEntityFactory(
+            entity=third_faculty,
+        )
+        PartnershipFactory(ucl_entity=third_faculty)
 
         cls.url = reverse(
             'partnerships:ucl_management_entities:delete',
@@ -109,13 +111,11 @@ class UCLManagementEntityDeleteViewTest(TestCase):
     def test_get_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.get(self.linked_url)
-        self.assertTemplateUsed(response, self.template_name)
-        self.assertTemplateNotUsed(response, 'access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post_for_linked_as_adri(self):
         self.client.force_login(self.adri_user)
         response = self.client.post(self.linked_url, follow=True)
-        self.assertFalse(UCLManagementEntity.objects.filter(
-            pk=self.ucl_management_entity_linked.pk
-        ))
-        self.assertTemplateNotUsed(response, 'access_denied.html')
+        self.assertTemplateNotUsed(response, self.template_name)
+        self.assertTemplateUsed(response, 'access_denied.html')

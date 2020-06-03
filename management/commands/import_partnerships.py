@@ -2,21 +2,22 @@ import csv
 import os
 from datetime import date
 
-from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db import IntegrityError, transaction
 
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
+from base.models.enums.entity_type import FACULTY
 from base.models.person import Person
 from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (
     Address, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipYear,
-    PartnershipYearEducationField, PartnerType,
+    PartnerType,
     UCLManagementEntity, MediaVisibility, PartnershipType, AgreementStatus,
 )
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 
 COUNTRIES_OLD_TO_ISO = {
     'ZA': 'ZA',
@@ -398,9 +399,9 @@ class Command(ProgressBarMixin, BaseCommand):
         code = code.rjust(4, '0')
         if code not in self.education_fields:
             try:
-                ed_field = PartnershipYearEducationField.objects.get(code=code)
+                ed_field = DomainIsced.objects.get(code=code)
                 self.education_fields[code] = ed_field
-            except PartnershipYearEducationField.DoesNotExist:
+            except DomainIsced.DoesNotExist:
                 self.write_error('Unknown education field {code}'.format(
                     code=code)
                 )
@@ -480,8 +481,7 @@ class Command(ProgressBarMixin, BaseCommand):
             return
 
         partnership.partner = partner
-        partnership.ucl_university = self.get_entity_by_acronym(line[8])
-        partnership.ucl_university_labo = self.get_entity_by_acronym(line[10])
+        partnership.ucl_entity = self.get_entity_by_acronym(line[10])
         partnership.supervisor = self.get_supervisor(line[12])
         partnership.save()
 
@@ -490,8 +490,7 @@ class Command(ProgressBarMixin, BaseCommand):
                 'academic_responsible': partnership.supervisor,
                 'administrative_responsible': partnership.supervisor,
             },
-            faculty=partnership.ucl_university,
-            entity=partnership.ucl_university_labo,
+            entity=partnership.ucl_entity,
         )
 
         educations_fields = []
@@ -525,8 +524,9 @@ class Command(ProgressBarMixin, BaseCommand):
             partnership_year.is_sta = bool(line[14])
             partnership_year.save()
             partnership_year.education_fields = educations_fields
-            if partnership.ucl_university_labo is not None:
-                partnership_year.entities = [partnership.ucl_university_labo]
+            entity = partnership.ucl_entity.entityversion_set.latest('start_date')
+            if entity.entity_type != FACULTY:
+                partnership_year.entities = [partnership.ucl_entity]
 
         key = '{0}-{1}'.format(line[5], line[11])
         self.partnerships_for_agreements[key] = partnership

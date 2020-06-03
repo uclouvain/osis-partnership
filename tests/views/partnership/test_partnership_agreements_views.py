@@ -12,12 +12,11 @@ from partnership.models import AgreementStatus, MediaVisibility
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory
+    PartnershipFactory,
 )
 
 
-class PartnershipsAgreementsListViewTest(TestCase):
-
+class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         for i in range(15):
@@ -25,12 +24,14 @@ class PartnershipsAgreementsListViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
+        perm = Permission.objects.get(name='can_access_partnerships_agreements')
+        cls.user.user_permissions.add(perm)
+        cls.user_adri.user_permissions.add(perm)
 
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.url = reverse('partnerships:agreements-list')
+        cls.export_url = reverse('partnerships:export_agreements')
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -47,6 +48,21 @@ class PartnershipsAgreementsListViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
 
+    def test_export_anonymous(self):
+        response = self.client.get(self.export_url, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/agreements/agreement_list.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
+
+    def test_export_as_authenticated(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.export_url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_export_as_adri(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.export_url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
 
 class PartnershipAgreementCreateViewTest(TestCase):
 
@@ -59,6 +75,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -70,7 +87,10 @@ class PartnershipAgreementCreateViewTest(TestCase):
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
         cls.partnership = PartnershipFactory()
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         # Misc
         cls.url = reverse('partnerships:agreements:create', kwargs={'partnership_pk': cls.partnership.pk})
         cls.data = {
@@ -148,6 +168,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -161,7 +182,10 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
         # Misc
         cls.url = reverse('partnerships:agreements:update', kwargs={
@@ -257,6 +281,7 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        EntityVersionFactory(entity=entity_manager.entity)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -270,9 +295,15 @@ class PartnershipAgreementsDeleteViewTest(TestCase):
         date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         PartnershipAgreementFactory(partnership=cls.partnership)
-        cls.partnership_gf = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_gf = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_gf)
-        cls.partnership_out_of_date = PartnershipFactory(author=cls.user_gf.person, ucl_university=entity_manager.entity)
+        cls.partnership_out_of_date = PartnershipFactory(
+            author=cls.user_gf.person,
+            ucl_entity=entity_manager.entity,
+        )
         PartnershipAgreementFactory(partnership=cls.partnership_out_of_date)
         # Misc
         cls.url = reverse('partnerships:agreements:delete', kwargs={

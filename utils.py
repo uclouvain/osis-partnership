@@ -1,7 +1,6 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.db.models import Q
 
 from base.models.entity_version import EntityVersion
@@ -54,15 +53,15 @@ def user_is_gf(user):
         return False
 
 
-def user_is_gf_of_faculty(user, faculty):
-    if user_is_gf(user):
-        return User.objects.filter(
-            Q(person__partnershipentitymanager__entity=faculty)
-            | Q(person__partnershipentitymanager__entity__parent_of__entity=faculty),
-            pk=user.pk,
-        ).exists()
-    else:
-        return False
+def user_is_gf_of_faculty(user, entity):
+    from partnership.models import PartnershipEntityManager
+
+    # Get all parents entities which have a PartnershipEntityManager
+    # with this person
+    cte = EntityVersion.objects.with_children(entity=entity)
+    return hasattr(user, 'person') and cte.join(
+        PartnershipEntityManager, entity_id=cte.col.entity_id
+    ).with_cte(cte).filter(person=user.person).exists()
 
 
 def user_is_in_user_faculty(user, other_user):

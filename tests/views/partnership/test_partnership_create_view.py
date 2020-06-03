@@ -2,10 +2,11 @@ from datetime import date
 
 from django.contrib.auth.models import Permission
 from django.core import mail
+from django.forms import ModelChoiceField
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity import EntityFactory
@@ -14,11 +15,11 @@ from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnerEntityFactory, PartnerFactory,
     PartnershipEntityManagerFactory,
-    PartnershipYearEducationFieldFactory,
     PartnershipYearEducationLevelFactory,
-    UCLManagementEntityFactory
+    UCLManagementEntityFactory,
 )
 from reference.tests.factories.country import CountryFactory
+from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnershipCreateViewTest(TestCase):
@@ -34,11 +35,12 @@ class PartnershipCreateViewTest(TestCase):
         cls.country = CountryFactory()
         cls.user_other_gf = UserFactory()
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_gs.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(perm)
+        cls.user_adri.user_permissions.add(perm)
+        cls.user_gs.user_permissions.add(perm)
+        cls.user_gf.user_permissions.add(perm)
+        cls.user_other_gf.user_permissions.add(perm)
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
@@ -50,22 +52,28 @@ class PartnershipCreateViewTest(TestCase):
         AcademicYearFactory(year=year + 1)
         AcademicYearFactory(year=year + 2)
 
-        cls.education_field = PartnershipYearEducationFieldFactory()
+        cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
 
         cls.url = reverse('partnerships:create')
 
         # Ucl
         sector = EntityFactory()
+        EntityVersionFactory(entity=sector, entity_type=SECTOR)
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         cls.ucl_university_labo = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
-        UCLManagementEntityFactory(faculty=cls.ucl_university, entity=cls.ucl_university_labo)
+        UCLManagementEntityFactory(entity=cls.ucl_university)
+        UCLManagementEntityFactory()
+
         cls.ucl_university_not_choice = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, entity_type=FACULTY)
+        EntityVersionFactory(entity=cls.ucl_university_not_choice, entity_type=FACULTY)
         cls.ucl_university_labo_not_choice = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        EntityVersionFactory(
+            entity=cls.ucl_university_labo_not_choice,
+            parent=cls.ucl_university_not_choice,
+        )
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)
@@ -77,8 +85,7 @@ class PartnershipCreateViewTest(TestCase):
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
             'supervisor': '',
-            'ucl_university': cls.ucl_university.pk,
-            'ucl_university_labo': cls.ucl_university_labo.pk,
+            'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
             'year-is_sms': True,
             'year-is_smp': False,
@@ -149,18 +156,18 @@ class PartnershipCreateViewTest(TestCase):
     def test_post_ucl_university_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
-        data['ucl_university'] = self.ucl_university_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
+        data['ucl_entity'] = self.ucl_university_not_choice.pk
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
         data = self.data
-        data['ucl_university_labo'] = self.ucl_university_labo_not_choice.pk
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
+        data['ucl_entity'] = self.ucl_university_labo_not_choice.pk
+        response = self.client.post(self.url, data=data)
+        invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
+        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)

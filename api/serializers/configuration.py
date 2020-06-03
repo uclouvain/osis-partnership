@@ -1,10 +1,13 @@
+from django.conf import settings
+from django.utils.translation import get_language
 from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner, PartnershipYearEducationField
+from partnership.models import Partner
 from reference.models.continent import Continent
 from reference.models.country import Country
+from reference.models.domain_isced import DomainIsced
 
 __all__ = [
     'CountryConfigurationSerializer',
@@ -56,19 +59,20 @@ class UCLUniversityLaboConfigurationSerializer(serializers.ModelSerializer):
 
 class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField(source='most_recent_acronym')
-    ucl_university_labos = serializers.SerializerMethodField()
+    label = serializers.SerializerMethodField()
 
     class Meta:
         model = Entity
-        fields = ['value', 'label', 'ucl_university_labos']
+        fields = ['value', 'label']
 
-    def get_ucl_university_labos(self, instance):
-        entities = (entity_version.entity for entity_version in
-                    instance.parent_of.all())
-        return UCLUniversityLaboConfigurationSerializer(
-            entities, many=True,
-        ).data
+    @staticmethod
+    def get_label(result):
+        acronyms = filter(None, [
+            result.sector_acronym,
+            result.faculty_acronym,
+            result.most_recent_acronym,
+        ])
+        return '{} - {}'.format(' / '.join(acronyms), result.most_recent_title)
 
 
 class SupervisorConfigurationSerializer(serializers.ModelSerializer):
@@ -82,8 +86,13 @@ class SupervisorConfigurationSerializer(serializers.ModelSerializer):
 
 class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField()
+    label = serializers.SerializerMethodField()
 
     class Meta:
-        model = PartnershipYearEducationField
+        model = DomainIsced
         fields = ['value', 'label']
+
+    @staticmethod
+    def get_label(result):
+        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
+        return result[label]

@@ -2,84 +2,66 @@ from datetime import date
 
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Q, Subquery
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY
-from partnership.utils import user_is_adri
+from base.models.enums.entity_type import FACULTY, SECTOR
+from base.utils.cte import CTESubquery
 
 __all__ = [
-    'FacultyAutocompleteView',
     'FacultyEntityAutocompleteView',
 ]
 
 
-class FacultyAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        qs = (
-            Entity.objects
-                .annotate(
-                    most_recent_acronym=Subquery(
-                        EntityVersion.objects
-                            .filter(entity=OuterRef('pk'))
-                            .order_by('-start_date')
-                            .values('acronym')[:1]
-                    ),
-                )
-                .filter(entityversion__entity_type=FACULTY)
-        )
-        if not user_is_adri(self.request.user):
-            qs = qs.filter(
-                Q(partnershipentitymanager__person__user=self.request.user)
-                | Q(entityversion__parent__partnershipentitymanager__person__user=self.request.user)
-            )
-        if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        qs = qs.order_by('most_recent_acronym')
-        return qs.distinct()
-
-    def get_result_label(self, result):
-        if result.entityversion_set:
-            title = result.entityversion_set.latest("start_date").title
-        else:
-            return result.most_recent_acronym
-        return '{0.most_recent_acronym} - {1}'.format(result, title)
-
-
 class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    """
+    Autocomplete for entities on UCLManagementEntity form
+    """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
+        last_version = EntityVersion.objects.filter(
+            entity=OuterRef('pk')
+        ).order_by('-start_date')
+
+        # Get entities with their sector and faculty (if exists)
+        cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
+        qs = cte.join(
+            EntityVersion, id=cte.col.id
+        ).with_cte(cte).order_by('-start_date')
+
         qs = Entity.objects.annotate(
-            most_recent_acronym=Subquery(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .order_by('-start_date')
-                    .values('acronym')[:1]
+            most_recent_acronym=Subquery(last_version.values('acronym')[:1]),
+            most_recent_title=Subquery(last_version.values('title')[:1]),
+            is_valid=Exists(last_version.exclude(end_date__lte=date.today())),
+            sector_acronym=CTESubquery(
+                qs.filter(entity_type=SECTOR).values('acronym')[:1]
             ),
+            faculty_acronym=CTESubquery(
+                qs.exclude(
+                    entity_id=(OuterRef('pk')),
+                ).filter(entity_type=FACULTY).values('acronym')[:1]
+            ),
+        ).filter(is_valid=True).order_by(
+            'sector_acronym',
+            F('faculty_acronym').asc(nulls_first=True),
+            'most_recent_acronym',
         )
-        ucl_university = self.forwarded.get('ucl_university', None)
-        if ucl_university:
-            qs = qs.filter(entityversion__parent=ucl_university)
-        else:
-            return Entity.objects.none()
-        qs = qs.annotate(
-            is_valid=Exists(
-                EntityVersion.objects
-                    .filter(entity=OuterRef('pk'))
-                    .exclude(end_date__lte=date.today())
-            )
-        ).filter(is_valid=True)
         if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        qs = qs.order_by('most_recent_acronym')
+            qs = qs.filter(
+                Q(most_recent_acronym__icontains=self.q)
+                | Q(most_recent_title__icontains=self.q)
+                | Q(sector_acronym__icontains=self.q)
+                | Q(faculty_acronym__icontains=self.q)
+            )
         return qs.distinct()
 
     def get_result_label(self, result):
-        title = result.entityversion_set.latest("start_date").title
-        return '{0.most_recent_acronym} - {1}'.format(result, title)
+        acronyms = filter(None, [
+            result.sector_acronym,
+            result.faculty_acronym,
+            result.most_recent_acronym,
+        ])
+        return '{} - {}'.format(' / '.join(acronyms), result.most_recent_title)

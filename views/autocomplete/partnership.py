@@ -1,16 +1,14 @@
-from datetime import date
-
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Q
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
+from base.models.enums.entity_type import FACULTY
 from partnership.models import (
     Partner, PartnerEntity, Partnership, PartnershipConfiguration,
 )
-
 from .faculty import FacultyEntityAutocompleteView
 
 __all__ = [
@@ -21,6 +19,18 @@ __all__ = [
     'PartnershipYearOffersAutocompleteView',
     'YearsEntityAutocompleteFilterView',
 ]
+
+
+def get_faculty_id(entity_id):
+    """
+    Returns the faculty id of an entity (which can be a faculty or a labo)
+    :param entity_id:
+    :return: faculty_id
+    """
+    cte = EntityVersion.objects.with_children(entity=entity_id)
+    return cte.join(EntityVersion, id=cte.col.id).with_cte(cte).filter(
+        entity_type=FACULTY
+    ).values_list('entity_id', flat=True).first()
 
 
 class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
@@ -37,75 +47,75 @@ class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Q
         return qs.distinct()
 
 
-class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
+class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
+    """
+    Autocomplete for entities on PartnershipYearForm
+    """
     def get_queryset(self):
-        faculty = self.forwarded.get('faculty', None)
-        if faculty is not None:
-            qs = Entity.objects.annotate(
-                most_recent_acronym=Subquery(
-                    EntityVersion.objects
-                        .filter(entity=OuterRef('pk'))
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-            ).filter(entityversion__parent=faculty)
-        else:
+        """
+        Return the children when entity is a faculty,
+        or the siblings when entity is a labo
+        """
+        # entity is the hidden field of PartnershipYearForm
+        entity_id = self.forwarded.get('entity', None)
+        if entity_id is None:
             return Entity.objects.none()
-        qs = qs.annotate(
-            is_valid=Exists(
-                EntityVersion.objects
-                .filter(entity=OuterRef('pk'))
-                .exclude(end_date__lte=date.today())
-            )
-        ).filter(is_valid=True)
-        if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        return qs.distinct()
 
-    def get_result_label(self, result):
-        try:
-            title = result.entityversion_set.latest("start_date").title
-            return '{0.most_recent_acronym} - {1}'.format(result, title)
-        except EntityVersion.DoesNotExist:
-            return result.most_recent_acronym
+        # Get faculty (entity if faculty, or parent if not faculty)
+        faculty = get_faculty_id(entity_id)
+
+        cte = EntityVersion.objects.with_parents(entity=faculty)
+        qs = cte.queryset().with_cte(cte).values('entity_id')
+
+        return super().get_queryset().filter(pk__in=qs).exclude(pk=faculty)
 
 
 class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+    """
+    Autocomplete for offers on partnership create/update form
+    """
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.filter(joint_diploma=True).select_related('academic_year')
-        next_academic_year = \
-            PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        qs = qs.filter(academic_year=next_academic_year)
-        # Education levels filter
+        config = PartnershipConfiguration.get_configuration()
+        next_academic_year = config.partnership_creation_update_min_year
+
         education_levels = self.forwarded.get('education_levels', None)
-        if education_levels is not None:
-            qs = qs.filter(education_group_type__partnership_education_levels__in=education_levels)
-        else:
-            return EducationGroupYear.objects.none()
-        # Entities filter
         entities = self.forwarded.get('entities', None)
+        entity = self.forwarded.get('entity', None)
+
+        # Return nothing if we don't have all the data
+        if education_levels is None or (entities is None and entity is None):
+            return EducationGroupYear.objects.none()
+
+        qs = EducationGroupYear.objects.filter(
+            joint_diploma=True,
+            academic_year=next_academic_year,
+            education_group_type__partnership_education_levels__in=education_levels,
+        ).select_related('academic_year')
+
+        # Entities filter
         if entities is not None:
-            qs = qs.filter(Q(management_entity__in=entities) | Q(administration_entity__in=entities))
+            qs = qs.filter(
+                Q(management_entity__in=entities)
+                | Q(administration_entity__in=entities)
+            )
         else:
-            faculty = self.forwarded.get('faculty', None)
-            if faculty is not None:
-                qs = qs.filter(
-                    Q(management_entity=faculty) | Q(administration_entity=faculty)
-                    | Q(management_entity__entityversion__parent=faculty)
-                    | Q(administration_entity__entityversion__parent=faculty)
-                )
-            else:
-                return EducationGroupYear.objects.none()
+            # entity is the hidden field of PartnershipYearForm, updated by JS
+            faculty = get_faculty_id(entity)
+
+            qs = qs.filter(
+                Q(management_entity=faculty)
+                | Q(administration_entity=faculty)
+                | Q(management_entity__entityversion__parent=faculty)
+                | Q(administration_entity__entityversion__parent=faculty)
+            )
+
         # Query filter
         if self.q:
             qs = qs.filter(title__icontains=self.q)
-        return qs.distinct('education_group').order_by()
+        return qs.distinct('education_group').order_by('education_group')
 
     def get_result_label(self, result):
         return '{0.acronym} - {0.title}'.format(result)
@@ -139,10 +149,21 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
 
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
+    """
+    Autocomplete for entities on partnership list filter form
+    """
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(partnerships_years__isnull=False)
-        return qs
+        entity = self.forwarded.get('ucl_entity', None)
+        if entity is None:
+            return Entity.objects.none()
+
+        # Get all children of faculty
+        faculty = get_faculty_id(entity)
+        cte = EntityVersion.objects.with_parents(entity=faculty)
+        qs = cte.queryset().with_cte(cte).values('entity_id')
+
+        # Must have partnership_years associated
+        return super().get_queryset().filter(
+            partnerships_years__isnull=False,
+            pk__in=qs,
+        )

@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
+from django.utils.translation import get_language
 from django.views.generic import DetailView
 
 from partnership import perms
@@ -25,6 +27,11 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
         context['can_change'] = perms.user_can_change_partnership(
             self.request.user, self.object
         )
+        context['domain_title'] = (
+            'title_fr' if get_language() == settings.LANGUAGE_CODE_FR
+            else 'title_en'
+        )
+
         if self.object.current_year is None:
             context['show_more_year_link'] = self.object.years.count() > 1
         else:
@@ -37,9 +44,13 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return get_object_or_404(
             Partnership.objects
+            .add_acronyms()
             .select_related(
-                'partner', 'partner_entity', 'ucl_university',
-                'ucl_university_labo', 'author__user'
+                'partner', 'partner_entity', 'ucl_entity', 'author__user',
+                'supervisor',
+                'ucl_entity__uclmanagement_entity__academic_responsible',
+                'ucl_entity__uclmanagement_entity__contact_in_person',
+                'ucl_entity__uclmanagement_entity__contact_out_person',
             )
             .prefetch_related(
                 'contacts',
