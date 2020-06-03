@@ -259,6 +259,8 @@ class PartnershipUpdateViewTest(TestCase):
             str(partnership.end_academic_year.pk),
             str(data['year-end_academic_year']),
         )
+        # No agreement, not valid
+        self.assertFalse(partnership.is_valid)
 
     def test_post_empty(self):
         self.client.force_login(self.user_adri)

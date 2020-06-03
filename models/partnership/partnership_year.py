@@ -130,6 +130,9 @@ class PartnershipYear(models.Model):
 
     @cached_property
     def is_valid(self):
+        if self.partnership.partnership_type == PartnershipType.PROJECT.name:
+            return True
+
         ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
             if (self.academic_year.start_date.year >= range['start']

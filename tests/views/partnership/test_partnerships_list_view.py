@@ -176,7 +176,6 @@ class PartnershipsListViewTest(TestCase):
         labo = EntityVersionFactory(acronym='ZZZ', parent=faculty.entity)
         cls.partnership_all_filters = PartnershipFactory(
             ucl_entity=labo.entity,
-            partnership_type=PartnershipType.PROJECT.name,
             partner__contact_address__city='all_filters',
             partner__contact_address__country=country,
             comment='all_filters',
@@ -479,7 +478,6 @@ class PartnershipsListViewTest(TestCase):
             'is_smp': 'False',
             'is_sta': 'False',
             'is_stt': 'False',
-            'partnership_type': PartnershipType.PROJECT.name,
             'tags': str(self.partnership_all_filters.tags.first().pk),
             'comment': 'all_filters',
             'partnership_in': str(AcademicYear.objects.get(year=2125).pk),
