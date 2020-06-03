@@ -1,18 +1,18 @@
 import os
 
 from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
-from django.http import Http404, FileResponse
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
+from osis_common.decorators.download import set_download_cookie
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import MediaForm
-from partnership.models import Partner, Partnership
+from partnership.models import Partner
 from partnership.views.partnership.mixins import PartnershipRelatedMixin
 
 
@@ -107,6 +107,7 @@ class PartnershipMediaFormMixin(PartnershipMediaMixin, FormMixin):
 
 
 class MediaDownloadMixin(SingleObjectMixin, View):
+    @set_download_cookie
     def get(self, request, *args, **kwargs):
         media = self.get_object()
         if media.file is None:
