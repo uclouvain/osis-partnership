@@ -1038,6 +1038,13 @@ msgstr "Partenariats en cours en"
 msgid "partnership_inactif_partner_error"
 msgstr "Ce partenaire est inactif."
 
+msgid "partnership_is_public"
+msgstr "Partenariat public"
+
+msgid "partnership_is_public_help_text"
+msgstr ""
+"Si décoché, ce partenariat ne sera pas visible sur l'interface publique"
+
 msgid "partnership_media_error"
 msgstr "Erreur lors de la sauvegarde du média."
 

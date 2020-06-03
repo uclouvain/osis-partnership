@@ -76,6 +76,7 @@ class PartnershipApiViewTest(TestCase):
         # Some noises - Agreement not validated or not in status validated
         PartnerFactory()
         cls.partnership_without_agreement = PartnershipFactory()
+        cls.partnership_not_public = PartnershipFactory(is_public=False)
 
         cls.partnership_with_agreement_not_validated = PartnershipFactory(supervisor=None, years=[])
         PartnershipYearFactory(

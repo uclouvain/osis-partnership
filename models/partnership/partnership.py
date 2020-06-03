@@ -169,6 +169,11 @@ class Partnership(models.Model):
         editable=False,
         null=True,
     )
+    is_public = models.BooleanField(
+        verbose_name=_('partnership_is_public'),
+        default=True,
+        help_text=_('partnership_is_public_help_text'),
+    )
 
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
