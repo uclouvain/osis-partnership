@@ -1,8 +1,6 @@
-from datetime import date
-
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Q
 
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
@@ -53,13 +51,10 @@ class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Q
         return qs.distinct()
 
 
-class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
+class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
     """
     Autocomplete for entities on PartnershipYearForm
     """
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
     def get_queryset(self):
         """
         Return the children when entity is a faculty,
@@ -78,31 +73,16 @@ class PartnershipYearEntitiesAutocompleteView(PermissionRequiredMixin, autocompl
             # Get faculty (entity if faculty, or parent if not faculty)
             faculty = get_faculty_id(entity_id)
 
-        latest = EntityVersion.objects.filter(
-            entity=OuterRef('pk')
-        ).order_by('-start_date')
-
-        # Get all valid children of faculty
         cte = EntityVersion.objects.with_parents(entity=faculty)
-        qs = Entity.objects.filter(pk__in=Subquery(
-            cte.queryset().with_cte(cte).values('entity_id')
-        )).exclude(pk=faculty).annotate(
-            most_recent_acronym=Subquery(latest.values('acronym')[:1]),
-            title=Subquery(latest.values('title')[:1]),
-        ).annotate(
-            is_valid=Exists(latest.exclude(end_date__lte=date.today()))
-        ).filter(is_valid=True).order_by('most_recent_acronym')
+        cte_qs = cte.queryset().with_cte(cte).values('entity_id')
+
+        qs = super().get_queryset().filter(pk__in=cte_qs).exclude(pk=faculty)
 
         if partnership_type == PartnershipType.DOCTORATE.name:
             # Only return doctoral commissions for this type
             qs = qs.filter(entityversion__entity_type=DOCTORAL_COMMISSION)
 
-        if self.q:
-            qs = qs.filter(most_recent_acronym__icontains=self.q)
-        return qs.distinct()
-
-    def get_result_label(self, result):
-        return '{0.most_recent_acronym} - {0.title}'.format(result)
+        return qs
 
 
 class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
@@ -126,7 +106,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
 
         qs = EducationGroupYear.objects.filter(
             joint_diploma=True,
-            # academic_year=next_academic_year,
+            academic_year=next_academic_year,
             education_group_type__partnership_education_levels__in=education_levels,
         ).select_related('academic_year')
 

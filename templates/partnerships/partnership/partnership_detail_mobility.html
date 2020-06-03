@@ -1,5 +1,5 @@
 {% extends "partnerships/partnership/partnership_detail.html" %}
-{% load i18n partnerships static years osis_role %}
+{% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
   <table class="table table-striped">
@@ -27,7 +27,7 @@
             {% for education_field in partnership_year.education_fields.all %}
               <li>
                 <strong>{{ education_field.code }}</strong>
-                - {{ education_field.label }}
+                - {{ education_field|getattr:domain_title }}
               </li>
             {% endfor %}
           </ul>

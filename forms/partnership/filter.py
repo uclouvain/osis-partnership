@@ -37,6 +37,10 @@ class PartnershipFilterForm(forms.Form):
             },
         ),
     )
+    ucl_entity_with_child = forms.BooleanField(
+        label=_('Include subordinate entities'),
+        required=False,
+    )
 
     education_level = forms.ModelChoiceField(
         label=_('education_level_filter'),

@@ -20,8 +20,7 @@ from partnership.tests.factories import (
 )
 
 
-class PartnershipsAgreementsListViewTest(TestCase):
-
+class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         for i in range(15):
@@ -29,12 +28,14 @@ class PartnershipsAgreementsListViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships_agreements'))
+        perm = Permission.objects.get(name='can_access_partnerships_agreements')
+        cls.user.user_permissions.add(perm)
+        cls.user_adri.user_permissions.add(perm)
 
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.url = reverse('partnerships:agreements-list')
+        cls.export_url = reverse('partnerships:export_agreements')
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -50,6 +51,21 @@ class PartnershipsAgreementsListViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
+
+    def test_export_anonymous(self):
+        response = self.client.get(self.export_url, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/agreements/agreement_list.html')
+        self.assertTemplateUsed(response, 'access_denied.html')
+
+    def test_export_as_authenticated(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.export_url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_export_as_adri(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.export_url, follow=True)
+        self.assertEqual(response.status_code, 200)
 
 
 class PartnershipAgreementCreateViewTest(TestCase):

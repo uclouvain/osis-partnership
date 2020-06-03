@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
+from django.utils.translation import get_language
 from django.views.generic import DetailView
 
 from partnership.models import (
@@ -28,6 +30,11 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['domain_title'] = (
+            'title_fr' if get_language() == settings.LANGUAGE_CODE_FR
+            else 'title_en'
+        )
+
         if self.object.current_year is None:
             context['show_more_year_link'] = self.object.years.count() > 1
         else:

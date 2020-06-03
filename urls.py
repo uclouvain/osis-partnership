@@ -1,53 +1,7 @@
 from django.urls import include, path, re_path, register_converter
 
-from partnership.converters import PartnershipTypeConverter
-from partnership.views import (
-    EntityAutocompleteView,
-    FacultyEntityAutocompleteView,
-    FinancingExportView, FinancingImportView,
-    FinancingListView,
-    PartnerAutocompletePartnershipsFilterView,
-    PartnerAutocompleteView, PartnerCreateView,
-    PartnerDetailView,
-    PartnerEntityAutocompletePartnershipsFilterView,
-    PartnerEntityAutocompleteView,
-    PartnerEntityCreateView,
-    PartnerEntityDeleteView,
-    PartnerEntityUpdateView, PartnerMediaCreateView,
-    PartnerMediaDeleteView,
-    PartnerMediaDownloadView,
-    PartnerMediaUpdateView, PartnersExportView,
-    PartnershipAgreementExportView,
-    PartnershipAgreementMediaDownloadView,
-    PartnershipAutocompleteView,
-    PartnershipContactCreateView,
-    PartnershipContactDeleteView,
-    PartnershipContactUpdateView,
-    PartnershipCreateView, PartnershipDetailView,
-    PartnershipExportView, PartnershipsListView,
-    PartnershipUpdateView,
-    PartnershipYearEntitiesAutocompleteView,
-    PartnershipYearOffersAutocompleteView,
-    PartnersListView, PartnerUpdateView,
-    PartnershipAgreementCreateView,
-    PartnershipAgreementDeleteView,
-    PartnershipAgreementUpdateView,
-    PartnershipConfigurationUpdateView,
-    PersonAutocompleteView, SimilarPartnerView,
-    UCLManagementEntityCreateView,
-    UCLManagementEntityDeleteView,
-    UCLManagementEntityListView,
-    UCLManagementEntityUpdateView,
-    UclUniversityAutocompleteFilterView,
-    UclEntityAutocompleteView,
-    UniversityOffersAutocompleteFilterView,
-    YearsEntityAutocompleteFilterView, PartnershipMediaCreateView,
-    PartnershipAgreementListView,
-    PartnershipMediaUpdateView,
-    PartnershipMediaDeleteView,
-    PartnershipMediaDownloadView,
-    PartnershipTypeChooseView,
-)
+from .converters import PartnershipTypeConverter
+from .views import *
 
 register_converter(PartnershipTypeConverter, 'partnership_type')
 
@@ -134,7 +88,6 @@ urlpatterns = [
             PartnershipYearOffersAutocompleteView.as_view(),
             name='partnership_year_offers',
         ),
-        path('entity/', EntityAutocompleteView.as_view(), name='entity'),
 
         # Partnerships filter
         path(

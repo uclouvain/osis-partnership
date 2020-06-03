@@ -1,11 +1,6 @@
-from django.db.models import OuterRef
-
-from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
-from base.utils.cte import CTESubquery
-from partnership.models.enums.partnership import PartnershipType
 from .faculty import FacultyEntityAutocompleteView
 from ...forms import PartnershipMobilityForm
+from ...models import PartnershipType
 
 __all__ = [
     'UclUniversityAutocompleteFilterView',
@@ -21,37 +16,12 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-
-        # Get entities with their sector and faculty (if exists)
-        cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
-        qs = cte.join(
-            EntityVersion, id=cte.col.id
-        ).with_cte(cte).order_by('-start_date')
-
+        qs = super().get_queryset()
         if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:
-            queryset = queryset.filter(
+            qs = qs.filter(
                 PartnershipMobilityForm.get_entities_condition(self.request.user)
             )
-
-        return queryset.annotate(
-            sector_acronym=CTESubquery(
-                qs.filter(entity_type=SECTOR).values('acronym')[:1]
-            ),
-            faculty_acronym=CTESubquery(
-                qs.exclude(
-                    entity_id=(OuterRef('pk')),
-                ).filter(entity_type=FACULTY).values('acronym')[:1]
-            ),
-        )
-
-    def get_result_label(self, result):
-        acronyms = filter(None, [
-            result.sector_acronym,
-            result.faculty_acronym,
-            result.most_recent_acronym,
-        ])
-        return '{} - {}'.format(' / '.join(acronyms), result.most_recent_title)
+        return qs
 
 
 class UclUniversityAutocompleteFilterView(FacultyEntityAutocompleteView):
