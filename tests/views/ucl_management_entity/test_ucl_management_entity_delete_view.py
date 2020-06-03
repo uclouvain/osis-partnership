@@ -29,7 +29,7 @@ class UCLManagementEntityDeleteViewTest(TestCase):
         entity_version = EntityVersionFactory(acronym="ADRI")
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.adri_user)
         cls.gf_user = UserFactory()
-        entity_manager = PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
+        PartnershipEntityManagerFactory(person__user=cls.gf_user, entity=faculty)
         cls.other_gf_user = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.other_gf_user, entity=other_faculty)
 

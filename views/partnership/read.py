@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from django.views.generic import DetailView
 
-from partnership import perms
 from partnership.models import (
     Media, Partnership, PartnershipAgreement, PartnershipYear,
 )
@@ -18,15 +17,19 @@ __all__ = [
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     model = Partnership
     context_object_name = 'partnership'
-    template_name = 'partnerships/partnership/partnership_detail.html'
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
+    def get_template_names(self):
+        return [
+            'partnerships/partnership/partnership_detail_{}.html'.format(
+                self.object.partnership_type.lower()
+            ),
+            'partnerships/partnership/partnership_detail.html',
+        ]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['can_change'] = perms.user_can_change_partnership(
-            self.request.user, self.object
-        )
         context['domain_title'] = (
             'title_fr' if get_language() == settings.LANGUAGE_CODE_FR
             else 'title_en'

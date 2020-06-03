@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Exists, Max, OuterRef, Q
+from django.db.models import Case, Exists, Max, OuterRef, Q, When
 from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
@@ -12,7 +12,7 @@ from partnership.forms import (
 from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     AgreementStatus,
-    PartnershipYear,
+    PartnershipType, PartnershipYear,
 )
 
 
@@ -178,8 +178,19 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='years__is_stt',
         widget=CustomNullBooleanSelect(),
     )
-    partnership_type = filters.CharFilter(field_name='years__partnership_type')
+    is_smst = filters.BooleanFilter(
+        field_name='years__is_smst',
+        widget=CustomNullBooleanSelect(),
+    )
+    funding_type = filters.ModelChoiceFilter(field_name='years__funding_type')
+    funding_program = filters.ModelChoiceFilter(
+        field_name='years__funding_type__program',
+    )
+    funding_source = filters.ModelChoiceFilter(
+        field_name='years__funding_type__program__source',
+    )
     partnership_in = filters.CharFilter(method='filter_partnership_in')
+    subtype = filters.CharFilter(field_name='years__subtype')
     partnership_ending_in = filters.CharFilter(
         method='filter_partnership_ending_in'
     )
@@ -198,6 +209,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         model = Partnership
         fields = [
             'ordering',
+            'partnership_type',
             'partner_type',
             'ucl_entity',
             'education_level',
@@ -217,6 +229,10 @@ class PartnershipAdminFilter(filters.FilterSet):
             'is_smp',
             'is_sta',
             'is_stt',
+            'is_smst',
+            'funding_type',
+            'funding_program',
+            'funding_source',
             'partnership_type',
             'supervisor',
             'tags',
@@ -228,8 +244,21 @@ class PartnershipAdminFilter(filters.FilterSet):
             'comment',
         ]
 
-    def get_form_class(self):
-        return PartnershipFilterForm
+    @property
+    def form(self):
+        if not hasattr(self, '_form'):
+            if self.is_bound:
+                self._form = PartnershipFilterForm(
+                    self.data,
+                    user=self.request.user,
+                    prefix=self.form_prefix,
+                )
+            else:
+                self._form = PartnershipFilterForm(
+                    user=self.request.user,
+                    prefix=self.form_prefix,
+                )
+        return self._form
 
     @staticmethod
     def filter_years_entity(queryset, name, value):
@@ -293,13 +322,15 @@ class PartnershipAdminFilter(filters.FilterSet):
     def filter_partnership_valid_in(queryset, name, value):
         if value:
             queryset = queryset.annotate(
-                has_valid=Exists(
-                    PartnershipAgreement.objects.filter(
+                has_valid=Case(
+                    When(partnership_type=PartnershipType.PROJECT.name,
+                         then=True),
+                    default=Exists(PartnershipAgreement.objects.filter(
                         partnership=OuterRef('pk'),
                         status=AgreementStatus.VALIDATED.name,
                         start_academic_year__start_date__lte=value.start_date,
                         end_academic_year__end_date__gte=value.end_date,
-                    )
+                    ))
                 )
             ).filter(has_valid=True)
         return queryset

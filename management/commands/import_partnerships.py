@@ -483,6 +483,7 @@ class Command(ProgressBarMixin, BaseCommand):
         partnership.partner = partner
         partnership.ucl_entity = self.get_entity_by_acronym(line[10])
         partnership.supervisor = self.get_supervisor(line[12])
+        partnership.partnership_type = PartnershipType.MOBILITY.name
         partnership.save()
 
         UCLManagementEntity.objects.get_or_create(
@@ -518,7 +519,6 @@ class Command(ProgressBarMixin, BaseCommand):
                 partnership_year = PartnershipYear(
                     partnership=partnership,
                     academic_year=academic_year,
-                    partnership_type=PartnershipType.MOBILITY.name
                 )
             partnership_year.is_sms = bool(line[13])
             partnership_year.is_sta = bool(line[14])

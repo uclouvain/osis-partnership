@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load bootstrap3 i18n partnerships static %}
+{% load bootstrap3 i18n partnerships static osis_role %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
@@ -17,6 +17,8 @@
     </h1>
   </div>
 
+  {% has_perm 'partnership.add_uclmanagemententity' user as can_create_ucl_management_entity %}
+
   <div class="panel panel-default">
     <div class="panel-body">
       {% if can_create_ucl_management_entity %}
@@ -25,7 +27,9 @@
           <div class="pull-right">
             <a class="btn btn-default" type="button"
                href="{% url "partnerships:ucl_management_entities:create" %}">
-              <i class="fas fa-fw fa-plus"></i><span class="hidden-xs">{% trans "create_ucl_management_entity" %}</span></a>
+              <i class="fas fa-fw fa-plus"></i>
+              <span class="hidden-xs">{% trans "create_ucl_management_entity" %}</span>
+            </a>
           </div>
         </div>
       </div>
@@ -46,56 +50,116 @@
               </tr>
             </thead>
             <tbody>
-              {% for ucl_management_entity in ucl_management_entities %}
-                <tr>
-                  <td>{{ ucl_management_entity.faculty_most_recent_acronym|default_if_none:"" }}</td>
-                  <td>
-                    {% if ucl_management_entity.faculty_most_recent_acronym != ucl_management_entity.entity_most_recent_acronym %}
-                    {{ ucl_management_entity.entity_most_recent_acronym|default_if_none:"" }}
+            {% for ume in ucl_management_entities %}
+              {% has_perm 'partnership.change_uclmanagemententity' user ume as can_change_entity %}
+              {% has_perm 'partnership.delete_uclmanagemententity' user ume as can_delete_entity %}
+
+              <tr>
+                <td>
+                  {{ ume.faculty_most_recent_acronym|default_if_none:"" }}
+                </td>
+                <td>
+                  {% if ume.faculty_most_recent_acronym != ume.entity_most_recent_acronym %}
+                    {{ ume.entity_most_recent_acronym|default_if_none:"" }}
                   {% endif %}
-                  <td>{{ ucl_management_entity.academic_responsible|default_if_none:"" }}{% if ucl_management_entity.academic_responsible.email %} - {{ ucl_management_entity.academic_responsible.email }}{% endif %}</td>
-                  <td>{{ ucl_management_entity.administrative_responsible|default_if_none:"" }}{% if ucl_management_entity.administrative_responsible.email  %} - {{ ucl_management_entity.administrative_responsible.email }}{% endif %}</td>
-                  <td>
-                    <ul class="list-unstyled">
-                      {% if ucl_management_entity.contact_in_person %}<li>{{ ucl_management_entity.contact_in_person }}{% if ucl_management_entity.contact_in_person %} - {{ ucl_management_entity.contact_in_person.email }}{% endif %}</li>{% endif %}
-                      {% if ucl_management_entity.contact_in_email %}<li><a href="mailto:{{ ucl_management_entity.contact_in_email }}">{{ ucl_management_entity.contact_in_email }}</a></li>{% endif %}
-                      {% if ucl_management_entity.contact_in_url %}<li><a href="{{ ucl_management_entity.contact_in_url }}" target="_blank">{{ ucl_management_entity.contact_in_url }}</a></li>{% endif %}
-                    </ul>
-                  </td>
-                  <td>
-                    <ul class="list-unstyled">
-                      {% if ucl_management_entity.contact_out_person %}<li>{{ ucl_management_entity.contact_out_person }}{% if ucl_management_entity.contact_out_person.email %} - {{ ucl_management_entity.contact_out_person.email }}{% endif %}</li>{% endif %}
-                      {% if ucl_management_entity.contact_out_email %}<li><a href="mailto:{{ ucl_management_entity.contact_out_email }}">{{ ucl_management_entity.contact_out_email }}</a></li>{% endif %}
-                      {% if ucl_management_entity.contact_out_url %}<li><a href="{{ ucl_management_entity.contact_out_url }}" target="_blank">{{ ucl_management_entity.contact_out_url }}</a></li>{% endif %}
-                    </ul>
-                  </td>
-                  <td>
-                    {% if user|can_change_management_entity:ucl_management_entity %}
-                      <div class="btn-group pull-right">
-                        <a href="{% url "partnerships:ucl_management_entities:update" ucl_management_entity.pk %}" class="btn btn-default">
-                          <i class="fas fa-pencil-alt"></i>
-                        </a>
-                        {% if user|can_delete_management_entity:ucl_management_entity %}
-                          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"
-                                  aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                          </button>
-                          <ul class="dropdown-menu">
-                            <li>
-                              <a href="{% url 'partnerships:ucl_management_entities:delete' pk=ucl_management_entity.pk %}"
-                                 class="modal-link"
-                                 data-modal-danger
-                                 data-modal-submit="{% trans "delete_ucl_management_entity" %}"
-                                 data-modal-title="{{ contact }}"
-                                 data-modal="modal-form">
-                                <i class="fas fa-times fa-fw"></i> {% trans 'delete_ucl_management_entity' %}
-                              </a>
-                            </li>
-                          </ul>
+                </td>
+                <td>
+                  {{ ume.academic_responsible|default_if_none:"" }}
+                  {% if ume.academic_responsible.email %}
+                    - {{ ume.academic_responsible.email }}
+                  {% endif %}
+                </td>
+                <td>
+                  {{ ume.administrative_responsible|default_if_none:"" }}
+                  {% if ume.administrative_responsible.email %}
+                    - {{ ume.administrative_responsible.email }}
+                  {% endif %}
+                </td>
+                <td>
+                  <ul class="list-unstyled">
+                    {% if ume.contact_in_person %}
+                      <li>
+                        {{ ume.contact_in_person }}
+                        {% if ume.contact_in_person %}
+                          - {{ ume.contact_in_person.email }}
                         {% endif %}
-                      </div>
+                      </li>
                     {% endif %}
+                    {% if ume.contact_in_email %}
+                      <li>
+                        <a href="mailto:{{ ume.contact_in_email }}">
+                          {{ ume.contact_in_email }}
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if ume.contact_in_url %}
+                      <li>
+                        <a href="{{ ume.contact_in_url }}" target="_blank">
+                          {{ ume.contact_in_url }}
+                        </a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </td>
+                <td>
+                  <ul class="list-unstyled">
+                    {% if ume.contact_out_person %}
+                      <li>{{ ume.contact_out_person }}
+                          {% if ume.contact_out_person.email %} -
+                            {{ ume.contact_out_person.email }}
+                          {% endif %}
+                      </li>
+                    {% endif %}
+                    {% if ume.contact_out_email %}
+                      <li>
+                        <a href="mailto:{{ ume.contact_out_email }}">
+                          {{ ume.contact_out_email }}
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if ume.contact_out_url %}
+                      <li>
+                        <a href="{{ ume.contact_out_url }}" target="_blank">
+                          {{ ume.contact_out_url }}
+                        </a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </td>
+                <td>
+                  {% if can_change_entity %}
+                    <div class="btn-group pull-right">
+                      <a href="{% url "partnerships:ucl_management_entities:update" ume.pk %}" class="btn btn-default">
+                        <i class="fas fa-pencil-alt"></i>
+                      </a>
+                      {% if can_delete_entity %}
+                        <button
+                            class="btn btn-default dropdown-toggle"
+                            type="button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                        >
+                          <span class="caret"></span>
+                          <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                                href="{% url 'partnerships:ucl_management_entities:delete' pk=ume.pk %}"
+                                class="modal-link"
+                                data-modal-danger
+                                data-modal-submit="{% trans "delete_ucl_management_entity" %}"
+                                data-modal-title="{{ contact }}"
+                                data-modal="modal-form"
+                            >
+                              <i class="fas fa-times fa-fw"></i> {% trans 'delete_ucl_management_entity' %}
+                            </a>
+                          </li>
+                        </ul>
+                      {% endif %}
+                    </div>
+                  {% endif %}
                   </td>
                 </tr>
               {% endfor %}

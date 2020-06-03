@@ -23,17 +23,17 @@
 
 {% block content %}
   <div class="page-header">
-    <h1>{% trans "partnership_create" %}</h1>
+    <h1>{% trans "create_a" %} {{ view.kwargs.type.value|lower }}</h1>
   </div>
 
   {% bootstrap_form_errors form %}
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <form action="{% url "partnerships:create" %}" method="post" class="container col-xs-12">
+      <form action="" method="post" class="container col-xs-12">
         {% csrf_token %}
 
-        {% include "partnerships/includes/partnership_form.html" %}
+        {% include form_template %}
 
         <div class="row">
           <div class="col-sm-12">

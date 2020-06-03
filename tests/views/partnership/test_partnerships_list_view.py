@@ -11,13 +11,16 @@ from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
 from partnership.tests.factories import (
-    PartnerEntityFactory, PartnerFactory,
+    PartnerEntityFactory,
+    PartnerFactory,
+    PartnerTagFactory,
+    PartnerTypeFactory,
     PartnershipAgreementFactory,
+    PartnershipEntityManagerFactory,
     PartnershipFactory,
     PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
-    PartnerTagFactory, PartnerTypeFactory
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
@@ -118,10 +121,11 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_is_stt = PartnershipFactory()
         PartnershipYearFactory(partnership=cls.partnership_is_stt, is_stt=True, academic_year__year=2153)
         # partnership_type
-        cls.partnership_type = PartnershipFactory()
+        cls.partnership_type = PartnershipFactory(
+            partnership_type=PartnershipType.GENERAL.name,
+        )
         PartnershipYearFactory(
             partnership=cls.partnership_type,
-            partnership_type=PartnershipType.CODIPLOMATION.name,
             academic_year__year=2154,
         )
         # tags
@@ -186,7 +190,6 @@ class PartnershipsListViewTest(TestCase):
             is_smp=False,
             is_sta=False,
             is_stt=False,
-            partnership_type=PartnershipType.AUTRE.name,
             academic_year__year=2160,
         )
         partnership_year.offers.add(EducationGroupYearFactory())
@@ -209,7 +212,12 @@ class PartnershipsListViewTest(TestCase):
         AcademicYearFactory(year=2126)
 
         cls.user = UserFactory()
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(perm)
+        PartnershipEntityManagerFactory(person__user=cls.user, scopes=[
+            PartnershipType.GENERAL.name,
+            PartnershipType.MOBILITY.name,
+        ])
         cls.url = reverse('partnerships:list')
 
     def test_get_list_anonymous(self):
@@ -402,7 +410,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.CODIPLOMATION.name)
+        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.GENERAL.name)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -487,7 +495,6 @@ class PartnershipsListViewTest(TestCase):
             'is_smp': 'False',
             'is_sta': 'False',
             'is_stt': 'False',
-            'partnership_type': PartnershipType.AUTRE.name,
             'tags': str(self.partnership_all_filters.tags.first().pk),
             'comment': 'all_filters',
             'partnership_in': str(AcademicYear.objects.get(year=2125).pk),

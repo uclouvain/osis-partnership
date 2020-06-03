@@ -12,6 +12,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
     def get_xls_headers(self):
         return [
             gettext('id'),
+            gettext('partnership_type'),
             gettext('partner'),
             gettext('country'),
             gettext('city'),
@@ -29,6 +30,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
             yield [
                 agreement.pk,
+                agreement.partnership.get_partnership_type_display(),
                 str(agreement.partnership.partner),
                 str(agreement.partnership.partner.contact_address.country),
                 str(agreement.partnership.partner.contact_address.city),

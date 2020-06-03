@@ -8,7 +8,11 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import AgreementStatus, MediaVisibility
+from partnership.models import (
+    AgreementStatus,
+    MediaVisibility,
+    PartnershipType,
+)
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
@@ -79,10 +83,11 @@ class PartnershipAgreementCreateViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_other_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user.user_permissions.add(perm)
+        cls.user_adri.user_permissions.add(perm)
+        cls.user_gf.user_permissions.add(perm)
+        cls.user_other_gf.user_permissions.add(perm)
 
         # Partnership creation
         cls.date_ok = date.today() + timedelta(days=365)
@@ -155,6 +160,74 @@ class PartnershipAgreementCreateViewTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(str(self.user_gf), mail.outbox[0].body)
         mail.outbox = []
+
+    def test_post_invalid_dates(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['start_academic_year'], data['end_academic_year'] = (
+            # Flip the two
+            data['end_academic_year'], data['start_academic_year']
+        )
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTrue(response.context['form'].errors)
+
+
+class PartnershipAgreementGeneralCreateViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_adri = UserFactory()
+        entity_version = EntityVersionFactory(acronym='ADRI')
+        PartnershipEntityManagerFactory(
+            entity=entity_version.entity,
+            person__user=cls.user_adri,
+            scopes=[PartnershipType.GENERAL.name]
+        )
+
+        perm = Permission.objects.get(name='can_access_partnerships')
+        cls.user_adri.user_permissions.add(perm)
+
+        # Partnership creation
+        cls.partnership = PartnershipFactory(
+            partnership_type=PartnershipType.GENERAL.name,
+        )
+
+        # Misc
+        cls.url = reverse('partnerships:agreements:create', kwargs={
+            'partnership_pk': cls.partnership.pk,
+        })
+        cls.years = AcademicYearFactory.produce_in_future(date.today().year, 3)
+
+        cls.data = {
+            'start_date': date.today(),
+            'end_date': date.today() + timedelta(days=365),
+            'status': AgreementStatus.WAITING.name,
+            'comment': 'test',
+            'media-name': 'test',
+            'media-description': 'test',
+            'media-url': 'http://example.com',
+            'media-visibility': MediaVisibility.PUBLIC.name,
+        }
+
+    def test_get_view_as_adri(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/agreements/create.html')
+        self.assertTrue('start_date' in response.context['form'].fields)
+
+    def test_post(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        agreement = self.partnership.agreements.first()
+        self.assertEqual(agreement.start_academic_year, self.years[0])
+
+    def test_post_invalid_dates(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['start_date'] = data['end_date']
+        data['end_date'] = date.today()
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTrue(response.context['form'].errors)
 
 
 class PartnershipAgreementsUpdateViewTest(TestCase):

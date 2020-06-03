@@ -1,9 +1,8 @@
 import os
 
 from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
-from django.http import Http404, FileResponse
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -11,20 +10,22 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
 from osis_common.decorators.download import set_download_cookie
-from partnership import perms
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.forms import MediaForm
-from partnership.models import Partner, Partnership
+from partnership.models import Partner
+from partnership.views.partnership.mixins import PartnershipRelatedMixin
 
 
-class PartnerMediaMixin(UserPassesTestMixin):
+class PartnerMediaMixin(PermissionRequiredMixin):
     login_url = 'access_denied'
+    permission_required = 'partnership.change_partner'
 
     def dispatch(self, request, *args, **kwargs):
         self.partner = get_object_or_404(Partner, pk=kwargs['partner_pk'])
         return super().dispatch(request, *args, **kwargs)
 
-    def test_func(self):
-        return perms.user_can_change_partner(self.request.user, self.partner)
+    def get_permission_object(self):
+        return self.partner
 
     def get_queryset(self):
         return self.partner.medias.all()
@@ -69,26 +70,9 @@ class PartnerMediaFormMixin(PartnerMediaMixin, FormMixin):
         return super().form_invalid(form)
 
 
-class PartnershipMediaMixin(UserPassesTestMixin):
-    login_url = 'access_denied'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
-        return super().dispatch(request, *args, **kwargs)
-
-    def test_func(self):
-        return perms.user_can_change_partnership(self.request.user, self.partnership)
-
+class PartnershipMediaMixin(PartnershipRelatedMixin):
     def get_queryset(self):
         return self.partnership.medias.all()
-
-    def get_success_url(self):
-        return self.partnership.get_absolute_url()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['partnership'] = self.partnership
-        return context
 
 
 class PartnershipMediaFormMixin(PartnershipMediaMixin, FormMixin):

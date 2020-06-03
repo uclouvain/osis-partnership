@@ -3,19 +3,11 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
-from partnership.models import Financing
 
 __all__ = [
-    'FinancingForm',
     'FinancingFilterForm',
     'FinancingImportForm',
 ]
-
-
-class FinancingForm(forms.ModelForm):
-    class Meta:
-        model = Financing
-        fields = '__all__'
 
 
 class FinancingFilterForm(forms.Form):

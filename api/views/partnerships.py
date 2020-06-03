@@ -219,13 +219,13 @@ class PartnershipsMixinView(GenericAPIView):
                     Financing.objects.filter(
                         academic_year=academic_year,
                         countries=OuterRef('partner__contact_address__country_id'),
-                    ).values('name')[:1]
+                    ).values('type__name')[:1]
                 ),
                 funding_url=Subquery(
                     Financing.objects.filter(
                         academic_year=academic_year,
                         countries=OuterRef('partner__contact_address__country_id'),
-                    ).values('url')[:1]
+                    ).values('type__url')[:1]
                 ),
             )
             .filter(

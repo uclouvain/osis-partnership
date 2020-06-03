@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% load bootstrap3 i18n static osis_role %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
@@ -47,6 +47,9 @@
       {% trans 'financings' %} : {{ academic_year }}
     </h1>
   </div>
+
+  {% has_perm 'partnership.import_financing' user as can_import_financing %}
+  {% has_perm 'partnership.export_financing' user as can_export_financing %}
 
   <div class="panel panel-default">
     <div class="panel-body">

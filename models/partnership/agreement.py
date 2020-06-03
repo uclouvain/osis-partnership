@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -36,13 +37,15 @@ class PartnershipAgreement(models.Model):
         on_delete=models.PROTECT,
         related_name='+',
     )
-
     end_academic_year = models.ForeignKey(
         'base.AcademicYear',
         verbose_name=_('end_academic_year'),
         on_delete=models.PROTECT,
         related_name='partnership_agreements_end',
     )
+
+    start_date = models.DateField(_('start_date'), null=True)
+    end_date = models.DateField(_('end_date'), null=True)
 
     media = models.ForeignKey(
         'partnership.Media',
@@ -79,3 +82,7 @@ class PartnershipAgreement(models.Model):
     @property
     def is_valid(self):
         return self.status == AgreementStatus.VALIDATED.name
+
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError(_("End date must be after start date"))

@@ -1,6 +1,5 @@
 import csv
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -8,8 +7,8 @@ from django.views import View
 
 from base.models.academic_year import AcademicYear
 from osis_common.decorators.download import set_download_cookie
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.models import Financing, PartnershipConfiguration
-from partnership.utils import user_is_adri
 from reference.models.country import Country
 
 __all__ = [
@@ -17,18 +16,17 @@ __all__ = [
 ]
 
 
-class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
+class FinancingExportView(PermissionRequiredMixin, View):
     login_url = 'access_denied'
-
-    def test_func(self):
-        return user_is_adri(self.request.user)
+    permission_required = 'partnership.export_financing'
 
     def get_csv_data(self, academic_year):
         countries = Country.objects.all().order_by('name').prefetch_related(
             Prefetch(
                 'financing_set',
-                queryset=Financing.objects.prefetch_related(
-                    'academic_year'
+                queryset=Financing.objects.select_related(
+                    'academic_year',
+                    'type__program__source'
                 ).filter(academic_year=academic_year)
             )
         )
@@ -37,17 +35,21 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
                 for financing in country.financing_set.all():
                     row = {
                         'country': country.iso_code,
-                        'name': financing.name,
-                        'url': financing.url,
                         'country_name': country.name,
+                        'name': financing.type.name,
+                        'url': financing.type.url,
+                        'program': financing.type.program,
+                        'source': financing.type.program.source,
                     }
                     yield row
             else:
                 row = {
                     'country': country.iso_code,
+                    'country_name': country.name,
                     'name': '',
                     'url': '',
-                    'country_name': country.name,
+                    'program': '',
+                    'source': '',
                 }
                 yield row
 
@@ -64,7 +66,7 @@ class FinancingExportView(LoginRequiredMixin, UserPassesTestMixin, View):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
 
-        fieldnames = ['country_name', 'country', 'name', 'url']
+        fieldnames = ['country_name', 'country', 'name', 'url', 'program', 'source']
         wr = csv.DictWriter(response, delimiter=';', quoting=csv.QUOTE_NONE, fieldnames=fieldnames)
         wr.writeheader()
         for row in self.get_csv_data(academic_year=self.academic_year):

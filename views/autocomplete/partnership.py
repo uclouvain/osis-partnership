@@ -5,9 +5,13 @@ from django.db.models import Q
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY
+from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY
 from partnership.models import (
-    Partner, PartnerEntity, Partnership, PartnershipConfiguration,
+    Partner,
+    PartnerEntity,
+    Partnership,
+    PartnershipConfiguration,
+    PartnershipType,
 )
 from .faculty import FacultyEntityAutocompleteView
 
@@ -61,13 +65,24 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
         if entity_id is None:
             return Entity.objects.none()
 
-        # Get faculty (entity if faculty, or parent if not faculty)
-        faculty = get_faculty_id(entity_id)
+        partnership_type = self.forwarded.get('partnership_type', None)
+        if partnership_type == PartnershipType.DOCTORATE.name:
+            # No need to filter on faculty for this type
+            faculty = entity_id
+        else:
+            # Get faculty (entity if faculty, or parent if not faculty)
+            faculty = get_faculty_id(entity_id)
 
         cte = EntityVersion.objects.with_parents(entity=faculty)
-        qs = cte.queryset().with_cte(cte).values('entity_id')
+        cte_qs = cte.queryset().with_cte(cte).values('entity_id')
 
-        return super().get_queryset().filter(pk__in=qs).exclude(pk=faculty)
+        qs = super().get_queryset().filter(pk__in=cte_qs).exclude(pk=faculty)
+
+        if partnership_type == PartnershipType.DOCTORATE.name:
+            # Only return doctoral commissions for this type
+            qs = qs.filter(entityversion__entity_type=DOCTORAL_COMMISSION)
+
+        return qs
 
 
 class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):

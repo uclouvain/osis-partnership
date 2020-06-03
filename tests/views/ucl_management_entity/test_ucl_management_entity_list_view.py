@@ -14,7 +14,7 @@ GF_UME_NUMBER = 3
 OTHER_GF_UME_NUMBER = 7
 
 
-class UCLManagementEntitiesListViewTest(TestCase):
+class UCLManagementEntityListViewTest(TestCase):
     """
     Tests UCLManagementEntityListView
     """

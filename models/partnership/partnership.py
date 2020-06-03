@@ -1,7 +1,7 @@
 import uuid
 
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -9,13 +9,10 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from base.models.education_group_year import EducationGroupYear
-from base.models.entity_version import (
-    EntityVersion,
-)
+from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
-from partnership.models import AgreementStatus
+from partnership.models import AgreementStatus, PartnershipType
 from partnership.utils import merge_agreement_ranges
 
 __all__ = [
@@ -94,6 +91,12 @@ class Partnership(models.Model):
         db_index=True,
     )
 
+    partnership_type = models.CharField(
+        _('partnership_type'),
+        max_length=255,
+        choices=PartnershipType.choices(),
+    )
+
     external_id = models.CharField(
         _('external_id'),
         help_text=_('to_synchronize_with_epc'),
@@ -166,6 +169,9 @@ class Partnership(models.Model):
         null=True,
     )
 
+    start_date = models.DateField(_('start_date'), null=True)
+    end_date = models.DateField(_('end_date'), null=True)
+
     objects = PartnershipQuerySet.as_manager()
 
     class Meta:
@@ -180,8 +186,14 @@ class Partnership(models.Model):
     def get_absolute_url(self):
         return reverse('partnerships:detail', kwargs={'pk': self.pk})
 
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError(_("End date must be after start date"))
+
     @cached_property
     def is_valid(self):
+        if self.partnership_type == PartnershipType.PROJECT.name:
+            return True
         return self.validated_agreements.exists()
 
     @property
@@ -209,18 +221,6 @@ class Partnership(models.Model):
         if partnership_year is None:
             return None
         return partnership_year.academic_year
-
-    @cached_property
-    def start_date(self):
-        if not self.validated_agreements.exists():
-            return None
-        return self.validated_agreements.aggregate(start_date=Min('start_academic_year__start_date'))['start_date']
-
-    @cached_property
-    def end_date(self):
-        if not self.validated_agreements.exists():
-            return None
-        return self.validated_agreements.aggregate(end_date=Max('end_academic_year__end_date'))['end_date']
 
     @cached_property
     def validity_end(self):
@@ -258,7 +258,7 @@ class Partnership(models.Model):
     @cached_property
     def has_missing_valid_years(self):
         """ Test if we have PartnershipYear for all of the partnership duration """
-        if self.end_academic_year is not None and self.start_academic_year is not None:
+        if self.end_academic_year and self.start_academic_year:
             if len(self.valid_agreements_dates_ranges) == 0:
                 return True
             elif len(self.valid_agreements_dates_ranges) > 1:
@@ -269,8 +269,7 @@ class Partnership(models.Model):
                     or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
                     or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
                 )
-        else:
-            return False
+        return False
 
     @cached_property
     def current_year(self):
@@ -281,12 +280,6 @@ class Partnership(models.Model):
                 .prefetch_related('education_fields', 'education_levels')
                 .first()
         )
-
-    @property
-    def university_offers(self):
-        if self.current_year is None:
-            return EducationGroupYear.objects.none()
-        return self.current_year.offers
 
     @cached_property
     def entities_acronyms(self):

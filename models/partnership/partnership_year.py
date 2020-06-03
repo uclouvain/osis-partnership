@@ -1,12 +1,15 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import Subquery, OuterRef
+from django.db.models import OuterRef, Subquery
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
-from partnership.models import PartnershipType
+from ..enums.partnership import PartnershipType
 
 __all__ = [
+    'PartnershipMission',
+    'PartnershipSubtype',
     'PartnershipYear',
 ]
 
@@ -52,20 +55,62 @@ class PartnershipYear(models.Model):
         related_name='partnerships',
         blank=True,
     )
+
+    # For MOBILITY type
     is_sms = models.BooleanField(_('is_sms'), default=False, blank=True)
     is_smp = models.BooleanField(_('is_smp'), default=False, blank=True)
     is_smst = models.BooleanField(_('is_smst'), default=False, blank=True)
     is_sta = models.BooleanField(_('is_sta'), default=False, blank=True)
     is_stt = models.BooleanField(_('is_stt'), default=False, blank=True)
-    partnership_type = models.CharField(
-        _('partnership_type'),
-        max_length=255,
-        choices=PartnershipType.choices(),
-    )
+
     eligible = models.BooleanField(
         _('eligible'),
         default=True,
         blank=True,
+    )
+    funding_type = models.ForeignKey(
+        'partnership.FundingType',
+        verbose_name=_('funding_type'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+    )
+    missions = models.ManyToManyField(
+        'partnership.PartnershipMission',
+        verbose_name=_('partnership_missions'),
+    )
+    subtype = models.ForeignKey(
+        'partnership.PartnershipSubtype',
+        verbose_name=_('partnership_subtype'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+    )
+    description = models.TextField(
+        _('partnership_year_description'),
+        default='',
+        blank=True,
+    )
+
+    # For PROJECT type
+    ucl_status = models.CharField(
+        verbose_name=_('partnership_year_ucl_status'),
+        max_length=20,
+        default='',
+        choices=[
+            ('coordinator', _('Coordinator')),
+            ('partner', _('Partner')),
+        ],
+    )
+    id_number = models.CharField(
+        verbose_name=_('partnership_year_id_number'),
+        max_length=200,
+        default='',
+    )
+    project_title = models.CharField(
+        verbose_name=_('partnership_year_project_title'),
+        max_length=200,
+        default='',
     )
 
     class Meta:
@@ -74,7 +119,10 @@ class PartnershipYear(models.Model):
         verbose_name = _('partnership_year')
 
     def __str__(self):
-        return _('partnership_year_{partnership}_{year}').format(partnership=self.partnership, year=self.academic_year)
+        return _('partnership_year_{partnership}_{year}').format(
+            partnership=self.partnership,
+            year=self.academic_year,
+        )
 
     @property
     def has_sm(self):
@@ -82,6 +130,9 @@ class PartnershipYear(models.Model):
 
     @cached_property
     def is_valid(self):
+        if self.partnership.partnership_type == PartnershipType.PROJECT.name:
+            return True
+
         ranges = self.partnership.valid_agreements_dates_ranges
         for range in ranges:
             if (self.academic_year.start_date.year >= range['start']
@@ -133,3 +184,32 @@ class PartnershipYear(models.Model):
                 academic_year=self.academic_year,
             ).first()
         )
+
+
+class PartnershipMission(models.Model):
+    label = models.CharField(max_length=100)
+    code = models.CharField(max_length=100, unique=True)
+    types = ArrayField(
+        models.CharField(max_length=50, choices=PartnershipType.choices()),
+    )
+
+    class Meta:
+        verbose_name = _('partnership_mission')
+
+    def __str__(self):
+        return "{} - {}".format(self.code, self.label)
+
+
+class PartnershipSubtype(models.Model):
+    label = models.CharField(max_length=100)
+    code = models.CharField(max_length=100, unique=True)
+    types = ArrayField(
+        models.CharField(max_length=50, choices=PartnershipType.choices()),
+    )
+    is_active = models.BooleanField(_('is_active'), default=True)
+
+    class Meta:
+        verbose_name = _('partnership_subtype')
+
+    def __str__(self):
+        return "{} - {}".format(self.code, self.label)

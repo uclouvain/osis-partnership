@@ -102,9 +102,9 @@ class ConfigurationView(APIView):
         fundings = (
              Financing.objects
              .filter(academic_year=current_year)
-             .values_list('name', flat=True)
-             .distinct('name')
-             .order_by('name')
+             .values_list('type__name', flat=True)
+             .distinct('type__name')
+             .order_by('type__name')
         )
 
         data = {

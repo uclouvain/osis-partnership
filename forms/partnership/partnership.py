@@ -4,21 +4,26 @@ from django.core.exceptions import ValidationError
 from django.db.models import Func, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 
+from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from base.utils.cte import CTESubquery
-from partnership.models import (
-    Partner, Partnership,
-    PartnershipEntityManager,
-)
-from partnership.utils import user_is_adri
+from partnership.auth.predicates import is_linked_to_adri_entity
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
+from partnership.models import Partnership
 from ..fields import EntityChoiceField, PersonChoiceField
 
-__all__ = ['PartnershipForm']
+__all__ = [
+    'PartnershipGeneralForm',
+    'PartnershipMobilityForm',
+    'PartnershipCourseForm',
+    'PartnershipDoctorateForm',
+    'PartnershipProjectForm',
+]
 
 
-class PartnershipForm(forms.ModelForm):
+class PartnershipBaseForm(forms.ModelForm):
     ucl_entity = EntityChoiceField(
         label=_('ucl_entity'),
         # This is actually refined in form and autocomplete
@@ -29,12 +34,12 @@ class PartnershipForm(forms.ModelForm):
                 'class': 'resetting',
                 'data-reset': '#id_ucl_university_labo',
             },
+            forward=['partnership_type'],
         ),
     )
 
     supervisor = PersonChoiceField(
         label=_('partnership_supervisor'),
-        required=False,
         queryset=Person.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:person',
@@ -47,6 +52,7 @@ class PartnershipForm(forms.ModelForm):
     class Meta:
         model = Partnership
         fields = (
+            'partnership_type',
             'partner',
             'partner_entity',
             'ucl_entity',
@@ -67,33 +73,24 @@ class PartnershipForm(forms.ModelForm):
                 forward=['partner'],
             ),
             'tags': autocomplete.Select2Multiple(),
+            'partnership_type': forms.HiddenInput(),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, partnership_type=None, *args, **kwargs):
+        """
+        :type partnership_type: str
+        """
         self.user = kwargs.pop('user', None)
+        self.partnership_type = partnership_type
+
+        # Initialise partnership_type for creation
+        kwargs['initial']['partnership_type'] = partnership_type
+
         super().__init__(*args, **kwargs)
 
-        field = self.fields['ucl_entity']
-        field.queryset = field.queryset.filter(
-            self.get_entities_condition(self.user)
-        ).distinct()
-
-        if not user_is_adri(self.user):
-            # Restrict fields for GF and GS
-            if field.queryset.count() == 1:
-                field.initial = field.queryset.first().pk
-                field.disabled = True
-
-            if self.instance.pk is not None:
-                self.fields['partner'].disabled = True
-                field.disabled = True
-
-        try:
-            self.fields['partner'].widget.forward.append(
-                forward.Const(self.instance.partner.pk, 'partner_pk'),
-            )
-        except Partner.DoesNotExist:
-            pass
+        # Prevent type modification for updating
+        if self.instance.pk:
+            self.fields['partnership_type'].disabled = True
 
     @classmethod
     def get_entities_condition(cls, user):
@@ -108,7 +105,7 @@ class PartnershipForm(forms.ModelForm):
         # Must have UCL management entity
         conditions = Q(uclmanagement_entity__isnull=False)
 
-        if not user_is_adri(user):
+        if not is_linked_to_adri_entity(user):
             # Get children entities which user has a PartnershipEntityManager
             cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
             qs = cte.join(
@@ -139,3 +136,73 @@ class PartnershipForm(forms.ModelForm):
         if partner_entity and partner_entity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
         return self.cleaned_data
+
+
+class PartnershipWithDatesMixin(PartnershipBaseForm):
+    class Meta(PartnershipBaseForm.Meta):
+        fields = PartnershipBaseForm.Meta.fields + (
+            'start_date',
+            'end_date',
+        )
+        widgets = {
+            **PartnershipBaseForm.Meta.widgets,
+            'start_date': DatePickerInput(
+                format=DATE_FORMAT,
+                attrs={
+                    'class': 'datepicker',
+                    'placeholder': _('partnership_start_date'),
+                    'autocomplete': 'off',
+                },
+            ),
+            'end_date': DatePickerInput(
+                format=DATE_FORMAT,
+                attrs={
+                    'class': 'datepicker',
+                    'placeholder': _('partnership_end_date'),
+                    'autocomplete': 'off',
+                },
+            ),
+        }
+
+
+class PartnershipGeneralForm(PartnershipWithDatesMixin):
+    pass
+
+
+class PartnershipMobilityForm(PartnershipBaseForm):
+    def __init__(self, partnership_type=None, *args, **kwargs):
+        super().__init__(partnership_type, *args, **kwargs)
+
+        field = self.fields['ucl_entity']
+        field.queryset = field.queryset.filter(
+            self.get_entities_condition(self.user)
+        ).distinct()
+
+        if not is_linked_to_adri_entity(self.user):
+            # Restrict fields for GF and GS
+            if field.queryset.count() == 1:
+                field.initial = field.queryset.first().pk
+                field.disabled = True
+
+            if self.instance.pk is not None:
+                self.fields['partner'].disabled = True
+                field.disabled = True
+
+        if self.instance.partner_id:
+            self.fields['partner'].widget.forward.append(
+                forward.Const(self.instance.partner_id, 'partner_pk'),
+            )
+
+        self.fields['supervisor'].required = False
+
+
+class PartnershipCourseForm(PartnershipBaseForm):
+    pass
+
+
+class PartnershipDoctorateForm(PartnershipWithDatesMixin):
+    pass
+
+
+class PartnershipProjectForm(PartnershipWithDatesMixin):
+    pass

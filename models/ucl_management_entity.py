@@ -106,6 +106,3 @@ class UCLManagementEntity(models.Model):
         return (
             self.is_contact_in_defined() or self.is_contact_out_defined()
         )
-
-    def has_linked_partnerships(self):
-        return self.entity.partnerships.exists()

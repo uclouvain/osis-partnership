@@ -1,5 +1,6 @@
+from partnership.models.enums.partnership import PartnershipType
 from .faculty import FacultyEntityAutocompleteView
-from ...forms import PartnershipForm
+from ...forms import PartnershipMobilityForm
 
 __all__ = [
     'UclUniversityAutocompleteFilterView',
@@ -15,9 +16,12 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            PartnershipForm.get_entities_condition(self.request.user)
-        )
+        qs = super().get_queryset()
+        if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:
+            qs = qs.filter(
+                PartnershipMobilityForm.get_entities_condition(self.request.user)
+            )
+        return qs
 
 
 class UclUniversityAutocompleteFilterView(FacultyEntityAutocompleteView):

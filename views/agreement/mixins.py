@@ -1,35 +1,31 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
-from partnership.forms import MediaForm, PartnershipAgreementForm
-from partnership.models import Partnership
+from partnership.forms import (
+    MediaForm,
+    PartnershipAgreementWithAcademicYearsForm,
+    PartnershipAgreementWithDatesForm,
+)
+from partnership.models import PartnershipType
+from partnership.views.partnership.mixins import PartnershipRelatedMixin
 
 
-class PartnershipAgreementsMixin(LoginRequiredMixin, UserPassesTestMixin):
+class PartnershipAgreementsMixin(PartnershipRelatedMixin):
     context_object_name = 'agreement'
-    login_url = 'access_denied'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.partnership = get_object_or_404(Partnership, pk=kwargs['partnership_pk'])
-        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return self.partnership.agreements.all()
 
-    def get_success_url(self):
-        return self.partnership.get_absolute_url()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['partnership'] = self.partnership
-        return context
-
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
-    form_class = PartnershipAgreementForm
-    login_url = 'access_denied'
+    def get_form_class(self):
+        if self.partnership.partnership_type in [
+            PartnershipType.GENERAL.name,
+            PartnershipType.COURSE.name,
+            PartnershipType.DOCTORATE.name,
+        ]:
+            return PartnershipAgreementWithDatesForm
+        return PartnershipAgreementWithAcademicYearsForm
 
     def get_template_names(self):
         if self.request.is_ajax():
