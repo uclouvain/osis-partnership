@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% load i18n bootstrap3 %}
+
+{% block breadcrumb %}
+  <li>
+    <a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a>
+  </li>
+  <li class="active">{{ partnership }}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{% trans 'confirm_partnership_delete' %}</h1>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form method="post" action="">
+        {% csrf_token %}
+        <p>{% trans 'Are you sure you want to delete this partnership?' %}</p>
+        <input class="btn btn-default" type="submit" value="{% trans "Confirm" %}" name="submit" />
+        <a href="{% url 'partnerships:list' %}" class="text-danger">{% trans 'Cancel' %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

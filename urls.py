@@ -17,6 +17,7 @@ urlpatterns = [
     path('create/', PartnershipTypeChooseView.as_view(), name="create"),
     path('create/<partnership_type:type>/', PartnershipCreateView.as_view(), name="create"),
     path('<int:pk>/update/', PartnershipUpdateView.as_view(), name="update"),
+    path('<int:pk>/delete/', PartnershipDeleteView.as_view(), name="delete"),
 
     path('<int:partnership_pk>/contacts/', include(([
         path('new/', PartnershipContactCreateView.as_view(), name="create"),
