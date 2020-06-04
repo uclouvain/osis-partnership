@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.contrib.auth.models import Permission
 from django.core import mail
 from django.forms import ModelChoiceField
 from django.test import TestCase
@@ -41,14 +40,6 @@ class PartnershipCreateViewTest(TestCase):
             person__user=cls.user_2_types,
             scopes=[PartnershipType.MOBILITY.name, PartnershipType.GENERAL.name]
         )
-
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
-        cls.user_adri.user_permissions.add(access_perm)
-        cls.user_gs.user_permissions.add(access_perm)
-        cls.user_gf.user_permissions.add(access_perm)
-        cls.user_other_gf.user_permissions.add(access_perm)
-        cls.user_2_types.user_permissions.add(access_perm)
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)

@@ -1,13 +1,11 @@
 import json
 
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory, UCLManagementEntityFactory,
@@ -17,8 +15,7 @@ from partnership.tests.factories import (
 class UclEntityAutocompleteTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory()
-        PersonFactory(user=cls.user)
+        cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
@@ -26,14 +23,6 @@ class UclEntityAutocompleteTestCase(TestCase):
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
         cls.other_gs = UserFactory()
-
-        perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(perm)
-        cls.user_adri.user_permissions.add(perm)
-        cls.user_gs.user_permissions.add(perm)
-        cls.user_gf.user_permissions.add(perm)
-        cls.user_other_gf.user_permissions.add(perm)
-        cls.other_gs.user_permissions.add(perm)
 
         cls.url = reverse('partnerships:autocomplete:ucl_entity')
 

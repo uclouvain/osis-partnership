@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import Permission
 from django.core import mail
 from django.forms import ModelChoiceField
 from django.shortcuts import resolve_url
@@ -49,14 +48,6 @@ class PartnershipUpdateViewTest(TestCase):
             person__user=cls.user_project,
             scopes=[PartnershipType.PROJECT.name]
         )
-
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
-        cls.user_adri.user_permissions.add(access_perm)
-        cls.user_gs.user_permissions.add(access_perm)
-        cls.user_gf.user_permissions.add(access_perm)
-        cls.user_other_gf.user_permissions.add(access_perm)
-        cls.user_project.user_permissions.add(access_perm)
 
         # Dates :
         cls.partner = PartnerFactory()

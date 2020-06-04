@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -212,8 +211,6 @@ class PartnershipsListViewTest(TestCase):
         AcademicYearFactory(year=2126)
 
         cls.user = UserFactory()
-        perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(perm)
         PartnershipEntityManagerFactory(person__user=cls.user, scopes=[
             PartnershipType.GENERAL.name,
             PartnershipType.MOBILITY.name,
