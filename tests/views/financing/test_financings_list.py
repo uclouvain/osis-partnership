@@ -12,7 +12,7 @@ from reference.models.country import Country
 from reference.tests.factories.country import CountryFactory
 
 
-class FinancingsListViewTest(TestCase):
+class FinancingListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         for i in range(50):
@@ -30,7 +30,9 @@ class FinancingsListViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
+
         cls.url = resolve_url('partnerships:financings:list', year=cls.academic_year_1.year)
+        cls.default_url = resolve_url('partnerships:financings:list')
 
     def test_list_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -46,6 +48,9 @@ class FinancingsListViewTest(TestCase):
     def test_list_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
+
+        response = self.client.get(self.default_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
 
         # Post to list should redirect

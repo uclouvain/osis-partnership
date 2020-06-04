@@ -29,7 +29,11 @@ class FinancingListView(PermissionRequiredMixin, SearchMixin, FormMixin, FilterV
     permission_required = 'partnership.export_financing'
 
     def dispatch(self, *args, year=None, **kwargs):
-        self.academic_year = get_object_or_404(AcademicYear, year=year)
+        if year is None:
+            config = PartnershipConfiguration.get_configuration()
+            self.academic_year = config.partnership_creation_update_min_year
+        else:
+            self.academic_year = get_object_or_404(AcademicYear, year=year)
 
         self.import_form = FinancingImportForm(
             self.request.POST or None,
