@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -23,11 +22,6 @@ class ConfigurationUpdateViewTest(TestCase):
         )
         cls.user_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_gf)
-
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
-        cls.user_adri.user_permissions.add(access_perm)
-        cls.user_gf.user_permissions.add(access_perm)
 
         cls.url = reverse('partnerships:configuration_update')
 

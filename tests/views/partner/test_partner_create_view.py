@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,8 +5,9 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
 from partnership.tests.factories import (
+    PartnerTagFactory,
+    PartnerTypeFactory,
     PartnershipEntityManagerFactory,
-    PartnerTagFactory, PartnerTypeFactory
 )
 from reference.tests.factories.country import CountryFactory
 
@@ -22,10 +22,6 @@ class PartnerCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_gf)
-
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_gf.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
 
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()

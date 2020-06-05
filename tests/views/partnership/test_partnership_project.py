@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 
-from django.contrib.auth.models import Permission
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
@@ -36,8 +35,6 @@ class PartnershipCreateProjectViewTest(TestCase):
             person__user=cls.user,
             scopes=[PartnershipType.PROJECT.name]
         )
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
@@ -104,9 +101,6 @@ class PartnershipUpdateProjectViewTest(TestCase):
             person__user=cls.user,
             scopes=[PartnershipType.PROJECT.name]
         )
-
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
 
         # Dates :
         cls.partner = PartnerFactory()

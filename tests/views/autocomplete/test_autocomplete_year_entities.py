@@ -1,6 +1,5 @@
 import json
 
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -12,18 +11,17 @@ from base.models.enums.entity_type import (
 )
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipType
-from partnership.tests.factories import PartnershipYearFactory
+from partnership.tests.factories import (
+    PartnershipEntityManagerFactory,
+    PartnershipYearFactory,
+)
 
 
 class YearEntitiesAutocompleteTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory()
-
-        perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(perm)
+        cls.user = PartnershipEntityManagerFactory().person.user
 
         cls.url = reverse(
             'partnerships:autocomplete:partnership_year_entities'

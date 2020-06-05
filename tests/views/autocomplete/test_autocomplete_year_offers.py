@@ -1,14 +1,12 @@
 import json
 
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
-    PartnershipYearEducationLevelFactory,
+    PartnershipEntityManagerFactory, PartnershipYearEducationLevelFactory,
 )
 
 
@@ -29,9 +27,7 @@ class YearOffersAutocompleteTestCase(TestCase):
             cls.university_offer.education_group_type
         )
 
-        cls.user = UserFactory()
-        perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(perm)
+        cls.user = PartnershipEntityManagerFactory().person.user
 
     def test_year_offer_autocomplete(self):
         self.client.force_login(self.user)

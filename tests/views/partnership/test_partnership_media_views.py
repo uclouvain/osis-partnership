@@ -1,11 +1,14 @@
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import MediaVisibility
-from partnership.tests.factories import (MediaFactory, PartnershipEntityManagerFactory, PartnershipFactory)
+from partnership.tests.factories import (
+    MediaFactory,
+    PartnershipEntityManagerFactory,
+    PartnershipFactory,
+)
 
 
 class PartnershipMediaCreateViewTest(TestCase):
@@ -17,9 +20,6 @@ class PartnershipMediaCreateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
 
         # Partnership creation
         cls.partnership = PartnershipFactory()
@@ -63,9 +63,6 @@ class PartnershipMediaUpdateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
 
         # Partnership creation
         cls.partnership = PartnershipFactory()
@@ -112,9 +109,6 @@ class PartnershipMediaDeleteViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
-        cls.user_adri.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
 
         # Partnership creation
         cls.partnership = PartnershipFactory()

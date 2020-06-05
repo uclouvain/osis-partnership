@@ -39,6 +39,7 @@ class PartnershipEntityManager(EntityRoleModel):
         )
         return RuleSet({
             # Partnership
+            'partnership.can_access_partnerships': rules.always_allow,
             'partnership.add_partnership':
                 (is_linked_to_adri_entity | is_faculty_manager)
                 & partnership_type_allowed_for_user_scope,
@@ -47,6 +48,7 @@ class PartnershipEntityManager(EntityRoleModel):
                 & partnership_allowed_for_user_scope,
 
             # PartnershipAgreement
+            'partnership.can_access_partnerships_agreements': rules.always_allow,
             'partnership.change_agreement': can_change_agreement,
             'partnership.delete_agreement':
                 ~is_agreement_validated & can_change_agreement,
@@ -62,6 +64,7 @@ class PartnershipEntityManager(EntityRoleModel):
                 is_linked_to_adri_entity & ~ume_has_partnerships,
 
             # Financing
+            'partnership.change_financing': rules.always_allow,
             'partnership.import_financing': is_linked_to_adri_entity,
             'partnership.export_financing': is_linked_to_adri_entity,
 

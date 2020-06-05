@@ -1,9 +1,10 @@
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from base.tests.factories.user import UserFactory
-from partnership.tests.factories import PartnerFactory
+from partnership.tests.factories import (
+    PartnerFactory,
+    PartnershipEntityManagerFactory,
+)
 
 
 class PartnerDetailViewTest(TestCase):
@@ -11,8 +12,7 @@ class PartnerDetailViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.partner = PartnerFactory()
-        cls.user = UserFactory()
-        cls.user.user_permissions.add(Permission.objects.get(name='can_access_partnerships'))
+        cls.user = PartnershipEntityManagerFactory().person.user
         cls.url = reverse('partnerships:partners:detail', kwargs={'pk': cls.partner.pk})
 
     def test_get_anonymous(self):
