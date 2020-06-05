@@ -1,11 +1,12 @@
+from django.shortcuts import resolve_url
 from django.test import TestCase
-from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactTitle, ContactType
 from partnership.tests.factories import (
-    PartnerFactory,
+    PartnerEntityFactory, PartnerFactory,
     PartnershipEntityManagerFactory,
 )
 from reference.tests.factories.country import CountryFactory
@@ -31,7 +32,7 @@ class PartnerEntityCreateViewTest(TestCase):
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
-        cls.url = reverse('partnerships:partners:entities:create', kwargs={'partner_pk': cls.partner.pk})
+        cls.url = resolve_url('partnerships:partners:entities:create', partner_pk=cls.partner.pk)
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -103,14 +104,30 @@ class PartnerEntityUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partner creation
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(author=PersonFactory())
+        cls.partner_entity = PartnerEntityFactory(
+            partner=cls.partner,
+            author=cls.partner.author,
+        )
+
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
+        cls.partner_entity_gf = PartnerEntityFactory(
+            partner=cls.partner_gf,
+            author=cls.partner_gf.author,
+        )
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
-        cls.partner_entity = cls.partner.entities.first()
-        cls.url = reverse('partnerships:partners:entities:update',
-                          kwargs={'partner_pk': cls.partner.pk, 'pk': cls.partner_entity.pk})
+        cls.url = resolve_url(
+            'partnerships:partners:entities:update',
+            partner_pk=cls.partner.pk,
+            pk=cls.partner_entity.pk,
+        )
+        cls.gf_url = resolve_url(
+            'partnerships:partners:entities:update',
+            partner_pk=cls.partner_gf.pk,
+            pk=cls.partner_entity_gf.pk,
+        )
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -136,16 +153,12 @@ class PartnerEntityUpdateViewTest(TestCase):
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:partners:entities:update',
-                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:partners:entities:update',
-                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
 
     def test_post(self):
@@ -197,14 +210,30 @@ class PartnerEntityDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partner creation
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(author=PersonFactory())
+        cls.partner_entity = PartnerEntityFactory(
+            partner=cls.partner,
+            author=cls.partner.author,
+        )
+
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
+        cls.partner_entity_gf = PartnerEntityFactory(
+            partner=cls.partner_gf,
+            author=cls.partner_gf.author,
+        )
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
-        cls.partner_entity = cls.partner.entities.first()
-        cls.url = reverse('partnerships:partners:entities:delete',
-                          kwargs={'partner_pk': cls.partner.pk, 'pk': cls.partner_entity.pk})
+        cls.url = resolve_url(
+            'partnerships:partners:entities:delete',
+            partner_pk=cls.partner.pk,
+            pk=cls.partner_entity.pk,
+        )
+        cls.gf_url = resolve_url(
+            'partnerships:partners:entities:delete',
+            partner_pk=cls.partner_gf.pk,
+            pk=cls.partner_entity_gf.pk,
+        )
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -230,16 +259,12 @@ class PartnerEntityDeleteViewTest(TestCase):
 
     def test_get_own_partner_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:partners:entities:delete',
-                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
 
     def test_get_faculty_partner_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:partners:entities:delete',
-                      kwargs={'partner_pk': self.partner_gf.pk, 'pk': self.partner_gf.entities.first().pk})
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
 
     def test_post(self):

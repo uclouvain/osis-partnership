@@ -11,6 +11,9 @@ class PartnershipEntityManagerFactory(factory.DjangoModelFactory):
         model = PartnershipEntityManager
 
     person = factory.SubFactory('base.tests.factories.person.PersonFactory')
-    entity = factory.SubFactory('base.tests.factories.entity.EntityFactory')
+    entity = factory.SubFactory(
+        'base.tests.factories.entity.EntityFactory',
+        organization=None,
+    )
     with_child = True
     scopes = [PartnershipType.MOBILITY.name]

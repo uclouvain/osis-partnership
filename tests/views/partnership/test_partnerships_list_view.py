@@ -4,8 +4,8 @@ from django.urls import reverse
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
-from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.education_group_year import EducationGroupYearFactory as BaseEducationGroupYearFactory
+from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
@@ -27,14 +27,21 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnershipsListViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
-        for i in range(15):
-            PartnershipFactory()
+        class EntityVersionFactory(BaseEntityVersionFactory):
+            entity__organization = None
+
+        class EducationGroupYearFactory(BaseEducationGroupYearFactory):
+            management_entity = None
+            administration_entity = None
+            enrollment_campus = None
+            main_teaching_campus = None
+
         cls.partnership_first_name = PartnershipFactory(
             partner__name='Albania School',
         )
+
         # ucl_university
         parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
         cls.ucl_university = EntityVersionFactory(
@@ -45,6 +52,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_ucl_university = PartnershipFactory(
             ucl_entity=cls.ucl_university
         )
+
         # ucl_university_labo
         cls.ucl_university_labo = EntityVersionFactory(
             parent=cls.ucl_university,
@@ -53,6 +61,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_ucl_university_labo = PartnershipFactory(
             ucl_entity=cls.ucl_university_labo
         )
+
         # university_offer
         cls.university_offer = EducationGroupYearFactory()
         cls.partnership_university_offer = PartnershipFactory()
@@ -61,64 +70,70 @@ class PartnershipsListViewTest(TestCase):
             academic_year__year=2101,
         )
         partnership_year.offers.add(cls.university_offer)
+
         # partner
         cls.partner = PartnerFactory(
             contact_address__city='Tirana',
             contact_address__country__name='Albania',
         )
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
+
         # partner_entity
         cls.partner_entity = PartnerEntityFactory()
         cls.partnership_partner_entity = PartnershipFactory(partner_entity=cls.partner_entity)
+
         # use_egracons
         cls.partnership_use_egracons = PartnershipFactory(partner__use_egracons=True)
+
         # partner_type
         cls.partner_type = PartnerTypeFactory()
         cls.partnership_partner_type = PartnershipFactory(partner__partner_type=cls.partner_type)
+
         # city
-        cls.partner_city = PartnerFactory(
-            contact_address__city='Berat',
-            contact_address__country=cls.partner.contact_address.country,
+        cls.partnership_city = PartnershipFactory(
+            partner__contact_address__city='Berat',
+            partner__contact_address__country=cls.partner.contact_address.country,
         )
-        cls.partnership_city = PartnershipFactory(partner=cls.partner_city)
+
         # country
         cls.country = CountryFactory()
         partner_country = PartnerFactory(contact_address__country=cls.country)
         cls.partnership_country = PartnershipFactory(partner=partner_country)
+
         # continent
         cls.continent = Continent.objects.create(code='fo', name='foo')
-        country_continent = CountryFactory()
-        country_continent.continent = cls.continent
-        country_continent.save()
+        country_continent = CountryFactory(continent=cls.continent)
         partner_continent = PartnerFactory(contact_address__country=country_continent)
         cls.partnership_continent = PartnershipFactory(partner=partner_continent)
+
         # partner_tags
         cls.partner_tag = PartnerTagFactory()
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
         cls.partnership_partner_tags = PartnershipFactory(partner=partner_tag)
+
         # education_field
         cls.education_field = DomainIscedFactory()
         partnership_year = PartnershipYearFactory(academic_year__year=2120)
         partnership_year.education_fields.add(cls.education_field)
-        cls.partnership_education_field = PartnershipFactory(years=[partnership_year])
+        cls.partnership_education_field = partnership_year.partnership
         partnership_year.offers.add(EducationGroupYearFactory())
+
         # education_level
         cls.education_level = PartnershipYearEducationLevelFactory()
         partnership_year = PartnershipYearFactory(academic_year__year=2120)
         partnership_year.education_levels.add(cls.education_level)
-        cls.partnership_education_level = PartnershipFactory(years=[partnership_year])
+        cls.partnership_education_level = partnership_year.partnership
+
         # is_sms
-        cls.partnership_is_sms = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_sms, is_sms=True, academic_year__year=2150)
+        cls.partnership_is_sms = PartnershipYearFactory(is_sms=True, academic_year__year=2150).partnership
+
         # is_smp
-        cls.partnership_is_smp = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_smp, is_smp=True, academic_year__year=2151)
+        cls.partnership_is_smp = PartnershipYearFactory(is_smp=True, academic_year__year=2151).partnership
         # is_sta
-        cls.partnership_is_sta = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_sta, is_sta=True, academic_year__year=2152)
+        cls.partnership_is_sta = PartnershipYearFactory(is_sta=True, academic_year__year=2152).partnership
         # is_stt
-        cls.partnership_is_stt = PartnershipFactory()
-        PartnershipYearFactory(partnership=cls.partnership_is_stt, is_stt=True, academic_year__year=2153)
+        cls.partnership_is_stt = PartnershipYearFactory(is_stt=True, academic_year__year=2153).partnership
+
         # partnership_type
         cls.partnership_type = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
@@ -127,11 +142,14 @@ class PartnershipsListViewTest(TestCase):
             partnership=cls.partnership_type,
             academic_year__year=2154,
         )
+
         # tags
         cls.tag = PartnershipTagFactory()
         cls.partnership_tag = PartnershipFactory(tags=[cls.tag])
+
         # comment
         cls.partnership_comment = PartnershipFactory(comment='foobar')
+
         # partnership_in
         cls.partnership_partnership_in = PartnershipFactory()
         PartnershipAgreementFactory(
@@ -169,20 +187,33 @@ class PartnershipsListViewTest(TestCase):
         )
         # All filters
         country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
-        sector = EntityVersionFactory(acronym='ZZZ', entity_type=SECTOR)
+        sector = EntityVersionFactory(
+            acronym='ZZZ',
+            entity_type=SECTOR,
+        )
         faculty = EntityVersionFactory(
             acronym='ZZZ',
             entity_type=FACULTY,
             parent=sector.entity,
         )
-        labo = EntityVersionFactory(acronym='ZZZ', parent=faculty.entity)
+        labo = EntityVersionFactory(
+            acronym='ZZZ',
+            parent=faculty.entity,
+        )
+        cls.all_partner_tag = PartnerTagFactory()
+        cls.partner_all_filters = PartnerFactory(
+            contact_address__city='all_filters',
+            contact_address__country=country,
+            tags=[cls.all_partner_tag],
+        )
         cls.partnership_all_filters = PartnershipFactory(
             ucl_entity=labo.entity,
-            partner__contact_address__city='all_filters',
-            partner__contact_address__country=country,
+            partner=cls.partner_all_filters,
             comment='all_filters',
+            partner_entity=PartnerEntityFactory(
+                partner=cls.partner_all_filters,
+            ),
         )
-        cls.partnership_all_filters.partner.tags.add(PartnerTagFactory())
         partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_all_filters,
             is_sms=False,
@@ -196,7 +227,8 @@ class PartnershipsListViewTest(TestCase):
         partnership_year.education_fields.add(cls.all_education_field)
         cls.all_education_level = PartnershipYearEducationLevelFactory()
         partnership_year.education_levels.add(cls.all_education_level)
-        cls.partnership_all_filters.tags.add(PartnershipTagFactory())
+        cls.all_partnership_tag = PartnershipTagFactory()
+        cls.partnership_all_filters.tags.add(cls.all_partnership_tag)
         PartnershipAgreementFactory(
             partnership=cls.partnership_all_filters,
             start_academic_year__year=2125,
@@ -291,7 +323,7 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url + '?university_offer=' + str(self.university_offer.pk))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
-        self.assertEqual(context['paginator'].count, 43)  # Include partnerships with offers at None
+        self.assertEqual(context['paginator'].count, 27)  # Include partnerships with offers at None
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -431,8 +463,8 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_in(self):
         self.client.force_login(self.user)
-        academic_year = self.partnership_partnership_in.agreements.first().start_academic_year
-        response = self.client.get(self.url + '?partnership_in=' + str(academic_year.pk))
+        academic_year = self.partnership_partnership_in.agreements.first().start_academic_year_id
+        response = self.client.get(self.url + '?partnership_in=' + str(academic_year))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -440,8 +472,8 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_ending_in(self):
         self.client.force_login(self.user)
-        academic_year = self.partnership_partnership_ending_in.agreements.first().end_academic_year
-        response = self.client.get(self.url + '?partnership_ending_in=' + str(academic_year.pk))
+        academic_year = self.partnership_partnership_ending_in.agreements.first().end_academic_year_id
+        response = self.client.get(self.url + '?partnership_ending_in=' + str(academic_year))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -449,8 +481,8 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_valid_in(self):
         self.client.force_login(self.user)
-        academic_year = self.partnership_partnership_valid_in.agreements.first().start_academic_year
-        response = self.client.get(self.url + '?partnership_valid_in=' + str(academic_year.pk))
+        academic_year = self.partnership_partnership_valid_in.agreements.first().start_academic_year_id
+        response = self.client.get(self.url + '?partnership_valid_in=' + str(academic_year))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -458,8 +490,8 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_not_valid_in(self):
         self.client.force_login(self.user)
-        academic_year = self.partnership_partnership_not_valid_in.agreements.first().start_academic_year
-        response = self.client.get(self.url + '?partnership_not_valid_in=' + str(academic_year.pk))
+        academic_year = self.partnership_partnership_not_valid_in.agreements.first().start_academic_year_id
+        response = self.client.get(self.url + '?partnership_not_valid_in=' + str(academic_year))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -467,8 +499,8 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_no_agreements_in(self):
         self.client.force_login(self.user)
-        academic_year = self.partnership_partnership_no_agreement_in.years.first().academic_year
-        response = self.client.get(self.url + '?partnership_with_no_agreements_in=' + str(academic_year.pk))
+        academic_year = self.partnership_partnership_no_agreement_in.years.first().academic_year_id
+        response = self.client.get(self.url + '?partnership_with_no_agreements_in=' + str(academic_year))
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
@@ -477,22 +509,22 @@ class PartnershipsListViewTest(TestCase):
     def test_all_filters(self):
         self.client.force_login(self.user)
         query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
-            'ucl_entity': str(self.partnership_all_filters.ucl_entity.pk),
+            'ucl_entity': str(self.partnership_all_filters.ucl_entity_id),
             'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
-            'partner': str(self.partnership_all_filters.partner.pk),
+            'partner': str(self.partnership_all_filters.partner_id),
             'use_egracons': 'False',
-            'partner_entity': str(self.partnership_all_filters.partner_entity.pk),
+            'partner_entity': str(self.partnership_all_filters.partner_entity_id),
             'city': 'all_filters',
-            'country': str(self.partnership_all_filters.partner.contact_address.country.pk),
-            'continent': str(self.partnership_all_filters.partner.contact_address.country.continent.pk),
-            'partner_tags': str(self.partnership_all_filters.partner.tags.first().pk),
+            'country': str(self.partner_all_filters.contact_address.country_id),
+            'continent': str(self.partner_all_filters.contact_address.country.continent_id),
+            'partner_tags': str(self.all_partner_tag.pk),
             'education_field': str(self.all_education_field.pk),
             'education_level': str(self.all_education_level.pk),
             'is_sms': 'False',
             'is_smp': 'False',
             'is_sta': 'False',
             'is_stt': 'False',
-            'tags': str(self.partnership_all_filters.tags.first().pk),
+            'tags': str(self.all_partnership_tag.pk),
             'comment': 'all_filters',
             'partnership_in': str(AcademicYear.objects.get(year=2125).pk),
             'partnership_ending_in': str(AcademicYear.objects.get(year=2129).pk),

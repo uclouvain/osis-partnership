@@ -54,23 +54,15 @@ class PartnerFactory(factory.DjangoModelFactory):
     is_nonprofit = factory.Faker('boolean')
     is_public = factory.Faker('boolean')
 
-    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
-
     @factory.post_generation
     def tags(obj, create, extracted, **kwargs):
-        if create:
-            if extracted:
-                obj.tags.set(extracted)
-            else:
-                obj.tags.set([PartnerTagFactory(), PartnerTagFactory()])
+        if create and extracted is not None:
+            obj.tags.set(extracted)
 
     @factory.post_generation
     def entities(obj, create, extracted, **kwargs):
-        if create:
-            if extracted:
-                obj.entities.set(extracted)
-            else:
-                obj.entities.set([PartnerEntityFactory(partner=obj, author=obj.author)])
+        if create and extracted is not None:
+            obj.entities.set(extracted)
 
 
 class PartnerEntityFactory(factory.DjangoModelFactory):
@@ -79,5 +71,4 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
 
     partner = factory.SubFactory(PartnerFactory)
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
-    author = factory.SubFactory('base.tests.factories.person.PersonFactory')
-    address = factory.SubFactory(AddressFactory, country=factory.SelfAttribute('..partner.contact_address.country'))
+    address = factory.SelfAttribute('partner.contact_address')
