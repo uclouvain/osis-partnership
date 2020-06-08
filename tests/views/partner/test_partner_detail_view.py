@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from base.tests.factories.person import PersonFactory
 from partnership.tests.factories import (
     PartnerFactory,
     PartnershipEntityManagerFactory,
@@ -11,7 +12,7 @@ class PartnerDetailViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(author=PersonFactory())
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.url = reverse('partnerships:partners:detail', kwargs={'pk': cls.partner.pk})
 

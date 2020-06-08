@@ -11,16 +11,12 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
 
     entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
+        organization=None,
     )
     academic_responsible = factory.SubFactory(
         'base.tests.factories.person.PersonFactory',
     )
-    administrative_responsible = factory.SubFactory(
-        'base.tests.factories.person.PersonFactory'
-    )
-    contact_in_person = factory.SubFactory(
-        'base.tests.factories.person.PersonFactory',
-    )
-    contact_out_person = factory.SubFactory(
-        'base.tests.factories.person.PersonFactory',
-    )
+    # Reuse person to speed up tests
+    administrative_responsible = factory.SelfAttribute('academic_responsible')
+    contact_in_person = factory.SelfAttribute('academic_responsible')
+    contact_out_person = factory.SelfAttribute('academic_responsible')

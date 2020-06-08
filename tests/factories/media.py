@@ -13,4 +13,3 @@ class MediaFactory(factory.DjangoModelFactory):
     description = factory.Faker('sentence')
     url = factory.Faker('url')
     visibility = MediaVisibility.PUBLIC.name
-    author = factory.SubFactory('base.tests.factories.person.PersonFactory')

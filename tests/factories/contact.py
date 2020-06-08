@@ -19,5 +19,4 @@ class ContactFactory(factory.DjangoModelFactory):
     class Meta:
         model = Contact
 
-    type = factory.SubFactory(ContactTypeFactory)
     title = ContactTitle.MISTER.name

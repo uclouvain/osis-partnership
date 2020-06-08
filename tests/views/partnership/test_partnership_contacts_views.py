@@ -1,13 +1,13 @@
 from datetime import date, timedelta
 
+from django.shortcuts import resolve_url
 from django.test import TestCase
-from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactTitle
 from partnership.tests.factories import (
-    ContactTypeFactory,
+    ContactFactory, ContactTypeFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
 )
@@ -29,15 +29,13 @@ class PartnershipContactCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
-        date_ko = date.today() - timedelta(days=365)
         cls.partnership = PartnershipFactory()
         cls.partnership_gf = PartnershipFactory(
             author=cls.user_gf.person,
             ucl_entity=entity_manager.entity,
         )
         # Misc
-        cls.url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': cls.partnership.pk})
+        cls.url = resolve_url('partnerships:contacts:create', partnership_pk=cls.partnership.pk)
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -63,13 +61,13 @@ class PartnershipContactCreateViewTest(TestCase):
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': self.partnership_gf.pk})
+        url = resolve_url('partnerships:contacts:create', partnership_pk=self.partnership_gf.pk)
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_create.html')
 
     def test_get_from_faculty_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:contacts:create', kwargs={'partnership_pk': self.partnership_gf.pk})
+        url = resolve_url('partnerships:contacts:create', partnership_pk=self.partnership_gf.pk)
         response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_create.html')
 
@@ -108,17 +106,25 @@ class PartnershipContactUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
-        date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory()
+        contact = ContactFactory()
+        cls.partnership = PartnershipFactory(contacts=[contact])
+        cls.url = resolve_url(
+            'partnerships:contacts:update',
+            partnership_pk=cls.partnership.pk,
+            pk=contact.pk,
+        )
+
+        contact = ContactFactory()
         cls.partnership_gf = PartnershipFactory(
             author=cls.user_gf.person,
             ucl_entity=entity_manager.entity,
+            contacts=[contact],
         )
-        # Misc
-        cls.url = reverse('partnerships:contacts:update', kwargs={
-            'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
-        })
+        cls.gf_url = resolve_url(
+            'partnerships:contacts:update',
+            partnership_pk=cls.partnership_gf.pk,
+            pk=contact.pk,
+        )
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -144,18 +150,12 @@ class PartnershipContactUpdateViewTest(TestCase):
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:update', kwargs={
-            'partnership_pk': self.partnership_gf.pk, 'pk': self.partnership_gf.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_update.html')
 
     def test_get_from_faculty_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:contacts:update', kwargs={
-            'partnership_pk': self.partnership_gf.pk, 'pk': self.partnership_gf.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/partnership_contact_update.html')
 
     def test_post(self):
@@ -192,17 +192,25 @@ class PartnershipContactDeleteViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partnership creation
-        date_ok = date.today() + timedelta(days=365)
-        date_ko = date.today() - timedelta(days=365)
-        cls.partnership = PartnershipFactory()
+        contact = ContactFactory()
+        cls.partnership = PartnershipFactory(contacts=[contact])
+        cls.url = resolve_url(
+            'partnerships:contacts:delete',
+            partnership_pk=cls.partnership.pk,
+            pk=contact.pk,
+        )
+
+        contact = ContactFactory()
         cls.partnership_gf = PartnershipFactory(
             author=cls.user_gf.person,
             ucl_entity=entity_manager.entity,
+            contacts=[contact],
         )
-        # Misc
-        cls.url = reverse('partnerships:contacts:delete', kwargs={
-            'partnership_pk': cls.partnership.pk, 'pk': cls.partnership.contacts.all()[0].pk
-        })
+        cls.gf_url = resolve_url(
+            'partnerships:contacts:delete',
+            partnership_pk=cls.partnership_gf.pk,
+            pk=contact.pk,
+        )
 
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -228,18 +236,12 @@ class PartnershipContactDeleteViewTest(TestCase):
 
     def test_get_own_as_gf(self):
         self.client.force_login(self.user_gf)
-        url = reverse('partnerships:contacts:delete', kwargs={
-            'partnership_pk': self.partnership_gf.pk, 'pk': self.partnership_gf.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
 
     def test_get_from_faculty_as_gf(self):
         self.client.force_login(self.user_other_gf)
-        url = reverse('partnerships:contacts:delete', kwargs={
-            'partnership_pk': self.partnership_gf.pk, 'pk': self.partnership_gf.contacts.all()[0].pk
-        })
-        response = self.client.get(url, follow=True)
+        response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/contacts/contact_confirm_delete.html')
 
     def test_post(self):

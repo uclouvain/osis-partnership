@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from partnership.tests.factories import (
     PartnerFactory,
-    PartnershipEntityManagerFactory,
+    PartnerTagFactory, PartnershipEntityManagerFactory,
 )
 
 
@@ -27,7 +27,8 @@ class PartnersListViewTest(TestCase):
             end_date=timezone.now() - timedelta(days=1),
             is_ies=False
         )
-        cls.partner_tags = PartnerFactory(is_ies=False)
+        cls.partner_tag = PartnerTagFactory()
+        cls.partner_tags = PartnerFactory(is_ies=False, tags=[cls.partner_tag])
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.url = reverse('partnerships:partners:list')
 
@@ -114,7 +115,7 @@ class PartnersListViewTest(TestCase):
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
-        url = self.url + '?tags={0}'.format(self.partner_tags.tags.all().first().id)
+        url = self.url + '?tags={0}'.format(self.partner_tag.pk)
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data

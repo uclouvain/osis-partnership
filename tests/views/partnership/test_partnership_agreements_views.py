@@ -22,7 +22,7 @@ from partnership.tests.factories import (
 class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        for i in range(15):
+        for i in range(3):
             PartnershipAgreementFactory()
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
