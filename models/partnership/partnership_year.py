@@ -21,7 +21,7 @@ class PartnershipYear(models.Model):
     partnership = models.ForeignKey(
         'partnership.Partnership',
         verbose_name=_('partnership'),
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='years',
     )
     academic_year = models.ForeignKey(

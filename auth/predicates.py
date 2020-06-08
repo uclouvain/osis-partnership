@@ -103,3 +103,8 @@ def partnership_type_allowed_for_user_scope(self, user, partnership_type):
 def partnership_allowed_for_user_scope(self, user, partnership):
     return any(partnership.partnership_type in role_row.scopes
                for role_row in self.context['role_qs'])
+
+
+@rules.predicate
+def partnership_has_agreement(user, partnership):
+    return partnership.agreements.exists()

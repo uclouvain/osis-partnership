@@ -46,6 +46,9 @@ class PartnershipEntityManager(EntityRoleModel):
             'partnership.change_partnership':
                 (is_linked_to_adri_entity | is_faculty_manager_for_partnership)
                 & partnership_allowed_for_user_scope,
+            'partnership.delete_partnership':
+                (is_linked_to_adri_entity & partnership_allowed_for_user_scope
+                 & ~partnership_has_agreement),
 
             # PartnershipAgreement
             'partnership.can_access_partnerships_agreements': rules.always_allow,

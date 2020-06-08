@@ -33,8 +33,14 @@ msgstr "Êtes-vous sûr de vouloir supprimer \"%(object)s\"?"
 msgid "Are you sure you want to delete this contact?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce contact?"
 
+msgid "Are you sure you want to delete this partnership?"
+msgstr "Êtes-vous sûr de vouloir supprimer ce partenariat ?"
+
 msgid "Cancel"
 msgstr "Annuler"
+
+msgid "Confirm"
+msgstr "Confirmer"
 
 msgid "Coordinator"
 msgstr "Coordinateur"
@@ -470,6 +476,11 @@ msgstr ""
 "Voulez-vous vraiment supprimer ce contact ? ATTENTION, cette action est "
 "irréversible."
 
+msgid "confirm_partnership_delete"
+msgstr ""
+"Voulez-vous vraiment supprimer ce partenariat ? ATTENTION, cette action est "
+"irréversible."
+
 msgid "contact_address"
 msgstr "Adresse"
 
@@ -576,6 +587,9 @@ msgstr "Supprimer le média"
 
 msgid "delete_partner_entity"
 msgstr "Supprimer l'entité partenaire"
+
+msgid "delete_partnership"
+msgstr "Supprimer le partenariat"
 
 msgid "delete_partnership_agreement"
 msgstr "Supprimer l'accord"
@@ -1062,6 +1076,9 @@ msgstr "Type de co-organisation doctorat"
 
 msgid "partnership_success"
 msgstr "Partenariat sauvegardé avec succès."
+
+msgid "partnership_success_delete"
+msgstr "Partenariat supprimé avec succès."
 
 msgid "partnership_supervisor"
 msgstr "Responsable académique du partenariat"

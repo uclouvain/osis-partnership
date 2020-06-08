@@ -33,8 +33,14 @@ msgstr "Are you sure you want to delete \"%(object)s\"?"
 msgid "Are you sure you want to delete this contact?"
 msgstr "Are you sure you want to delete this contact?"
 
+msgid "Are you sure you want to delete this partnership?"
+msgstr "Are you sure you want to delete this partnership?"
+
 msgid "Cancel"
 msgstr "Cancel"
+
+msgid "Confirm"
+msgstr "Confirm"
 
 msgid "Coordinator"
 msgstr ""
@@ -409,6 +415,10 @@ msgid "confirm_contact_delete"
 msgstr ""
 "Do you really want to delete this contact? WARNING, this cannot be undone."
 
+msgid "confirm_partnership_delete"
+msgstr ""
+"Do you really want to delete this partnership? WARNING, this cannot be undone."
+
 msgid "contact_address"
 msgstr "Contact address"
 
@@ -514,6 +524,9 @@ msgstr "Delete media"
 
 msgid "delete_partner_entity"
 msgstr "Delete partner entity"
+
+msgid "delete_partnership"
+msgstr "Delete partnership"
 
 msgid "delete_partnership_agreement"
 msgstr "Delete partnership agreement"
@@ -990,6 +1003,9 @@ msgstr "Doctorate co-organisation type"
 
 msgid "partnership_success"
 msgstr "Partnership saved successfully"
+
+msgid "partnership_success_delete"
+msgstr "Partnership deleted successfully"
 
 msgid "partnership_supervisor"
 msgstr "Partnership supervisor"
