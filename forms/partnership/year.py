@@ -219,6 +219,9 @@ class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
 
         self.fields['funding_type'].help_text = _('help_text_funding_type')
         self.fields['funding_type'].required = False
+        self.fields['funding_type'].label_from_instance = (
+            lambda o: "{0.program.source} / {0.program} / {0}".format(o)
+        )
 
         self.fields['eligible'].widget = forms.CheckboxInput()
 
@@ -318,3 +321,9 @@ class PartnershipYearProjectForm(PartnershipYearBaseForm):
             **PartnershipYearBaseForm.Meta.widgets,
             'funding_type': autocomplete.ModelSelect2(),
         }
+
+    def __init__(self, partnership_type=None, *args, **kwargs):
+        super().__init__(partnership_type, *args, **kwargs)
+        self.fields['funding_type'].label_from_instance = (
+            lambda o: "{0.program.source} / {0.program} / {0}".format(o)
+        )
