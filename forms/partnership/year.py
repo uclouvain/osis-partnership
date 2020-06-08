@@ -1,7 +1,6 @@
 from dal import autocomplete
 from dal.forward import Const
 from django import forms
-from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -81,6 +80,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
 
         # Fill the missions field according to the current type
         field_missions = self.fields['missions']
+        field_missions.label_from_instance = lambda o: o.label
         field_missions.queryset = field_missions.queryset.filter(
             types__contains=[self.partnership_type],
         )
@@ -196,6 +196,7 @@ class PartnershipYearGeneralForm(PartnershipYearSubtypeMixin, PartnershipYearBas
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_agreement')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
 class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
@@ -270,6 +271,7 @@ class PartnershipYearCourseForm(PartnershipYearSubtypeMixin, PartnershipYearWith
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_course')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
 class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearBaseForm):
@@ -286,6 +288,7 @@ class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearB
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_doctorate')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
         fixed_level = PartnershipYearEducationLevel.objects.filter(
             education_group_types__name=TrainingType.PHD.name,
