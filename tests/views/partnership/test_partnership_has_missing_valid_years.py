@@ -176,9 +176,15 @@ class PartnershipHasMissingValidYearsTest(TestCase):
 
     def test_no_agreement(self):
         self.assertTrue(self.partnership_no_agreement.has_missing_valid_years)
+        self.assertIsNone(self.partnership_no_agreement.valid_start_date)
+        self.assertIsNone(self.partnership_no_agreement.valid_end_date)
 
     def test_full(self):
         self.assertFalse(self.partnership_full.has_missing_valid_years)
+        self.assertEqual(self.partnership_full.valid_start_date,
+                         self.academic_year_less_3.start_date)
+        self.assertEqual(self.partnership_full.valid_end_date,
+                         self.academic_year_more_1.end_date)
 
     def test_no_years(self):
         self.assertFalse(self.partnership_no_years.has_missing_valid_years)

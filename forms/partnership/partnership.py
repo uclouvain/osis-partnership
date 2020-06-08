@@ -43,9 +43,6 @@ class PartnershipBaseForm(forms.ModelForm):
         queryset=Person.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:person',
-            attrs={
-                'data-placeholder': _('same_supervisor_than_management_entity')
-            },
         ),
     )
 
@@ -194,6 +191,9 @@ class PartnershipMobilityForm(PartnershipBaseForm):
             )
 
         self.fields['supervisor'].required = False
+        self.fields['supervisor'].widget.attrs = {
+            'data-placeholder': _('same_supervisor_than_management_entity')
+        }
 
 
 class PartnershipCourseForm(PartnershipBaseForm):

@@ -10,7 +10,6 @@ __all__ = [
 
 
 class FinancingManager(models.Manager):
-
     def get_queryset(self):
         return super().get_queryset().select_related(
             'type',
@@ -47,6 +46,11 @@ class Financing(models.Model):
         return '{0} - {1}'.format(self.academic_year, self.type)
 
 
+class FundingTypeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('program__source')
+
+
 class FundingType(models.Model):
     name = models.CharField(verbose_name=_('funding_type'), max_length=100)
     url = models.URLField(_('url'))
@@ -55,6 +59,8 @@ class FundingType(models.Model):
         verbose_name=_('funding_program'),
         on_delete=models.CASCADE,
     )
+
+    objects = FundingTypeManager()
 
     class Meta:
         ordering = ('name',)

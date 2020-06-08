@@ -84,7 +84,7 @@
             {% endwith %}
 
             <dt>{% trans "validated_agreements" %}</dt>
-            <dd>{% academic_dates start_date=partnership.start_date end_date=partnership.end_date %}</dd>
+            <dd>{% academic_dates start_date=partnership.valid_start_date end_date=partnership.valid_end_date %}</dd>
             <dt>{% trans "years" %}</dt>
             <dd>
               {% academic_years start_year=partnership.start_academic_year end_year=partnership.end_academic_year %}
