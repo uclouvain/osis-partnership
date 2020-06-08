@@ -2,6 +2,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Max, Min
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -221,6 +222,22 @@ class Partnership(models.Model):
         if partnership_year is None:
             return None
         return partnership_year.academic_year
+
+    @cached_property
+    def valid_start_date(self):
+        if not self.validated_agreements.exists():
+            return None
+        return self.validated_agreements.aggregate(
+            start_date=Min('start_academic_year__start_date')
+        )['start_date']
+
+    @cached_property
+    def valid_end_date(self):
+        if not self.validated_agreements.exists():
+            return None
+        return self.validated_agreements.aggregate(
+            end_date=Max('end_academic_year__end_date')
+        )['end_date']
 
     @cached_property
     def validity_end(self):
