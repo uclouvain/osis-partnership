@@ -41,6 +41,7 @@ class PartnersListView(generics.ListAPIView):
                 )
             ),
         ).filter(
+            is_public=True,
             has_years_in=True,
             has_valid_agreement_in_current_year=True,
             years__academic_year=F('current_academic_year'),  # From annotation

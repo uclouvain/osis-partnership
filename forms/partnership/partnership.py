@@ -56,6 +56,7 @@ class PartnershipBaseForm(forms.ModelForm):
             'supervisor',
             'comment',
             'tags',
+            'is_public',
         )
         widgets = {
             'partner': autocomplete.ModelSelect2(
@@ -88,34 +89,6 @@ class PartnershipBaseForm(forms.ModelForm):
         # Prevent type modification for updating
         if self.instance.pk:
             self.fields['partnership_type'].disabled = True
-
-    @classmethod
-    def get_entities_condition(cls, user):
-        """
-        Filter entities :
-            - must have UCLManagementEntity associated
-            - if user is not adri, only entities the user is allowed to manage
-
-        :param user:
-        :return: Q object
-        """
-        # Must have UCL management entity
-        conditions = Q(uclmanagement_entity__isnull=False)
-
-        if not is_linked_to_adri_entity(user):
-            # Get children entities which user has a PartnershipEntityManager
-            cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
-            qs = cte.join(
-                PartnershipEntityManager, entity_id=cte.col.entity_id
-            ).with_cte(cte).filter(person=user.person).annotate(
-                child_entity_id=Func(cte.col.children, function='unnest'),
-            )
-
-            # Restrict fields for GF and GS
-            conditions &= Q(
-                pk__in=CTESubquery(qs.values('child_entity_id'))
-            )
-        return conditions
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']
@@ -172,7 +145,7 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
         field = self.fields['ucl_entity']
         field.queryset = field.queryset.filter(
-            self.get_entities_condition(self.user)
+            self.get_partnership_entities_managed(self.user)
         ).distinct()
 
         if not is_linked_to_adri_entity(self.user):
@@ -185,6 +158,8 @@ class PartnershipMobilityForm(PartnershipBaseForm):
                 self.fields['partner'].disabled = True
                 field.disabled = True
 
+            del self.fields['is_public']
+
         if self.instance.partner_id:
             self.fields['partner'].widget.forward.append(
                 forward.Const(self.instance.partner_id, 'partner_pk'),
@@ -194,6 +169,34 @@ class PartnershipMobilityForm(PartnershipBaseForm):
         self.fields['supervisor'].widget.attrs = {
             'data-placeholder': _('same_supervisor_than_management_entity')
         }
+
+    @classmethod
+    def get_partnership_entities_managed(cls, user):
+        """
+        Filter entities :
+            - must have UCLManagementEntity associated
+            - if user is not adri, only entities the user is allowed to manage
+
+        :param user:
+        :return: Q object
+        """
+        # Must have UCL management entity
+        conditions = Q(uclmanagement_entity__isnull=False)
+
+        if not is_linked_to_adri_entity(user):
+            # Get children entities which user has a PartnershipEntityManager
+            cte = EntityVersion.objects.with_children(entity_id=OuterRef('pk'))
+            qs = cte.join(
+                PartnershipEntityManager, entity_id=cte.col.entity_id
+            ).with_cte(cte).filter(person=user.person).annotate(
+                child_entity_id=Func(cte.col.children, function='unnest'),
+            )
+
+            # Restrict fields for GF and GS
+            conditions &= Q(
+                pk__in=CTESubquery(qs.values('child_entity_id'))
+            )
+        return conditions
 
 
 class PartnershipCourseForm(PartnershipBaseForm):

@@ -417,7 +417,8 @@ msgstr ""
 
 msgid "confirm_partnership_delete"
 msgstr ""
-"Do you really want to delete this partnership? WARNING, this cannot be undone."
+"Do you really want to delete this partnership? WARNING, this cannot be "
+"undone."
 
 msgid "contact_address"
 msgstr "Contact address"
@@ -964,6 +965,13 @@ msgstr "Partnership valid in"
 
 msgid "partnership_inactif_partner_error"
 msgstr "This partner is inactive"
+
+msgid "partnership_is_public"
+msgstr "Public partnership"
+
+msgid "partnership_is_public_help_text"
+msgstr ""
+"If unchecked, this partnership will not be displayed on the public interface"
 
 msgid "partnership_media_error"
 msgstr "Error while saving the media."

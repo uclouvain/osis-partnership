@@ -19,7 +19,7 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
         qs = super().get_queryset()
         if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:
             qs = qs.filter(
-                PartnershipMobilityForm.get_entities_condition(self.request.user)
+                PartnershipMobilityForm.get_partnership_entities_managed(self.request.user)
             )
         return qs
 
