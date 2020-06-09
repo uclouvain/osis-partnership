@@ -73,6 +73,13 @@ class PartnersApiViewTest(TestCase):
         # Some noises
         PartnerFactory()
         PartnershipFactory()
+        PartnershipFactory(
+            supervisor=cls.supervisor_partnership,
+            years=[],
+            is_public=False,
+            partner__contact_address__country=cls.country,
+            ucl_entity=EntityFactory(),
+        )
 
     def test_get(self):
         response = self.client.get(self.url)

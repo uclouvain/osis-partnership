@@ -133,6 +133,7 @@ class PartnershipCreateViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/type_choose.html')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
+        self.assertNotIn('is_public', response.context_data['form'].fields)
 
     def test_get_view_as_gs(self):
         self.client.force_login(self.user_gs)
