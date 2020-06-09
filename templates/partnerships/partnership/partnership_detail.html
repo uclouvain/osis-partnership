@@ -21,6 +21,7 @@
 
 {% block content %}
   {% has_perm 'partnership.change_partnership' user partnership as can_change %}
+  {% has_perm 'partnership.delete_partnership' user partnership as can_delete %}
   <div class="page-header">
     <h1>{{ partnership }}</h1>
   </div>
@@ -30,8 +31,15 @@
       <!-- Partenariat -->
       <div class="row">
         <div class="col-sm-12">
+          {% if can_delete %}
+          <a href="{% url 'partnerships:delete' pk=partnership.pk %}" class="btn btn-default pull-right">
+            <i class="fas fa-fw fa-trash-alt"></i> {% trans 'delete_partnership' %}
+          </a>
+          {% endif %}
           {% if can_change %}
-          <a href="{% url 'partnerships:update' pk=partnership.pk %}" class="btn btn-default pull-right"><i class="fas fa-fw fa-pencil-alt"></i> {% trans 'edit_partnership' %}</a>
+          <a href="{% url 'partnerships:update' pk=partnership.pk %}" class="btn btn-default pull-right">
+            <i class="fas fa-fw fa-pencil-alt"></i> {% trans 'edit_partnership' %}
+          </a>
           {% endif %}
           <p>
             <em>
