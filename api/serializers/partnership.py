@@ -1,6 +1,10 @@
+from datetime import timedelta
+
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import get_language
 from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
 
 from partnership.models import (
     Partnership, MediaType,
@@ -8,7 +12,7 @@ from partnership.models import (
 )
 from .contact import ContactSerializer
 from .media import MediaSerializer, AgreementMediaSerializer
-from .partner import PartnerSerializer
+from .partner import PartnerDetailSerializer
 from .entity import EntitySerializer
 
 __all__ = [
@@ -22,7 +26,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
         view_name='partnership_api_v1:partnerships:retrieve',
         lookup_field='uuid',
     )
-    partner = PartnerSerializer()
+    partner = PartnerDetailSerializer()
+    type = serializers.ReadOnlyField(source='get_partnership_type_display')
     partner_entity = serializers.CharField(
         source='partner_entity.name',
         allow_null=True,
@@ -42,6 +47,13 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_smst = serializers.SerializerMethodField()
     is_sta = serializers.SerializerMethodField()
     is_stt = serializers.SerializerMethodField()
+
+    missions = serializers.SerializerMethodField()
+    subtype = serializers.SerializerMethodField()
+    id_number = serializers.SerializerMethodField()
+    project_title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     bilateral_agreements = serializers.SerializerMethodField()
@@ -57,6 +69,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
     out_partner_contacts = ContactSerializer(source='contacts', many=True)
     out_course_catalogue = serializers.SerializerMethodField()
     out_summary_tables = serializers.SerializerMethodField()
+    out_useful_links = serializers.SerializerMethodField()
+    funding_program = serializers.SerializerMethodField()
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(
@@ -71,16 +85,20 @@ class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
         fields = [
-            'uuid', 'url', 'partner', 'supervisor', 'ucl_entity',
-            'ucl_faculty',
-            'ucl_sector', 'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
+            'uuid', 'url', 'partner', 'supervisor', 'type', 'partnership_type',
+            'ucl_sector', 'ucl_faculty', 'ucl_entity',
+            'is_sms', 'is_smp', 'is_smst', 'is_sta', 'is_stt',
+
+            'missions', 'subtype', 'description', 'id_number', 'project_title',
+            'funding_program',
+
             'education_fields', 'status', 'partner_entity', 'medias',
             'bilateral_agreements',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
             'out_contact', 'out_portal', 'out_funding',
             'out_partner_contacts', 'out_course_catalogue',
-            'out_summary_tables',
+            'out_summary_tables', 'out_useful_links',
             # IN
             'in_contact', 'in_portal',
             # STAFF
@@ -88,10 +106,11 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'staff_partner_contacts',
         ]
 
-    def _get_current_year_attr(self, partnership, attr):
+    @staticmethod
+    def _get_current_year_attr(partnership, attr):
         try:
             return getattr(partnership.current_year_for_api[0], attr)
-        except IndexError:
+        except IndexError:  # pragma: no cover
             return None
 
     def get_is_sms(self, partnership):
@@ -109,9 +128,27 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_is_stt(self, partnership):
         return self._get_current_year_attr(partnership, 'is_stt')
 
+    def get_missions(self, partnership):
+        missions = self._get_current_year_attr(partnership, 'missions')
+        return ', '.join([mission.label for mission in missions.all()])
+
+    def get_description(self, partnership):
+        return self._get_current_year_attr(partnership, 'description')
+
+    def get_id_number(self, partnership):
+        return self._get_current_year_attr(partnership, 'id_number')
+
+    def get_project_title(self, partnership):
+        return self._get_current_year_attr(partnership, 'project_title')
+
+    def get_subtype(self, partnership):
+        subtype = self._get_current_year_attr(partnership, 'subtype')
+        if subtype:
+            return subtype.label
+
     def get_education_fields(self, partnership):
         education_fields = self._get_current_year_attr(partnership, 'education_fields')
-        if education_fields is None:
+        if education_fields is None:  # pragma: no cover
             return None
 
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
@@ -119,13 +156,29 @@ class PartnershipSerializer(serializers.ModelSerializer):
                 for field in education_fields.all()]
 
     def get_status(self, partnership):
-        if partnership.agreement_status is None:
-            return None
+        if partnership.is_mobility:
+            return {
+                'status': AgreementStatus.VALIDATED.value,
+                # annotation on the queryset
+                'valid_years': partnership.validity_years,
+            }
+        value = _('status_ongoing')
+        if partnership.agreement_end:  # pragma: no cover
+            threshold = partnership.agreement_end + timedelta(days=365 * 5)
+            today = timezone.now().date()
+            if today < partnership.agreement_end:
+                value = _('status_ongoing')
+            elif today < threshold:
+                value = _('status_finished')
+            elif threshold < today:
+                value = _('status_archived')
         return {
-            'status': AgreementStatus.get_value(partnership.agreement_status),
-            # annotation on the queryset
-            'valid_years': partnership.validity_years,
-            # annotation on the queryset
+            'status': value,
+            # annotations on the queryset
+            'start_date': partnership.agreement_start.strftime('%d/%m/%Y')
+            if partnership.agreement_start else '',
+            'end_date': partnership.agreement_end.strftime('%d/%m/%Y')
+            if partnership.agreement_end else '',
         }
 
     def get_bilateral_agreements(self, partnership):
@@ -138,19 +191,19 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_out_education_levels(self, partnership):
         education_levels = self._get_current_year_attr(partnership,
                                                        'education_levels')
-        if education_levels is None:
+        if education_levels is None:  # pragma: no cover
             return None
         return [level.code for level in education_levels.all()]
 
     def get_out_entities(self, partnership):
         entities = self._get_current_year_attr(partnership, 'entities')
-        if entities is None:
+        if entities is None:  # pragma: no cover
             return None
         return [EntitySerializer(entity).data for entity in entities.all()]
 
     def get_out_university_offers(self, partnership):
         offers = self._get_current_year_attr(partnership, 'offers')
-        if offers is None:
+        if offers is None:  # pragma: no cover
             return None
         return ['{} - {}'.format(offer.acronym, offer.title) for offer in
                 offers.all()]
@@ -198,21 +251,26 @@ class PartnershipSerializer(serializers.ModelSerializer):
             }
         }
 
-    def get_out_summary_tables(self, partnership):
+    @staticmethod
+    def get_public_media(partnership, media_type):
         medias = [
-                     MediaSerializer(media).data
-                     for media in partnership.medias.all()
-                     if media.is_visible_in_portal
-                        and media.type is not None
-                        and media.type.code == MediaType.SUMMARY_TABLE
-                 ] + [
-                     MediaSerializer(media).data
-                     for media in partnership.partner.medias.all()
-                     if media.is_visible_in_portal
-                        and media.type is not None
-                        and media.type.code == MediaType.SUMMARY_TABLE
-                 ]
+            MediaSerializer(media).data for media in partnership.medias.all()
+            if (media.is_visible_in_portal and media.type is not None
+                and media.type.code == media_type)
+        ]
+        medias += [
+            MediaSerializer(media).data
+            for media in partnership.partner.medias.all()
+            if (media.is_visible_in_portal and media.type is not None
+                and media.type.code == media_type)
+        ]
         return medias
+
+    def get_out_summary_tables(self, partnership):
+        return self.get_public_media(partnership, MediaType.SUMMARY_TABLE)
+
+    def get_out_useful_links(self, partnership):
+        return self.get_public_media(partnership, MediaType.USEFUL_LINK)
 
     def get_in_contact(self, partnership):
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
@@ -224,8 +282,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
         if email is None:
             email = getattr(administrative_person, 'email', None)
-        person = ume.contact_in_person
 
+        person = ume.contact_in_person
         if person is None:
             person = administrative_person
 
@@ -243,32 +301,36 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return contact
 
     def get_funding(self, partnership):
-        if not partnership.has_valid_agreement_in_current_year:
-            return None
-        if not partnership.current_year_for_api:
-            return None
-        if not self._get_current_year_attr(partnership, 'eligible'):
-            return None
-        if not partnership.funding_name:
-            return None
-        return {
-            'name': partnership.funding_name,
-            'url': partnership.funding_url,
-        }
+        funding_source = self._get_current_year_attr(partnership, 'funding_source')
+        if funding_source:
+            return {'name': str(funding_source), 'url': ''}
+        eligible = self._get_current_year_attr(partnership, 'eligible')
+        if partnership.is_mobility and eligible and partnership.funding_name:
+            return {
+                'name': partnership.funding_name,
+                'url': partnership.funding_url,
+            }
+
+    def get_funding_program(self, partnership):
+        label = ''
+        funding_program = self._get_current_year_attr(partnership, 'funding_program')
+        if funding_program:
+            label += str(funding_program)
+        funding_type = self._get_current_year_attr(partnership, 'funding_type')
+        if funding_type:
+            label += ' / ' + str(funding_type)
+        return label
 
     def get_staff_contact(self, partnership):
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
             return None
         ume = partnership.ucl_entity.uclmanagement_entity
-        administrative_person = ume.administrative_responsible
-        if administrative_person is None:
-            return None
         contact = {
-            'email': administrative_person.email,
+            'email': ume.administrative_responsible.email,
             'title': None,
-            'first_name': administrative_person.first_name,
-            'last_name': administrative_person.last_name,
-            'phone': administrative_person.phone,
+            'first_name': ume.administrative_responsible.first_name,
+            'last_name': ume.administrative_responsible.last_name,
+            'phone': ume.administrative_responsible.phone,
         }
         return contact
 

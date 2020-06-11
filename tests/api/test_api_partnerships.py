@@ -1,19 +1,30 @@
+from datetime import date
+
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
-from base.tests.factories.entity import EntityFactory
+from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import AgreementStatus, PartnershipConfiguration
+from partnership.models import (
+    AgreementStatus,
+    PartnershipConfiguration,
+    PartnershipType,
+)
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     FinancingFactory, PartnerFactory,
     PartnershipAgreementFactory, PartnershipFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
+    PartnershipSubtypeFactory,
+    FundingTypeFactory,
+    FundingSourceFactory,
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
+
+PARTNERSHIP_COUNT = 4
 
 
 class PartnershipApiViewTest(TestCase):
@@ -26,26 +37,37 @@ class PartnershipApiViewTest(TestCase):
 
         # Continents
         cls.continent = Continent.objects.create(code='AA', name='aaaaa')
-        cls.country = CountryFactory()
-        cls.country.continent = cls.continent
-        cls.country.save()
+        cls.country = CountryFactory(
+            name="Albania",
+            iso_code='AL',
+            continent=cls.continent,
+        )
         CountryFactory(continent=cls.continent)
         CountryFactory()
 
         # Partnerships
         cls.supervisor_partnership = PersonFactory()
         cls.supervisor_management_entity = PersonFactory()
+        cls.funding_type = FundingTypeFactory()
+        cls.funding_program = cls.funding_type.program
+        cls.funding_source = cls.funding_program.source
+        cls.subtype = PartnershipSubtypeFactory()
 
         cls.partnership = PartnershipFactory(
             supervisor=cls.supervisor_partnership,
             years=[],
             partner__contact_address__country=cls.country,
-            ucl_entity=EntityFactory(),
+            partner__contact_address__city="Tirana",
+            ucl_entity=EntityVersionFactory().entity,
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
             academic_year=current_academic_year,
             is_smp=True,
+            funding_source=cls.funding_source,
+            funding_program=cls.funding_program,
+            funding_type=cls.funding_type,
+            subtype=cls.subtype,
         )
         cls.education_field = DomainIscedFactory()
         year.education_fields.add(cls.education_field)
@@ -56,21 +78,60 @@ class PartnershipApiViewTest(TestCase):
             status=AgreementStatus.VALIDATED.name,
             media__is_visible_in_portal=False,
         )
+        cls.management_entity = UCLManagementEntityFactory(
+            entity=cls.partnership.ucl_entity,
+        )
 
-        partnership = PartnershipFactory(supervisor=None, years=[])
-        PartnershipYearFactory(partnership=partnership, academic_year=current_academic_year)
+        cls.partnership_2 = PartnershipFactory(
+            supervisor=None,
+            partner__contact_address__country__name="Zambia",
+            partner__contact_address__country__iso_code="ZM",
+            partner__contact_address__city="Lusaka",
+            years=[PartnershipYearFactory(academic_year=current_academic_year)],
+        )
         PartnershipAgreementFactory(
-            partnership=partnership,
+            partnership=cls.partnership_2,
             start_academic_year=current_academic_year,
             end_academic_year__year=current_academic_year.year + 1,
             status=AgreementStatus.VALIDATED.name,
         )
         cls.management_entity = UCLManagementEntityFactory(
-            entity=partnership.ucl_entity,
-            academic_responsible=cls.supervisor_management_entity
+            entity=cls.partnership_2.ucl_entity,
+            academic_responsible=cls.supervisor_management_entity,
+            contact_out_person=None,
+            contact_in_person=None,
         )
         cls.financing = FinancingFactory(academic_year=current_academic_year)
-        cls.financing.countries.add(partnership.partner.contact_address.country)
+        cls.financing.countries.add(cls.partnership_2.partner.contact_address.country)
+
+        # Other types
+        cls.partnership_project = PartnershipFactory(
+            partnership_type=PartnershipType.PROJECT.name,
+            start_date=date(current_academic_year.year, 1, 1),
+            end_date=date(current_academic_year.year, 10, 1),
+            partner__contact_address__country__iso_code="ZM",
+            partner__contact_address__city="Ndola",
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership_project,
+            academic_year=current_academic_year,
+            funding_source=FundingSourceFactory(),
+        )
+
+        cls.partnership_general = PartnershipFactory(
+            partnership_type=PartnershipType.GENERAL.name,
+            start_date=date(current_academic_year.year - 1, 1, 1),
+            end_date=date(current_academic_year.year + 3, 10, 1),
+            partner__contact_address__country__iso_code="ZM",
+            partner__contact_address__city="Mpunde",
+            years=[PartnershipYearFactory(academic_year=current_academic_year)],
+        )
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_general,
+            start_date=date(current_academic_year.year - 10, 10, 1),
+            end_date=date(current_academic_year.year + 7, 10, 1),
+            status=AgreementStatus.VALIDATED.name,
+        )
 
         # Some noises - Agreement not validated or not in status validated
         PartnerFactory()
@@ -90,107 +151,120 @@ class PartnershipApiViewTest(TestCase):
         )
 
     def test_get(self):
-        with self.assertNumQueriesLessThan(18):
+        with self.assertNumQueriesLessThan(19):
             response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_partner(self):
-        response = self.client.get(self.url + '?ordering=partner')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_country_en(self):
-        response = self.client.get(self.url + '?ordering=country_en')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_city(self):
-        response = self.client.get(self.url + '?ordering=city')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_ucl_entity(self):
-        response = self.client.get(self.url + '?ordering=ucl_entity')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_type(self):
-        response = self.client.get(self.url + '?ordering=type')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
-
-    def test_ordering_subject_area(self):
-        response = self.client.get(self.url + '?ordering=subject_area')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 2)
+        self.assertEqual(len(data['results']), PARTNERSHIP_COUNT)
 
     def test_filter_continent(self):
-        response = self.client.get(self.url + '?continent=' + str(self.continent.name))
+        response = self.client.get(self.url, {'continent': self.continent.name})
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_country(self):
-        response = self.client.get(self.url + '?country=' + str(self.country.iso_code))
+        response = self.client.get(self.url, {'country': self.country.iso_code})
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_city(self):
-        response = self.client.get(self.url + '?city=' + str(self.partnership.partner.contact_address.city))
+        response = self.client.get(self.url, {
+            'city': self.partnership.partner.contact_address.city,
+        })
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_partner(self):
-        response = self.client.get(self.url + '?partner=' + str(self.partnership.partner.uuid))
+        response = self.client.get(self.url, {
+            'partner': self.partnership.partner.uuid,
+        })
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_ucl_university(self):
-        response = self.client.get(self.url + '?ucl_entity=' + str(self.partnership.ucl_entity.uuid))
+        response = self.client.get(self.url, {
+            'ucl_entity': self.partnership.ucl_entity.uuid,
+            'with_children': True,
+        })
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_supervisor(self):
-        response = self.client.get(self.url + '?supervisor=' + str(self.supervisor_partnership.uuid))
+        response = self.client.get(self.url, {
+            'supervisor': self.supervisor_partnership.uuid,
+        })
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_supervisor_in_entity_manager(self):
-        response = self.client.get(self.url + '?supervisor=' + str(self.supervisor_management_entity.uuid))
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        response = self.client.get(self.url, {
+            'supervisor': self.supervisor_management_entity.uuid,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
 
     def test_filter_education_field(self):
-        response = self.client.get(self.url + '?education_field=' + str(self.education_field.uuid))
+        response = self.client.get(self.url, {
+            'education_field': self.education_field.uuid,
+        })
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_filter_mobility_type(self):
         response = self.client.get(self.url + '?mobility_type=student')
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
-    def test_filter_funding(self):
-        response = self.client.get(self.url + '?funding=' + self.financing.type.name)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data['results']), 1)
+        response = self.client.get(self.url + '?mobility_type=staff')
+        results = response.json()['results']
+        self.assertEqual(len(results), 0)
+
+    def test_filter_funding_calculated(self):
+        response = self.client.get(self.url,  {
+            'funding_source': self.financing.type.program.source_id,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
+
+        response = self.client.get(self.url,  {
+            'funding_program': self.financing.type.program_id,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
+
+        response = self.client.get(self.url,  {
+            'funding_type': self.financing.type_id,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
+
+    def test_filter_funding_overridden(self):
+        response = self.client.get(self.url,  {
+            'funding_source': self.funding_source.pk,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
     def test_retrieve_case_partnership_with_agreement_validated(self):
         url = reverse(

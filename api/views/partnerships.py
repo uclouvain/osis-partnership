@@ -1,14 +1,8 @@
-from django.conf import settings
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import (
-    Subquery, OuterRef, Value, Exists,
-    Case, When, F,
-)
-from django.db.models.functions import Concat
+from django.db.models.expressions import F, OuterRef, Subquery, Value
+from django.db.models.functions import Concat, Now
 from django.db.models.query import Prefetch
-from django.db.models.query_utils import Q
-from django.utils.translation import get_language
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
@@ -18,19 +12,22 @@ from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.models import (
+    AgreementStatus,
     Financing,
     Media,
     Partner,
     Partnership,
     PartnershipAgreement,
     PartnershipConfiguration,
-    PartnershipType,
     PartnershipYear,
-    AgreementStatus,
 )
-from reference.models.domain_isced import DomainIsced
 from ..filters import PartnershipFilter
 from ..serializers import PartnershipSerializer
+
+__all__ = [
+    'PartnershipsRetrieveView',
+    'PartnershipsListView',
+]
 
 
 class PartnershipsMixinView(GenericAPIView):
@@ -46,9 +43,9 @@ class PartnershipsMixinView(GenericAPIView):
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
-        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return (
             Partnership.objects
+            .filter_for_api(academic_year)
             .add_acronyms()
             .annotate_partner_address(
                 'country__continent__name',
@@ -64,28 +61,24 @@ class PartnershipsMixinView(GenericAPIView):
                 'contacts',
                 Prefetch(
                     'medias',
-                    queryset=Media.objects
-                        .select_related('type')
-                        .filter(is_visible_in_portal=True),
+                    queryset=Media.objects.select_related('type').filter(
+                        is_visible_in_portal=True
+                    ),
                 ),
                 Prefetch(
                     'partner',
-                    queryset=Partner.objects
-                        .annotate_address(
+                    queryset=Partner.objects.annotate_address(
                             'country__iso_code',
                             'country__name',
                             'city',
-                        )
-                        .annotate_website()
-                        .prefetch_related(
+                        ).annotate_website().prefetch_related(
                             Prefetch(
                                 'medias',
-                                queryset=Media.objects
-                                    .filter(is_visible_in_portal=True)
-                                    .select_related('type')
+                                queryset=Media.objects.filter(
+                                    is_visible_in_portal=True
+                                ).select_related('type')
                             ),
-                        )
-                        .annotate(
+                        ).annotate(
                             partnerships_count=Count('partnerships'),
                         )
                 ),
@@ -100,16 +93,14 @@ class PartnershipsMixinView(GenericAPIView):
                     )
                     .annotate(
                         most_recent_acronym=Subquery(
-                            EntityVersion.objects
-                                .filter(entity=OuterRef('pk'))
-                                .order_by('-start_date')
-                                .values('acronym')[:1]
+                            EntityVersion.objects.filter(
+                                entity=OuterRef('pk')
+                            ).order_by('-start_date').values('acronym')[:1]
                         ),
                         most_recent_title=Subquery(
-                            EntityVersion.objects
-                                .filter(entity=OuterRef('pk'))
-                                .order_by('-start_date')
-                                .values('title')[:1]
+                            EntityVersion.objects.filter(
+                                entity=OuterRef('pk')
+                            ).order_by('-start_date').values('title')[:1]
                         ),
                     )
                 ),
@@ -117,29 +108,35 @@ class PartnershipsMixinView(GenericAPIView):
                     'years',
                     queryset=(
                         PartnershipYear.objects
-                        .select_related('academic_year')
+                        .select_related(
+                            'academic_year',
+                            'subtype',
+                            'funding_source',
+                            'funding_program',
+                            'funding_type',
+                        )
                         .prefetch_related(
                             Prefetch(
                                 'entities',
-                                queryset=Entity.objects
-                                .annotate(
+                                queryset=Entity.objects.annotate(
                                     most_recent_acronym=Subquery(
                                         EntityVersion.objects
-                                            .filter(entity=OuterRef('pk'))
-                                            .order_by('-start_date')
-                                            .values('acronym')[:1]
+                                        .filter(entity=OuterRef('pk'))
+                                        .order_by('-start_date')
+                                        .values('acronym')[:1]
                                     ),
                                     most_recent_title=Subquery(
                                         EntityVersion.objects
-                                            .filter(entity=OuterRef('pk'))
-                                            .order_by('-start_date')
-                                            .values('title')[:1]
+                                        .filter(entity=OuterRef('pk'))
+                                        .order_by('-start_date')
+                                        .values('title')[:1]
                                     ),
                                 )
                             ),
                             'education_fields',
                             'education_levels',
                             'offers',
+                            'missions',
                         ).filter(academic_year=academic_year)
                     ),
                     to_attr='current_year_for_api',
@@ -159,7 +156,6 @@ class PartnershipsMixinView(GenericAPIView):
                 ),
             )
             .annotate(
-                current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
                 validity_end_year=Subquery(
                     AcademicYear.objects
                     .filter(
@@ -169,12 +165,36 @@ class PartnershipsMixinView(GenericAPIView):
                     .order_by('-end_date')
                     .values('year')[:1]
                 ),
+                agreement_start=Subquery(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                        start_date__lte=Now(),
+                        end_date__gte=Now(),
+                    ).order_by('-end_date').values('start_date')[:1]
+                ),
+                agreement_end=Subquery(
+                    PartnershipAgreement.objects.filter(
+                        partnership=OuterRef('pk'),
+                        start_date__lte=Now(),
+                        end_date__gte=Now(),
+                    ).order_by('-end_date').values('end_date')[:1]
+                ),
             ).annotate(
                 validity_years=Concat(
                     Value(academic_year.year),
                     Value('-'),
                     F('validity_end_year') + 1,
                     output_field=models.CharField()
+                ),
+                agreement_year_status=Subquery(
+                    PartnershipAgreement.objects
+                    .filter(
+                        partnership=OuterRef('pk'),
+                        start_academic_year__year__lte=academic_year.year,
+                        end_academic_year__year__gte=academic_year.year,
+                    )
+                    .order_by('-end_academic_year__year')
+                    .values('status')[:1]
                 ),
                 agreement_status=Subquery(
                     PartnershipAgreement.objects
@@ -185,58 +205,6 @@ class PartnershipsMixinView(GenericAPIView):
                     )
                     .order_by('-end_academic_year__year')
                     .values('status')[:1]
-                ),
-                has_years_in=Exists(
-                    PartnershipYear.objects.filter(
-                        partnership=OuterRef('pk'),
-                        academic_year=academic_year,
-                    )
-                ),
-                has_valid_agreement_in_current_year=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk'),
-                        status=AgreementStatus.VALIDATED.name,
-                        start_academic_year__year__lte=academic_year.year,
-                        end_academic_year__year__gte=academic_year.year,
-                    )
-                ),
-                subject_area_ordered=Subquery(  # For ordering only
-                    DomainIsced.objects
-                    .filter(
-                        partnershipyear__academic_year=academic_year,
-                        partnershipyear__partnership=OuterRef('pk'),
-                    )
-                    .order_by(label)
-                    .values(label)[:1]
-                ),
-                type_ordered=Subquery(  # For ordering only
-                    PartnershipYear.objects
-                    .filter(academic_year=academic_year, partnership=OuterRef('pk'))
-                    .annotate(
-                        type_ordered=Case(  # We can't make a Case directly as it will create several lines in the results
-                            When(
-                                (Q(is_sms=True)
-                                | Q(is_smp=True)
-                                | Q(is_smst=True))
-                                & (Q(is_sta=True)
-                                   | Q(is_stt=True)),
-                                then=Value('a-student-staff')
-                            ),
-                            When(
-                                Q(is_sms=True)
-                                | Q(is_smp=True)
-                                | Q(is_smst=True),
-                                then=Value('b-student')
-                            ),
-                            When(
-                                Q(is_sta=True)
-                                | Q(is_stt=True),
-                                then=Value('c-staff')
-                            ),
-                            default=Value('d-none'),
-                            output_field=models.CharField(),
-                        )
-                    ).values('type_ordered')[:1]
                 ),
                 funding_name=Subquery(
                     Financing.objects.filter(
@@ -250,13 +218,6 @@ class PartnershipsMixinView(GenericAPIView):
                         countries=OuterRef('country_id'),
                     ).values('type__url')[:1]
                 ),
-            )
-            .filter(
-                Q(has_valid_agreement_in_current_year=True)
-                | Q(partnership_type=PartnershipType.PROJECT.name),
-                is_public=True,
-                has_years_in=True,
-                years__academic_year=F('current_academic_year'),  # From annotation
             )
             .distinct()
         )

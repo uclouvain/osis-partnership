@@ -21,7 +21,7 @@ class AgreementMediaSerializer(serializers.Serializer):
 
     def get_url(self, agreement):
         media = agreement.media
-        if media.file.name:
+        if media.file.name:  # pragma: no cover
             # TODO: Fix when authentication is done in ESB (use already X-Forwarded-Host) / Shibb
             url = reverse('partnerships:agreements:download_media', args=(agreement.partnership_id, agreement.pk))
             return '{scheme}://{host}{path}'.format(
