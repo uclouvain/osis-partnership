@@ -167,7 +167,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
             'partner_entity': cls.partner_entity.pk,
             'supervisor': cls.user.person.pk,
             'ucl_entity': cls.ucl_university_labo.pk,
-            'start_date': cls.from_academic_year.start_date,
+            'start_date': cls.start_academic_year.start_date,
             'end_date': cls.end_academic_year.end_date,
             'year-is_sms': True,
             'year-is_smp': False,
@@ -194,3 +194,13 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_remove_partnership_year(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.partnership.years.count(), 3)
+        data = self.data.copy()
+        data['start_date'] = self.from_academic_year.start_date
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.partnership.refresh_from_db()
+        self.assertEqual(self.partnership.years.count(), 2)

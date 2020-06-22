@@ -254,6 +254,21 @@ class PartnershipUpdateViewTest(TestCase):
         # No agreement, not valid
         self.assertFalse(partnership.is_valid)
 
+    def test_dates_are_synced(self):
+        self.client.force_login(self.user_adri)
+        data = self.data
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        partnership = Partnership.objects.get(pk=self.partnership.pk)
+        self.assertEqual(
+            partnership.start_date,
+            self.start_academic_year.start_date,
+        )
+        self.assertEqual(
+            partnership.end_date,
+            self.end_academic_year.end_date,
+        )
+
     def test_post_empty(self):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data={}, follow=True)

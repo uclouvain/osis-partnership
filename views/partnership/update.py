@@ -45,6 +45,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
                 'partnership': partnership,
             })
 
+        start_year = None
         start_academic_year = year_data.get('start_academic_year', None)
         # Create missing start year if needed
         if start_academic_year is not None:
@@ -100,9 +101,22 @@ class PartnershipUpdateView(PartnershipFormMixin,
 
         # Delete no longer used years
         query = Q(academic_year__year__gt=end_year)
+        # When input is an academic year
         if start_academic_year is not None:
             query |= Q(academic_year__year__lt=start_year)
-        PartnershipYear.objects.filter(query, partnership=partnership).delete()
+        # When input is a date
+        start_date = form.cleaned_data.get('start_date')
+        if start_date:
+            query |= Q(academic_year__year__lt=start_date.year)
+        partnership.years.filter(query).delete()
+
+        # Sync dates
+        if not start_date and start_academic_year:
+            partnership.start_date = start_academic_year.start_date
+            partnership.save()
+        if not form.cleaned_data.get('end_date'):
+            partnership.end_date = year_data['end_academic_year'].end_date
+            partnership.save()
 
         messages.success(self.request, _('partnership_success'))
         return redirect(partnership)
