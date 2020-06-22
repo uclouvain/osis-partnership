@@ -16,6 +16,7 @@ from base.tests.factories.user import UserFactory
 from partnership.models import (
     Partnership,
     PartnershipConfiguration,
+    PartnershipMission,
     PartnershipType,
 )
 from partnership.tests.factories import (
@@ -23,7 +24,7 @@ from partnership.tests.factories import (
     PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
-    PartnershipMissionFactory, PartnershipTagFactory,
+    PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
     UCLManagementEntityFactory,
@@ -91,7 +92,9 @@ class PartnershipUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
-        mission = PartnershipMissionFactory()
+        mission = PartnershipMission.objects.filter(
+            types__contains=[PartnershipType.MOBILITY.name],
+        ).first()
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
@@ -120,6 +123,7 @@ class PartnershipUpdateViewTest(TestCase):
             'ucl_entity': cls.ucl_university_labo.pk,
             'year-is_sms': True,
             'year-is_smp': False,
+            'year-is_smst': True,
             'year-is_sta': True,
             'year-is_stt': False,
             'year-education_fields': [cls.education_field.pk],
@@ -221,7 +225,7 @@ class PartnershipUpdateViewTest(TestCase):
         )
         self.assertEqual(
             str(partnership.supervisor_id if partnership.supervisor is not None else None),
-            str(data['supervisor'] if data['supervisor'] is not '' else None),
+            str(data['supervisor'] if data['supervisor'] != '' else None),
         )
         self.assertEqual(
             str(partnership.ucl_entity_id),
