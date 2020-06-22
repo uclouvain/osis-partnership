@@ -32,7 +32,6 @@ __all__ = [
 class PartnershipYearBaseForm(forms.ModelForm):
     # Used for the dal forward
     entity = forms.CharField(required=False, widget=forms.HiddenInput())
-    partnership_type = forms.CharField(required=False, widget=forms.HiddenInput())
 
     entities = EntityChoiceMultipleField(
         label=_('partnership_year_entities'),
@@ -273,6 +272,8 @@ class PartnershipYearCourseForm(PartnershipYearSubtypeMixin, PartnershipYearWith
         super().__init__(partnership_type, *args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
+
+        self.fields['education_levels'].required = True
 
 
 class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearBaseForm):
