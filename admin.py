@@ -8,10 +8,20 @@ from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from partnership.models import *
 
 
+class TypeField(forms.CheckboxSelectMultiple):
+    def format_value(self, value):
+        if isinstance(value, str):
+            value = value.split(',')
+        return super().format_value(value)
+
+
 class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     list_display = ('person', 'entity', 'scopes')
     search_fields = ['person__first_name', 'person__last_name', 'entity__entityversion__acronym']
     raw_id_fields = ('person', 'entity',)
+    formfield_overrides = {
+        ArrayField: {'widget': TypeField(choices=PartnershipType.choices())}
+    }
 
 
 class PartnerEntityAdmin(admin.TabularInline):
@@ -157,13 +167,6 @@ class PartnershipYearAdmin(admin.ModelAdmin):
         'entities',
         'offers',
     )
-
-
-class TypeField(forms.CheckboxSelectMultiple):
-    def format_value(self, value):
-        if isinstance(value, str):
-            value = value.split(',')
-        return super().format_value(value)
 
 
 class PartnershipTypeListFilter(admin.SimpleListFilter):
