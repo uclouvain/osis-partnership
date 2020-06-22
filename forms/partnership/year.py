@@ -83,7 +83,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
         field_missions.label_from_instance = lambda o: o.label
         field_missions.queryset = field_missions.queryset.filter(
             types__contains=[self.partnership_type],
-        )
+        ).order_by('label')
         # If only one mission available, force it
         if len(field_missions.queryset) == 1:
             field_missions.initial = field_missions.queryset
@@ -102,7 +102,7 @@ class PartnershipYearSubtypeMixin:
         # Allow inactive types already set only for update
         if self.instance.pk:
             condition |= Q(pk=self.instance.subtype_id)
-        field_subtype.queryset = field_subtype.queryset.filter(condition)
+        field_subtype.queryset = field_subtype.queryset.filter(condition).order_by('label')
 
         # Prevent empty value from showing
         field_subtype.empty_label = None
