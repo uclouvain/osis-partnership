@@ -161,6 +161,8 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
+        cls.subtype1 = PartnershipSubtypeFactory()
+        cls.subtype2 = PartnershipSubtypeFactory()
         cls.data = {
             'comment': '',
             'partner': cls.partner.pk,
@@ -182,7 +184,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
-            'year-subtype': PartnershipSubtypeFactory().pk,
+            'year-subtype': cls.subtype1.pk,
         }
 
     def test_get_own_partnership_as_adri(self):
@@ -204,3 +206,24 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.partnership.refresh_from_db()
         self.assertEqual(self.partnership.years.count(), 2)
+
+    def test_subtype_deactivation(self):
+        self.client.force_login(self.user)
+        # Save subtype 1
+        self.client.post(self.url, data=self.data, follow=True)
+
+        response = self.client.get(self.url)
+        field = response.context_data['form_year'].fields['subtype']
+        self.assertIn(self.subtype1, field.queryset)
+        self.assertIn(self.subtype2, field.queryset)
+
+        # If we deactivate both subtypes, we should still have the 1 set
+        self.subtype1.is_active = False
+        self.subtype1.save()
+        self.subtype2.is_active = False
+        self.subtype2.save()
+
+        response = self.client.get(self.url)
+        field = response.context_data['form_year'].fields['subtype']
+        self.assertIn(self.subtype1, field.queryset)
+        self.assertNotIn(self.subtype2, field.queryset)

@@ -97,13 +97,11 @@ class PartnershipYearSubtypeMixin:
         field_subtype = self.fields['subtype']
 
         # Constraint according to partnership type
-        condition = Q(types__contains=[self.partnership_type])
+        condition = Q(types__contains=[self.partnership_type], is_active=True)
 
         # Allow inactive types already set only for update
-        if not self.instance.pk:
-            condition &= (Q(is_active=True) | Q(pk=self.instance.subtype_id))
-        else:
-            condition &= Q(is_active=True)
+        if self.instance.pk:
+            condition |= Q(pk=self.instance.subtype_id)
         field_subtype.queryset = field_subtype.queryset.filter(condition)
 
         # Prevent empty value from showing
