@@ -126,7 +126,7 @@ class PartnershipYear(models.Model):
 
     @property
     def has_sm(self):
-        return self.is_sms or self.is_smp
+        return self.is_sms or self.is_smp or self.is_smst
 
     @cached_property
     def is_valid(self):
@@ -147,6 +147,8 @@ class PartnershipYear(models.Model):
             activities.append('SMS')
         if self.is_smp:
             activities.append('SMP')
+        if self.is_smst:
+            activities.append('SMST')
         if self.is_sta:
             activities.append('STA')
         if self.is_stt:
