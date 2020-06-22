@@ -253,7 +253,7 @@ msgid "Partnerships"
 msgstr "Partnerships"
 
 msgid "Projet financé"
-msgstr ""
+msgstr "Project"
 
 msgid "Regional Public body"
 msgstr ""
@@ -496,7 +496,7 @@ msgid "create_contact"
 msgstr "create contact"
 
 msgid "create_ucl_management_entity"
-msgstr "Create UCLouvain management entities"
+msgstr "Create mobility management entities"
 
 msgid "created"
 msgstr "Created"
@@ -533,7 +533,7 @@ msgid "delete_partnership_agreement"
 msgstr "Delete partnership agreement"
 
 msgid "delete_ucl_management_entity"
-msgstr "Delete UCLouvain management entity"
+msgstr "Delete mobility management entity"
 
 msgid "description"
 msgstr "Description"
@@ -1116,7 +1116,7 @@ msgid "reset_search_fields"
 msgstr "Reset search fields"
 
 msgid "same_supervisor_than_management_entity"
-msgstr "Create UCLouvain management entities"
+msgstr "Create mobility management entities"
 
 msgid "search"
 msgstr "Search"
@@ -1196,22 +1196,22 @@ msgid "ucl_entity_partner"
 msgstr "UCL entity partner"
 
 msgid "ucl_management_entities"
-msgstr "UCLouvain management entities"
+msgstr "Mobility management entities"
 
 msgid "ucl_management_entities_empty"
-msgstr "UCLouvain management entities"
+msgstr "Mobility management entities"
 
 msgid "ucl_management_entities_list"
-msgstr "List of UCLouvain management entities"
+msgstr "List of mobility management entities"
 
 msgid "ucl_management_entity_change_success"
-msgstr "UCLouvain management entity successfully changed."
+msgstr "Mobility management entity successfully changed."
 
 msgid "ucl_management_entity_contacts"
-msgstr "UCLouvain management entity contacts"
+msgstr "Mobility management entity contacts"
 
 msgid "ucl_management_entity_create_success"
-msgstr "UCLouvain management entity successfully created."
+msgstr "Mobility management entity successfully created."
 
 msgid "ucl_university"
 msgstr "UCLouvain university"
@@ -1241,7 +1241,7 @@ msgid "update_partnership_agreement"
 msgstr "Update partnership agreement"
 
 msgid "update_ucl_management_entity"
-msgstr "Update UCLouvain management entity"
+msgstr "Update mobility management entity"
 
 msgid "url"
 msgstr "URL"
