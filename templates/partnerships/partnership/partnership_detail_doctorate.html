@@ -1,0 +1,57 @@
+{% extends "partnerships/partnership/partnership_detail.html" %}{% load i18n partnerships static years osis_role getattr %}
+
+{% block partnership_years %}
+  {% with partnership_year=partnership.years.first %}
+    <dl class="dl-horizontal">
+      <dt>{% trans "education_fields" %}</dt>
+      <dd>
+        <ul class="list-unstyled">
+          {% for education_field in partnership_year.education_fields.all %}
+            <li>
+              <strong>{{ education_field.code }}</strong>
+              - {{ education_field|getattr:domain_title }}
+            </li>
+          {% endfor %}
+        </ul>
+      </dd>
+      <dt>{% trans "partnership_subtype_doctorate" %}</dt>
+      <dd>{{ partnership_year.subtype }}</dd>
+      <dt>{% trans "education_levels" %}</dt>
+      <dd>
+        {% for education_level in partnership_year.education_levels.all %}
+          <strong>{{ education_level.code }}</strong>
+          - {{ education_level.label }}
+        {% endfor %}
+      </dd>
+      <dt>{% trans "partnership_doctorate_years_entity" %}</dt>
+      <dd>
+        <ul class="list-unstyled">
+          {% for entity in partnership_year.get_entities_with_titles %}
+            <li>
+              <strong>{{ entity.most_recent_acronym }}</strong>
+              - {{ entity.most_recent_title }}
+            </li>
+            {% empty %}
+            <li>
+              {% trans "all_entities" %}
+            </li>
+          {% endfor %}
+        </ul>
+      </dd>
+      <dt>{% trans "partnership_year_offers" %}</dt>
+      <dd>
+        <ul class="list-unstyled">
+          {% for offer in partnership_year.offers.all %}
+            <li>
+              <strong>{{ offer.acronym }}</strong> - {{ offer.title }}
+            </li>
+            {% empty %}
+            <li>{% trans "all_offers" %}</li>
+          {% endfor %}
+        </ul>
+      </dd>
+      <dt>{% trans "partnership_year_description" %}</dt>
+      <dd>{{ partnership_year.description|linebreaks }}</dd>
+    </dl>
+  {% endwith %}
+{% endblock %}
