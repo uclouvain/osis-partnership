@@ -5,7 +5,7 @@ from django.db.models import Q
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY
+from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY, SECTOR
 from partnership.models import (
     Partner,
     PartnerEntity,
@@ -25,15 +25,15 @@ __all__ = [
 ]
 
 
-def get_faculty_id(entity_id):
+def get_parent_id(entity_id, entity_type):
     """
     Returns the faculty id of an entity (which can be a faculty or a labo)
-    :param entity_id:
-    :return: faculty_id
+    :param entity_id: The child id from where to search
+    :param entity_type: The type of parent to find
     """
     cte = EntityVersion.objects.with_children(entity=entity_id)
     return cte.join(EntityVersion, id=cte.col.id).with_cte(cte).filter(
-        entity_type=FACULTY
+        entity_type=entity_type
     ).values_list('entity_id', flat=True).first()
 
 
@@ -67,16 +67,16 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
 
         partnership_type = self.forwarded.get('partnership_type', None)
         if partnership_type == PartnershipType.DOCTORATE.name:
-            # No need to filter on faculty for this type
-            faculty = entity_id
+            # We need the sector
+            parent_id = get_parent_id(entity_id, SECTOR)
         else:
             # Get faculty (entity if faculty, or parent if not faculty)
-            faculty = get_faculty_id(entity_id)
+            parent_id = get_parent_id(entity_id, FACULTY)
 
-        cte = EntityVersion.objects.with_parents(entity=faculty)
+        cte = EntityVersion.objects.with_parents(entity_id=parent_id)
         cte_qs = cte.queryset().with_cte(cte).values('entity_id')
 
-        qs = super().get_queryset().filter(pk__in=cte_qs).exclude(pk=faculty)
+        qs = super().get_queryset().filter(pk__in=cte_qs).exclude(pk=parent_id)
 
         if partnership_type == PartnershipType.DOCTORATE.name:
             # Only return doctoral commissions for this type
@@ -118,7 +118,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
             )
         else:
             # entity is the hidden field of PartnershipYearForm, updated by JS
-            faculty = get_faculty_id(entity)
+            faculty = get_parent_id(entity, FACULTY)
 
             qs = qs.filter(
                 Q(management_entity=faculty)
@@ -173,7 +173,7 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
             return Entity.objects.none()
 
         # Get all children of faculty
-        faculty = get_faculty_id(entity)
+        faculty = get_parent_id(entity, FACULTY)
         cte = EntityVersion.objects.with_parents(entity=faculty)
         qs = cte.queryset().with_cte(cte).values('entity_id')
 

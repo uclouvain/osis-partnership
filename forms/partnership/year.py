@@ -32,7 +32,6 @@ __all__ = [
 class PartnershipYearBaseForm(forms.ModelForm):
     # Used for the dal forward
     entity = forms.CharField(required=False, widget=forms.HiddenInput())
-    partnership_type = forms.CharField(required=False, widget=forms.HiddenInput())
 
     entities = EntityChoiceMultipleField(
         label=_('partnership_year_entities'),
@@ -83,7 +82,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
         field_missions.label_from_instance = lambda o: o.label
         field_missions.queryset = field_missions.queryset.filter(
             types__contains=[self.partnership_type],
-        )
+        ).order_by('label')
         # If only one mission available, force it
         if len(field_missions.queryset) == 1:
             field_missions.initial = field_missions.queryset
@@ -97,14 +96,12 @@ class PartnershipYearSubtypeMixin:
         field_subtype = self.fields['subtype']
 
         # Constraint according to partnership type
-        condition = Q(types__contains=[self.partnership_type])
+        condition = Q(types__contains=[self.partnership_type], is_active=True)
 
         # Allow inactive types already set only for update
-        if not self.instance.pk:
-            condition &= (Q(is_active=True) | Q(pk=self.instance.subtype_id))
-        else:
-            condition &= Q(is_active=True)
-        field_subtype.queryset = field_subtype.queryset.filter(condition)
+        if self.instance.pk:
+            condition |= Q(pk=self.instance.subtype_id)
+        field_subtype.queryset = field_subtype.queryset.filter(condition).order_by('label')
 
         # Prevent empty value from showing
         field_subtype.empty_label = None
@@ -275,6 +272,8 @@ class PartnershipYearCourseForm(PartnershipYearSubtypeMixin, PartnershipYearWith
         super().__init__(partnership_type, *args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
+
+        self.fields['education_levels'].required = True
 
 
 class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearBaseForm):

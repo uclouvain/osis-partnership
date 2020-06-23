@@ -161,13 +161,15 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
+        cls.subtype1 = PartnershipSubtypeFactory()
+        cls.subtype2 = PartnershipSubtypeFactory()
         cls.data = {
             'comment': '',
             'partner': cls.partner.pk,
             'partner_entity': cls.partner_entity.pk,
             'supervisor': cls.user.person.pk,
             'ucl_entity': cls.ucl_university_labo.pk,
-            'start_date': cls.from_academic_year.start_date,
+            'start_date': cls.start_academic_year.start_date,
             'end_date': cls.end_academic_year.end_date,
             'year-is_sms': True,
             'year-is_smp': False,
@@ -182,7 +184,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
-            'year-subtype': PartnershipSubtypeFactory().pk,
+            'year-subtype': cls.subtype1.pk,
         }
 
     def test_get_own_partnership_as_adri(self):
@@ -194,3 +196,34 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_remove_partnership_year(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.partnership.years.count(), 3)
+        data = self.data.copy()
+        data['start_date'] = self.from_academic_year.start_date
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.partnership.refresh_from_db()
+        self.assertEqual(self.partnership.years.count(), 2)
+
+    def test_subtype_deactivation(self):
+        self.client.force_login(self.user)
+        # Save subtype 1
+        self.client.post(self.url, data=self.data, follow=True)
+
+        response = self.client.get(self.url)
+        field = response.context_data['form_year'].fields['subtype']
+        self.assertIn(self.subtype1, field.queryset)
+        self.assertIn(self.subtype2, field.queryset)
+
+        # If we deactivate both subtypes, we should still have the 1 set
+        self.subtype1.is_active = False
+        self.subtype1.save()
+        self.subtype2.is_active = False
+        self.subtype2.save()
+
+        response = self.client.get(self.url)
+        field = response.context_data['form_year'].fields['subtype']
+        self.assertIn(self.subtype1, field.queryset)
+        self.assertNotIn(self.subtype2, field.queryset)
