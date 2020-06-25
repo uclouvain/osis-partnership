@@ -6,7 +6,7 @@ from django.utils.translation import get_language
 from django.views.generic import DetailView
 
 from partnership.models import (
-    Media, Partnership, PartnershipAgreement, PartnershipYear,
+    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear,
 )
 
 __all__ = [
@@ -35,7 +35,9 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             else 'title_en'
         )
 
-        if self.object.current_year is None:
+        if self.object.partnership_type not in PartnershipType.with_synced_dates():
+            context['show_more_year_link'] = False
+        elif self.object.current_year is None:
             context['show_more_year_link'] = self.object.years.count() > 1
         else:
             year = self.object.current_year.academic_year.year

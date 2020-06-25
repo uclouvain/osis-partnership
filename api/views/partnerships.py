@@ -15,8 +15,14 @@ from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.models import (
-    Financing, Media, Partner, Partnership,
-    PartnershipAgreement, PartnershipConfiguration, PartnershipYear,
+    Financing,
+    Media,
+    Partner,
+    Partnership,
+    PartnershipAgreement,
+    PartnershipConfiguration,
+    PartnershipType,
+    PartnershipYear,
     AgreementStatus,
 )
 from reference.models.domain_isced import DomainIsced
@@ -229,9 +235,10 @@ class PartnershipsMixinView(GenericAPIView):
                 ),
             )
             .filter(
+                Q(has_valid_agreement_in_current_year=True)
+                | Q(partnership_type=PartnershipType.PROJECT.name),
                 is_public=True,
                 has_years_in=True,
-                has_valid_agreement_in_current_year=True,
                 years__academic_year=F('current_academic_year'),  # From annotation
             )
             .distinct()

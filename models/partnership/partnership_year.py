@@ -180,7 +180,7 @@ class PartnershipYear(models.Model):
         from ..financing import Financing
         return (
             Financing.objects
-            .select_related('academic_year')
+            .select_related('academic_year', 'type')
             .filter(
                 countries=country,
                 academic_year=self.academic_year,

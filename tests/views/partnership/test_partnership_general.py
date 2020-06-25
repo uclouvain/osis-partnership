@@ -201,7 +201,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.client.force_login(self.user)
         self.assertEqual(self.partnership.years.count(), 3)
         data = self.data.copy()
-        data['start_date'] = self.from_academic_year.start_date
+        data['start_date'] = date(2152, 1, 1)
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.partnership.refresh_from_db()

@@ -95,6 +95,6 @@ class PartnershipAgreementWithAcademicYearsForm(PartnershipAgreementFormMixin):
         # Sync date fields
         if start_academic_year is not None and end_academic_year is not None:
             data['start_date'] = start_academic_year.start_date
-            data['end_date'] = start_academic_year.end_date
+            data['end_date'] = end_academic_year.end_date
 
         return data

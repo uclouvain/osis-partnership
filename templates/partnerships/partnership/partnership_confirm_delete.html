@@ -18,7 +18,9 @@
         {% csrf_token %}
         <p>{% trans 'Are you sure you want to delete this partnership?' %}</p>
         <input class="btn btn-default" type="submit" value="{% trans "Confirm" %}" name="submit" />
-        <a href="{% url 'partnerships:list' %}" class="text-danger">{% trans 'Cancel' %}
+        <a href="{% url 'partnerships:detail' partnership.pk %}" class="text-danger">
+          {% trans 'Cancel' %}
+        </a>
       </form>
     </div>
   </div>

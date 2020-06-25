@@ -81,22 +81,25 @@
               </dd>
             {% endwith %}
 
-            {% with partnership.ucl_entity.uclmanagement_entity as ume %}
-              <dt>{% trans "administrative_responsible" %}</dt>
-              <dd>
-                {{ ume.administrative_responsible|default_if_none:"" }}
-                {% if ume.administrative_responsible.email %} -
-                  {{ ume.administrative_responsible.email }}
-                {% endif %}
-              </dd>
-            {% endwith %}
+            {% block administrative_responsible %}{% endblock %}
 
             <dt>{% trans "validated_agreements" %}</dt>
             <dd>{% academic_dates start_date=partnership.valid_start_date end_date=partnership.valid_end_date %}</dd>
+
             <dt>{% trans "years" %}</dt>
             <dd>
               {% academic_years start_year=partnership.start_academic_year end_year=partnership.end_academic_year %}
               {% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}
+            </dd>
+
+            <dt>Dates</dt>
+            <dd>
+              {{ partnership.start_date|date:"d/m/Y" }} > {{ partnership.end_date|date:"d/m/Y" }}
+            </dd>
+
+            <dt>{% trans "partnership_is_public" %}</dt>
+            <dd>
+              <i class="fas {{ partnership.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
             </dd>
           </dl>
         </div>
@@ -200,51 +203,7 @@
         {% endfor %}
       </div>
 
-      {% with management_entity=partnership.ucl_entity.uclmanagement_entity %}
-      {% if management_entity and management_entity.are_contacts_defined %}
-        <h2>{% trans "ucl_management_entity_contacts" %}</h2>
-        <div class="row">
-          {% if management_entity.is_contact_in_defined %}
-            <div class="{% if management_entity.is_contact_out_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
-              <h4>{% trans "contact_in" %}</h4>
-              <dl class="dl-horizontal">
-                {% if management_entity.contact_in_person is not None %}
-                  <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ management_entity.contact_in_person }}{% if management_entity.contact_in_person %} - {{ management_entity.contact_in_person.email }}{% endif %}</dd>
-                {% endif %}
-                {% if management_entity.contact_in_email is not None %}
-                  <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ management_entity.contact_in_email }}">{{ management_entity.contact_in_email }}</a></dd>
-                {% endif %}
-                {% if management_entity.contact_in_url is not None %}
-                  <dt>{% trans 'portal' %}</dt>
-                  <dd><a href="{{ management_entity.contact_in_url }}" target="_blank">{{ management_entity.contact_in_url}}</a></dd>
-                {% endif %}
-              </dl>
-            </div>
-          {% endif %}
-          {% if management_entity.is_contact_out_defined %}
-            <div class="{% if management_entity.is_contact_in_defined %}col-sm-6{% else %}col-sm-12{% endif %}">
-              <h4>{% trans "contact_out" %}</h4>
-              <dl class="dl-horizontal">
-                {% if management_entity.contact_out_person is not None %}
-                  <dt>{% trans 'Name' %}</dt>
-                  <dd>{{ management_entity.contact_out_person }}{% if management_entity.contact_out_person %} - {{ management_entity.contact_out_person.email }}{% endif %}</dd>
-                {% endif %}
-                {% if management_entity.contact_out_email is not None %}
-                  <dt>{% trans 'email' %}</dt>
-                  <dd><a href="mailto:{{ management_entity.contact_out_email }}">{{ management_entity.contact_out_email }}</a></dd>
-                {% endif %}
-                {% if management_entity.contact_out_url is not None %}
-                  <dt>{% trans 'portal' %}</dt>
-                  <dd><a href="{{ management_entity.contact_out_url }}" target="_blank">{{ management_entity.contact_out_url }}</a></dd>
-                {% endif %}
-              </dl>
-            </div>
-          {% endif %}
-        </div>
-      {% endif %}
-      {% endwith %}
+      {% block contacts %}{% endblock %}
 
       <!-- Accords -->
       <h2>{% trans "Agreements" %}

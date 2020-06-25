@@ -5,6 +5,13 @@
       <dl class="dl-horizontal">
         <dt>{% trans "academic_years" %}</dt>
         <dd>{% academic_years start_year=agreement.start_academic_year end_year=agreement.end_academic_year %}</dd>
+
+        <dt>Dates</dt>
+        <dd>
+          {{ agreement.start_date|date:"d/m/Y" }} >
+          {{ agreement.end_date|date:"d/m/Y" }}
+        </dd>
+
         <dt>{% trans "status" %}</dt>
         <dd>{{ agreement.get_status_display }}</dd>
 

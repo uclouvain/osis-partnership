@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Case, Exists, Max, OuterRef, Q, When
+from django.db.models import Exists, Max, OuterRef, Q
 from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
@@ -10,9 +10,11 @@ from partnership.forms import (
     CustomNullBooleanSelect,
 )
 from partnership.models import (
-    Partner, Partnership, PartnershipAgreement,
     AgreementStatus,
-    PartnershipType, PartnershipYear,
+    Partner,
+    Partnership,
+    PartnershipAgreement,
+    PartnershipYear,
 )
 
 
@@ -204,6 +206,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         method='filter_partnership_with_no_agreements_in'
     )
     comment = filters.CharFilter(lookup_expr='icontains')
+    is_public = filters.BooleanFilter(widget=CustomNullBooleanSelect())
 
     class Meta:
         model = Partnership
@@ -242,6 +245,7 @@ class PartnershipAdminFilter(filters.FilterSet):
             'partnership_not_valid_in',
             'partnership_with_no_agreements_in',
             'comment',
+            'is_public',
         ]
 
     @property
@@ -322,16 +326,12 @@ class PartnershipAdminFilter(filters.FilterSet):
     def filter_partnership_valid_in(queryset, name, value):
         if value:
             queryset = queryset.annotate(
-                has_valid=Case(
-                    When(partnership_type=PartnershipType.PROJECT.name,
-                         then=True),
-                    default=Exists(PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk'),
-                        status=AgreementStatus.VALIDATED.name,
-                        start_academic_year__start_date__lte=value.start_date,
-                        end_academic_year__end_date__gte=value.end_date,
-                    ))
-                )
+                has_valid=Exists(PartnershipAgreement.objects.filter(
+                    partnership=OuterRef('pk'),
+                    status=AgreementStatus.VALIDATED.name,
+                    start_academic_year__start_date__lte=value.start_date,
+                    end_academic_year__end_date__gte=value.end_date,
+                ))
             ).filter(has_valid=True)
         return queryset
 
