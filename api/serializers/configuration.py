@@ -41,7 +41,7 @@ class ContinentConfigurationSerializer(serializers.ModelSerializer):
 
 class PartnerConfigurationSerializer(serializers.ModelSerializer):
     value = serializers.CharField(source='uuid')
-    label = serializers.CharField(source='name')
+    label = serializers.CharField(source='organization__name')
 
     class Meta:
         model = Partner

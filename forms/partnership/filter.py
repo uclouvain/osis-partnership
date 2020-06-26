@@ -6,13 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.person import Person
 from partnership.models import (
     Address,
     FundingProgram, FundingSource, FundingType, Partner,
     PartnerEntity,
     PartnerTag,
-    PartnerType,
     PartnershipSubtype, PartnershipTag,
     PartnershipType,
     PartnershipYearEducationLevel,
@@ -122,10 +122,9 @@ class PartnershipFilterForm(forms.Form):
         ),
         required=False,
     )
-    partner_type = forms.ModelChoiceField(
+    partner_type = forms.ChoiceField(
         label=_('partner_type'),
-        queryset=PartnerType.objects.filter(partners__partnerships__isnull=False).distinct(),
-        empty_label=_('partner_type'),
+        choices=((None, '---------'),) + ORGANIZATION_TYPE,
         required=False,
     )
     erasmus_code = forms.CharField(

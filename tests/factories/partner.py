@@ -4,23 +4,16 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
-from partnership.models import PartnerType, PartnerTag, Partner, PartnerEntity
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.organization import MainOrganizationFactory
+from partnership.models import Partner, PartnerEntity, PartnerTag
 from .address import AddressFactory
 
 __all__ = [
     'PartnerFactory',
     'PartnerTagFactory',
-    'PartnerTypeFactory',
     'PartnerEntityFactory',
 ]
-
-
-class PartnerTypeFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = PartnerType
-        django_get_or_create = ('value',)
-
-    value = factory.Sequence(lambda n: 'PartnerType-{0}'.format(n))
 
 
 class PartnerTagFactory(factory.DjangoModelFactory):
@@ -34,21 +27,18 @@ class PartnerTagFactory(factory.DjangoModelFactory):
 class PartnerFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partner
-        django_get_or_create = ('partner_type', 'partner_code')
 
     is_valid = True
-    name = factory.Sequence(lambda n: 'Partner-é-{0}'.format(n))
     is_ies = factory.Faker('boolean')
-    partner_type = factory.SubFactory(PartnerTypeFactory)
-    partner_code = factory.Sequence(lambda n: 'partner_code-é-{0}-{1}'.format(n, uuid.uuid4()))
+    organization = factory.SubFactory(
+        MainOrganizationFactory,
+        name=factory.Sequence(lambda n: 'Partner-é-{0}'.format(n)),
+    )
     pic_code = factory.Sequence(lambda n: 'pic_code-é-{0}-{1}'.format(n, uuid.uuid4()))
     erasmus_code = factory.Sequence(lambda n: 'erasmus_code-é-{0}-{1}'.format(n, uuid.uuid4()))
-    start_date = factory.LazyAttribute(lambda o: timezone.now() - timedelta(days=1))
-    end_date = factory.LazyAttribute(lambda o: timezone.now() + timedelta(days=1))
 
     contact_address = factory.SubFactory(AddressFactory)
 
-    website = factory.Faker('url')
     email = factory.Faker('email')
     phone = factory.Faker('phone_number')
     is_nonprofit = factory.Faker('boolean')
@@ -58,6 +48,16 @@ class PartnerFactory(factory.DjangoModelFactory):
     def tags(obj, create, extracted, **kwargs):
         if create and extracted is not None:
             obj.tags.set(extracted)
+
+    @factory.post_generation
+    def dates(obj, create, extracted, start=None, end=None, **kwargs):
+        if create:
+            EntityVersionFactory(
+                entity__organization=obj.organization,
+                start_date=start or (timezone.now() - timedelta(days=365)),
+                end_date=end,
+                parent=None,
+            )
 
     @factory.post_generation
     def entities(obj, create, extracted, **kwargs):

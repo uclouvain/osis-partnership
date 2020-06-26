@@ -19,7 +19,9 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
         source='partnership.partner.contact_address.city',
     )
     supervisor = serializers.CharField(source='partnership.get_supervisor')
-    partner = serializers.CharField(source='partnership.partner.name')
+    partner = serializers.CharField(
+        source='partnership.partner.organization.name'
+    )
     entities_acronyms = serializers.SerializerMethodField()
     academic_years = serializers.SerializerMethodField()
     status = serializers.CharField(source='get_status_display')

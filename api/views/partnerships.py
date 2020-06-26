@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
 from django.db.models.aggregates import Count
@@ -61,7 +63,7 @@ class PartnershipsMixinView(GenericAPIView):
                 Prefetch(
                     'partner',
                     queryset=Partner.objects
-                        .select_related('partner_type', 'contact_address__country')
+                        .select_related('contact_address__country')
                         .prefetch_related(
                             Prefetch(
                                 'medias',
@@ -70,7 +72,15 @@ class PartnershipsMixinView(GenericAPIView):
                                     .select_related('type')
                             ),
                         )
-                        .annotate(partnerships_count=Count('partnerships'))
+                        .annotate(
+                            website=Subquery(EntityVersion.objects.current(
+                                datetime.now()
+                            ).filter(
+                                entity__organization=OuterRef('organization_id'),
+                                parent__isnull=True,
+                            ).order_by('-start_date').values('entity__website')[:1]),
+                            partnerships_count=Count('partnerships'),
+                        )
                 ),
                 Prefetch(
                     'ucl_entity',

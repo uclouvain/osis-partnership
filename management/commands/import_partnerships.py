@@ -13,7 +13,6 @@ from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (
     Address, Media, Partner, Partnership,
     PartnershipAgreement, PartnershipYear,
-    PartnerType,
     UCLManagementEntity, MediaVisibility, PartnershipType, AgreementStatus,
 )
 from reference.models.country import Country
@@ -276,18 +275,15 @@ class Command(ProgressBarMixin, BaseCommand):
 
     def get_default_value(self):
         if self.default_values is None:
-            partner_type = PartnerType.objects.all().first()
-            if partner_type is None:
-                partner_type = PartnerType.objects.create(value='IMPORTED')
             self.default_values = {
                 'author': Person.objects.filter(
                     personentity__entity__entityversion__acronym='ADRI'
                 )[0],
-                'partner_type': partner_type,
                 'website': 'https://uclouvain.be',
             }
         return self.default_values
 
+    # TODO
     def get_partner_external_id(self, base_external_id, partner_id):
         if not base_external_id:
             return None
@@ -309,15 +305,16 @@ class Command(ProgressBarMixin, BaseCommand):
             return
         partner_code = line[2]
         try:
-            partner = Partner.objects.get(partner_code=partner_code)
+            partner = Partner.objects.get(organization__code=partner_code)
         except Partner.DoesNotExist:
-            partner = Partner(partner_code=partner_code)
+            # TODO orga
+            partner = Partner(organization__code=partner_code)
 
+        # TODO orga
         # Mandatory fields not in the CSV file
         default_values = self.get_default_value()
         partner.is_valid = True
         partner.author = default_values['author']
-        partner.partner_type = default_values['partner_type']
 
         # Fields from the CSV file
         partner.external_id = self.get_partner_external_id(line[1], partner.pk)

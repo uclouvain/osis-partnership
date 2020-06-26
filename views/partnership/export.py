@@ -110,7 +110,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 partnership.pk,
                 partnership.get_partnership_type_display(),
                 str(partnership.partner),
-                str(partnership.partner.partner_code) if partnership.partner.partner_code is not None else '',
+                str(partnership.partner.organization.code) if partnership.partner.organization.code is not None else '',
                 str(partnership.partner.erasmus_code) if partnership.partner.erasmus_code is not None else '',
                 str(partnership.partner.pic_code) if partnership.partner.pic_code is not None else '',
                 str(partnership.partner_entity) if partnership.partner_entity else None,

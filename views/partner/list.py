@@ -24,7 +24,7 @@ class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
     def get_queryset(self):
         return (
             Partner.objects.all()
-            .select_related('partner_type', 'contact_address__country')
+            .select_related('contact_address__country')
             .annotate(partnerships_count=Count('partnerships')).distinct()
         )
 

@@ -1,7 +1,9 @@
 from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import OuterRef, Subquery
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
+from base.models.entity_version import EntityVersion
 from .list import PartnersListView
 from ..export import ExportView
 
@@ -37,19 +39,29 @@ class PartnersExportView(ExportView, PartnersListView):
         queryset = self.filterset.qs
         queryset = (
             queryset
-            .annotate(tags_list=StringAgg('tags__value', ', '))
+            .annotate(
+                tags_list=StringAgg('tags__value', ', '),
+                start_date=Subquery(EntityVersion.objects.filter(
+                    entity__organization=OuterRef('organization_id'),
+                    parent__isnull=True,
+                ).order_by('start_date').values('start_date')[:1]),
+                end_date=Subquery(EntityVersion.objects.filter(
+                    entity__organization=OuterRef('organization_id'),
+                    parent__isnull=True,
+                ).order_by('-start_date').values('end_date')[:1]),
+            )
             .values_list(
                 'id',
-                'external_id',
+                'organization__external_id',
                 'author__user__username',
                 'created',
                 'changed',
-                'name',
+                'organization__name',
                 'is_valid',
                 'start_date',
                 'end_date',
-                'now_known_as__name',
-                'partner_type__value',
+                'now_known_as__organization__name',
+                'organization__type',
                 'pic_code',
                 'erasmus_code',
                 'is_ies',

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Count, Exists, F, OuterRef, Subquery, Value
@@ -6,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
+from base.models.entity_version import EntityVersion
 from partnership.models import (
     Partner, Partnership, PartnershipAgreement,
     PartnershipConfiguration, PartnershipYear,
@@ -69,9 +72,10 @@ class PartnersListView(generics.ListAPIView):
         partnerships_queryset = self.get_partnerships_count_subquery(academic_year)
 
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
+        now = datetime.now()
         return (
             Partner.objects
-            .select_related('partner_type', 'contact_address__country')
+            .select_related('contact_address__country')
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
                 has_in=Exists(
@@ -94,6 +98,10 @@ class PartnersListView(generics.ListAPIView):
                     partnerships_queryset,
                     output_field=models.IntegerField()
                 ),
+                website=Subquery(EntityVersion.objects.current(now).filter(
+                    entity__organization=OuterRef('organization_id'),
+                    parent__isnull=True,
+                ).order_by('-start_date').values('entity__website')[:1]),
             )
             .exclude(partnerships_count=0)
             .filter(

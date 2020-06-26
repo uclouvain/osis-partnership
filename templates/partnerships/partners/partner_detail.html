@@ -37,10 +37,10 @@
       <div class="col-sm-12 col-md-6 partner-info-left">
         <dl class="dl-horizontal">
           <dt>{% trans "partner_type" %}</dt>
-          <dd>{{ partner.partner_type|default_if_none:"" }}</dd>
+          <dd>{{ partner.organization.type|default_if_none:"" }}</dd>
 
           <dt>{% trans "partner_code" %}</dt>
-          <dd>{{ partner.partner_code|default_if_none:"" }}</dd>
+          <dd>{{ partner.organization.code|default_if_none:"" }}</dd>
 
           <dt>{% trans "pic_code" %}</dt>
           <dd>{{ partner.pic_code|default_if_none:"" }}</dd>

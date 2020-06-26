@@ -587,9 +587,6 @@ msgstr "Erasmus code"
 msgid "export_financings_for_year_%(academic_year)s"
 msgstr "Export financings for year %(academic_year)s"
 
-msgid "external_id"
-msgstr "external ID"
-
 msgid "external_link"
 msgstr "External link"
 

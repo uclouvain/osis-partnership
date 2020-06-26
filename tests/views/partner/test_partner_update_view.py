@@ -7,13 +7,12 @@ from partnership.models import ContactType
 from partnership.tests.factories import (
     PartnerFactory,
     PartnerTagFactory,
-    PartnerTypeFactory,
     PartnershipEntityManagerFactory,
 )
 from reference.tests.factories.country import CountryFactory
 
 
-class PartnerCreateViewTest(TestCase):
+class PartnerUpdateViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -74,12 +73,11 @@ class PartnerCreateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
-            'partner-name': 'test',
+            'organization-name': 'test',
             'partner-is_valid': 'on',
-            'partner-start_date': '',
-            'partner-end_date': '',
-            'partner-partner_type': PartnerTypeFactory().pk,
-            'partner-partner_code': 'test',
+            'organization-start_date': '',
+            'organization-end_date': '',
+            'organization-code': 'test',
             'partner-pic_code': 'test',
             'partner-erasmus_code': 'test',
             'partner-is_ies': 'True',
@@ -88,7 +86,7 @@ class PartnerCreateViewTest(TestCase):
             'partner-use_egracons': 'on',
             'partner-comment': 'test',
             'partner-phone': 'test',
-            'partner-website': 'http://localhost:8000',
+            'organization-website': 'http://localhost:8000',
             'partner-email': 'test@test.test',
             'partner-tags': [PartnerTagFactory().id],
             'contact_address-name': 'test',

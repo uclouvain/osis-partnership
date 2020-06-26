@@ -649,9 +649,6 @@ msgstr "Code Erasmus"
 msgid "export_financings_for_year_%(academic_year)s"
 msgstr "Exporter les financements pour l'année %(academic_year)s"
 
-msgid "external_id"
-msgstr "ID Externe"
-
 msgid "external_link"
 msgstr "Lien externe"
 

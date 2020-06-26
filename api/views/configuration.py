@@ -49,7 +49,7 @@ class ConfigurationView(APIView):
                 )
             )
             .filter(has_in=True)
-            .values('uuid', 'name')
+            .values('uuid', 'organization__name')
         )
 
         last_version = EntityVersion.objects.filter(

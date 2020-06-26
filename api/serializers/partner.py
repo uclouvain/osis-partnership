@@ -9,7 +9,9 @@ __all__ = [
 
 
 class PartnerSerializer(serializers.ModelSerializer):
-    partner_type = serializers.CharField(source='partner_type.value')
+    partner_type = serializers.CharField(source='organization.get_type_display')
+    name = serializers.CharField(source='organization.name')
+    website = serializers.CharField()
     city = serializers.CharField(source='contact_address.city')
     country = serializers.CharField(source='contact_address.country.name')
     country_iso = serializers.CharField(
