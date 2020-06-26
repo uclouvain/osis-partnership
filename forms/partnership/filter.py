@@ -24,7 +24,7 @@ from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
 from ...auth.predicates import (
     is_faculty_manager,
-    partnership_type_allowed_for_user_scope,
+    is_linked_to_adri_entity, partnership_type_allowed_for_user_scope,
 )
 
 __all__ = ['PartnershipFilterForm']
@@ -210,6 +210,7 @@ class PartnershipFilterForm(forms.Form):
     )
     partnership_type = forms.ChoiceField(
         label=_('partnership_type'),
+        choices=((None, '---------'),) + PartnershipType.choices(),
         required=False,
     )
     subtype = forms.ModelChoiceField(
@@ -285,6 +286,11 @@ class PartnershipFilterForm(forms.Form):
         required=False,
     )
     ordering = forms.CharField(widget=forms.HiddenInput, required=False)
+    is_public = forms.NullBooleanField(
+        label=_('partnership_is_public'),
+        widget=CustomNullBooleanSelect(),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -300,17 +306,18 @@ class PartnershipFilterForm(forms.Form):
         )
         self.fields['city'].choices = ((None, _('city')),) + tuple((city, city) for city in cities)
 
-        # Make types available according to perms
-        choices = []
-        for scope in PartnershipType:
-            if partnership_type_allowed_for_user_scope(user, scope):
-                choices.append((scope.name, scope.value))
-        if len(choices) == 1:
+        allowed = [scope for scope in PartnershipType
+                   if partnership_type_allowed_for_user_scope(user, scope)]
+
+        # If we have only one scope, pre-filter with this scope
+        if len(allowed) == 1:
+            self.fields['partnership_type'].initial = allowed[0].name
+
+        # Everyone has access to every type, except faculty managers
+        if len(allowed) == 1 and not is_linked_to_adri_entity(user):
+            # They have only access to mobility (their only type)
+            self.fields['partnership_type'].disabled = True
             self.fields['partnership_type'].widget = forms.HiddenInput()
-            self.fields['partnership_type'].initial = choices[0][0]
-        else:
-            choices = [(None, '---------')] + choices
-        self.fields['partnership_type'].choices = choices
 
         # Init ucl_entity for faculty manager
         if is_faculty_manager(user):

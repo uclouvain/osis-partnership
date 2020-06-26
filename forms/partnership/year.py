@@ -243,7 +243,7 @@ class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
         super().clean()
         data = self.cleaned_data
 
-        if data['is_sms'] or data['is_smp']:
+        if data['is_sms'] or data['is_smp'] or data['is_smst']:
             if not data['education_levels']:
                 self.add_error(
                     'education_levels',

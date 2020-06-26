@@ -283,6 +283,7 @@ class PartnershipUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['year-is_sms'] = False
+        data['year-is_smst'] = False
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         year = response.context_data['partnership'].years.last()

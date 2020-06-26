@@ -100,18 +100,17 @@ class PartnershipUpdateView(PartnershipFormMixin,
             form_year.save_m2m()
 
         # Delete no longer used years
-        query = Q(academic_year__year__gt=end_year)
-        # When input is an academic year
-        if start_academic_year is not None:
-            query |= Q(academic_year__year__lt=start_year)
-        # When input is a date
-        start_date = form.cleaned_data.get('start_date')
-        if start_date:
-            query |= Q(academic_year__year__lt=start_date.year)
+        if partnership.partnership_type in PartnershipType.with_synced_dates():
+            query = Q(academic_year__year__gt=end_year)
+            if start_academic_year is not None:
+                query |= Q(academic_year__year__lt=start_year)
+        else:
+            query = Q(academic_year__start_date__gt=partnership.end_date)
+            query |= Q(academic_year__end_date__lt=partnership.start_date)
         partnership.years.filter(query).delete()
 
         # Sync dates
-        if not start_date and start_academic_year:
+        if not form.cleaned_data.get('start_date') and start_academic_year:
             partnership.start_date = start_academic_year.start_date
             partnership.save()
         if not form.cleaned_data.get('end_date'):

@@ -3,6 +3,8 @@ from datetime import date
 import rules
 from django.db.models import Q
 
+from partnership.models import PartnershipType
+
 
 @rules.predicate
 def is_agreement_validated(user, agreement):
@@ -102,6 +104,12 @@ def partnership_type_allowed_for_user_scope(self, user, partnership_type):
 @rules.predicate(bind=True)
 def partnership_allowed_for_user_scope(self, user, partnership):
     return any(partnership.partnership_type in role_row.scopes
+               for role_row in self.context['role_qs'])
+
+
+@rules.predicate(bind=True)
+def has_mobility_scope(self, user):
+    return any(PartnershipType.MOBILITY.name in role_row.scopes
                for role_row in self.context['role_qs'])
 
 
