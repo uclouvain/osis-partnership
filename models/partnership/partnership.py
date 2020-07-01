@@ -246,7 +246,9 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
-        if hasattr(self, 'validity_end_year'):
+        is_mobility = self.partnership_type == PartnershipType.MOBILITY.name
+        is_project = self.partnership_type == PartnershipType.PROJECT.name
+        if is_mobility and hasattr(self, 'validity_end_year'):
             # Queryset was annotated
             if self.validity_end_year is None:
                 return None
@@ -254,6 +256,8 @@ class Partnership(models.Model):
                 self.validity_end_year,
                 str(self.validity_end_year + 1)[-2:],
             )
+        if is_project:
+            return self.end_date.strftime("%d/%m/%Y")
         agreement = (
             self.validated_agreements
                 .select_related('end_academic_year')
@@ -262,7 +266,9 @@ class Partnership(models.Model):
         )
         if agreement is None:
             return None
-        return str(agreement.end_academic_year)
+        if is_mobility:
+            return str(agreement.end_academic_year)
+        return agreement.end_date.strftime("%d/%m/%Y")
 
     @cached_property
     def valid_agreements_dates_ranges(self):

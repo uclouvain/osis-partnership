@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -137,6 +139,11 @@ class PartnershipsListViewTest(TestCase):
         # partnership_type
         cls.partnership_type = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
+        )
+        PartnershipAgreementFactory(
+            partnership=cls.partnership_type,
+            status=AgreementStatus.VALIDATED.name,
+            end_date=date(2020, 7, 1),
         )
         PartnershipYearFactory(
             partnership=cls.partnership_type,
@@ -444,6 +451,7 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_type)
+        self.assertEqual(context['partnerships'][0].validity_end, "01/07/2020")
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
@@ -487,6 +495,7 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_partnership_valid_in)
+        self.assertEqual(context['partnerships'][0].validity_end, "2118-19")
 
     def test_filter_partnership_not_valid_in(self):
         self.client.force_login(self.user)
@@ -496,6 +505,7 @@ class PartnershipsListViewTest(TestCase):
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)
         self.assertEqual(context['partnerships'][0], self.partnership_partnership_not_valid_in)
+        self.assertIsNone(context['partnerships'][0].validity_end)
 
     def test_filter_partnership_no_agreements_in(self):
         self.client.force_login(self.user)
