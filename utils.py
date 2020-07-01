@@ -31,8 +31,8 @@ def academic_years(start_academic_year, end_academic_year):
 def academic_dates(start_academic_date, end_academic_date):
     if start_academic_date is not None or end_academic_date is not None:
         return ' > '.join([
-            str(start_academic_date) or "N/A",
-            str(end_academic_date) or "N/A",
+            start_academic_date.strftime('%d/%m/%Y') or "N/A",
+            end_academic_date.strftime('%d/%m/%Y') or "N/A",
         ])
     return "N/A"
 
