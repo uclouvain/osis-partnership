@@ -1,12 +1,15 @@
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Exists, OuterRef, Prefetch, Subquery
+from django.db.models import Case, Exists, OuterRef, Prefetch, Subquery, When
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.models import (
-    PartnershipAgreement, PartnershipYear, PartnershipConfiguration,
+    PartnershipAgreement,
+    PartnershipType,
+    PartnershipYear,
+    PartnershipConfiguration,
     AgreementStatus,
 )
 from .list import PartnershipsListView
@@ -54,10 +57,17 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             queryset
             .annotate(
                 tags_list=StringAgg('tags__value', ', '),
-                is_valid=Exists(
-                    PartnershipAgreement.objects
-                        .filter(status=AgreementStatus.VALIDATED.name,
-                                partnership=OuterRef('pk'))
+                is_valid=Case(
+                    When(
+                        partnership_type=PartnershipType.PROJECT.name,
+                        then=True,
+                    ),
+                    default=Exists(
+                        PartnershipAgreement.objects.filter(
+                            status=AgreementStatus.VALIDATED.name,
+                            partnership=OuterRef('pk'),
+                        )
+                    )
                 ),
             )
             .prefetch_related(
