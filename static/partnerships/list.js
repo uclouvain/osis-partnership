@@ -96,9 +96,24 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         $('#result-list').DataTable().ajax.reload();
         updateExportButton();
         return false;
-    }).on('reset', function () {
+    });
+
+    // Use click handler and not reset event to be able to prevent default
+    $form.find(':reset').on('click', function (e) {
+        // Manually reset autocomplete
         yl.jQuery('[data-autocomplete-light-function=select2]').val('').trigger('change');
+
+        // Manually reset fields, because we don't want to reset hidden fields
+        $form.find(':input').not(':button, :submit, :reset, [type=hidden]')
+            .val('')
+            .prop('checked', false);
+        // Manually reset select
+        $form.find('select').each(function () {
+            this.selectedIndex = 0;
+        });
+
+        // Prevent browser default reset
+        e.preventDefault();
         updateExportButton();
-        $('#result-list').DataTable().ajax.reload();
-    })
+    });
 })(jQuery);
