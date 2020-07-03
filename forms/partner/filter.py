@@ -19,7 +19,7 @@ class PartnerFilterForm(forms.Form):
     )
     partner_type = forms.ChoiceField(
         label=_('partner_type'),
-        choices=ORGANIZATION_TYPE,
+        choices=((None, '---------'),) + ORGANIZATION_TYPE,
         required=False,
     )
     pic_code = forms.CharField(

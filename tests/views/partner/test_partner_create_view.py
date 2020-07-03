@@ -1,6 +1,8 @@
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import ContactType
@@ -25,9 +27,10 @@ class PartnerCreateViewTest(TestCase):
         cls.country = CountryFactory()
         cls.data = {
             'organization-name': 'test',
-            'organization-start_date': '',
+            'organization-start_date': '02/07/2020',
             'organization-end_date': '',
             'organization-code': 'test',
+            'organization-type': ACADEMIC_PARTNER,
             'partner-is_valid': 'on',
             'partner-pic_code': 'test',
             'partner-erasmus_code': 'test',
@@ -75,13 +78,59 @@ class PartnerCreateViewTest(TestCase):
     def test_dates_error(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
-        data['organization-start_date'] = '02/07/2020'
         data['organization-end_date'] = '01/07/2020'
         response = self.client.post(self.url, data, follow=True)
         self.assertIn('start_date', response.context['organization_form'].errors)
         self.assertTemplateNotUsed(response, self.detail_template)
 
-    def test_post(self):
+    def test_ies_pic_requirements(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['partner-is_ies'] = 'False'
+        data['partner-pic_code'] = ''
+        data['partner-is_nonprofit'] = ''
+        data['partner-is_public'] = ''
+        data['partner-email'] = ''
+        data['partner-phone'] = ''
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn('is_nonprofit', response.context_data['form'].errors)
+        self.assertIn('is_public', response.context_data['form'].errors)
+        self.assertIn('email', response.context_data['form'].errors)
+        self.assertIn('phone', response.context_data['form'].errors)
+        self.assertIn('contact_type', response.context_data['form'].errors)
+        self.assertTemplateNotUsed(response, self.detail_template)
+
+    def test_ies_pic_address_requirements(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['partner-is_ies'] = 'False'
+        data['partner-pic_code'] = ''
+        data['contact_address-name'] = ''
+        data['contact_address-city'] = ''
+
+        # If there is an error in the address form, do not check for ies/pic
+        data['contact_address-country'] = '-1'
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn('country', response.context_data['form_address'].errors)
+        self.assertNotIn('city', response.context_data['form_address'].errors)
+
+        # Otherwise name, city and country are mandatory
+        data['contact_address-country'] = ''
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn('country', response.context_data['form_address'].errors)
+        self.assertIn('city', response.context_data['form_address'].errors)
+        self.assertIn('name', response.context_data['form_address'].errors)
+        self.assertTemplateNotUsed(response, self.detail_template)
+
+    def test_post_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, self.detail_template)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_post_as_gf_adri_notified(self):
+        self.client.force_login(self.user_gf)
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, self.detail_template)
+        self.assertEqual(len(mail.outbox), 1)
+        mail.outbox = []

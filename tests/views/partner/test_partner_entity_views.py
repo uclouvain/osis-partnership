@@ -13,7 +13,6 @@ from reference.tests.factories.country import CountryFactory
 
 
 class PartnerEntityCreateViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         # User creation
@@ -55,6 +54,12 @@ class PartnerEntityCreateViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_create.html')
 
+    def test_post_invalid(self):
+        self.client.force_login(self.user_adri)
+        data = {'name': ''}  # At least the name is required
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_detail.html')
+
     def test_post(self):
         self.client.force_login(self.user_adri)
         data = {
@@ -90,7 +95,6 @@ class PartnerEntityCreateViewTest(TestCase):
 
 
 class PartnerEntityUpdateViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         # User creation
@@ -160,6 +164,13 @@ class PartnerEntityUpdateViewTest(TestCase):
         self.client.force_login(self.user_other_gf)
         response = self.client.get(self.gf_url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
+
+    def test_absolute_url(self):
+        partner_url = resolve_url('partnerships:partners:detail', pk=self.partner.pk)
+        self.assertEqual(
+            self.partner_entity.get_absolute_url(),
+            partner_url + '#partner-entity-' + str(self.partner_entity.pk)
+        )
 
     def test_post(self):
         self.client.force_login(self.user_adri)
@@ -196,7 +207,6 @@ class PartnerEntityUpdateViewTest(TestCase):
 
 
 class PartnerEntityDeleteViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         # User creation
@@ -269,6 +279,16 @@ class PartnerEntityDeleteViewTest(TestCase):
 
     def test_post(self):
         self.client.force_login(self.user_adri)
-        data = {}
-        response = self.client.post(self.url, data=data, follow=True)
+        response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+    def test_get_as_ajax(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url, data={}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertTemplateUsed(response, 'partnerships/partners/entities/includes/partner_entity_delete.html')
+        self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
+
+    def test_post_as_ajax(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.post(self.url, data={}, HTTP_X_REQUESTED_WITH='XMLHttpRequest', follow=True)
+        self.assertEqual(response.status_code, 200)

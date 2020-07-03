@@ -2,7 +2,7 @@
     // Similar partners in AJAX
     var $similar = $('#similar-partners');
     var xhr = null;
-    $(document).on('keyup', '#id_partner-name', function(event) {
+    $(document).on('keyup', '#id_organization-name', function(event) {
         if (xhr !== null) {
             xhr.abort();
         }

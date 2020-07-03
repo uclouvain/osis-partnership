@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -38,8 +38,6 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             kwargs['instance'] = self.object.contact_address
         form = AddressForm(**kwargs)
         form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['city'].required = True
-        form.fields['country'].required = True
         return form
 
     def get_organization_form(self):
@@ -51,9 +49,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         if self.object is not None:
             kwargs['instance'] = self.object.organization
         kwargs['user'] = self.request.user
-        form = OrganizationForm(**kwargs)
-        form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        return form
+        return OrganizationForm(**kwargs)
 
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
@@ -82,8 +78,8 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         last_version = entity.get_latest_entity_version()
         start_date = organization_form.cleaned_data['start_date']
         end_date = organization_form.cleaned_data['end_date']
-        if last_version and start_date and last_version.start_date != start_date:
-            last_version.end_date = start_date
+        if last_version and last_version.start_date != start_date:
+            last_version.end_date = start_date - timedelta(days=1)
             last_version.save()
             last_version = None
         elif last_version and end_date and last_version.end_date != end_date:
@@ -176,11 +172,6 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
     form_class = PartnerEntityForm
     context_object_name = 'partner_entity'
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partner_entity_form.html'
-        return self.template_name
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['partner'] = self.partner
@@ -188,20 +179,10 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
     @transaction.atomic
     def form_valid(self, form):
-        entity = form.save(commit=False)
-        # We need to set the partner
-        #  because the one on the entity is not saved yet
-        entity.partner = self.partner
-        if entity.pk is None:
-            entity.author = self.request.user.person
-        entity.address.save()
-        entity.address_id = entity.address.id
-        entity.contact_in.save()
-        entity.contact_in_id = entity.contact_in.id
-        entity.contact_out.save()
-        entity.contact_out_id = entity.contact_out.id
-        entity.save()
-        form.save_m2m()
+        form.instance.partner = self.partner
+        if form.instance.pk is None:
+            form.instance.author = self.request.user.person
+        form.save()
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
 

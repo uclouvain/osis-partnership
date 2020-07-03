@@ -1,6 +1,13 @@
+from datetime import date
+
 from django.test import TestCase
 
-from partnership.utils import merge_agreement_ranges
+from base.tests.factories.academic_year import AcademicYearFactory
+from partnership.utils import (
+    academic_dates,
+    academic_years,
+    merge_agreement_ranges,
+)
 
 
 class MergeAgreementRangesTest(TestCase):
@@ -64,3 +71,23 @@ class MergeAgreementRangesTest(TestCase):
             {'start': 2010, 'end': 2013},
             {'start': 2015, 'end': 2017},
         ])
+
+
+class UtilAcademicDisplayTest(TestCase):
+    def test_academic_dates(self):
+        start = date(2020, 7, 2)
+        end = date(2020, 9, 30)
+        self.assertEqual(academic_dates('', ''), "N/A")
+        self.assertEqual(academic_dates(None, None), "N/A")
+        self.assertEqual(academic_dates(start, None), "02/07/2020 > N/A")
+        self.assertEqual(academic_dates('', end), "N/A > 30/09/2020")
+        self.assertEqual(academic_dates(start, end), "02/07/2020 > 30/09/2020")
+
+    def test_academic_years(self):
+        start = AcademicYearFactory(year=2150)
+        end = AcademicYearFactory(year=2151)
+        self.assertEqual(academic_years('', ''), "N/A")
+        self.assertEqual(academic_years(None, None), "N/A")
+        self.assertEqual(academic_years(start, None), "2150 > N/A")
+        self.assertEqual(academic_years('', end), "N/A > 2152")
+        self.assertEqual(academic_years(start, end), "2150 > 2152")

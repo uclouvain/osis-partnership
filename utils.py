@@ -1,39 +1,16 @@
-from django.contrib.auth import get_user_model
-
-from base.models.entity_version import EntityVersion
-
-
-def get_adri_users():
-    return get_user_model().objects.filter(
-        person__partnershipentitymanager__entity__entityversion__acronym='ADRI'
-    )
-
-
-def get_user_faculties(user):
-    return EntityVersion.objects.filter(
-        entity_type="FACULTY", entity__partnershipentitymanager__person__user=user
-    )
-
-
-def get_adri_emails():
-    return get_adri_users().values_list('email', flat=True)
-
-
-def academic_years(start_academic_year, end_academic_year):
-    if start_academic_year is not None or end_academic_year is not None:
-        return ' > '.join([
-            str(start_academic_year.year) or "N/A",
-            str(end_academic_year.year + 1) or "N/A",
-        ])
+def academic_years(start_year, end_year):
+    if start_year or end_year:
+        start_year = start_year.year if start_year else "N/A"
+        end_year = end_year.year + 1 if end_year else "N/A"
+        return '{} > {}'.format(start_year, end_year)
     return "N/A"
 
 
-def academic_dates(start_academic_date, end_academic_date):
-    if start_academic_date or end_academic_date:
-        return ' > '.join([
-            start_academic_date.strftime('%d/%m/%Y') or "N/A",
-            end_academic_date.strftime('%d/%m/%Y') or "N/A",
-        ])
+def academic_dates(start_date, end_date):
+    if start_date or end_date:
+        start_date = start_date.strftime('%d/%m/%Y') if start_date else "N/A"
+        end_date = end_date.strftime('%d/%m/%Y') if end_date else "N/A"
+        return '{} > {}'.format(start_date, end_date)
     return "N/A"
 
 

@@ -73,25 +73,7 @@ class PartnerAdminFilter(filters.FilterSet):
 
     @staticmethod
     def filter_is_actif(queryset, name, value):
-        queryset = queryset.annotate(
-            start_date=Subquery(EntityVersion.objects.filter(
-                entity__organization=OuterRef('organization_id'),
-                parent__isnull=True,
-            ).order_by('start_date').values('start_date')[:1]),
-            end_date=Subquery(EntityVersion.objects.filter(
-                entity__organization=OuterRef('organization_id'),
-                parent__isnull=True,
-            ).order_by('-start_date').values('end_date')[:1]),
-        )
-        if value:
-            return queryset.filter(
-                (Q(start_date__isnull=True) & Q(end_date__isnull=True))
-                | (Q(start_date__lte=Now()) & Q(end_date__gte=Now()))
-            )
-        else:
-            return queryset.filter(
-                Q(start_date__gt=Now()) | Q(end_date__lt=Now())
-            )
+        return queryset.add_dates_annotation(filter_value=value)
 
 
 class FinancingOrderingFilter(filters.OrderingFilter):

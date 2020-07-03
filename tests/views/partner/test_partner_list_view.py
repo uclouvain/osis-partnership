@@ -41,8 +41,12 @@ class PartnersListViewTest(TestCase):
             is_valid=False,
             is_ies=False,
         )
-        cls.partner_is_actif = PartnerFactory(
+        cls.partner_not_active = PartnerFactory(
             dates__end=timezone.now() - timedelta(days=1),
+            is_ies=False
+        )
+        cls.partner_not_active2 = PartnerFactory(
+            dates__start=timezone.now() + timedelta(days=1),
             is_ies=False
         )
         cls.partner_tag = PartnerTagFactory()
@@ -120,12 +124,20 @@ class PartnersListViewTest(TestCase):
         self.assertEqual(context['partners'][0], self.partner_is_valid)
 
     def test_filter_is_actif(self):
+        self.assertFalse(self.partner_not_active.is_actif)
+        self.assertFalse(self.partner_not_active2.is_actif)
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_actif=False')
+        response = self.client.get(self.url + '?is_actif=3')
         self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
-        self.assertEqual(len(context['partners']), 1)
-        self.assertEqual(context['partners'][0], self.partner_is_actif)
+        self.assertEqual(len(context['partners']), 2)
+        self.assertEqual(context['partners'][0], self.partner_not_active)
+        self.assertEqual(context['partners'][1], self.partner_not_active2)
+
+        response = self.client.get(self.url + '?is_actif=2')
+        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
+        context = response.context_data
+        self.assertEqual(len(context['partners']), 8)
 
     def test_filter_tags(self):
         self.client.force_login(self.user)

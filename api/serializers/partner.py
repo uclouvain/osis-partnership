@@ -34,6 +34,7 @@ class PartnerAdminSerializer(PartnerSerializer):
 
     class Meta:
         model = Partner
-        fields = PartnerSerializer.Meta.fields + [
-            'is_actif', 'is_valid', 'url', 'id'
+        fields = [
+            'name', 'erasmus_code', 'partner_type', 'city', 'country',
+            'partnerships_count', 'is_actif', 'is_valid', 'url', 'id'
         ]

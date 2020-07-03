@@ -19,6 +19,7 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
         return (
             Partner.objects
             .select_related('organization', 'author__user')
+            .add_dates_annotation()
             .prefetch_related(
                 'tags',
                 Prefetch('entities', queryset=PartnerEntity.objects.select_related(

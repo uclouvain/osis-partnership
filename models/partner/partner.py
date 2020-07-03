@@ -2,10 +2,12 @@ import uuid
 from datetime import date
 
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Subquery, OuterRef, Q
+from django.db.models.functions import Now
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity_version import EntityVersion
 from base.models.organization import Organization
 
 __all__ = [
@@ -30,7 +32,31 @@ class PartnerTag(models.Model):
         return self.value
 
 
-class PartnerManager(models.Manager):
+class PartnerQueryset(models.QuerySet):
+    def add_dates_annotation(self, filter_value=None):
+        qs = self.annotate(
+            start_date=Subquery(EntityVersion.objects.filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('start_date').values('start_date')[:1]),
+            end_date=Subquery(EntityVersion.objects.filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('-start_date').values('end_date')[:1]),
+        )
+        if filter_value:
+            return qs.filter(
+                (Q(start_date__isnull=True) | Q(start_date__lte=Now()))
+                & (Q(end_date__isnull=True) | Q(end_date__gte=Now()))
+            )
+        elif filter_value is not None:
+            return qs.filter(
+                Q(start_date__gt=Now()) | Q(end_date__lt=Now())
+            )
+        return qs
+
+
+class PartnerManager(models.manager.BaseManager.from_queryset(PartnerQueryset)):
     def get_queryset(self):
         return super().get_queryset().select_related('organization')
 
@@ -170,8 +196,8 @@ class Partner(models.Model):
     @property
     def is_actif(self):
         """ Partner is not active if it has date and is not within those. """
-        start_date = self.organization.start_date
-        end_date = self.organization.end_date
+        start_date = getattr(self, 'start_date', self.organization.start_date)
+        end_date = getattr(self, 'end_date', self.organization.end_date)
         if start_date is not None and date.today() < start_date:
             return False
         if end_date is not None and date.today() > end_date:
