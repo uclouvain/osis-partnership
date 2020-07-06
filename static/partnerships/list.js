@@ -56,13 +56,6 @@ function initDataTable (storageKey, url, columnDefs, extra) {
 }
 
 (function ($) {
-    // Needed for select 2
-    $('select').parents('form').on('reset', function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-        $(this).find('input,select').val('').change();
-    });
-
     // Handle fields relying on certain types
     var type = $('#id_partnership_type')
     function collapseMobilityFields () {
@@ -99,7 +92,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     });
 
     // Use click handler and not reset event to be able to prevent default
-    $form.find(':reset').on('click', function (e) {
+    $form.on('reset', function (e) {
         // Manually reset autocomplete
         yl.jQuery('[data-autocomplete-light-function=select2]').val('').trigger('change');
 
@@ -108,12 +101,13 @@ function initDataTable (storageKey, url, columnDefs, extra) {
             .val('')
             .prop('checked', false);
         // Manually reset select
-        $form.find('select').each(function () {
+        $form.find('select').not('[data-autocomplete-light-function=select2]').each(function () {
             this.selectedIndex = 0;
-        });
+        }).trigger('change');
 
         // Prevent browser default reset
         e.preventDefault();
+        e.stopPropagation();
         updateExportButton();
     });
 })(jQuery);
