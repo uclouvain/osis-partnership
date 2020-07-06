@@ -323,6 +323,7 @@ class PartnershipFilterForm(forms.Form):
         if is_faculty_manager(user):
             university = user.person.partnershipentitymanager_set.first().entity_id
             self.fields['ucl_entity'].initial = university
+            self.fields['ucl_entity_with_child'].initial = True
 
     def clean_ordering(self):
         # Django filters expects a list
