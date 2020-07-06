@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormMixin
 
@@ -12,8 +13,12 @@ from base.models.entity_version import EntityVersion
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import AddressForm, PartnerEntityForm, PartnerForm
+from partnership.forms.partner.entity import (
+    PartnerEntityContactForm,
+    EntityVersionAddressForm,
+)
 from partnership.forms.partner.partner import OrganizationForm
-from partnership.models import Partner
+from partnership.models import Partner, PartnerEntity
 from partnership.views.mixins import NotifyAdminMailMixin
 
 
@@ -157,7 +162,9 @@ class PartnerEntityMixin(PermissionRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return self.partner.entities.all()
+        return PartnerEntity.objects.filter(
+            entity_version__parent__organization__partner=self.partner,
+        )
 
     def get_success_url(self):
         return self.partner.get_absolute_url()
@@ -171,18 +178,111 @@ class PartnerEntityMixin(PermissionRequiredMixin):
 class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
     form_class = PartnerEntityForm
     context_object_name = 'partner_entity'
+    forms = None
+    object = None
+    PARTNER_ENTITY_FORM = ''
+    CONTACT_IN_FORM = 'contact_in'
+    CONTACT_OUT_FORM = 'contact_out'
+    ADDRESS_FORM = 'address'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['partner'] = self.partner
         return kwargs
 
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        if kwargs.get(self.pk_url_kwarg):
+            self.object = self.get_object()
+        forms = self.get_forms()
+        if all(map(lambda form: form.is_valid(), forms.values())):
+            return self.form_valid(forms)
+        else:
+            return self.form_invalid(forms[self.PARTNER_ENTITY_FORM])
+
+    def get_forms(self):
+        if not self.forms:
+            address = None
+            if self.object:
+                address = self.object.entity_version.entityversionaddress_set.first()
+            self.forms = {
+                self.PARTNER_ENTITY_FORM: self.get_form(),
+                self.CONTACT_IN_FORM: PartnerEntityContactForm(
+                    self.request.POST or None,
+                    prefix=self.CONTACT_IN_FORM,
+                    instance=getattr(self.object, 'contact_in', None),
+                ),
+                self.CONTACT_OUT_FORM: PartnerEntityContactForm(
+                    self.request.POST or None,
+                    prefix=self.CONTACT_OUT_FORM,
+                    instance=getattr(self.object, 'contact_out', None),
+                ),
+                self.ADDRESS_FORM: EntityVersionAddressForm(
+                    self.request.POST or None,
+                    prefix=self.ADDRESS_FORM,
+                    instance=address,
+                ),
+            }
+        return self.forms
+
+    def get_context_data(self, **kwargs):
+        kwargs.update(**self.get_forms())
+        return super().get_context_data(**kwargs)
+
+    @staticmethod
+    def generate_unique_acronym(base_acronym):
+        existing = EntityVersion.objects.filter(
+            acronym__istartswith=base_acronym
+        ).values_list('acronym', flat=True)
+        i = 1
+        while '{}-{}'.format(base_acronym, i) in existing:  # pragma: no cover
+            i += 1
+        return '{}-{}'.format(base_acronym, i)
+
     @transaction.atomic
-    def form_valid(self, form):
-        form.instance.partner = self.partner
-        if form.instance.pk is None:
-            form.instance.author = self.request.user.person
-        form.save()
+    def form_valid(self, forms):
+        entity_form = forms[self.PARTNER_ENTITY_FORM]
+        address_form = forms[self.ADDRESS_FORM]
+
+        if not entity_form.instance.pk:
+            entity = entity_form.save(commit=False)
+            entity_form.instance.author = self.request.user.person
+            organization = self.partner.organization
+            entity.entity_version = EntityVersion.objects.create(
+                entity=Entity.objects.create(organization_id=organization.pk),
+                start_date=timezone.now(),
+                acronym=self.generate_unique_acronym(organization.code),
+                parent=organization.entity_set.first(),
+                title=entity.name,
+            )
+
+        elif entity_form.has_changed() or address_form.has_changed():
+            # End the previous entity
+            entity_form.instance.entity_version.end_date = (
+                timezone.now() - timedelta(days=1)
+            )
+            entity_form.instance.entity_version.save()
+
+            # Create a new one with previous values
+            entity_form.instance.entity_version = EntityVersion.objects.create(
+                entity=entity_form.instance.entity_version.entity,
+                acronym=entity_form.instance.entity_version.acronym,
+                parent=entity_form.instance.entity_version.parent,
+                title=entity_form.instance.entity_version.title,
+                start_date=timezone.now(),
+            )
+
+        entity_form.instance.partner = self.partner
+        entity_form.instance.contact_in = forms[self.CONTACT_IN_FORM].save()
+        entity_form.instance.contact_out = forms[self.CONTACT_OUT_FORM].save()
+        entity = entity_form.save()
+
+        address_form.instance.entity_version = entity.entity_version
+        address_form.save()
+
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
 

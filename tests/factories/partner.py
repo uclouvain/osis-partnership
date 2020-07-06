@@ -52,12 +52,13 @@ class PartnerFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def dates(obj, create, extracted, start=None, end=None, **kwargs):
         if create:
-            EntityVersionFactory(
+            entity_version = EntityVersionFactory(
                 entity__organization=obj.organization,
                 start_date=start or (timezone.now() - timedelta(days=365)),
                 end_date=end,
                 parent=None,
             )
+            obj.organization.entity_set.add(entity_version.entity)
 
     @factory.post_generation
     def entities(obj, create, extracted, **kwargs):
@@ -69,6 +70,15 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
     class Meta:
         model = PartnerEntity
 
-    partner = factory.SubFactory(PartnerFactory)
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
-    address = factory.SelfAttribute('partner.contact_address')
+    entity_version = factory.SubFactory(EntityVersionFactory, parent=None)
+
+    @factory.post_generation
+    def partner(obj, create, extracted, **kwargs):
+        if create:
+            partner = extracted or PartnerFactory()
+            if not obj.entity_version.parent_id:
+                obj.entity_version.parent = partner.organization.entity_set.first()
+                obj.entity_version.save()
+            obj.entity_version.entity.organization = partner.organization
+            obj.entity_version.entity.save()

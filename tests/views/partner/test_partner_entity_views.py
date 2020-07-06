@@ -65,9 +65,10 @@ class PartnerEntityCreateViewTest(TestCase):
         data = {
             'name': 'test',
             'comment': 'test',
-            'address_name': 'test',
-            'address_address': 'test',
+            'address_street_number': 'test',
+            'address_street': 'test',
             'address_postal_code': '13245',
+            'address_state': 'state',
             'address_city': 'test',
             'address_country': self.country.pk,
             'contact_in_type': self.contact_type.pk,
@@ -109,9 +110,14 @@ class PartnerEntityUpdateViewTest(TestCase):
 
         # Partner creation
         cls.partner = PartnerFactory(author=PersonFactory())
+        cls.parent_entity = PartnerEntityFactory(
+            partner=cls.partner,
+            author=cls.partner.author,
+        )
         cls.partner_entity = PartnerEntityFactory(
             partner=cls.partner,
             author=cls.partner.author,
+            entity_version__parent=cls.parent_entity.entity_version.entity,
         )
 
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
@@ -177,9 +183,10 @@ class PartnerEntityUpdateViewTest(TestCase):
         data = {
             'name': 'test',
             'comment': 'test',
-            'address_name': 'test',
-            'address_address': 'test',
+            'address_street_number': 'test',
+            'address_street': 'test',
             'address_postal_code': '13245',
+            'address_state': 'state',
             'address_city': 'test',
             'address_country': self.country.pk,
             'contact_in_type': self.contact_type.pk,
@@ -200,10 +207,19 @@ class PartnerEntityUpdateViewTest(TestCase):
             'contact_out_mobile_phone': 'test',
             'contact_out_fax': 'test',
             'contact_out_email': 'test@test.test',
-            'parent': '',
+            'parent': self.parent_entity.pk,
         }
+        current_entity = self.partner_entity.entity_version.entity
+        self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
+        self.assertEqual(current_entity.entityversion_set.count(), 1)
+
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        # Should have two versions
+        self.assertEqual(current_entity.entityversion_set.count(), 2)
+        # Should still be parent
+        self.partner_entity.refresh_from_db()
+        self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
 
 
 class PartnerEntityDeleteViewTest(TestCase):

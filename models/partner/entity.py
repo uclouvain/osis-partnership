@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import resolve_url
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 __all__ = ['PartnerEntity']
@@ -10,21 +11,13 @@ class PartnerEntity(models.Model):
     Une entité d'un partenaire.
     Il peut y avoir plusieurs entités par partenaire.
     """
-    partner = models.ForeignKey(
-        'partnership.Partner',
+    entity_version = models.OneToOneField(
+        'base.EntityVersion',
         verbose_name=_('partner'),
-        on_delete=models.CASCADE,
-        related_name='entities',
+        on_delete=models.PROTECT,
+        related_name='+',
     )
     name = models.CharField(_('Name'), max_length=255)
-    address = models.ForeignKey(
-        'partnership.Address',
-        verbose_name=_('address'),
-        on_delete=models.SET_NULL,
-        related_name='+',
-        blank=True,
-        null=True,
-    )
     contact_in = models.ForeignKey(
         'partnership.Contact',
         verbose_name=_('contact_in'),
@@ -38,14 +31,6 @@ class PartnerEntity(models.Model):
         verbose_name=_('contact_out'),
         on_delete=models.SET_NULL,
         related_name='+',
-        blank=True,
-        null=True,
-    )
-    parent = models.ForeignKey(
-        'self',
-        verbose_name=_('parent_entity'),
-        on_delete=models.PROTECT,
-        related_name='childs',
         blank=True,
         null=True,
     )
@@ -69,6 +54,16 @@ class PartnerEntity(models.Model):
 
     def get_absolute_url(self):
         return '{0}#partner-entity-{1}'.format(
-            resolve_url('partnerships:partners:detail', pk=self.partner_id),
+            resolve_url('partnerships:partners:detail', pk=self.partner.pk),
             self.id,
         )
+
+    @cached_property
+    def partner(self):
+        return self.entity_version.entity.organization.partner
+
+    @cached_property
+    def parent_entity(self):
+        return PartnerEntity.objects.filter(
+            entity_version=self.entity_version.parent.most_recent_entity_version
+        ).first()

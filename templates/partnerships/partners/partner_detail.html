@@ -161,7 +161,7 @@
       </div>
     </div>
 
-    {% for entity in partner.entities.all %}
+    {% for entity in entities %}
     {% has_perm 'partnership.change_partnerentity' user entity as can_change_partner_entity %}
     {% has_perm 'partnership.delete_partnerentity' user entity as can_delete_partner_entity %}
     <div class="partner-entity">
@@ -209,9 +209,17 @@
           {% endif %}
         </div>
         <div class="col-sm-12 col-md-6">
-          {% if entity.address and entity.address.one_line_display %}
-          <strong>{% trans "contact_address" %}</strong> {{ entity.address.one_line_display|linebreaksbr }}
-          {% endif %}
+          {% with address=entity.entity_version.entityversionaddress_set.all.0 %}
+            {% if address %}
+              <strong>{% trans "contact_address" %}</strong>
+              {{ address.street_number }}
+              {{ address.street }}
+              {{ address.postal_code }}
+              {{ address.city }}
+              {{ address.state }}
+              {{ address.country }}
+            {% endif %}
+          {% endwith %}
 
           {% if entity.comment %}<p><strong>{% trans "comment" %}</strong> <em>{{ entity.comment|linebreaksbr }}</em></p>{% endif %}
         </div>
@@ -225,8 +233,10 @@
           {% endif %}
         </div>
 
-        {% if entity.parent %}
-        <div class="col-sm-12 col-md-6"><strong>{% trans "parent_entity" %}</strong>  {{ entity.parent }}</div>
+        {% if entity.parent_entity %}
+          <div class="col-sm-12 col-md-6">
+            <strong>{% trans "parent_entity" %}</strong> {{ entity.parent_entity }}
+          </div>
         {% endif %}
       </div>
     </div>

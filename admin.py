@@ -24,10 +24,10 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     }
 
 
-class PartnerEntityAdmin(admin.TabularInline):
+class PartnerEntityAdmin(admin.ModelAdmin):
     model = PartnerEntity
     raw_id_fields = (
-        'address',
+        'entity_version',
         'contact_in',
         'contact_out',
     )
@@ -41,9 +41,6 @@ class PartnerAdmin(admin.ModelAdmin):
         'pic_code',
     )
     list_display = ('__str__', 'organization_code', 'erasmus_code', 'pic_code')
-    inlines = [
-        PartnerEntityAdmin,
-    ]
     raw_id_fields = (
         'now_known_as',
         'medias',
@@ -221,6 +218,7 @@ class UCLManagementEntityAdmin(admin.ModelAdmin):
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
+admin.site.register(PartnerEntity, PartnerEntityAdmin)
 admin.site.register(PartnershipTag)
 admin.site.register(PartnershipYearEducationLevel)
 admin.site.register(Partnership, PartnershipAdmin)

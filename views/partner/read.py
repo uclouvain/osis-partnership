@@ -23,12 +23,17 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
             .annotate_website()
             .prefetch_related(
                 'tags',
-                Prefetch('entities', queryset=PartnerEntity.objects.select_related(
-                    'contact_in', 'contact_out', 'address', 'parent', 'author__user',
-                )),
                 Prefetch(
                     'medias',
                     queryset=Media.objects.select_related('type'),
                 ),
             )
         )
+
+    def get_context_data(self, **kwargs):
+        kwargs['entities'] = PartnerEntity.objects.filter(
+            entity_version__parent__organization__partner=self.object,
+        ).select_related(
+            'contact_in', 'contact_out', 'entity_version', 'author__user',
+        )
+        return super().get_context_data(**kwargs)
