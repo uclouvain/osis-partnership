@@ -52,7 +52,7 @@ def forward(apps, schema_editor):
         )
         EntityVersion.objects.create(
             entity_id=entity.pk,
-            start_date=partner.start_date or datetime.today(),  # TODO confirm that
+            start_date=partner.start_date or partner.created,
             end_date=partner.end_date,
             title=partner.name,
         )

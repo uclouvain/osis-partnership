@@ -25,7 +25,7 @@ class PartnerAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Query
         ]
 
     def get_queryset(self):
-        qs = Partner.objects.add_dates_annotation(filter_value=True).distinct()
+        qs = Partner.objects.annotate_dates(filter_value=True).distinct()
         pk = self.forwarded.get('partner_pk', None)
         if self.q:
             qs = qs.filter(organization__name__icontains=self.q)

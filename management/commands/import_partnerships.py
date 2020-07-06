@@ -8,6 +8,7 @@ from django.db import IntegrityError, transaction
 from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.enums.entity_type import FACULTY
+from base.models.organization import Organization
 from base.models.person import Person
 from partnership.management.commands.progress_bar import ProgressBarMixin
 from partnership.models import (
@@ -307,8 +308,12 @@ class Command(ProgressBarMixin, BaseCommand):
         try:
             partner = Partner.objects.get(organization__code=partner_code)
         except Partner.DoesNotExist:
-            # TODO orga
-            partner = Partner(organization__code=partner_code)
+            organization = Organization.objects.create(
+                code=partner_code,
+                name=line[6],
+                external_id='osis.organization_' + line[1] if line[1] else ''
+            )
+            partner = Partner(organization=organization)
 
         # TODO orga
         # Mandatory fields not in the CSV file
@@ -317,13 +322,10 @@ class Command(ProgressBarMixin, BaseCommand):
         partner.author = default_values['author']
 
         # Fields from the CSV file
-        partner.external_id = self.get_partner_external_id(line[1], partner.pk)
-        partner.partner_code = line[2] if line[2] else None
         partner.pic_code = line[3] if line[3] else None
         partner.erasmus_code = (
             line[4] if line[4] and line[4] != line[10] else None
         )
-        partner.name = line[6] if line[6] else None
         partner.start_date = self.parse_date(line[7])
         partner.end_date = self.parse_date(line[8])
         partner.is_ies = line[11] == 'U'

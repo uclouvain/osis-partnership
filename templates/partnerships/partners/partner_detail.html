@@ -80,7 +80,7 @@
           <dt>{% trans "contact_address" %}</dt>
           <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
 
-          {% with website=partner.organization.website %}
+          {% with website=partner.website %}
             {% if website %}
               <dt>{% trans "website" %}</dt>
               <dd><a href="{{ website }}" target="_blank">{{ website }}</a></dd>

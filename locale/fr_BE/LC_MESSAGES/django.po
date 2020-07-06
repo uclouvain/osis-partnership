@@ -260,6 +260,9 @@ msgstr ""
 msgid "Higher education institution (tertiary level)"
 msgstr ""
 
+msgid "Include subordinate entities"
+msgstr "Inclure les entités subordonnées"
+
 msgid "International organisation under public law"
 msgstr ""
 
@@ -649,6 +652,9 @@ msgstr "Code Erasmus"
 msgid "export_financings_for_year_%(academic_year)s"
 msgstr "Exporter les financements pour l'année %(academic_year)s"
 
+msgid "external_id"
+msgstr "ID externe"
+
 msgid "external_link"
 msgstr "Lien externe"
 
@@ -943,6 +949,9 @@ msgstr "Partenaire sauvegardé avec succès."
 
 msgid "partner_start_date"
 msgstr "Date de début d’existence"
+
+msgid "partner_start_date_help_text"
+msgstr "Si modifié, une nouvelle version de cette entité sera créée"
 
 msgid "partner_tags"
 msgstr "Tags"

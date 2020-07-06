@@ -73,7 +73,7 @@ class PartnerAdminFilter(filters.FilterSet):
 
     @staticmethod
     def filter_is_actif(queryset, name, value):
-        return queryset.add_dates_annotation(filter_value=value)
+        return queryset.annotate_dates(filter_value=value)
 
 
 class FinancingOrderingFilter(filters.OrderingFilter):

@@ -201,6 +201,9 @@ msgstr ""
 msgid "Higher education institution (tertiary level)"
 msgstr ""
 
+msgid "Include subordinate entities"
+msgstr ""
+
 msgid "International organisation under public law"
 msgstr ""
 
@@ -587,6 +590,9 @@ msgstr "Erasmus code"
 msgid "export_financings_for_year_%(academic_year)s"
 msgstr "Export financings for year %(academic_year)s"
 
+msgid "external_id"
+msgstr "External ID"
+
 msgid "external_link"
 msgstr "External link"
 
@@ -874,6 +880,9 @@ msgstr "Partner successfully saved"
 
 msgid "partner_start_date"
 msgstr "Partner start date"
+
+msgid "partner_start_date_help_text"
+msgstr "If modified, will create a new version for this entity"
 
 msgid "partner_tags"
 msgstr "Partner tags"

@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 
 from django.db import models
 from django.db.models import Prefetch, Subquery, OuterRef, Q
@@ -33,7 +33,7 @@ class PartnerTag(models.Model):
 
 
 class PartnerQueryset(models.QuerySet):
-    def add_dates_annotation(self, filter_value=None):
+    def annotate_dates(self, filter_value=None):
         qs = self.annotate(
             start_date=Subquery(EntityVersion.objects.filter(
                 entity__organization=OuterRef('organization_id'),
@@ -54,6 +54,16 @@ class PartnerQueryset(models.QuerySet):
                 Q(start_date__gt=Now()) | Q(end_date__lt=Now())
             )
         return qs
+
+    def annotate_website(self, of_datetime=None):
+        if not of_datetime:
+            of_datetime = datetime.now()
+        return self.annotate(
+            website=Subquery(EntityVersion.objects.current(of_datetime).filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('-start_date').values('entity__website')[:1]),
+        )
 
 
 class PartnerManager(models.manager.BaseManager.from_queryset(PartnerQueryset)):
