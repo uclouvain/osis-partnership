@@ -1,0 +1,72 @@
+[
+  {
+    "model": "partnership.fundingsource",
+    "pk": 1,
+    "fields": {
+      "name": "Fonds propres"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 2,
+    "fields": {
+      "name": "Sources fédérales"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 3,
+    "fields": {
+      "name": "Grands Fonds"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 4,
+    "fields": {
+      "name": "Fédération Wallonie-Bruxelles"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 5,
+    "fields": {
+      "name": "Région Wallonne"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 6,
+    "fields": {
+      "name": "Région de Bruxelles-Capitale"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 8,
+    "fields": {
+      "name": "Fonds européens"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 10,
+    "fields": {
+      "name": "Fond privés"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 11,
+    "fields": {
+      "name": "Fonds publics étrangers et internationaux"
+    }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 12,
+    "fields": {
+      "name": "Néant"
+    }
+  }
+]

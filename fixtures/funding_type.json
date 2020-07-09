@@ -1,0 +1,299 @@
+[
+  {
+    "model": "partnership.fundingtype",
+    "pk": 1,
+    "fields": {
+      "name": "FAI - Fonds d'appui à l'internationalisation",
+      "url": "",
+      "program": 1
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 2,
+    "fields": {
+      "name": "Bourses de spécialisation médicale",
+      "url": "",
+      "program": 1
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 3,
+    "fields": {
+      "name": "Bourses de doctorat",
+      "url": "",
+      "program": 1
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 4,
+    "fields": {
+      "name": "Mobilité du personnel",
+      "url": "",
+      "program": 1
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 5,
+    "fields": {
+      "name": "PRD - Projet de recherche pour le développement",
+      "url": "",
+      "program": 2
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 6,
+    "fields": {
+      "name": "PFS - Projet de formation Sud",
+      "url": "",
+      "program": 2
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 7,
+    "fields": {
+      "name": "Projet d'appui institutionnel",
+      "url": "",
+      "program": 2
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 8,
+    "fields": {
+      "name": "ASEM-Duo",
+      "url": "",
+      "program": 3
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 9,
+    "fields": {
+      "name": "DESIRA",
+      "url": "",
+      "program": 4
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 10,
+    "fields": {
+      "name": "Commissions mixtes permanentes",
+      "url": "",
+      "program": 5
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 11,
+    "fields": {
+      "name": "Fonds régionaux",
+      "url": "",
+      "program": 5
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 12,
+    "fields": {
+      "name": "Accord WBI-FNRS-China Scholarship Council",
+      "url": "",
+      "program": 5
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 13,
+    "fields": {
+      "name": "Mercator-FAME",
+      "url": "",
+      "program": 6
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 14,
+    "fields": {
+      "name": "Belgica",
+      "url": "",
+      "program": 6
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 15,
+    "fields": {
+      "name": "Erasmus+",
+      "url": "",
+      "program": 8
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 16,
+    "fields": {
+      "name": "KA107 - Dimension international",
+      "url": "",
+      "program": 8
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 17,
+    "fields": {
+      "name": "Capacity Building",
+      "url": "",
+      "program": 9
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 18,
+    "fields": {
+      "name": "Strategic Partnerships",
+      "url": "",
+      "program": 9
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 19,
+    "fields": {
+      "name": "Collaborative Partnerships (Sport)",
+      "url": "",
+      "program": 9
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 20,
+    "fields": {
+      "name": "Knowledge Alliance",
+      "url": "",
+      "program": 9
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 21,
+    "fields": {
+      "name": "Sector Skills Alliances",
+      "url": "",
+      "program": 9
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 22,
+    "fields": {
+      "name": "Support for policy reform",
+      "url": "",
+      "program": 10
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 23,
+    "fields": {
+      "name": "Network",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 24,
+    "fields": {
+      "name": "Module",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 25,
+    "fields": {
+      "name": "Centres of excellence",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 26,
+    "fields": {
+      "name": "Support to associations",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 27,
+    "fields": {
+      "name": "Project",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 28,
+    "fields": {
+      "name": "Chair",
+      "url": "",
+      "program": 11
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 29,
+    "fields": {
+      "name": "Grants",
+      "url": "",
+      "program": 12
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 30,
+    "fields": {
+      "name": "Tenders",
+      "url": "",
+      "program": 12
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 31,
+    "fields": {
+      "name": "DeSIRA",
+      "url": "",
+      "program": 12
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 32,
+    "fields": {
+      "name": "Mission de prospection",
+      "url": "",
+      "program": 18
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 33,
+    "fields": {
+      "name": "Année sabatique",
+      "url": "",
+      "program": 18
+    }
+  }
+]
