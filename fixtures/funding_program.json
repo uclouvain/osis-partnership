@@ -142,5 +142,13 @@
       "name": "Banque mondiale",
       "source": 11
     }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 18,
+    "fields": {
+      "name": "Autres contacts et collaborations",
+      "source": 12
+    }
   }
 ]

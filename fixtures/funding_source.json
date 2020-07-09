@@ -61,5 +61,12 @@
     "fields": {
       "name": "Fonds publics étrangers et internationaux"
     }
+  },
+  {
+    "model": "partnership.fundingsource",
+    "pk": 12,
+    "fields": {
+      "name": "Néant"
+    }
   }
 ]

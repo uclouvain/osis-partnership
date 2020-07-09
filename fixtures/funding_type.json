@@ -277,5 +277,23 @@
       "url": "",
       "program": 12
     }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 32,
+    "fields": {
+      "name": "Mission de prospection",
+      "url": "",
+      "program": 18
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 33,
+    "fields": {
+      "name": "Année sabatique",
+      "url": "",
+      "program": 18
+    }
   }
 ]
