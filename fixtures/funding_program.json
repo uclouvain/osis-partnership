@@ -1,0 +1,146 @@
+[
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 1,
+    "fields": {
+      "name": "CAI - Conseil de l'action internationale",
+      "source": 1
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 2,
+    "fields": {
+      "name": "ARES - Commission coopération au développement",
+      "source": 2
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 3,
+    "fields": {
+      "name": "ARES - Commission relations internationales",
+      "source": 2
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 4,
+    "fields": {
+      "name": "ENABEL - Agence belge de développement",
+      "source": 2
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 5,
+    "fields": {
+      "name": "WBI - Wallonie-Bruxelles International",
+      "source": 4
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 6,
+    "fields": {
+      "name": "CSM - Conseil supérieur de la mobilité étudiante",
+      "source": 4
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 7,
+    "fields": {
+      "name": "Erasmus+  KA1",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 8,
+    "fields": {
+      "name": "Erasmus+  KA1",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 9,
+    "fields": {
+      "name": "Erasmus+  KA2",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 10,
+    "fields": {
+      "name": "Erasmus+  KA3",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 11,
+    "fields": {
+      "name": "Jean Monnet",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 12,
+    "fields": {
+      "name": "DG DEVCO",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 12,
+    "fields": {
+      "name": "Horizon 2020/Horizon Europe",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 13,
+    "fields": {
+      "name": "AUF - Agence universitaire de la francophonie",
+      "source": 11
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 14,
+    "fields": {
+      "name": "China Scholarship Council",
+      "source": 11
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 15,
+    "fields": {
+      "name": "Chinese Academy of Sciences",
+      "source": 11
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 16,
+    "fields": {
+      "name": "Vietnam International Education Development",
+      "source": 11
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 17,
+    "fields": {
+      "name": "Banque mondiale",
+      "source": 11
+    }
+  }
+]
