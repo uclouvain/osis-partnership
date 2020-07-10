@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
+from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory as BaseEducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
@@ -15,7 +16,6 @@ from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
     PartnerTagFactory,
-    PartnerTypeFactory,
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
     PartnershipFactory,
@@ -41,7 +41,7 @@ class PartnershipsListViewTest(TestCase):
             main_teaching_campus = None
 
         cls.partnership_first_name = PartnershipFactory(
-            partner__name='Albania School',
+            partner__organization__name='Albania School',
         )
 
         # ucl_university
@@ -79,6 +79,9 @@ class PartnershipsListViewTest(TestCase):
             contact_address__country__name='Albania',
         )
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
+        cls.partnership_partner_type = PartnershipFactory(
+            partner__organization__type=ACADEMIC_PARTNER,
+        )
 
         # partner_entity
         cls.partner_entity = PartnerEntityFactory()
@@ -86,10 +89,6 @@ class PartnershipsListViewTest(TestCase):
 
         # use_egracons
         cls.partnership_use_egracons = PartnershipFactory(partner__use_egracons=True)
-
-        # partner_type
-        cls.partner_type = PartnerTypeFactory()
-        cls.partnership_partner_type = PartnershipFactory(partner__partner_type=cls.partner_type)
 
         # city
         cls.partnership_city = PartnershipFactory(
@@ -275,7 +274,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=partner__name')
+        response = self.client.get(self.url + '?ordering=partner')
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(context['partnerships'][0], self.partnership_first_name)
@@ -358,7 +357,7 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partner_type=' + str(self.partner_type.pk))
+        response = self.client.get(self.url + '?partner_type=' + ACADEMIC_PARTNER)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
         context = response.context_data
         self.assertEqual(len(context['partnerships']), 1)

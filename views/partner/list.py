@@ -23,9 +23,13 @@ class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
 
     def get_queryset(self):
         return (
-            Partner.objects.all()
-            .select_related('partner_type', 'contact_address__country')
-            .annotate(partnerships_count=Count('partnerships')).distinct()
+            Partner.objects
+            .select_related('contact_address__country')
+            .annotate_dates()
+            .annotate_website()
+            .annotate(
+                partnerships_count=Count('partnerships'),
+            ).distinct()
         )
 
     def get_paginate_by(self, queryset):

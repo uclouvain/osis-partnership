@@ -377,7 +377,7 @@ class PartnershipUpdateViewTest(TestCase):
     def test_post_invalid_partner(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
-        partner = PartnerFactory(end_date=timezone.now() - timedelta(days=1))
+        partner = PartnerFactory(dates__end=timezone.now() - timedelta(days=1))
         data['partner'] = partner.pk
         response = self.client.post(self.url, data=data)
         msg = _('partnership_inactif_partner_error')

@@ -90,7 +90,7 @@ class PartnershipFilter(filters.FilterSet):
     # Not used
     ordering = filters.OrderingFilter(
         fields=(
-            ('partner__name', 'partner'),
+            ('partner__organization__name', 'partner'),
             ('partner__contact_address__country__name', 'country_en'),
             ('partner__contact_address__city', 'city'),
             ('type_ordered', 'type'),

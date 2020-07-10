@@ -96,7 +96,7 @@ class PartnerFundingFilter(FundingFilterMixin, filters.ModelMultipleChoiceFilter
 class PartnerFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
-            ('name', 'partner'),
+            ('organization__name', 'partner'),
             ('contact_address__country__iso_code', 'country_en'),
             ('contact_address__city', 'city'),
             ('partnerships__ucl_entity', 'ucl_entity'),

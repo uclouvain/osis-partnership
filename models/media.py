@@ -81,4 +81,7 @@ class Media(models.Model):
         return self.file.name.split('.')[-1]
 
     def get_document_file_size(self):
-        return self.file.size
+        try:
+            return self.file.size
+        except FileNotFoundError:
+            return "Not found"

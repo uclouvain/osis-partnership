@@ -37,10 +37,10 @@
       <div class="col-sm-12 col-md-6 partner-info-left">
         <dl class="dl-horizontal">
           <dt>{% trans "partner_type" %}</dt>
-          <dd>{{ partner.partner_type|default_if_none:"" }}</dd>
+          <dd>{{ partner.organization.get_type_display|default_if_none:"" }}</dd>
 
           <dt>{% trans "partner_code" %}</dt>
-          <dd>{{ partner.partner_code|default_if_none:"" }}</dd>
+          <dd>{{ partner.organization.code|default_if_none:"" }}</dd>
 
           <dt>{% trans "pic_code" %}</dt>
           <dd>{{ partner.pic_code|default_if_none:"" }}</dd>
@@ -80,8 +80,12 @@
           <dt>{% trans "contact_address" %}</dt>
           <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
 
-          <dt>{% trans "website" %}</dt>
-          <dd>{% if partner.website %}<a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>{% endif %}</dd>
+          {% with website=partner.website %}
+            {% if website %}
+              <dt>{% trans "website" %}</dt>
+              <dd><a href="{{ website }}" target="_blank">{{ website }}</a></dd>
+            {% endif %}
+          {% endwith %}
 
           {% if partner.email %}
           <dt>{% trans "email" %}</dt>

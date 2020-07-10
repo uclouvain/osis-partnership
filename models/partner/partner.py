@@ -1,31 +1,19 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Subquery, OuterRef, Q
+from django.db.models.functions import Now
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
+from base.models.entity_version import EntityVersion
+from base.models.organization import Organization
 
 __all__ = [
     'Partner',
     'PartnerTag',
-    'PartnerType',
 ]
-
-
-class PartnerType(models.Model):
-    """
-    Le type de partenaire
-
-    Dans un autre modèle car configurable dans l'administration Django.
-    """
-    value = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        ordering = ('value',)
-
-    def __str__(self):
-        return self.value
 
 
 class PartnerTag(models.Model):
@@ -42,6 +30,45 @@ class PartnerTag(models.Model):
 
     def __str__(self):
         return self.value
+
+
+class PartnerQueryset(models.QuerySet):
+    def annotate_dates(self, filter_value=None):
+        qs = self.annotate(
+            start_date=Subquery(EntityVersion.objects.filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('start_date').values('start_date')[:1]),
+            end_date=Subquery(EntityVersion.objects.filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('-start_date').values('end_date')[:1]),
+        )
+        if filter_value:
+            return qs.filter(
+                (Q(start_date__isnull=True) | Q(start_date__lte=Now()))
+                & (Q(end_date__isnull=True) | Q(end_date__gte=Now()))
+            )
+        elif filter_value is not None:
+            return qs.filter(
+                Q(start_date__gt=Now()) | Q(end_date__lt=Now())
+            )
+        return qs
+
+    def annotate_website(self, of_datetime=None):
+        if not of_datetime:
+            of_datetime = datetime.now()
+        return self.annotate(
+            website=Subquery(EntityVersion.objects.current(of_datetime).filter(
+                entity__organization=OuterRef('organization_id'),
+                parent__isnull=True,
+            ).order_by('-start_date').values('entity__website')[:1]),
+        )
+
+
+class PartnerManager(models.manager.BaseManager.from_queryset(PartnerQueryset)):
+    def get_queryset(self):
+        return super().get_queryset().select_related('organization')
 
 
 class Partner(models.Model):
@@ -83,31 +110,18 @@ class Partner(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
 
-    external_id = models.CharField(
-        _('external_id'),
-        help_text=_('to_synchronize_with_epc'),
-        max_length=255,
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
+    organization = models.OneToOneField(
+        Organization,
+        on_delete=models.PROTECT,
     )
+
     changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
-    name = models.CharField(_('Name'), max_length=255)
     is_ies = models.BooleanField(_('is_ies'), default=False)
-    partner_type = models.ForeignKey(
-        PartnerType,
-        verbose_name=_('partner_type'),
-        related_name='partners',
-        on_delete=models.PROTECT,
-    )
-    partner_code = models.CharField(_('partner_code'), max_length=255, unique=True, null=True, blank=True)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
-    start_date = models.DateField(_('partner_start_date'), null=True, blank=True)
-    end_date = models.DateField(_('partner_end_date'), null=True, blank=True)
+
     now_known_as = models.ForeignKey(
         'self',
         verbose_name=_('now_known_as'),
@@ -125,7 +139,6 @@ class Partner(models.Model):
         blank=True,
         null=True,
     )
-    website = models.URLField(_('website'))
     email = models.EmailField(
         _('email'),
         help_text=_('mandatory_if_not_pic_ies'),
@@ -176,6 +189,8 @@ class Partner(models.Model):
         null=True,
     )
 
+    objects = PartnerManager()
+
     class Meta:
         ordering = ('-created',)
         permissions = (
@@ -183,17 +198,19 @@ class Partner(models.Model):
         )
 
     def __str__(self):
-        return self.name
+        return self.organization.name
 
     def get_absolute_url(self):
         return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
 
     @property
     def is_actif(self):
-        """ Partner is not actif if it has date and is not within those. """
-        if self.start_date is not None and date.today() < self.start_date:
+        """ Partner is not active if it has date and is not within those. """
+        start_date = getattr(self, 'start_date', self.organization.start_date)
+        end_date = getattr(self, 'end_date', self.organization.end_date)
+        if start_date is not None and date.today() < start_date:
             return False
-        if self.end_date is not None and date.today() > self.end_date:
+        if end_date is not None and date.today() > end_date:
             return False
         return True
 

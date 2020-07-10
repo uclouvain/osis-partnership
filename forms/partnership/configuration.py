@@ -1,8 +1,6 @@
 from datetime import date
 
 from django import forms
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
 from partnership.models import PartnershipConfiguration

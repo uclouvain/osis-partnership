@@ -298,7 +298,7 @@ class PartnershipAdminSerializer(serializers.ModelSerializer):
         source='partner.contact_address.city',
     )
     supervisor = serializers.CharField(source='get_supervisor')
-    partner = serializers.CharField(source='partner.name')
+    partner = serializers.CharField(source='partner.organization.name')
     type = serializers.CharField(source='get_partnership_type_display')
 
     class Meta:

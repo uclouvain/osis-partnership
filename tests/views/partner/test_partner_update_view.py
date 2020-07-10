@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -7,13 +9,12 @@ from partnership.models import ContactType
 from partnership.tests.factories import (
     PartnerFactory,
     PartnerTagFactory,
-    PartnerTypeFactory,
     PartnershipEntityManagerFactory,
 )
 from reference.tests.factories.country import CountryFactory
 
 
-class PartnerCreateViewTest(TestCase):
+class PartnerUpdateViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -33,6 +34,32 @@ class PartnerCreateViewTest(TestCase):
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
+
+        cls.data = {
+            'organization-name': 'test',
+            'partner-is_valid': 'on',
+            'organization-start_date': cls.partner.organization.start_date,
+            'organization-end_date': '',
+            'organization-type':  cls.partner.organization.type,
+            'organization-code': 'test',
+            'partner-pic_code': 'test',
+            'partner-erasmus_code': 'test',
+            'partner-is_ies': 'True',
+            'partner-is_nonprofit': 'True',
+            'partner-is_public': 'True',
+            'partner-use_egracons': 'on',
+            'partner-comment': 'test',
+            'partner-phone': 'test',
+            'organization-website': 'http://localhost:8000',
+            'partner-email': 'test@test.test',
+            'partner-tags': [PartnerTagFactory().id],
+            'contact_address-name': 'test',
+            'contact_address-address': 'test',
+            'contact_address-postal_code': 'test',
+            'contact_address-city': 'test',
+            'contact_address-country': cls.country.pk,
+        }
+
         cls.url = reverse('partnerships:partners:update', kwargs={'pk': cls.partner.pk})
 
     def test_get_partner_as_anonymous(self):
@@ -73,29 +100,36 @@ class PartnerCreateViewTest(TestCase):
 
     def test_post(self):
         self.client.force_login(self.user_adri)
-        data = {
-            'partner-name': 'test',
-            'partner-is_valid': 'on',
-            'partner-start_date': '',
-            'partner-end_date': '',
-            'partner-partner_type': PartnerTypeFactory().pk,
-            'partner-partner_code': 'test',
-            'partner-pic_code': 'test',
-            'partner-erasmus_code': 'test',
-            'partner-is_ies': 'True',
-            'partner-is_nonprofit': 'True',
-            'partner-is_public': 'True',
-            'partner-use_egracons': 'on',
-            'partner-comment': 'test',
-            'partner-phone': 'test',
-            'partner-website': 'http://localhost:8000',
-            'partner-email': 'test@test.test',
-            'partner-tags': [PartnerTagFactory().id],
-            'contact_address-name': 'test',
-            'contact_address-address': 'test',
-            'contact_address-postal_code': 'test',
-            'contact_address-city': 'test',
-            'contact_address-country': self.country.pk,
-        }
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+    def test_post_new_dates(self):
+        self.client.force_login(self.user_adri)
+        entity = self.partner.organization.entity_set.first()
+        self.assertEqual(entity.entityversion_set.count(), 1)
+        data = self.data.copy()
+        data['organization-start_date'] = self.partner.organization.start_date + timedelta(days=30)
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(entity.entityversion_set.count(), 2)
+
+    def test_post_end_date(self):
+        self.client.force_login(self.user_adri)
+        entity = self.partner.organization.entity_set.first()
+        self.assertEqual(entity.entityversion_set.count(), 1)
+        data = self.data.copy()
+        data['organization-end_date'] = self.partner.organization.start_date + timedelta(days=30)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(entity.entityversion_set.count(), 1)
+
+    def test_post_both_dates(self):
+        self.client.force_login(self.user_adri)
+        entity = self.partner.organization.entity_set.first()
+        self.assertEqual(entity.entityversion_set.count(), 1)
+        data = self.data.copy()
+        data['organization-start_date'] = self.partner.organization.start_date + timedelta(days=30)
+        data['organization-end_date'] = self.partner.organization.start_date + timedelta(days=60)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(entity.entityversion_set.count(), 2)

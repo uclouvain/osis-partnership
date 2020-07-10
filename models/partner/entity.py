@@ -1,5 +1,5 @@
 from django.db import models
-from django.urls import reverse
+from django.shortcuts import resolve_url
 from django.utils.translation import gettext_lazy as _
 
 __all__ = ['PartnerEntity']
@@ -69,6 +69,6 @@ class PartnerEntity(models.Model):
 
     def get_absolute_url(self):
         return '{0}#partner-entity-{1}'.format(
-            reverse('partnerships:partners:detail', kwargs={'pk': self.partner_id}),
+            resolve_url('partnerships:partners:detail', pk=self.partner_id),
             self.id,
         )

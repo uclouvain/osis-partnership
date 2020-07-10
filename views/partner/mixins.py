@@ -1,20 +1,23 @@
-from django.conf import settings
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormMixin
 
+from base.models.entity import Entity
+from base.models.entity_version import EntityVersion
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms import AddressForm, PartnerEntityForm, PartnerForm
-from partnership.models import Partner, PartnershipConfiguration
+from partnership.forms.partner.partner import OrganizationForm
+from partnership.models import Partner
+from partnership.views.mixins import NotifyAdminMailMixin
 
 
-class PartnerFormMixin(PermissionRequiredMixin):
+class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
     form_class = PartnerForm
     context_object_name = 'partner'
     prefix = 'partner'
@@ -35,55 +38,89 @@ class PartnerFormMixin(PermissionRequiredMixin):
             kwargs['instance'] = self.object.contact_address
         form = AddressForm(**kwargs)
         form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        form.fields['city'].required = True
-        form.fields['country'].required = True
         return form
+
+    def get_organization_form(self):
+        kwargs = {
+            'prefix': 'organization',
+        }
+        if self.request.method in ('POST', 'PUT'):
+            kwargs['data'] = self.request.POST
+        if self.object is not None:
+            kwargs['instance'] = self.object.organization
+        kwargs['user'] = self.request.user
+        return OrganizationForm(**kwargs)
 
     def get_context_data(self, **kwargs):
         if 'form_address' not in kwargs:
             kwargs['form_address'] = self.get_address_form()
+        if 'organization_form' not in kwargs:
+            kwargs['organization_form'] = self.get_organization_form()
         return super().get_context_data(**kwargs)
 
     @transaction.atomic
-    def form_valid(self, form, form_address):
+    def form_valid(self, form, form_address, organization_form):
+        # Save address
         contact_address = form_address.save()
+
+        # Save organization
+        organization = organization_form.save()
+
+        # Save related entity
+        entity, created = Entity.objects.update_or_create(
+            defaults=dict(
+                website=organization_form.cleaned_data['website'],
+            ),
+            organization_id=organization.pk,
+        )
+
+        # Save entity version
+        last_version = entity.get_latest_entity_version()
+        start_date = organization_form.cleaned_data['start_date']
+        end_date = organization_form.cleaned_data['end_date']
+        if last_version and last_version.start_date != start_date:
+            last_version.end_date = start_date - timedelta(days=1)
+            last_version.save()
+            last_version = None
+        elif last_version and end_date and last_version.end_date != end_date:
+            last_version.end_date = start_date
+            last_version.save()
+
+        if not last_version:
+            EntityVersion.objects.create(
+                entity_id=entity.pk,
+                parent=None,
+                start_date=start_date or datetime.today(),
+                end_date=end_date,
+            )
+
         partner = form.save(commit=False)
-        is_create = partner.pk is None
-        if is_create:
+        is_creation = partner.pk is None
+        if is_creation:
             partner.author = self.request.user.person
+
         partner.contact_address = contact_address
+        partner.organization = organization
         partner.save()
         form.save_m2m()
         messages.success(self.request, _('partner_saved'))
-        if is_create and not is_linked_to_adri_entity(self.request.user):
-            send_mail(
-                'OSIS-Partenariats : {} - {}'.format(_('partner_created'), partner.name),
-                render_to_string(
-                    'partnerships/mails/plain_partner_creation.html',
-                    context={
-                        'user': self.request.user,
-                        'partner': partner,
-                    },
-                    request=self.request,
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [PartnershipConfiguration.get_configuration().email_notification_to],
-                html_message=render_to_string(
-                    'partnerships/mails/partner_creation.html',
-                    context={
-                        'user': self.request.user,
-                        'partner': partner,
-                    },
-                    request=self.request,
-                ),
+        if is_creation and not is_linked_to_adri_entity(self.request.user):
+            self.notify_admin_mail(
+                '{} - {}'.format(_('partner_created'), organization.name),
+                'partner_creation.html',
+                {
+                    'user': self.request.user,
+                    'partner': partner,
+                },
             )
         return redirect(partner)
 
-    def form_invalid(self, form, form_address):
+    def form_invalid(self, form, form_address, organization_form):
         messages.error(self.request, _('partner_error'))
         return self.render_to_response(self.get_context_data(
             form=form,
-            form_address=form_address
+            form_address=form_address,
+            organization_form=organization_form,
         ))
 
     def check_form_address(self, form, form_address):
@@ -104,12 +141,12 @@ class PartnerFormMixin(PermissionRequiredMixin):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_address = self.get_address_form()
+        organization_form = self.get_organization_form()
         form_valid = form.is_valid()
         form_address_valid = self.check_form_address(form, form_address)
-        if form_valid and form_address_valid:
-            return self.form_valid(form, form_address)
-        else:
-            return self.form_invalid(form, form_address)
+        if organization_form.is_valid() and form_valid and form_address_valid:
+            return self.form_valid(form, form_address, organization_form)
+        return self.form_invalid(form, form_address, organization_form)
 
 
 class PartnerEntityMixin(PermissionRequiredMixin):
@@ -135,11 +172,6 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
     form_class = PartnerEntityForm
     context_object_name = 'partner_entity'
 
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return 'partnerships/includes/partner_entity_form.html'
-        return self.template_name
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['partner'] = self.partner
@@ -147,20 +179,10 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
     @transaction.atomic
     def form_valid(self, form):
-        entity = form.save(commit=False)
-        # We need to set the partner
-        #  because the one on the entity is not saved yet
-        entity.partner = self.partner
-        if entity.pk is None:
-            entity.author = self.request.user.person
-        entity.address.save()
-        entity.address_id = entity.address.id
-        entity.contact_in.save()
-        entity.contact_in_id = entity.contact_in.id
-        entity.contact_out.save()
-        entity.contact_out_id = entity.contact_out.id
-        entity.save()
-        form.save_m2m()
+        form.instance.partner = self.partner
+        if form.instance.pk is None:
+            form.instance.author = self.request.user.person
+        form.save()
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
 

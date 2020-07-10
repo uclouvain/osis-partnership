@@ -2,7 +2,8 @@ from dal import autocomplete
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from partnership.models import Address, PartnerTag, PartnerType
+from base.models.enums.organization_type import ORGANIZATION_TYPE
+from partnership.models import Address, PartnerTag
 from reference.models.continent import Continent
 from reference.models.country import Country
 from ..widgets import CustomNullBooleanSelect
@@ -16,9 +17,9 @@ class PartnerFilterForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': _('partner_name')}),
         required=False,
     )
-    partner_type = forms.ModelChoiceField(
+    partner_type = forms.ChoiceField(
         label=_('partner_type'),
-        queryset=PartnerType.objects.all(),
+        choices=((None, '---------'),) + ORGANIZATION_TYPE,
         required=False,
     )
     pic_code = forms.CharField(

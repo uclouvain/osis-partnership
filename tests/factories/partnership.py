@@ -1,5 +1,6 @@
 import factory
 
+from base.models.enums.organization_type import MAIN
 from partnership.models import Partnership, PartnershipTag, PartnershipType
 from .partner import PartnerFactory
 from .partnership_year import PartnershipYearFactory
@@ -21,7 +22,7 @@ class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
 
-    partner = factory.SubFactory(PartnerFactory)
+    partner = factory.SubFactory(PartnerFactory, organization__type=MAIN)
     partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(

@@ -37,19 +37,21 @@ class PartnersExportView(ExportView, PartnersListView):
         queryset = self.filterset.qs
         queryset = (
             queryset
-            .annotate(tags_list=StringAgg('tags__value', ', '))
+            .annotate(
+                tags_list=StringAgg('tags__value', ', '),
+            )
             .values_list(
                 'id',
-                'external_id',
+                'organization__external_id',
                 'author__user__username',
                 'created',
                 'changed',
-                'name',
+                'organization__name',
                 'is_valid',
                 'start_date',
                 'end_date',
-                'now_known_as__name',
-                'partner_type__value',
+                'now_known_as__organization__name',
+                'organization__type',
                 'pic_code',
                 'erasmus_code',
                 'is_ies',

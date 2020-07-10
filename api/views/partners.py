@@ -71,7 +71,8 @@ class PartnersListView(generics.ListAPIView):
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return (
             Partner.objects
-            .select_related('partner_type', 'contact_address__country')
+            .select_related('contact_address__country')
+            .annotate_website()
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
                 has_in=Exists(

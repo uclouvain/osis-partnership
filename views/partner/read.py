@@ -18,7 +18,9 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
     def get_queryset(self):
         return (
             Partner.objects
-            .select_related('partner_type', 'author__user')
+            .select_related('organization', 'author__user')
+            .annotate_dates()
+            .annotate_website()
             .prefetch_related(
                 'tags',
                 Prefetch('entities', queryset=PartnerEntity.objects.select_related(

@@ -34,8 +34,13 @@ class PartnerEntityAdmin(admin.TabularInline):
 
 
 class PartnerAdmin(admin.ModelAdmin):
-    search_fields = ('name', 'partner_code', 'erasmus_code', 'pic_code')
-    list_display = ('__str__', 'partner_code', 'erasmus_code', 'pic_code')
+    search_fields = (
+        'organization__name',
+        'organization__code',
+        'erasmus_code',
+        'pic_code',
+    )
+    list_display = ('__str__', 'organization_code', 'erasmus_code', 'pic_code')
     inlines = [
         PartnerEntityAdmin,
     ]
@@ -45,6 +50,10 @@ class PartnerAdmin(admin.ModelAdmin):
         'author',
         'contact_address',
     )
+
+    @staticmethod
+    def organization_code(obj):
+        return obj.organization.code
 
     def save_form(self, request, form, change):
         """
@@ -210,7 +219,6 @@ class UCLManagementEntityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
-admin.site.register(PartnerType)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(PartnershipTag)

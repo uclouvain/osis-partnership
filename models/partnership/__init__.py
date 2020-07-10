@@ -9,7 +9,7 @@ try:
     for name in ['agreement', 'configuration', 'partnership',
                  'partnership_year', 'partnership_year_education']:
         del globals()[name]
-except RuntimeError as e:
+except RuntimeError as e:  # pragma: no cover
     # There's a weird bug when running tests, the test runner seeing a models
     # package tries to import it directly, failing to do so
     import sys

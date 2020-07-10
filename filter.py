@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Exists, Max, OuterRef, Q
+from django.db.models import Exists, Max, OuterRef, Q, Subquery
 from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
@@ -21,16 +21,20 @@ from partnership.models import (
 class PartnerAdminFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
-            ('name', 'partner'),
+            ('organization__name', 'partner'),
             ('contact_address__country__name', 'country'),
             ('erasmus_code', 'erasmus_code'),
-            ('partner_type__value', 'partner_type'),
+            ('organization__type', 'partner_type'),
             ('contact_address__city', 'city'),
             ('is_valid', 'is_valid'),
             ('is_actif', 'is_actif'),
         )
     )
-    name = filters.CharFilter(lookup_expr='icontains')
+    name = filters.CharFilter(
+        field_name='organization__name',
+        lookup_expr='icontains',
+    )
+    partner_type = filters.CharFilter(field_name='organization__type')
     pic_code = filters.CharFilter(lookup_expr='icontains')
     erasmus_code = filters.CharFilter(lookup_expr='icontains')
     continent = filters.CharFilter(
@@ -69,15 +73,7 @@ class PartnerAdminFilter(filters.FilterSet):
 
     @staticmethod
     def filter_is_actif(queryset, name, value):
-        if value:
-            return queryset.filter(
-                (Q(start_date__isnull=True) & Q(end_date__isnull=True))
-                | (Q(start_date__lte=Now()) & Q(end_date__gte=Now()))
-            )
-        else:
-            return queryset.filter(
-                Q(start_date__gt=Now()) | Q(end_date__lt=Now())
-            )
+        return queryset.annotate_dates(filter_value=value)
 
 
 class FinancingOrderingFilter(filters.OrderingFilter):
@@ -122,7 +118,7 @@ class MultipleOrderingFilter(filters.OrderingFilter):
 class PartnershipAdminFilter(filters.FilterSet):
     ordering = MultipleOrderingFilter(
         fields=(
-            ('partner__name', 'partner'),
+            ('partner__organization__name', 'partner'),
             ('country', 'country'),
             ('partner__contact_address__city', 'city'),
             ('ucl', 'ucl'),
@@ -131,7 +127,7 @@ class PartnershipAdminFilter(filters.FilterSet):
             'country': [
                 'partner__contact_address__country__name',
                 'partner__contact_address__city',
-                'partner__name'
+                'partner__organization__name'
             ],
             'ucl': [
                 'ucl_sector_most_recent_acronym',
@@ -150,7 +146,7 @@ class PartnershipAdminFilter(filters.FilterSet):
     ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
     ucl_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
-    partner_type = filters.CharFilter(field_name='partner__partner_type')
+    partner_type = filters.CharFilter(field_name='partner__organization__type')
     education_level = filters.CharFilter(field_name='years__education_levels')
     education_field = filters.CharFilter(field_name='years__education_fields')
     years_entity = filters.CharFilter(method='filter_years_entity')
@@ -220,7 +216,6 @@ class PartnershipAdminFilter(filters.FilterSet):
             'university_offer',
             'partner',
             'partner_entity',
-            'partner_type',
             'erasmus_code',
             'use_egracons',
             'continent',
@@ -389,7 +384,7 @@ class PartnershipAdminFilter(filters.FilterSet):
 class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
     ordering = MultipleOrderingFilter(
         fields=(
-            ('partnership__partner__name', 'partner'),
+            ('partnership__partner__organization__name', 'partner'),
             ('country', 'country'),
             ('partnership__partner__contact_address__city', 'city'),
             ('ucl', 'ucl'),
@@ -398,7 +393,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             'country': [
                 'partnership__partner__contact_address__country__name',
                 'partnership__partner__contact_address__city',
-                'partnership__partner__name',
+                'partnership__partner__organization__name',
             ],
             'ucl': [
                 'partnership_ucl_sector_most_recent_acronym',

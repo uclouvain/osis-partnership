@@ -25,15 +25,14 @@ class PartnerAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Query
         ]
 
     def get_queryset(self):
-        qs = Partner.objects.all()
+        qs = Partner.objects.annotate_dates(filter_value=True).distinct()
         pk = self.forwarded.get('partner_pk', None)
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
-        qs = qs.distinct()
+            qs = qs.filter(organization__name__icontains=self.q)
         if pk is not None:
             current = Partner.objects.get(pk=pk)
-            return [current] + list(filter(lambda x: x.is_actif, qs))
-        return list(filter(lambda x: x.is_actif, qs))
+            return [current] + list(qs)
+        return qs
 
 
 class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
@@ -41,12 +40,10 @@ class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = PartnerEntity.objects.all()
         partner = self.forwarded.get('partner', None)
-        if partner:
-            qs = qs.filter(partner=partner)
-        else:
+        if not partner:
             return PartnerEntity.objects.none()
+        qs = PartnerEntity.objects.filter(partner_id=partner)
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs.distinct()
