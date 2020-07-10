@@ -24,6 +24,12 @@ def forward(apps, schema_editor):
         ).values('pk').order_by('pk'))
     )
 
+    Entity.objects.filter(organization__partner__isnull=False).update(
+        website=Subquery(Organization.objects.filter(
+            pk=OuterRef('organization'),
+        ).values('partner__website').order_by('pk')[:1])
+    )
+
     unmatched = Partner.objects.filter(organization__isnull=True)
 
     type_mapping = {
