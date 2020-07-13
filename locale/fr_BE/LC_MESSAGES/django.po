@@ -610,7 +610,7 @@ msgid "education_field"
 msgstr "Domaine d'étude"
 
 msgid "education_fields"
-msgstr "Domaines d'étude"
+msgstr "Domaines"
 
 msgid "education_group_types"
 msgstr "Types de groupe d'éducation"
@@ -754,6 +754,9 @@ msgstr "Le partenaire est en cours de validation"
 
 msgid "invalid_partner_entity"
 msgstr "Entité partenaire invalide."
+
+msgid "invisible_on_api"
+msgstr "Non visible sur l'interface publique"
 
 msgid "is_actif"
 msgstr "Actif"
@@ -1347,6 +1350,9 @@ msgstr "Personnels"
 
 msgid "visibility_staff_student"
 msgstr "Personnels et étudiants"
+
+msgid "visible_on_api"
+msgstr "Visible sur l'interface publique"
 
 msgid "website"
 msgstr "Site web"

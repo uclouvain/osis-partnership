@@ -151,7 +151,12 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    comment = models.TextField(_('comment'), default='', blank=True)
+    comment = models.TextField(
+        _('comment'),
+        help_text=_('invisible_on_api'),
+        default='',
+        blank=True,
+    )
     tags = models.ManyToManyField(
         'partnership.PartnershipTag',
         verbose_name=_('tags'),

@@ -86,6 +86,8 @@ class PartnershipBaseForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
 
+        self.fields['comment'].widget.attrs['rows'] = 3
+
         # Prevent type modification for updating
         if self.instance.pk:
             self.fields['partnership_type'].disabled = True

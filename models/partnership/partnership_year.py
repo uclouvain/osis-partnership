@@ -105,6 +105,7 @@ class PartnershipYear(models.Model):
     )
     description = models.TextField(
         _('partnership_year_description'),
+        help_text=_('visible_on_api'),
         default='',
         blank=True,
     )

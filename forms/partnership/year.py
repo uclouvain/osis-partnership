@@ -78,6 +78,9 @@ class PartnershipYearBaseForm(forms.ModelForm):
         self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
 
+        if 'description' in self.fields:
+            self.fields['description'].widget.attrs['rows'] = 3
+
         # Fill the missions field according to the current type
         field_missions = self.fields['missions']
         field_missions.label_from_instance = lambda o: o.label
