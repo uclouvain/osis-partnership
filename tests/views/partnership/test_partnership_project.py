@@ -73,7 +73,7 @@ class PartnershipCreateProjectViewTest(TestCase):
             'year-education_fields': [cls.education_field.pk],
             'year-education_levels': [cls.education_level.pk],
             'year-missions': PartnershipMissionFactory().pk,
-            'year-funding_type': FundingTypeFactory().pk,
+            'year-funding': 'fundingtype-%s' % FundingTypeFactory().pk,
             'year-project_title': "Project title 1",
             'year-id_number': "#132456",
             'year-ucl_status': "coordinator",
@@ -138,6 +138,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
+        cls.type = FundingTypeFactory()
         cls.data = {
             'comment': '',
             'partner': cls.partner.pk,
@@ -152,7 +153,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
-            'year-funding_type': FundingTypeFactory().pk,
+            'year-funding': 'fundingtype-%s' % cls.type.pk,
             'year-project_title': "Project title 1",
             'year-id_number': "#132456",
             'year-ucl_status': "coordinator",
@@ -168,3 +169,43 @@ class PartnershipUpdateProjectViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        year = self.partnership.years.last()
+        self.assertEqual(year.funding_source_id, self.type.program.source_id)
+        self.assertEqual(year.funding_program_id, self.type.program_id)
+        self.assertEqual(year.funding_type_id, self.type.pk)
+
+    def test_post_bad_funding(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['year-funding'] = 'foobar'
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_post_financing_program(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['year-funding'] = 'fundingprogram-%s' % self.type.program_id
+        self.client.post(self.url, data=data, follow=True)
+
+        # Year should have changed
+        year = self.partnership.years.last()
+        self.assertEqual(year.funding_source_id, self.type.program.source_id)
+        self.assertEqual(year.funding_program_id, self.type.program_id)
+        self.assertIsNone(year.funding_type_id)
+
+    def test_post_financing_source(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['year-funding'] = 'fundingsource-%s' % self.type.program.source_id
+        self.client.post(self.url, data=data, follow=True)
+
+        # Year should have changed
+        year = self.partnership.years.last()
+        self.assertEqual(year.funding_source_id, self.type.program.source_id)
+        self.assertIsNone(year.funding_program_id)
+        self.assertIsNone(year.funding_type_id)
+
+        # If we get it again, initial should be ok
+        response = self.client.get(self.url)
+        form = response.context_data['form_year']
+        self.assertEqual(form.fields['funding'].initial, self.type.program.source)

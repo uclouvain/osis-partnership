@@ -68,12 +68,29 @@ class PartnershipYear(models.Model):
         default=True,
         blank=True,
     )
+    funding_source = models.ForeignKey(
+        'partnership.FundingSource',
+        verbose_name=_('funding_source'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+        blank=True,
+    )
+    funding_program = models.ForeignKey(
+        'partnership.FundingProgram',
+        verbose_name=_('funding_program'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+        blank=True,
+    )
     funding_type = models.ForeignKey(
         'partnership.FundingType',
         verbose_name=_('funding_type'),
         on_delete=models.PROTECT,
         related_name='years',
         null=True,
+        blank=True,
     )
     missions = models.ManyToManyField(
         'partnership.PartnershipMission',
