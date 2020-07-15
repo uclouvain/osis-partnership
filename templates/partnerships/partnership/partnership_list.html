@@ -273,16 +273,31 @@
             <tbody>
             </tbody>
           </table>
-          <div class="pull-right">
-            <a href="{{ export_url }}" data-base-href="{{ export_url }}"
-              class="btn btn-default btn-export pull-right download">
-              {% block export_button_label %}
-                {% trans "partnerships_export" %}
-              {% endblock %}
-            </a>
-          </div>
         </div>
+
+        {% block export_button %}
+          <div class="pull-right btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle"
+                    data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+              {% trans "partnerships_export" %}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              {% for year in export_years %}
+                {% url 'partnerships:export' year.pk as export_url %}
+                <li>
+                  <a href="{{ export_url }}" data-base-href="{{ export_url }}"
+                     class="btn-export download">
+                    {% blocktrans %}partnerships_export_yearly {{ year }}{% endblocktrans %}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endblock %}
       </div>
+    </div>
   </div>
   <script rel="stylesheet" src="{% static 'partnerships/reset_form.js' %}" type="text/javascript"></script>
 {% endblock %}

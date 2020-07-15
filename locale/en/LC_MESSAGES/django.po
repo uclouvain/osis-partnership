@@ -574,6 +574,9 @@ msgstr "End academic year"
 msgid "end_date"
 msgstr "End date"
 
+msgid "end_valid_agreement"
+msgstr "Agreement validity end"
+
 msgid "entities"
 msgstr "Entities"
 
@@ -966,6 +969,12 @@ msgstr "Partnership ending in"
 msgid "partnership_error"
 msgstr "Error while saving the partnership"
 
+msgid "partnership_export_end"
+msgstr "Partnership end"
+
+msgid "partnership_export_start"
+msgstr "Partnership start"
+
 msgid "partnership_funding"
 msgstr "Funding"
 
@@ -1094,6 +1103,9 @@ msgstr "Show all years."
 msgid "partnerships_export"
 msgstr "Export partnerships"
 
+msgid "partnerships_export_yearly %(year)s"
+msgstr "Yearly data for %(year)s"
+
 msgid "partnerships_financing_configuration"
 msgstr "Financings configuration"
 
@@ -1138,6 +1150,9 @@ msgstr "Search partners"
 
 msgid "search_partnership"
 msgstr "Search partnership"
+
+msgid "sector"
+msgstr "Sector"
 
 msgid "september"
 msgstr "September"

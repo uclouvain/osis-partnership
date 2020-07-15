@@ -203,9 +203,7 @@ class Partnership(models.Model):
 
     @cached_property
     def is_valid(self):
-        if self.partnership_type == PartnershipType.PROJECT.name:
-            return True
-        return self.validated_agreements.exists()
+        return self.is_project or self.validated_agreements.exists()
 
     @property
     def validated_agreements(self):
@@ -251,9 +249,7 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
-        is_mobility = self.partnership_type == PartnershipType.MOBILITY.name
-        is_project = self.partnership_type == PartnershipType.PROJECT.name
-        if is_mobility and hasattr(self, 'validity_end_year'):
+        if self.is_mobility and hasattr(self, 'validity_end_year'):
             # Queryset was annotated
             if self.validity_end_year is None:
                 return None
@@ -261,7 +257,7 @@ class Partnership(models.Model):
                 self.validity_end_year,
                 str(self.validity_end_year + 1)[-2:],
             )
-        if is_project:
+        if self.is_project:
             return self.end_date.strftime("%d/%m/%Y")
         agreement = (
             self.validated_agreements
@@ -271,7 +267,7 @@ class Partnership(models.Model):
         )
         if agreement is None:
             return None
-        if is_mobility:
+        if self.is_mobility:
             return str(agreement.end_academic_year)
         return agreement.end_date.strftime("%d/%m/%Y")
 
@@ -313,6 +309,14 @@ class Partnership(models.Model):
                 .prefetch_related('education_fields', 'education_levels')
                 .first()
         )
+
+    @cached_property
+    def is_mobility(self):
+        return self.partnership_type == PartnershipType.MOBILITY.name
+
+    @cached_property
+    def is_project(self):
+        return self.partnership_type == PartnershipType.PROJECT.name
 
     @cached_property
     def entities_acronyms(self):

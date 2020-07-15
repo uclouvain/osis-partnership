@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import OuterRef, Subquery
 from django.urls import reverse
@@ -53,8 +55,10 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
             if user.has_perm('partnership.add_partnership', t)]
         )
         context['url'] = reverse('partnerships:list')
-        context['export_url'] = reverse('partnerships:export')
         context['search_button_label'] = _('search_partnership')
+        context['export_years'] = AcademicYear.objects.filter(
+            year__gte=date.today().year,
+        ).order_by('year')[:3]
         return context
 
     def get_paginate_by(self, queryset):

@@ -10,8 +10,14 @@
   {% trans 'Agreements' %}
 {% endblock %}
 
-{% block export_button_label %}
-  {% trans "agreements_export" %}
+{% block export_button %}
+  <div class="pull-right">
+    {% url 'partnerships:export_agreements' as export_url %}
+    <a href="{{ export_url }}" data-base-href="{{ export_url }}"
+       class="btn btn-default btn-export pull-right download">
+      {% trans "agreements_export" %}
+    </a>
+  </div>
 {% endblock %}
 
 {% block datatable %}
