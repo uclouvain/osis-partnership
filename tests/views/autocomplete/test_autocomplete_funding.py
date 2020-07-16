@@ -19,10 +19,10 @@ class FundingAutocompleteTestCase(TestCase):
         FundingProgram.objects.all().delete()
 
         FundingTypeFactory(
-            name="Baz", program__name="Bar", program__source__name="Foo"
+            program__source__name="Ipsum", program__name="Lorem", name="Foobar"
         )
         FundingTypeFactory(
-            name="Foobar", program__name="Lorem", program__source__name="Ipsum"
+            program__source__name="Foo", program__name="Bar", name="Baz",
         )
 
     def test_funding_autocomplete(self):
@@ -30,13 +30,16 @@ class FundingAutocompleteTestCase(TestCase):
         response = self.client.get(self.url)
         results = response.json()['results']
         self.assertEqual(len(results), 6)
+        self.assertEqual(results[0]['text'], "Foo")
 
         response = self.client.get(self.url, {'q': 'bar'})
         results = response.json()['results']
         # should retrieve lorem>ipsum>foobar, foo>bar, type foo>bar>baz
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 3, results)
+        self.assertEqual(results[0]['text'], "Foo > Bar")
         self.assertEqual(results[1]['text'], "Foo > Bar > Baz")
 
         response = self.client.get(self.url, {'q': 'lorem'})
         results = response.json()['results']
         self.assertEqual(len(results), 2)  # program and type
+        self.assertEqual(results[0]['text'], "Ipsum > Lorem")

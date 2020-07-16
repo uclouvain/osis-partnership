@@ -62,10 +62,8 @@ class FundingChoiceField(GenericModelMixin, forms.ModelChoiceField):
     """Replacement for ModelChoiceField supporting multiple model choices."""
     def __init__(self, *args, **kwargs):
         super().__init__(
-            queryset=ContentType.objects.none(),
-            widget=FundingListSelect2(
-                url='partnerships:autocomplete:funding',
-            ),
+            queryset=ContentType.objects.none(),  # Required but useless for now
+            widget=FundingListSelect2(url='partnerships:autocomplete:funding'),
             *args,
             **kwargs
         )
