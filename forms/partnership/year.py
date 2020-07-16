@@ -14,10 +14,11 @@ from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import (
     PartnershipConfiguration,
     PartnershipType, PartnershipYear,
-    PartnershipYearEducationLevel,
+    PartnershipYearEducationLevel, FundingProgram, FundingType, FundingSource,
 )
 from ..fields import (
     EducationGroupYearChoiceSelect, EntityChoiceMultipleField,
+    FundingChoiceField,
 )
 
 __all__ = [
@@ -76,6 +77,9 @@ class PartnershipYearBaseForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
+
+        if 'description' in self.fields:
+            self.fields['description'].widget.attrs['rows'] = 3
 
         # Fill the missions field according to the current type
         field_missions = self.fields['missions']
@@ -154,8 +158,7 @@ class PartnershipYearWithoutDatesForm(PartnershipYearBaseForm):
             self.fields['end_academic_year'].initial = current_academic_year
 
     def clean(self):
-        super().clean()
-        data = self.cleaned_data
+        data = super().clean()
 
         start_academic_year = data.get('start_academic_year', None)
         from_academic_year = data.get('from_academic_year', None)
@@ -196,7 +199,44 @@ class PartnershipYearGeneralForm(PartnershipYearSubtypeMixin, PartnershipYearBas
         self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
-class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
+class FundingMixin(forms.Form):
+    funding = FundingChoiceField(label=_('funding'))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            self.fields['funding'].initial = (
+                    self.instance.funding_type
+                    or self.instance.funding_program
+                    or self.instance.funding_source
+            )
+
+    def clean(self):
+        data = super().clean()
+
+        # Reset previous values in case of empty value
+        data['funding_source'] = None
+        data['funding_program'] = None
+        data['funding_type'] = None
+
+        funding = data.get('funding')
+        if funding:
+            # Determine funding hierarchy from value
+            if isinstance(funding, FundingType):
+                data['funding_source'] = funding.program.source
+                data['funding_program'] = funding.program
+                data['funding_type'] = funding
+            elif isinstance(funding, FundingProgram):
+                data['funding_source'] = funding.source
+                data['funding_program'] = funding
+            elif isinstance(funding, FundingSource):
+                data['funding_source'] = funding
+
+        return data
+
+
+class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
             'is_sms',
@@ -204,22 +244,16 @@ class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
             'is_smst',
             'is_sta',
             'is_stt',
+            'funding_source',
+            'funding_program',
             'funding_type',
         )
-        widgets = {
-            **PartnershipYearBaseForm.Meta.widgets,
-            'funding_type': autocomplete.ModelSelect2(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['funding_type'].help_text = _('help_text_funding_type')
-        self.fields['funding_type'].required = False
-        self.fields['funding_type'].label_from_instance = (
-            lambda o: "{0.program.source} / {0.program} / {0}".format(o)
-        )
-
+        self.fields['funding'].help_text = _('help_text_funding_type')
+        self.fields['funding'].required = False
         self.fields['eligible'].widget = forms.CheckboxInput()
 
         is_adri = is_linked_to_adri_entity(self.user)
@@ -240,8 +274,7 @@ class PartnershipYearMobilityForm(PartnershipYearWithoutDatesForm):
                 self.fields['end_academic_year'].queryset = future_academic_years
 
     def clean(self):
-        super().clean()
-        data = self.cleaned_data
+        data = super().clean()
 
         if data['is_sms'] or data['is_smp'] or data['is_smst']:
             if not data['education_levels']:
@@ -307,22 +340,14 @@ class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearB
         ]
 
 
-class PartnershipYearProjectForm(PartnershipYearBaseForm):
+class PartnershipYearProjectForm(FundingMixin, PartnershipYearBaseForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
+            'funding_source',
+            'funding_program',
             'funding_type',
             'description',
             'id_number',
             'project_title',
             'ucl_status',
-        )
-        widgets = {
-            **PartnershipYearBaseForm.Meta.widgets,
-            'funding_type': autocomplete.ModelSelect2(),
-        }
-
-    def __init__(self, partnership_type=None, *args, **kwargs):
-        super().__init__(partnership_type, *args, **kwargs)
-        self.fields['funding_type'].label_from_instance = (
-            lambda o: "{0.program.source} / {0.program} / {0}".format(o)
         )

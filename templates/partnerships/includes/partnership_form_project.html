@@ -34,15 +34,6 @@
   <div class="col-xs-12">
     {% bootstrap_field form.supervisor %}
   </div>
-  <div class="col-xs-12">
-    {% bootstrap_field form.tags %}
-  </div>
-  <div class="col-xs-12">
-    {% bootstrap_field form.comment %}
-  </div>
-  <div class="col-xs-12">
-    {% bootstrap_field form.is_public %}
-  </div>
 </div>
 
 <h2>{% trans "partnership_subject" %}</h2>
@@ -54,13 +45,13 @@
     {% bootstrap_field form_year.education_fields %}
   </div>
   <div class="col-xs-12">
-    {% bootstrap_field form_year.funding_type %}
-  </div>
-  <div class="col-xs-12">
     {% bootstrap_field form_year.education_levels %}
   </div>
   <div class="col-xs-12">
     {% bootstrap_field form_year.missions field_class="form-inline" %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form_year.funding %}
   </div>
   <div class="col-xs-12">
     {% bootstrap_field form_year.project_title %}
@@ -73,6 +64,15 @@
   </div>
   <div class="col-xs-12">
     {% bootstrap_field form_year.description %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.tags %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.comment %}
+  </div>
+  <div class="col-xs-12">
+    {% bootstrap_field form.is_public %}
   </div>
 </div>
 

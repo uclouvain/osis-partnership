@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory, PartnerFactory, PartnerEntityFactory, )
+from partnership.tests.factories import PartnershipFactory
 
 
 class PartnerAutocompleteTestCase(TestCase):
@@ -44,6 +45,22 @@ class PartnerAutocompleteTestCase(TestCase):
         self.assertEqual(len(results), 3)
         self.assertEqual(results[0]['id'], str(self.current_partner.pk))
 
+    def test_partner_autocomplete_filter(self):
+        self.client.force_login(self.user)
+        url = reverse('partnerships:autocomplete:partner_partnerships_filter')
+
+        # No partnership, no partner
+        response = self.client.get(url)
+        results = response.json()['results']
+        self.assertEqual(len(results), 0)
+
+        # If partnership, return partner
+        PartnershipFactory(partner=self.current_partner)
+        response = self.client.get(url, {'q': 'Univ'})
+        results = response.json()['results']
+        self.assertEqual(len(results), 1, results)
+        self.assertEqual(results[0]['id'], str(self.current_partner.pk))
+
 
 class PartnerEntityAutocompleteTestCase(TestCase):
     @classmethod
@@ -52,7 +69,7 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         cls.url = reverse('partnerships:autocomplete:partner_entity')
 
         cls.partner = PartnerFactory(organization__name="Université de Nantes")
-        PartnerEntityFactory(partner=cls.partner, name="Entity A")
+        cls.entity = PartnerEntityFactory(partner=cls.partner, name="Entity A")
         PartnerEntityFactory(partner=cls.partner, name="Entity B")
         PartnerEntityFactory(name="Other entity")
 
@@ -70,3 +87,26 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         })
         results = response.json()['results']
         self.assertEqual(len(results), 2)
+
+    def test_partner_entity_autocomplete_filter(self):
+        self.client.force_login(self.user)
+        url = reverse('partnerships:autocomplete:partner_entity_partnerships_filter')
+
+        # No partnership, no partner entity
+        response = self.client.get(url)
+        self.assertEqual(len(response.json()['results']), 0)
+
+        # No partner forwarded, return nothing
+        PartnershipFactory(partner_entity=self.entity)
+        response = self.client.get(url, {'q': 'tity',})
+        self.assertEqual(len(response.json()['results']), 0)
+
+        # Return entity with partnership
+        response = self.client.get(url, {
+            'q': 'tity',
+            'forward': json.dumps({'partner': self.partner.pk}),
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1, results)
+        self.assertEqual(results[0]['id'], str(self.entity.pk))
+

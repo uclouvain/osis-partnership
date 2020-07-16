@@ -14,10 +14,6 @@
           {% endfor %}
         </ul>
       </dd>
-      <dt>{% trans "financing" %}</dt>
-      <dd>{{ partnership_year.funding_type }}</dd>
-      <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership_year.description|linebreaks }}</dd>
       <dt>{% trans "education_levels" %}</dt>
       <dd>
         <ul class="list-unstyled">
@@ -39,10 +35,22 @@
           {% endfor %}
         </ul>
       </dd>
+      <dt>{% trans "financing" %}</dt>
+      <dd>{{ partnership_year.funding_source }}</dd>
+      {% if partnership_year.funding_program %}
+        <dt>{% trans "funding_program" %}</dt>
+        <dd>{{ partnership_year.funding_program }}</dd>
+      {% endif %}
+      {% if partnership_year.funding_type %}
+        <dt>{% trans "funding_type" %}</dt>
+        <dd>{{ partnership_year.funding_type }}</dd>
+      {% endif %}
       <dt>{% trans "partnership_year_project_title" %}</dt>
       <dd>{{ partnership_year.project_title }}</dd>
       <dt>{% trans "partnership_year_id_number" %}</dt>
       <dd>{{ partnership_year.id_number }}</dd>
+      <dt>{% trans "partnership_year_description" %}</dt>
+      <dd>{{ partnership_year.description|linebreaks }}</dd>
       <dt>{% trans "partnership_year_ucl_status" %}</dt>
       <dd>{{ partnership_year.get_ucl_status_display }}</dd>
     </dl>

@@ -79,6 +79,7 @@ urlpatterns = [
         path('partner-entity/', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         path('faculty_entity/', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
         path('ucl_entity/', UclEntityAutocompleteView.as_view(), name='ucl_entity'),
+        path('funding/', FundingAutocompleteView.as_view(), name='funding'),
         path(
             'partnership_year_entities/',
             PartnershipYearEntitiesAutocompleteView.as_view(),

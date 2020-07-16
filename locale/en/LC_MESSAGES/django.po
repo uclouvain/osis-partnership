@@ -691,6 +691,9 @@ msgstr "Invalid partner"
 msgid "invalid_partner_entity"
 msgstr "Invalid partner entity"
 
+msgid "invisible_on_api"
+msgstr "Not visible on the public interface"
+
 msgid "is_actif"
 msgstr "Is active"
 
@@ -1275,6 +1278,9 @@ msgstr "Staff"
 
 msgid "visibility_staff_student"
 msgstr "Staff and Student"
+
+msgid "visible_on_api"
+msgstr "Visible on the public interface"
 
 msgid "website"
 msgstr "Website"

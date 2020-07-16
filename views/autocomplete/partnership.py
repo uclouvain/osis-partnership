@@ -45,7 +45,7 @@ class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Q
         qs = Partnership.objects.all()
         if self.q:
             qs = qs.filter(
-                Q(partner__name__icontains=self.q)
+                Q(partner__organization__name__icontains=self.q)
                 | Q(partner_entity__name__icontains=self.q)
             )
         return qs.distinct()
@@ -143,7 +143,7 @@ class PartnerAutocompletePartnershipsFilterView(PermissionRequiredMixin, autocom
     def get_queryset(self):
         qs = Partner.objects.filter(partnerships__isnull=False)
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(organization__name__icontains=self.q)
         return qs.distinct()
 
 
