@@ -150,5 +150,29 @@
       "name": "Autres contacts et collaborations",
       "source": 12
     }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 19,
+    "fields": {
+      "name": "Erasmus+ European Universities Initiative",
+      "source": 8
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 20,
+    "fields": {
+      "name": "Movetia",
+      "source": 11
+    }
+  },
+  {
+    "model": "partnership.fundingprogram",
+    "pk": 21,
+    "fields": {
+      "name": "Réseau institutionnel",
+      "source": 12
+    }
   }
 ]
