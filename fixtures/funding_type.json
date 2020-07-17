@@ -295,5 +295,41 @@
       "url": "",
       "program": 18
     }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 34,
+    "fields": {
+      "name": "Erasmus Mundus Joint Master Degrees",
+      "url": "",
+      "program": 8
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 35,
+    "fields": {
+      "name": "SEMP - Swiss European Mobility Programme",
+      "url": "",
+      "program": 20
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 36,
+    "fields": {
+      "name": "Coimbra Groupe",
+      "url": "",
+      "program": 21
+    }
+  },
+  {
+    "model": "partnership.fundingtype",
+    "pk": 37,
+    "fields": {
+      "name": "The Guild",
+      "url": "",
+      "program": 21
+    }
   }
 ]
