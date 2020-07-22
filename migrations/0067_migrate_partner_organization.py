@@ -46,7 +46,7 @@ def forward(apps, schema_editor):
     for partner in unmatched:
         partner.organization_id = Organization.objects.create(
             name=partner.name,
-            code=partner.partner_code or '',
+            code=partner.partner_code,
             type=type_mapping[partner.partner_type_id],
             external_id='osis.organization_' + partner.external_id
             if partner.external_id else '',
@@ -61,6 +61,7 @@ def forward(apps, schema_editor):
             start_date=partner.start_date or partner.created,
             end_date=partner.end_date,
             title=partner.name,
+            acronym=partner.partner_code,
         )
     Partner.objects.bulk_update(unmatched, ['organization_id'])
 

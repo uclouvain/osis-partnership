@@ -85,8 +85,8 @@ def ume_has_partnerships(user, ucl_management_entity):
 
 
 @rules.predicate
-def entity_has_children(user, entity):
-    return entity.childs.exists()
+def entity_has_children(user, partner_entity):
+    return partner_entity.entity_version.entity.parent_of.exists()
 
 
 @rules.predicate(bind=True)
