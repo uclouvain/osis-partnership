@@ -148,7 +148,7 @@ class PartnershipYear(models.Model):
 
     @cached_property
     def is_valid(self):
-        if self.partnership.partnership_type == PartnershipType.PROJECT.name:
+        if self.partnership.is_project:
             return True
 
         ranges = self.partnership.valid_agreements_dates_ranges

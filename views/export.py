@@ -17,9 +17,6 @@ class ExportView(FormMixin, View):
     def get_xls_data(self):
         raise NotImplementedError
 
-    def get_description(self):
-        raise NotImplementedError
-
     def get_filename(self):
         raise NotImplementedError
 

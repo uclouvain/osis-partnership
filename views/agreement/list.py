@@ -19,6 +19,5 @@ class PartnershipAgreementListView(PartnershipsListView):
         context = super().get_context_data(**kwargs)
         context['is_agreements'] = True
         context['url'] = reverse('partnerships:agreements-list')
-        context['export_url'] = reverse('partnerships:export_agreements')
         context['search_button_label'] = _('search_agreement')
         return context

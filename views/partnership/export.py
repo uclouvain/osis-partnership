@@ -1,19 +1,20 @@
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Case, Exists, OuterRef, Prefetch, Subquery, When
+from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
+from base.models.academic_year import AcademicYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from partnership.models import (
     PartnershipAgreement,
     PartnershipType,
     PartnershipYear,
-    PartnershipConfiguration,
     AgreementStatus,
+    Financing,
 )
 from .list import PartnershipsListView
-
 from ..export import ExportView
 
 __all__ = [
@@ -22,15 +23,29 @@ __all__ = [
 
 
 class PartnershipExportView(ExportView, PartnershipsListView):
+    academic_year = None
+
+    def get(self,  *args, **kwargs):
+        pk = kwargs.pop('academic_year_pk')
+        self.academic_year = get_object_or_404(AcademicYear, pk=pk)
+        return super().get(*args, **kwargs)
+
     def get_xls_headers(self):
         return [
             gettext('id'),
             gettext('partnership_type'),
+            gettext('partnership_subtype'),
+            gettext('funding_source'),
+            gettext('funding_program'),
+            gettext('funding_type'),
+            gettext('continent'),
+            gettext('country'),
             gettext('partner'),
             gettext('partner_code'),
             gettext('erasmus_code'),
             gettext('pic_code'),
             gettext('partner_entity'),
+            gettext('sector'),
             gettext('ucl_university'),
             gettext('ucl_university_labo'),
             gettext('supervisor'),
@@ -44,8 +59,9 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             gettext('is_smp'),
             gettext('is_sta'),
             gettext('is_stt'),
-            gettext('start_academic_year'),
-            gettext('end_academic_year'),
+            gettext('partnership_export_start'),
+            gettext('partnership_export_end'),
+            gettext('end_valid_agreement'),
             gettext('is_valid'),
             gettext('external_id'),
             gettext('eligible'),
@@ -53,6 +69,20 @@ class PartnershipExportView(ExportView, PartnershipsListView):
 
     def get_xls_data(self):
         queryset = self.filterset.qs
+        year_qs = PartnershipYear.objects.select_related(
+            'academic_year',
+            'subtype',
+            'funding_source',
+            'funding_program',
+            'funding_type',
+        ).prefetch_related(
+            Prefetch('entities', queryset=Entity.objects.annotate(
+                most_recent_acronym=Subquery(EntityVersion.objects.filter(
+                    entity=OuterRef('pk')
+                ).order_by('-start_date').values('acronym')[:1]),
+            )),
+            'education_levels',
+        ).filter(academic_year=self.academic_year)
         queryset = (
             queryset
             .annotate(
@@ -69,77 +99,111 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                         )
                     )
                 ),
+                financing_source=Subquery(Financing.objects.filter(
+                    countries=OuterRef('partner__contact_address__country'),
+                    academic_year=self.academic_year,
+                ).values('type__program__source')[:1]),
+                financing_program=Subquery(Financing.objects.filter(
+                    countries=OuterRef('partner__contact_address__country'),
+                    academic_year=self.academic_year,
+                ).values('type__program')[:1]),
+                financing_type=Subquery(Financing.objects.filter(
+                    countries=OuterRef('partner__contact_address__country'),
+                    academic_year=self.academic_year,
+                ).values('type')[:1]),
             )
             .prefetch_related(
                 Prefetch(
                     'years',
-                    queryset=PartnershipYear.objects
-                        .select_related('academic_year')
-                        .prefetch_related(
-                            Prefetch(
-                                'entities',
-                                queryset=Entity.objects.annotate(
-                                    most_recent_acronym=Subquery(
-                                        EntityVersion.objects
-                                            .filter(entity=OuterRef('pk'))
-                                            .order_by('-start_date')
-                                            .values('acronym')[:1]
-                                    ),
-                                )
-                            ),
-                            'education_levels',
-                        )
+                    queryset=year_qs,
+                    to_attr='selected_year',
+                ),
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects.select_related('academic_year'),
+                ),
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
+                    to_attr='reverse_years',
+                ),
+                Prefetch(
+                    'agreements',
+                    queryset=PartnershipAgreement.objects.filter(
+                        status=AgreementStatus.VALIDATED.name,
+                    ).select_related('end_academic_year').order_by('-end_date'),
+                    to_attr='last_agreement',
                 ),
             )
-            .select_related('author__user')
+            .select_related(
+                'author__user',
+                'partner__organization',
+                'partner__contact_address__country__continent',
+            )
+            .filter(
+                years__academic_year=self.academic_year,
+            )
         )
         for partnership in queryset.distinct():
+            year = partnership.selected_year[0]
+            last_agreement = partnership.last_agreement[0] if partnership.last_agreement else None
 
-            first_year = None
-            current_year = None
-            end_year = None
-            years = partnership.years.all()
-            if years:
-                first_year = years[0]
-            for year in years:
-                end_year = year
-                if year.academic_year == self.academic_year:
-                    current_year = year
+            # Replace funding values if financing is eligible for mobility
+            if partnership.is_mobility and year.eligible and partnership.financing_type:
+                partnership.funding_source = partnership.financing_source
+                partnership.funding_program = partnership.financing_program
+                partnership.funding_type = partnership.financing_type
 
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
+                str(year.subtype or ''),
+                str(year.funding_source or ''),
+                str(year.funding_program or ''),
+                str(year.funding_type or ''),
+                str(partnership.partner.contact_address.country.continent or ''),
+                str(partnership.partner.contact_address.country or ''),
                 str(partnership.partner),
-                str(partnership.partner.organization.code) if partnership.partner.organization.code is not None else '',
-                str(partnership.partner.erasmus_code) if partnership.partner.erasmus_code is not None else '',
-                str(partnership.partner.pic_code) if partnership.partner.pic_code is not None else '',
-                str(partnership.partner_entity) if partnership.partner_entity else None,
-                str(partnership.ucl_faculty_most_recent_acronym)
-                    if partnership.ucl_faculty_most_recent_acronym is not None
-                    else partnership.ucl_entity_most_recent_acronym,
-                str(partnership.ucl_entity_most_recent_acronym)
-                    if partnership.ucl_faculty_most_recent_acronym is not None else '',
-                str(partnership.supervisor) if partnership.supervisor is not None else '',
-                ', '.join(map(lambda x: x.most_recent_acronym, current_year.entities.all()))
-                    if current_year is not None else '',
-                ', '.join(map(str, current_year.education_levels.all())) if current_year is not None else '',
+                str(partnership.partner.organization.code or ''),
+                str(partnership.partner.erasmus_code or ''),
+                str(partnership.partner.pic_code or ''),
+                str(partnership.partner_entity or ''),
+
+                str(partnership.ucl_sector_most_recent_acronym),
+                str(partnership.ucl_faculty_most_recent_acronym
+                    or partnership.ucl_entity_most_recent_acronym),
+                str(partnership.ucl_faculty_most_recent_acronym
+                    and partnership.ucl_entity_most_recent_acronym or ''),
+
+                str(partnership.supervisor or ''),
+                ', '.join(map(lambda x: x.most_recent_acronym, year.entities.all())),
+                ', '.join(map(str, year.education_levels.all())),
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
                 str(partnership.author.user) if partnership.author else '',
-                current_year.is_sms if current_year is not None else '',
-                current_year.is_smp if current_year is not None else '',
-                current_year.is_sta if current_year is not None else '',
-                current_year.is_stt if current_year is not None else '',
-                first_year.academic_year if first_year is not None else '',
-                end_year.academic_year if end_year is not None else '',
+
+                year.is_sms,
+                year.is_smp,
+                year.is_sta,
+                year.is_stt,
+
+                str(partnership.years.first().academic_year)
+                if partnership.is_mobility else partnership.start_date,
+
+                str(partnership.reverse_years[0].academic_year)
+                if partnership.is_mobility else partnership.end_date,
+
+                getattr(
+                    last_agreement,
+                    'end_academic_year' if partnership.is_mobility else 'end_date',
+                    '',
+                ),
+
                 partnership.is_valid,
                 partnership.external_id,
-                current_year.eligible if current_year is not None else '',
+                year.eligible,
             ]
-
-    def get_description(self):
-        return _('Partnerships')
 
     def get_filename(self):
         return now().strftime('partnerships-%Y-%m-%d-%H-%M-%S')
@@ -152,8 +216,3 @@ class PartnershipExportView(ExportView, PartnershipsListView):
         filters[_('academic_year')] = str(self.academic_year)
         filters.move_to_end(_('academic_year'), last=False)
         return filters
-
-    def get(self, *args, **kwargs):
-        configuration = PartnershipConfiguration.get_configuration()
-        self.academic_year = configuration.get_current_academic_year_for_creation_modification()
-        return super().get(*args, **kwargs)

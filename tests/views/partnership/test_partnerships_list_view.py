@@ -1,7 +1,6 @@
 from datetime import date
 
-from django.test import TestCase
-from django.urls import reverse
+from django.shortcuts import resolve_url
 
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
@@ -12,6 +11,9 @@ from base.tests.factories.entity_version import EntityVersionFactory as BaseEnti
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
+from partnership.tests import TestCase
+from partnership.tests.factories import FinancingFactory
+from partnership.tests.factories import FundingTypeFactory
 from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
@@ -23,6 +25,7 @@ from partnership.tests.factories import (
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
 )
+from partnership.tests.factories import PartnershipSubtypeFactory
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
@@ -253,7 +256,7 @@ class PartnershipsListViewTest(TestCase):
             PartnershipType.GENERAL.name,
             PartnershipType.MOBILITY.name,
         ])
-        cls.url = reverse('partnerships:list')
+        cls.url = resolve_url('partnerships:list')
 
     def test_get_list_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -548,7 +551,46 @@ class PartnershipsListViewTest(TestCase):
 
     def test_export_all(self):
         self.client.force_login(self.user)
-        url = reverse('partnerships:export')
-        response = self.client.get(url)
+
+        # We need more precise objects (on the correct academic year)
+        year = AcademicYearFactory(year=2136)
+        partnership1 = PartnershipFactory()
+        partnership_year = PartnershipYearFactory(
+            partnership=partnership1,
+            academic_year=year,
+        )
+        partnership_year.education_levels.add(
+            PartnershipYearEducationLevelFactory(),
+            PartnershipYearEducationLevelFactory(),
+        )
+        partnership1.tags.add(PartnershipTagFactory(), PartnershipTagFactory())
+        PartnershipAgreementFactory(
+            partnership=partnership1,
+            status=AgreementStatus.VALIDATED.name,
+            start_academic_year=year,
+            end_academic_year__year=2137,
+        )
+        financing = FinancingFactory(academic_year=year)
+        financing.countries.add(partnership1.partner.contact_address.country)
+
+        partnership2 = PartnershipFactory(
+            partnership_type=PartnershipType.PROJECT.name,
+        )
+        PartnershipYearFactory(
+            partnership=partnership2,
+            academic_year=year,
+            subtype=PartnershipSubtypeFactory(),
+            funding_type=FundingTypeFactory(),
+        )
+        PartnershipAgreementFactory(
+            partnership=partnership2,
+            status=AgreementStatus.VALIDATED.name,
+            start_academic_year=year,
+            end_academic_year__year=2137,
+        )
+
+        url = resolve_url('partnerships:export', academic_year_pk=year.pk)
+        with self.assertNumQueriesLessThan(25, verbose=True):
+            response = self.client.get(url)
+            self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')
-        self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)

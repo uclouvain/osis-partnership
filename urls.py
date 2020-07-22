@@ -9,7 +9,7 @@ app_name = "partnerships"
 urlpatterns = [
     path('', PartnershipsListView.as_view(), name="list"),
     path('agreements/', PartnershipAgreementListView.as_view(), name="agreements-list"),
-    path('export/', PartnershipExportView.as_view(), name="export"),
+    path('export/<int:academic_year_pk>/', PartnershipExportView.as_view(), name="export"),
     path('export_agreements/', PartnershipAgreementExportView.as_view(), name="export_agreements"),
     path('configuration/', PartnershipConfigurationUpdateView.as_view(), name='configuration_update'),
 

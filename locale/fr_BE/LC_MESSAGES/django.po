@@ -636,6 +636,9 @@ msgstr "Année académique de fin"
 msgid "end_date"
 msgstr "Date de fin"
 
+msgid "end_valid_agreement"
+msgstr "Fin validité accord"
+
 msgid "entities"
 msgstr "Entités"
 
@@ -1038,6 +1041,12 @@ msgstr "Partenariats arrivant à échéance en"
 msgid "partnership_error"
 msgstr "Erreur lors de la sauvegarde du partenariat."
 
+msgid "partnership_export_end"
+msgstr "Fin partenariat"
+
+msgid "partnership_export_start"
+msgstr "Début partenariat"
+
 msgid "partnership_funding"
 msgstr "Financement"
 
@@ -1166,6 +1175,10 @@ msgstr "Montrer toutes les années."
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
 
+#, python-format
+msgid "partnerships_export_yearly %(year)s"
+msgstr "Données annualisées pour %(year)s"
+
 msgid "partnerships_financing_configuration"
 msgstr "Configuration des financements"
 
@@ -1210,6 +1223,9 @@ msgstr "Rechercher les partenaires"
 
 msgid "search_partnership"
 msgstr "Rechercher les partenariats"
+
+msgid "sector"
+msgstr "Secteur"
 
 msgid "september"
 msgstr "Septembre"
