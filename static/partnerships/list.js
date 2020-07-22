@@ -83,6 +83,11 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     function updateExportButton () {
         var $export = $('#results .btn-export');
         $export.attr('href', $export.data('base-href') + '?' + $form.serialize());
+
+        // Replace url to facilitate history
+        var state = $form.serializeArray().filter(function (o) {return o.value !== ""});
+        var newUrl = location.href.replace(location.search, '') + '?' + $.param(state);
+        history.replaceState(state, "", newUrl);
     }
 
     $form.on('submit', function () {
@@ -108,6 +113,8 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         // Prevent browser default reset
         e.preventDefault();
         e.stopPropagation();
-        updateExportButton();
+
+        // Update list
+        $form.trigger('submit');
     });
 })(jQuery);
