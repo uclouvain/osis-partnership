@@ -6,10 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
+from base.models.entity_version_address import EntityVersionAddress
 from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.person import Person
 from partnership.models import (
-    Address,
     FundingProgram, FundingSource, FundingType, Partner,
     PartnerEntity,
     PartnerTag,
@@ -145,10 +145,9 @@ class PartnershipFilterForm(forms.Form):
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-
         queryset=(
             Country.objects
-            .filter(address__partners__partnerships__isnull=False)
+            .filter(entityversionaddress__entity_version__entity__organization__partner__partnerships__isnull=False)
             .order_by('name')
             .distinct()
         ),
@@ -160,7 +159,7 @@ class PartnershipFilterForm(forms.Form):
         label=_('continent'),
         queryset=(
             Continent.objects
-            .filter(country__address__partners__partnerships__isnull=False)
+            .filter(country__entityversionaddress__entity_version__entity__organization__partner__partnerships__isnull=False)
             .order_by('name')
             .distinct()
         ),
@@ -297,8 +296,10 @@ class PartnershipFilterForm(forms.Form):
 
         # Cities
         cities = (
-            Address.objects
-            .filter(partners__partnerships__isnull=False, city__isnull=False)
+            EntityVersionAddress.objects
+            .filter(
+                entity_version__entity__organization__partner__partnerships__isnull=False,
+                city__isnull=False)
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')

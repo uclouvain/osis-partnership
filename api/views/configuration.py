@@ -34,7 +34,9 @@ class ConfigurationView(APIView):
         continents = Continent.objects.prefetch_related(
             Prefetch(
                 'country_set',
-                queryset=Country.objects.annotate(cities=StringAgg('address__city', ';', distinct=True))
+                queryset=Country.objects.annotate(
+                    cities=StringAgg('entityversionaddress__city', ';', distinct=True)
+                )
             )
         )
         partners = (

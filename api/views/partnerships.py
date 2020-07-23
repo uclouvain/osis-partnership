@@ -1,9 +1,10 @@
-from datetime import datetime
-
 from django.conf import settings
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery, OuterRef, Value, Exists, Case, When, F
+from django.db.models.expressions import (
+    Subquery, OuterRef, Value, Exists,
+    Case, When, F,
+)
 from django.db.models.functions import Concat
 from django.db.models.query import Prefetch
 from django.db.models.query_utils import Q
@@ -49,6 +50,13 @@ class PartnershipsMixinView(GenericAPIView):
         return (
             Partnership.objects
             .add_acronyms()
+            .annotate_partner_address(
+                'country__continent__name',
+                'country__iso_code',
+                'country__name',
+                'country_id',
+                'city',
+            )
             .select_related(
                 'supervisor',
                 'partner_entity',
@@ -63,8 +71,12 @@ class PartnershipsMixinView(GenericAPIView):
                 Prefetch(
                     'partner',
                     queryset=Partner.objects
+                        .annotate_address(
+                            'country__iso_code',
+                            'country__name',
+                            'city',
+                        )
                         .annotate_website()
-                        .select_related('contact_address__country')
                         .prefetch_related(
                             Prefetch(
                                 'medias',
@@ -229,13 +241,13 @@ class PartnershipsMixinView(GenericAPIView):
                 funding_name=Subquery(
                     Financing.objects.filter(
                         academic_year=academic_year,
-                        countries=OuterRef('partner__contact_address__country_id'),
+                        countries=OuterRef('country_id'),
                     ).values('type__name')[:1]
                 ),
                 funding_url=Subquery(
                     Financing.objects.filter(
                         academic_year=academic_year,
-                        countries=OuterRef('partner__contact_address__country_id'),
+                        countries=OuterRef('country_id'),
                     ).values('type__url')[:1]
                 ),
             )

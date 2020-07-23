@@ -15,7 +15,6 @@ class PartnerEntity(models.Model):
         'base.EntityVersion',
         verbose_name=_('partner'),
         on_delete=models.PROTECT,
-        related_name='+',
     )
     name = models.CharField(_('Name'), max_length=255)
     contact_in = models.ForeignKey(
@@ -64,6 +63,4 @@ class PartnerEntity(models.Model):
 
     @cached_property
     def parent_entity(self):
-        return PartnerEntity.objects.filter(
-            entity_version=self.entity_version.parent.most_recent_entity_version
-        ).first()
+        return self.entity_version.parent.most_recent_entity_version.partnerentity

@@ -2,8 +2,9 @@ from dal import autocomplete
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity_version_address import EntityVersionAddress
 from base.models.enums.organization_type import ORGANIZATION_TYPE
-from partnership.models import Address, PartnerTag
+from partnership.models import PartnerTag
 from reference.models.continent import Continent
 from reference.models.country import Country
 from ..widgets import CustomNullBooleanSelect
@@ -40,13 +41,17 @@ class PartnerFilterForm(forms.Form):
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-        queryset=Country.objects.filter(address__partners__isnull=False).order_by('name').distinct(),
+        queryset=Country.objects.filter(
+            entityversionaddress__entity_version__entity__organization__partner__isnull=False,
+        ).order_by('name').distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
-        queryset=Continent.objects.filter(country__address__partners__isnull=False).order_by('name').distinct(),
+        queryset=Continent.objects.filter(
+            country__entityversionaddress__entity_version__entity__organization__partner__isnull=False,
+        ).order_by('name').distinct(),
         required=False,
     )
     is_ies = forms.NullBooleanField(
@@ -75,8 +80,11 @@ class PartnerFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         cities = (
-            Address.objects
-            .filter(partners__isnull=False, city__isnull=False)
+            EntityVersionAddress.objects
+            .filter(
+                entity_version__entity__organization__partner__isnull=False,
+                city__isnull=False,
+            )
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')

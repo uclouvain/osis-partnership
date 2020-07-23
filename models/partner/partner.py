@@ -5,9 +5,12 @@ from django.db import models
 from django.db.models import Prefetch, Subquery, OuterRef, Q
 from django.db.models.functions import Now
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
+from base.models.entity_version_address import EntityVersionAddress
 from base.models.organization import Organization
 
 __all__ = [
@@ -63,6 +66,52 @@ class PartnerQueryset(models.QuerySet):
                 entity__organization=OuterRef('organization_id'),
                 parent__isnull=True,
             ).order_by('-start_date').values('entity__website')[:1]),
+        )
+
+    def annotate_address(self, *fields):
+        """
+        Add annotations on contact address
+
+        :param fields: list of fields relative to EntityVersionAddress
+            If a field contains a traversal, e.g. country__name, it will be
+            available as country_name
+        """
+        contact_address_qs = EntityVersion.objects.filter(
+            entity__organization=OuterRef('organization'),
+            parent__isnull=True,
+        ).order_by('-start_date')
+        qs = self
+        for field in fields:
+            lookup = Subquery(contact_address_qs.values(
+                'entityversionaddress__{}'.format(field)
+            )[:1])
+            qs = qs.annotate(**{field.replace('__', '_'): lookup})
+        return qs
+
+    def prefetch_address(self):
+        return self.prefetch_related(
+            # We need to do this nested prefetch because every level has a
+            # particular query
+            Prefetch(
+                'organization__entity_set',
+                Entity.objects.filter(
+                    entityversion__parent__isnull=True,
+                ).prefetch_related(Prefetch(
+                    'entityversion_set',
+                    EntityVersion.objects.filter(
+                        parent__isnull=True,
+                    ).order_by('-start_date').prefetch_related(Prefetch(
+                        'entityversionaddress_set',
+                        EntityVersionAddress.objects.select_related(
+                            'country__continent'
+                        ),
+                        to_attr='address'
+                    )),
+                    to_attr='versions',
+                )),
+                to_attr='entities',
+            ),
+
         )
 
 
@@ -131,14 +180,6 @@ class Partner(models.Model):
         blank=True,
     )
 
-    contact_address = models.ForeignKey(
-        'partnership.Address',
-        verbose_name=_('address'),
-        on_delete=models.PROTECT,
-        related_name='partners',
-        blank=True,
-        null=True,
-    )
     email = models.EmailField(
         _('email'),
         help_text=_('mandatory_if_not_pic_ies'),
@@ -203,18 +244,18 @@ class Partner(models.Model):
     def get_absolute_url(self):
         return reverse('partnerships:partners:detail', kwargs={'pk': self.pk})
 
-    @property
+    @cached_property
     def is_actif(self):
         """ Partner is not active if it has date and is not within those. """
-        start_date = getattr(self, 'start_date', self.organization.start_date)
-        end_date = getattr(self, 'end_date', self.organization.end_date)
+        start_date = self.start_date if hasattr(self, 'start_date') else self.organization.start_date
+        end_date = self.end_date if hasattr(self, 'end_date') else self.organization.end_date
         if start_date is not None and date.today() < start_date:
             return False
         if end_date is not None and date.today() > end_date:
             return False
         return True
 
-    @property
+    @cached_property
     def agreements(self):
         from ..partnership.agreement import PartnershipAgreement
         from ..partnership.partnership import Partnership
@@ -223,9 +264,21 @@ class Partner(models.Model):
             .filter(partnership__partner=self)
             .select_related('start_academic_year', 'end_academic_year')
             .prefetch_related(
+                'media',
                 Prefetch(
                     'partnership',
                     queryset=Partnership.objects.add_acronyms()
                 ),
             )
         )
+
+    @cached_property
+    def contact_address(self):
+        if not hasattr(self, '_prefetched_objects_cache'):
+            return EntityVersionAddress.objects.filter(
+                entity_version__entity__organization_id=self.organization_id
+            ).first()
+        # We surely have a entity and a version, but we may not have an address
+        address = self.organization.entities[0].versions[0].address
+        if address:
+            return address[0]

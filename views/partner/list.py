@@ -24,9 +24,14 @@ class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
     def get_queryset(self):
         return (
             Partner.objects
-            .select_related('contact_address__country')
             .annotate_dates()
             .annotate_website()
+            .annotate_address(
+                'country__continent_id',
+                'country__name',
+                'country_id',
+                'city',
+            )
             .annotate(
                 partnerships_count=Count('partnerships'),
             ).distinct()

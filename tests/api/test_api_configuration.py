@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SECTOR
@@ -6,6 +5,7 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from partnership.models import PartnershipConfiguration
+from partnership.tests import TestCase
 from partnership.tests.factories import (
     FinancingFactory, PartnerFactory,
     PartnershipAgreementFactory, PartnershipFactory, PartnershipYearFactory,
@@ -17,7 +17,6 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class ConfigurationApiViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse('partnership_api_v1:configuration')
@@ -74,6 +73,10 @@ class ConfigurationApiViewTest(TestCase):
         CountryFactory(continent=continent)
         CountryFactory(continent=continent)
         CountryFactory()
+
+    def test_num_queries(self):
+        with self.assertNumQueriesLessThan(10):
+            self.client.get(self.url)
 
     def test_continents(self):
         response = self.client.get(self.url)

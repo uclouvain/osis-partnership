@@ -45,7 +45,6 @@ class PartnerAdmin(admin.ModelAdmin):
         'now_known_as',
         'medias',
         'author',
-        'contact_address',
     )
 
     @staticmethod
@@ -230,7 +229,6 @@ admin.site.register(Media, MediaAdmin)
 admin.site.register(ContactType)
 admin.site.register(MediaType)
 admin.site.register(Contact, ContactAdmin)
-admin.site.register(Address, AddressAdmin)
 admin.site.register(UCLManagementEntity, UCLManagementEntityAdmin)
 admin.site.register(PartnershipYear, PartnershipYearAdmin)
 admin.site.register(PartnershipMission, PartnershipMissionAdmin)

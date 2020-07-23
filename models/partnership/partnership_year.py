@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
 from ..enums.partnership import PartnershipType
+from ...utils import get_attribute
 
 __all__ = [
     'PartnershipMission',
@@ -192,7 +193,12 @@ class PartnershipYear(models.Model):
     def get_financing(self):
         if not self.eligible:
             return None
-        country = self.partnership.partner.contact_address.country
+        country = get_attribute(
+            self,
+            'partnership.partner.contact_address.country',
+            default=None,
+            cast_str=False,
+        )
         if country is None:
             return None
         from ..financing import Financing
@@ -200,7 +206,7 @@ class PartnershipYear(models.Model):
             Financing.objects
             .select_related('academic_year', 'type')
             .filter(
-                countries=country,
+                countries=country.pk,
                 academic_year=self.academic_year,
             ).first()
         )

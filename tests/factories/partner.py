@@ -5,9 +5,11 @@ import factory
 from django.utils import timezone
 
 from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.entity_version_address import (
+    EntityVersionAddressFactory
+)
 from base.tests.factories.organization import MainOrganizationFactory
 from partnership.models import Partner, PartnerEntity, PartnerTag
-from .address import AddressFactory
 
 __all__ = [
     'PartnerFactory',
@@ -37,8 +39,6 @@ class PartnerFactory(factory.DjangoModelFactory):
     pic_code = factory.Sequence(lambda n: 'pic_code-é-{0}-{1}'.format(n, uuid.uuid4()))
     erasmus_code = factory.Sequence(lambda n: 'erasmus_code-é-{0}-{1}'.format(n, uuid.uuid4()))
 
-    contact_address = factory.SubFactory(AddressFactory)
-
     email = factory.Faker('email')
     phone = factory.Faker('phone_number')
     is_nonprofit = factory.Faker('boolean')
@@ -64,6 +64,15 @@ class PartnerFactory(factory.DjangoModelFactory):
     def entities(obj, create, extracted, **kwargs):
         if create and extracted is not None:
             obj.entities.set(extracted)
+
+    @factory.post_generation
+    def contact_address(obj, create, extracted, **kwargs):
+        if create:
+            entity = obj.organization.entity_set.first()
+            EntityVersionAddressFactory(
+                entity_version_id=entity.entityversion_set.first().pk,
+                **kwargs,
+            )
 
 
 class PartnerEntityFactory(factory.DjangoModelFactory):

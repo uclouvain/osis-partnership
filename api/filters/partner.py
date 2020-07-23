@@ -80,12 +80,13 @@ class PartnerFundingFilter(FundingFilterMixin, filters.ModelMultipleChoiceFilter
             filter_qs |= Q(type_id=funding.pk)
         return (
             qs
+            .annotate_address('country_id')
             .annotate(
                 has_funding=Exists(
                     Financing.objects
                     .filter(
                         filter_qs,
-                        countries=OuterRef('contact_address__country'),
+                        countries=OuterRef('country_id'),
                         academic_year=OuterRef('current_academic_year'),
                     )
                 )
@@ -97,24 +98,21 @@ class PartnerFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('organization__name', 'partner'),
-            ('contact_address__country__iso_code', 'country_en'),
-            ('contact_address__city', 'city'),
+            ('country_iso_code', 'country_en'),
+            ('city', 'city'),
             ('partnerships__ucl_entity', 'ucl_entity'),
             ('subject_area_ordered', 'subject_area'),
         )
     )
     continent = filters.CharFilter(
-        field_name='contact_address__country__continent__name',
+        field_name='country_continent_name',
         lookup_expr='iexact',
     )
     country = filters.CharFilter(
-        field_name='contact_address__country__iso_code',
+        field_name='country_iso_code',
         lookup_expr='iexact',
     )
-    city = filters.CharFilter(
-        field_name='contact_address__city',
-        lookup_expr='iexact',
-    )
+    city = filters.CharFilter(field_name='city', lookup_expr='iexact')
     partner = filters.UUIDFilter(field_name='uuid')
     ucl_entity = filters.UUIDFilter(
         field_name='partnerships__ucl_entity__uuid',

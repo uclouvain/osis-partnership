@@ -1,10 +1,10 @@
-from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
 from partnership.models import AgreementStatus, PartnershipConfiguration
+from partnership.tests import TestCase
 from partnership.tests.factories import (
     FinancingFactory, PartnerFactory,
     PartnershipAgreementFactory, PartnershipFactory,
@@ -17,7 +17,6 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
 class PartnersApiViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse('partnership_api_v1:partners')
@@ -82,7 +81,8 @@ class PartnersApiViewTest(TestCase):
         )
 
     def test_get(self):
-        response = self.client.get(self.url)
+        with self.assertNumQueriesLessThan(8):
+            response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data['results']), 2)

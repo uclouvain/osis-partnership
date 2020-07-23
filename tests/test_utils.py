@@ -7,6 +7,7 @@ from partnership.utils import (
     academic_dates,
     academic_years,
     merge_agreement_ranges,
+    get_attribute,
 )
 
 
@@ -91,3 +92,14 @@ class UtilAcademicDisplayTest(TestCase):
         self.assertEqual(academic_years(start, None), "2150 > N/A")
         self.assertEqual(academic_years('', end), "N/A > 2152")
         self.assertEqual(academic_years(start, end), "2150 > 2152")
+
+
+class UtilGetNestedAttributeTest(TestCase):
+    def test_get_attribute(self):
+        obj = type('test', (object,), {})()
+        self.assertEqual(get_attribute(obj, 'foo.bar'), '')
+        obj.foo = {'bar': 42}
+        self.assertEqual(get_attribute(obj, 'foo'), "{'bar': 42}")
+        self.assertEqual(get_attribute(obj, 'foo.bar'), '42')
+        self.assertEqual(get_attribute(obj, 'foo.bar', cast_str=False), 42)
+        self.assertEqual(get_attribute(obj, 'foo.baz', default=0), 0)

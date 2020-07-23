@@ -12,11 +12,9 @@ class PartnerSerializer(serializers.ModelSerializer):
     partner_type = serializers.CharField(source='organization.get_type_display')
     name = serializers.CharField(source='organization.name')
     website = serializers.CharField()
-    city = serializers.CharField(source='contact_address.city')
-    country = serializers.CharField(source='contact_address.country.name')
-    country_iso = serializers.CharField(
-        source='contact_address.country.iso_code'
-    )
+    city = serializers.ReadOnlyField()
+    country = serializers.ReadOnlyField(source='country_name')
+    country_iso = serializers.CharField(source='country_iso_code')
     partnerships_count = serializers.IntegerField()
 
     class Meta:

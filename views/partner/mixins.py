@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -12,7 +13,7 @@ from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
-from partnership.forms import AddressForm, PartnerEntityForm, PartnerForm
+from partnership.forms import PartnerEntityForm, PartnerForm
 from partnership.forms.partner.entity import (
     PartnerEntityContactForm,
     EntityVersionAddressForm,
@@ -41,9 +42,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             kwargs['data'] = self.request.POST
         if self.object is not None:
             kwargs['instance'] = self.object.contact_address
-        form = AddressForm(**kwargs)
-        form.fields['name'].help_text = _('mandatory_if_not_pic_ies')
-        return form
+        return EntityVersionAddressForm(**kwargs)
 
     def get_organization_form(self):
         kwargs = {
@@ -65,8 +64,11 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
 
     @transaction.atomic
     def form_valid(self, form, form_address, organization_form):
-        # Save address
-        contact_address = form_address.save()
+        changed = (
+                form.has_changed()
+                or form_address.has_changed()
+                or organization_form.has_changed()
+        )
 
         # Save organization
         organization = organization_form.save()
@@ -79,35 +81,22 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             organization_id=organization.pk,
         )
 
-        # Save entity version
-        last_version = entity.get_latest_entity_version()
-        start_date = organization_form.cleaned_data['start_date']
-        end_date = organization_form.cleaned_data['end_date']
-        if last_version and last_version.start_date != start_date:
-            last_version.end_date = start_date - timedelta(days=1)
-            last_version.save()
-            last_version = None
-        elif last_version and end_date and last_version.end_date != end_date:
-            last_version.end_date = start_date
-            last_version.save()
-
-        if not last_version:
-            EntityVersion.objects.create(
-                entity_id=entity.pk,
-                parent=None,
-                start_date=start_date or datetime.today(),
-                end_date=end_date,
-            )
+        last_version = self.save_entity_version(
+            changed, entity, organization_form,
+        )
 
         partner = form.save(commit=False)
         is_creation = partner.pk is None
         if is_creation:
             partner.author = self.request.user.person
 
-        partner.contact_address = contact_address
         partner.organization = organization
         partner.save()
         form.save_m2m()
+
+        # Save address
+        self.save_address(last_version, form_address)
+
         messages.success(self.request, _('partner_saved'))
         if is_creation and not is_linked_to_adri_entity(self.request.user):
             self.notify_admin_mail(
@@ -119,6 +108,51 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
                 },
             )
         return redirect(partner)
+
+    @staticmethod
+    def save_address(last_version, form_address):
+        """ Save address """
+        if form_address.instance.entity_version_id != last_version.pk:
+            # Save a new address version if changed or new entity version
+            form_address.instance.pk = None
+        form_address.instance.entity_version_id = last_version.pk
+        form_address.instance.is_main = True
+        form_address.save()
+
+    @staticmethod
+    def save_entity_version(changed, entity, organization_form):
+        """
+        Save entity version if anything changed
+
+        :param changed:
+        :param entity:
+        :param organization_form:
+        :return:
+        """
+        last_version = entity.get_latest_entity_version()
+
+        if changed:
+            start_date = organization_form.cleaned_data['start_date']
+            end_date = organization_form.cleaned_data['end_date']
+
+            if last_version and last_version.start_date != start_date:
+                # End the previous version if start_date is changed
+                last_version.end_date = start_date - timedelta(days=1)
+                last_version.save()
+                last_version = None
+            elif last_version and end_date and last_version.end_date != end_date:
+                # End the previous version if end date
+                last_version.end_date = start_date
+                last_version.save()
+
+            if not last_version:
+                last_version = EntityVersion.objects.create(
+                    entity_id=entity.pk,
+                    parent=None,
+                    start_date=start_date or datetime.today(),
+                    end_date=end_date,
+                )
+        return last_version
 
     def form_invalid(self, form, form_address, organization_form):
         messages.error(self.request, _('partner_error'))
@@ -135,8 +169,6 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
             return True
         cleaned_data = form_address.cleaned_data
-        if not cleaned_data['name']:
-            form_address.add_error('name', ValidationError(_('required')))
         if not cleaned_data['city']:
             form_address.add_error('city', ValidationError(_('required')))
         if not cleaned_data['country']:
@@ -244,47 +276,76 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
 
     @transaction.atomic
     def form_valid(self, forms):
+        changed = any(map(lambda f: f.has_changed(), forms.values()))
+
         entity_form = forms[self.PARTNER_ENTITY_FORM]
         address_form = forms[self.ADDRESS_FORM]
 
         if not entity_form.instance.pk:
-            entity = entity_form.save(commit=False)
             entity_form.instance.author = self.request.user.person
-            organization = self.partner.organization
-            entity.entity_version = EntityVersion.objects.create(
-                entity=Entity.objects.create(organization_id=organization.pk),
-                start_date=timezone.now(),
-                acronym=self.generate_unique_acronym(organization.code),
-                parent=organization.entity_set.first(),
-                title=entity.name,
-            )
 
-        elif entity_form.has_changed() or address_form.has_changed():
-            # End the previous entity
-            entity_form.instance.entity_version.end_date = (
-                timezone.now() - timedelta(days=1)
-            )
-            entity_form.instance.entity_version.save()
+        entity_version = self.save_entity_version(changed, entity_form)
 
-            # Create a new one with previous values
-            entity_form.instance.entity_version = EntityVersion.objects.create(
-                entity=entity_form.instance.entity_version.entity,
-                acronym=entity_form.instance.entity_version.acronym,
-                parent=entity_form.instance.entity_version.parent,
-                title=entity_form.instance.entity_version.title,
-                start_date=timezone.now(),
-            )
-
+        # Save partner entity
+        entity_form.instance.entity_version = entity_version
         entity_form.instance.partner = self.partner
         entity_form.instance.contact_in = forms[self.CONTACT_IN_FORM].save()
         entity_form.instance.contact_out = forms[self.CONTACT_OUT_FORM].save()
-        entity = entity_form.save()
+        entity_form.save()
 
-        address_form.instance.entity_version = entity.entity_version
-        address_form.save()
+        # Save address
+        self.save_address(entity_version, address_form)
 
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
+
+    def save_entity_version(self, changed, entity_form):
+        today = timezone.now().date()
+        if not entity_form.instance.pk:
+            # Save a new entity and entity version
+            organization = self.partner.organization
+            return EntityVersion.objects.create(
+                entity=Entity.objects.create(organization_id=organization.pk),
+                start_date=today,
+                acronym=self.generate_unique_acronym(organization.code),
+                parent=(
+                        entity_form.cleaned_data.get('parent')  # from form
+                        or organization.entity_set.first()  # default is partner
+                ),
+                title=entity_form.cleaned_data.get('name'),
+            )
+
+        elif changed:
+            entity_version = entity_form.instance.entity_version
+            if entity_version.start_date != today:
+                # End the previous entity, if started not today
+                entity_version.end_date = (
+                        today - timedelta(days=1)
+                )
+                entity_version.save()
+                entity_version.pk = None
+                entity_version.end_date = None
+                entity_version.uuid = uuid4()
+
+            # Save entity version with previous values
+            entity_version.parent = (
+                    entity_form.cleaned_data.get('parent')  # from form
+                    or entity_version.parent  # default is previous
+            )
+            entity_version.title = entity_form.cleaned_data.get('name')
+            entity_version.start_date = today
+            entity_version.save()
+            return entity_version
+
+    @staticmethod
+    def save_address(last_version, form_address):
+        """ Save address """
+        if form_address.instance.entity_version_id != last_version.pk:
+            # Save a new address version if changed or new entity version
+            form_address.instance.pk = None
+        form_address.instance.entity_version_id = last_version.pk
+        form_address.instance.is_main = True
+        form_address.save()
 
     def form_invalid(self, form):
         messages.error(self.request, _('partner_entity_error'))

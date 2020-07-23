@@ -402,9 +402,6 @@ msgstr "Ajouter un accord"
 msgid "address"
 msgstr "Adresse"
 
-msgid "address_name_help_text"
-msgstr "Nom de la faculté, de l’entreprise, …"
-
 msgid "administrative_responsible"
 msgstr "Responsable administratif"
 
@@ -455,12 +452,6 @@ msgstr "Modifié"
 
 msgid "city"
 msgstr "Ville"
-
-msgid "city_english"
-msgstr "Ville en anglais"
-
-msgid "city_french"
-msgstr "Ville en français"
 
 msgid "close"
 msgstr "Fermer"
@@ -1253,6 +1244,9 @@ msgstr "La date de début se situe après la date de modification."
 msgid "start_date_gt_end_date_error"
 msgstr "La date de début se situe après la date de fin"
 
+msgid "state"
+msgstr "État"
+
 msgid "status"
 msgstr "État"
 
@@ -1267,6 +1261,9 @@ msgstr "En attente de validation"
 
 msgid "still_actif"
 msgstr "Actif"
+
+msgid "street_number"
+msgstr "N°"
 
 msgid "submit"
 msgstr "Envoyer"

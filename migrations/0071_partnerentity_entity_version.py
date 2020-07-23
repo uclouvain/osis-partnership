@@ -140,7 +140,6 @@ class Migration(migrations.Migration):
             field=models.OneToOneField(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name='+',
                 to='base.EntityVersion',
                 verbose_name='partner',
             ),
@@ -151,7 +150,6 @@ class Migration(migrations.Migration):
             name='entity_version',
             field=models.OneToOneField(
                 on_delete=django.db.models.deletion.PROTECT,
-                related_name='+',
                 to='base.EntityVersion',
                 verbose_name='partner',
             ),

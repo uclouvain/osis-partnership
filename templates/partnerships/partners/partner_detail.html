@@ -28,9 +28,16 @@
     <div class="row">
       <div class="col-sm-12">
         {% if can_update_partner %}
-        <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right"><i class="fas fa-fw fa-pencil-alt"></i> {% trans "update_partner" %}</a>
+          <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right">
+            <i class="fas fa-fw fa-pencil-alt"></i>
+            {% trans "update_partner" %}
+          </a>
         {% endif %}
-        <p><em>{% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author.user modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+        <p>
+          <em>
+              {% blocktrans with created=partner.created|date:"SHORT_DATE_FORMAT" author=partner.author.user modified=partner.changed|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
+          </em>
+        </p>
       </div>
     </div>
     <div class="row">
@@ -57,10 +64,22 @@
           <dd><i class="fas {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
 
           <dt>{% trans "is_nonprofit" %}</dt>
-          <dd>{% if partner.is_nonprofit is None %}{% trans "not_filled_in" %}{% else %}<i class="fas {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
+          <dd>
+            {% if partner.is_nonprofit is None %}
+              {% trans "not_filled_in" %}
+            {% else %}
+              <i class="fas {{ partner.is_nonprofit|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% endif %}
+          </dd>
 
           <dt>{% trans "is_public" %}</dt>
-          <dd>{% if partner.is_public is None %}{% trans "not_filled_in" %}{% else %}<i class="fas {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>{% endif %}</dd>
+          <dd>
+            {% if partner.is_public is None %}
+              {% trans "not_filled_in" %}
+            {% else %}
+              <i class="fas {{ partner.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+            {% endif %}
+          </dd>
 
           <dt title="{% trans "use_egracons" %}">{% trans "use_egracons" %}</dt>
           <dd><i class="fas {{ partner.use_egracons|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
@@ -78,7 +97,7 @@
           </dd>
 
           <dt>{% trans "contact_address" %}</dt>
-          <dd>{{ partner.contact_address.one_line_display|linebreaksbr }}</dd>
+          <dd>{{ partner.contact_address|address_one_line }}</dd>
 
           {% with website=partner.website %}
             {% if website %}
@@ -197,7 +216,11 @@
         </div>
 
         <div class="col-sm-12 col-md-6">
-          <p><em>{% blocktrans with created=entity.created|date:"SHORT_DATE_FORMAT" author=entity.author.user modified=entity.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}</em></p>
+          <p>
+            <em>
+              {% blocktrans with created=entity.created|date:"SHORT_DATE_FORMAT" author=entity.author.user modified=entity.modified|date:"SHORT_DATE_FORMAT" %}created_{{ created }}_by_{{ author }}_modified_{{ modified }}{% endblocktrans %}
+            </em>
+          </p>
         </div>
       </div>
 
@@ -210,14 +233,9 @@
         </div>
         <div class="col-sm-12 col-md-6">
           {% with address=entity.entity_version.entityversionaddress_set.all.0 %}
-            {% if address %}
+            {% if address|address_one_line %}
               <strong>{% trans "contact_address" %}</strong>
-              {{ address.street_number }}
-              {{ address.street }}
-              {{ address.postal_code }}
-              {{ address.city }}
-              {{ address.state }}
-              {{ address.country }}
+              {{ address|address_one_line }}
             {% endif %}
           {% endwith %}
 
@@ -267,7 +285,11 @@
     <div class="modal-content">
       <form action="" method="post" class="partner-form" enctype="multipart/form-data">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}">
+            <span aria-hidden="true">
+              <i class="fas fa-times"></i>
+            </span>
+          </button>
           <h4 class="modal-title" id="myModalLabel">Title</h4>
         </div>
         <div class="modal-body">

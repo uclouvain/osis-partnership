@@ -207,7 +207,7 @@ class PartnerEntityUpdateViewTest(TestCase):
             'contact_out_mobile_phone': 'test',
             'contact_out_fax': 'test',
             'contact_out_email': 'test@test.test',
-            'parent': self.parent_entity.pk,
+            'parent': self.parent_entity.entity_version.entity_id,
         }
         current_entity = self.partner_entity.entity_version.entity
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)

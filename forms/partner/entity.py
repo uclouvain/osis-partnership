@@ -1,10 +1,16 @@
 from django import forms
+from django.db.models import Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity import Entity
 from base.models.entity_version_address import EntityVersionAddress
 from partnership.models import Contact, PartnerEntity
 
-__all__ = ['PartnerEntityForm']
+__all__ = [
+    'PartnerEntityForm',
+    'PartnerEntityContactForm',
+    'EntityVersionAddressForm',
+]
 
 
 class EntityVersionAddressForm(forms.ModelForm):
@@ -39,7 +45,7 @@ class PartnerEntityContactForm(forms.ModelForm):
 class PartnerEntityForm(forms.ModelForm):
     parent = forms.ModelChoiceField(
         label="",
-        queryset=PartnerEntity.objects.none(),
+        queryset=Entity.objects.none(),
         required=False,
     )
 
@@ -58,12 +64,20 @@ class PartnerEntityForm(forms.ModelForm):
         qs = PartnerEntity.objects.filter(
             entity_version__entity__organization__partner=partner,
         )
+        qs = Entity.objects.filter(
+            entityversion__parent__organization__partner=partner,
+        ).annotate(
+            name=Subquery(PartnerEntity.objects.filter(
+                entity_version__entity=OuterRef('pk'),
+            ).values('name')[:1])
+        ).distinct('pk')
         if self.instance.pk:
             qs = qs.exclude(
-                pk=self.instance.pk,
+                pk=self.instance.entity_version.entity_id,
             ).exclude(
                 # Prevent circle dependency
-                entity_version__parent=self.instance.entity_version.entity,
+                entityversion__parent=self.instance.entity_version.entity,
             )
-            self.fields['parent'].initial = self.instance.parent_entity
+            self.fields['parent'].initial = self.instance.entity_version.parent
+        self.fields['parent'].label_from_instance = lambda obj: str(obj.name)
         self.fields['parent'].queryset = qs
