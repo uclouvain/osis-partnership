@@ -24,7 +24,11 @@ class PartnersListView(generics.ListAPIView):
 
     def get_partnerships_count_subquery(self, academic_year):
         # Partnership queryset for subquery count
-        partnerships_queryset = Partnership.objects.annotate(
+        partnerships_queryset = Partnership.objects.annotate_partner_address(
+            'country__continent__name',
+            'country__iso_code',
+            'city',
+        ).annotate(
             current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
             has_years_in=Exists(
                 PartnershipYear.objects.filter(
@@ -71,8 +75,13 @@ class PartnersListView(generics.ListAPIView):
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return (
             Partner.objects
-            .select_related('contact_address__country')
             .annotate_website()
+            .annotate_address(
+                'country__continent__name',
+                'country__iso_code',
+                'country__name',
+                'city',
+            )
             .annotate(
                 current_academic_year=Value(academic_year.id, output_field=models.AutoField()),
                 has_in=Exists(

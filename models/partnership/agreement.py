@@ -1,10 +1,34 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity_version import EntityVersion
 from partnership.models import AgreementStatus
 
 __all__ = ['PartnershipAgreement']
+
+
+class PartnershipAgreementQuerySet(models.QuerySet):
+    def annotate_partner_address(self, *fields):
+        """
+        Add annotations on partner contact address
+
+        :param fields: list of fields relative to EntityVersionAddress
+            If a field contains a traversal, e.g. country__name, it will be
+            available as country_name
+        """
+        contact_address_qs = EntityVersion.objects.filter(
+            entity__organization=OuterRef('partnership__partner__organization'),
+            parent__isnull=True,
+        ).order_by('-start_date')
+        qs = self
+        for field in fields:
+            lookup = Subquery(contact_address_qs.values(
+                'entityversionaddress__{}'.format(field)
+            )[:1])
+            qs = qs.annotate(**{field.replace('__', '_'): lookup})
+        return qs
 
 
 class PartnershipAgreement(models.Model):
@@ -66,6 +90,8 @@ class PartnershipAgreement(models.Model):
         blank=True,
         default='',
     )
+
+    objects = PartnershipAgreementQuerySet.as_manager()
 
     class Meta:
         verbose_name = _('financing')

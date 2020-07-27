@@ -80,6 +80,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partner = PartnerFactory(
             contact_address__city='Tirana',
             contact_address__country__name='Albania',
+            contact_address__country__iso_code='AL',
         )
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
         cls.partnership_partner_type = PartnershipFactory(
@@ -96,7 +97,7 @@ class PartnershipsListViewTest(TestCase):
         # city
         cls.partnership_city = PartnershipFactory(
             partner__contact_address__city='Berat',
-            partner__contact_address__country=cls.partner.contact_address.country,
+            partner__contact_address__country__iso_code='AL',
         )
 
         # country
@@ -106,7 +107,10 @@ class PartnershipsListViewTest(TestCase):
 
         # continent
         cls.continent = Continent.objects.create(code='fo', name='foo')
-        country_continent = CountryFactory(continent=cls.continent)
+        country_continent = CountryFactory(
+            iso_code='FO',  # This is needed to prevent caching
+            continent=cls.continent,
+        )
         partner_continent = PartnerFactory(contact_address__country=country_continent)
         cls.partnership_continent = PartnershipFactory(partner=partner_continent)
 
@@ -195,7 +199,10 @@ class PartnershipsListViewTest(TestCase):
             academic_year__year=2180,
         )
         # All filters
-        country = CountryFactory(continent=Continent.objects.create(code='ba', name='bar'))
+        cls.country_all_filters = CountryFactory(
+            iso_code='BA',  # This is needed to prevent caching
+            continent=Continent.objects.create(code='ba', name='bar'),
+        )
         sector = EntityVersionFactory(
             acronym='ZZZ',
             entity_type=SECTOR,
@@ -212,7 +219,7 @@ class PartnershipsListViewTest(TestCase):
         cls.all_partner_tag = PartnerTagFactory()
         cls.partner_all_filters = PartnerFactory(
             contact_address__city='all_filters',
-            contact_address__country=country,
+            contact_address__country=cls.country_all_filters,
             tags=[cls.all_partner_tag],
         )
         cls.partnership_all_filters = PartnershipFactory(
@@ -268,12 +275,10 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
-    def test_get_list_pagination(self):
+    def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?page=1')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 20)
+        with self.assertNumQueriesLessThan(11):
+            self.client.get(self.url, HTTP_ACCEPT='application/json')
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
@@ -448,12 +453,13 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_partnership_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partnership_type=' + PartnershipType.GENERAL.name)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_type)
-        self.assertEqual(context['partnerships'][0].validity_end, "01/07/2020")
+        response = self.client.get(self.url, {
+            'partnership_type': PartnershipType.GENERAL.name,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_type.uuid))
+        self.assertEqual(results[0]['validity_end'], "01/07/2020")
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
@@ -527,8 +533,8 @@ class PartnershipsListViewTest(TestCase):
             'use_egracons': 'False',
             'partner_entity': str(self.partnership_all_filters.partner_entity_id),
             'city': 'all_filters',
-            'country': str(self.partner_all_filters.contact_address.country_id),
-            'continent': str(self.partner_all_filters.contact_address.country.continent_id),
+            'country': str(self.country_all_filters.pk),
+            'continent': str(self.country_all_filters.continent_id),
             'partner_tags': str(self.all_partner_tag.pk),
             'education_field': str(self.all_education_field.pk),
             'education_level': str(self.all_education_level.pk),
@@ -590,7 +596,7 @@ class PartnershipsListViewTest(TestCase):
         )
 
         url = resolve_url('partnerships:export', academic_year_pk=year.pk)
-        with self.assertNumQueriesLessThan(25, verbose=True):
+        with self.assertNumQueriesLessThan(24):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')

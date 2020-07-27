@@ -1,6 +1,5 @@
 import django_filters as filters
-from django.db.models import Exists, Max, OuterRef, Q, Subquery
-from django.db.models.functions import Now
+from django.db.models import Exists, Max, OuterRef, Q
 
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
@@ -18,14 +17,18 @@ from partnership.models import (
 )
 
 
+def filter_pk_from_annotation(queryset, name, value):
+    return queryset.filter(**{name: value.pk})
+
+
 class PartnerAdminFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('organization__name', 'partner'),
-            ('contact_address__country__name', 'country'),
+            ('country_name', 'country'),
             ('erasmus_code', 'erasmus_code'),
             ('organization__type', 'partner_type'),
-            ('contact_address__city', 'city'),
+            ('city', 'city'),
             ('is_valid', 'is_valid'),
             ('is_actif', 'is_actif'),
         )
@@ -38,13 +41,15 @@ class PartnerAdminFilter(filters.FilterSet):
     pic_code = filters.CharFilter(lookup_expr='icontains')
     erasmus_code = filters.CharFilter(lookup_expr='icontains')
     continent = filters.CharFilter(
-        field_name='contact_address__country__continent',
+        field_name='country_continent_id',
+        method=filter_pk_from_annotation,
     )
     country = filters.CharFilter(
-        field_name='contact_address__country',
+        field_name='country_id',
+        method=filter_pk_from_annotation,
     )
     city = filters.CharFilter(
-        field_name='contact_address__city',
+        field_name='city',
         lookup_expr='iexact',
     )
     is_actif = filters.BooleanFilter(
@@ -119,14 +124,12 @@ class PartnershipAdminFilter(filters.FilterSet):
     ordering = MultipleOrderingFilter(
         fields=(
             ('partner__organization__name', 'partner'),
-            ('country', 'country'),
-            ('partner__contact_address__city', 'city'),
-            ('ucl', 'ucl'),
+            ('city', 'city'),
         ),
         multiples={
             'country': [
-                'partner__contact_address__country__name',
-                'partner__contact_address__city',
+                'country_name',
+                'city',
                 'partner__organization__name'
             ],
             'ucl': [
@@ -137,12 +140,14 @@ class PartnershipAdminFilter(filters.FilterSet):
         },
     )
     continent = filters.CharFilter(
-        field_name='partner__contact_address__country__continent',
+        field_name='country_continent_id',
+        method=filter_pk_from_annotation
     )
-    country = filters.CharFilter(
-        field_name='partner__contact_address__country',
+    country = filters.ModelChoiceFilter(
+        field_name='country_id',
+        method=filter_pk_from_annotation,
     )
-    city = filters.CharFilter(field_name='partner__contact_address__city')
+    city = filters.CharFilter()
     ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
     ucl_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
@@ -386,13 +391,13 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
         fields=(
             ('partnership__partner__organization__name', 'partner'),
             ('country', 'country'),
-            ('partnership__partner__contact_address__city', 'city'),
+            ('city', 'city'),
             ('ucl', 'ucl'),
         ),
         multiples={
             'country': [
-                'partnership__partner__contact_address__country__name',
-                'partnership__partner__contact_address__city',
+                'country_name',
+                'city',
                 'partnership__partner__organization__name',
             ],
             'ucl': [
@@ -413,6 +418,12 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
 
         queryset = (
             PartnershipAgreement.objects
+            .annotate_partner_address(
+                'country__name',
+                'city',
+            )
+            # TODO remove when Entity city field is dropped (conflict)
+            .defer("partnership__ucl_entity__city")
             .annotate(
                 # Used for ordering
                 partnership_ucl_sector_most_recent_acronym=CTESubquery(
@@ -450,9 +461,9 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             ).filter(
                 partnership__in=super().qs
             ).select_related(
-                'partnership__partner__contact_address__country',
                 'partnership__supervisor',
-                'partnership__ucl_entity',
+                'partnership__ucl_entity__uclmanagement_entity__academic_responsible',
+                'partnership__partner__organization',
                 'start_academic_year',
                 'end_academic_year',
             )

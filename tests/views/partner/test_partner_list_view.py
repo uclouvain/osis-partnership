@@ -1,10 +1,10 @@
 from datetime import timedelta
 
-from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from base.models.enums.organization_type import ACADEMIC_PARTNER, EMBASSY
+from base.models.enums.organization_type import ACADEMIC_PARTNER
+from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnerFactory,
     PartnerTagFactory, PartnershipEntityManagerFactory,
@@ -12,7 +12,6 @@ from partnership.tests.factories import (
 
 
 class PartnersListViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.partner_erasmus_last = PartnerFactory(
@@ -64,8 +63,14 @@ class PartnersListViewTest(TestCase):
 
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
+        with self.assertNumQueriesLessThan(24):
+            response = self.client.get(self.url)
+            self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
+
+    def test_num_queries_serializer(self):
+        self.client.force_login(self.user)
+        with self.assertNumQueriesLessThan(10):
+            self.client.get(self.url, HTTP_ACCEPT='application/json')
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)

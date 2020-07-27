@@ -28,7 +28,6 @@ class PartnershipFactory(factory.DjangoModelFactory):
     ucl_entity = factory.SubFactory(
         'base.tests.factories.entity.EntityFactory',
         organization=None,
-        country=factory.SelfAttribute('..partner.contact_address.country'),
     )
 
     @factory.post_generation

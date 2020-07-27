@@ -12,7 +12,7 @@ __all__ = [
 class PartnerUpdateView(PartnerFormMixin, UpdateView):
     template_name = 'partnerships/partners/partner_update.html'
     prefix = 'partner'
-    queryset = Partner.objects.select_related('contact_address')
+    model = Partner
     permission_required = 'partnership.change_partner'
 
     def post(self, request, *args, **kwargs):

@@ -24,11 +24,31 @@ def forward(apps, schema_editor):
         ).values('pk').order_by('pk'))
     )
 
+    # Copy over website if related entity has none
     Entity.objects.filter(organization__partner__isnull=False).update(
         website=Subquery(Organization.objects.filter(
             pk=OuterRef('organization'),
         ).values('partner__website').order_by('pk')[:1])
     )
+
+    # Create Entity and EntityVersion if none associated
+    no_entity = Partner.objects.filter(
+        organization__entity__isnull=True,
+        organization__isnull=False,
+    )
+    for partner in no_entity:
+        # also create the corresponding Entity and EntityVersion
+        entity = Entity.objects.create(
+            organization_id=partner.organization_id,
+            website=partner.website,
+        )
+        EntityVersion.objects.create(
+            entity_id=entity.pk,
+            start_date=partner.start_date or partner.created,
+            end_date=partner.end_date,
+            title=partner.name,
+            acronym=partner.partner_code,
+        )
 
     unmatched = Partner.objects.filter(organization__isnull=True)
 
@@ -41,8 +61,7 @@ def forward(apps, schema_editor):
         6: NGO,
         7: ACADEMIC_PARTNER,
     }
-    # Si aucun résultat:  Création d'une nouvelle organisation et ajout de l'ID
-    # dans la relation One-To-One du partner
+    # If unmatched, create a new organization and link it to partner
     for partner in unmatched:
         partner.organization_id = Organization.objects.create(
             name=partner.name,
@@ -67,6 +86,21 @@ def forward(apps, schema_editor):
 
     unmatched = Partner.objects.filter(organization__isnull=True)
     assert not unmatched.exists(), '{} unmatched'.format(unmatched.count())
+
+    # Check everything has an Entity
+    no_entity_version = Partner.objects.filter(
+        organization__entity__isnull=True,
+        organization__isnull=False,
+    )
+    assert not no_entity_version.exists()
+
+    # Check everything has an EntityVersion
+    no_entity_version = Partner.objects.filter(
+        organization__entity__entityversion__isnull=True,
+        organization__entity__isnull=False,
+        organization__isnull=False,
+    )
+    assert not no_entity_version.exists()
 
 
 def backward(apps, schema_editor):

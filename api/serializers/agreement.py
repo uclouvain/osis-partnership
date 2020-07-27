@@ -12,12 +12,8 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
         source='partnership',
         read_only=True,
     )
-    country = serializers.CharField(
-        source='partnership.partner.contact_address.country',
-    )
-    city = serializers.CharField(
-        source='partnership.partner.contact_address.city',
-    )
+    country = serializers.ReadOnlyField(source='country_name')
+    city = serializers.ReadOnlyField()
     supervisor = serializers.CharField(source='partnership.get_supervisor')
     partner = serializers.CharField(
         source='partnership.partner.organization.name'

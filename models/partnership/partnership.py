@@ -2,7 +2,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Prefetch, OuterRef, Subquery
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -10,6 +10,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from base.models.academic_year import AcademicYear
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
@@ -40,7 +41,7 @@ class PartnershipTag(models.Model):
 
 class PartnershipQuerySet(models.QuerySet):
     def add_acronyms(self):
-        ref = models.OuterRef('ucl_entity__pk')
+        ref = models.OuterRef('ucl_entity_id')
 
         cte = EntityVersion.objects.with_children(entity_id=ref)
         qs = cte.join(
@@ -79,6 +80,40 @@ class PartnershipQuerySet(models.QuerySet):
                 last_version.values('title')[:1]
             ),
         )
+
+    def for_validity_end(self):
+        from .agreement import PartnershipAgreement
+        return self.prefetch_related(
+            Prefetch(
+                'agreements',
+                PartnershipAgreement.objects.filter(
+                    status=AgreementStatus.VALIDATED.name,
+                ).select_related('end_academic_year').order_by(
+                    '-end_academic_year__end_date'
+                ),
+                to_attr='last_valid_agreements',
+            ),
+        )
+
+    def annotate_partner_address(self, *fields):
+        """
+        Add annotations on partner contact address
+
+        :param fields: list of fields relative to EntityVersionAddress
+            If a field contains a traversal, e.g. country__name, it will be
+            available as country_name
+        """
+        contact_address_qs = EntityVersion.objects.filter(
+            entity__organization=OuterRef('partner__organization'),
+            parent__isnull=True,
+        ).order_by('-start_date')
+        qs = self
+        for field in fields:
+            lookup = Subquery(contact_address_qs.values(
+                'entityversionaddress__{}'.format(field)
+            )[:1])
+            qs = qs.annotate(**{field.replace('__', '_'): lookup})
+        return qs
 
 
 class Partnership(models.Model):
@@ -249,27 +284,14 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
-        if self.is_mobility and hasattr(self, 'validity_end_year'):
-            # Queryset was annotated
-            if self.validity_end_year is None:
-                return None
-            return '{0}-{1}'.format(
-                self.validity_end_year,
-                str(self.validity_end_year + 1)[-2:],
-            )
+        # Queryset must be annotated with for_validity_end()
         if self.is_project:
             return self.end_date.strftime("%d/%m/%Y")
-        agreement = (
-            self.validated_agreements
-                .select_related('end_academic_year')
-                .order_by('-end_academic_year__end_date')
-                .first()
-        )
-        if agreement is None:
+        if not self.last_valid_agreements:
             return None
         if self.is_mobility:
-            return str(agreement.end_academic_year)
-        return agreement.end_date.strftime("%d/%m/%Y")
+            return str(self.last_valid_agreements[0].end_academic_year)
+        return self.last_valid_agreements[0].end_date.strftime("%d/%m/%Y")
 
     @cached_property
     def valid_agreements_dates_ranges(self):

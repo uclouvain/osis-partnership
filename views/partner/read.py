@@ -18,7 +18,8 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
     def get_queryset(self):
         return (
             Partner.objects
-            .select_related('organization', 'author__user')
+            .prefetch_address()
+            .select_related('author__user')
             .annotate_dates()
             .annotate_website()
             .prefetch_related(
@@ -34,6 +35,9 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
         kwargs['entities'] = PartnerEntity.objects.filter(
             entity_version__parent__organization__partner=self.object,
         ).select_related(
-            'contact_in', 'contact_out', 'entity_version', 'author__user',
+            'contact_in', 'contact_out', 'author__user',
+        ).prefetch_related(
+            'entity_version__parent__entityversion_set__partnerentity',
+            'entity_version__entityversionaddress_set__country',
         )
         return super().get_context_data(**kwargs)

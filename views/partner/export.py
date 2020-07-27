@@ -56,8 +56,8 @@ class PartnersExportView(ExportView, PartnersListView):
                 'erasmus_code',
                 'is_ies',
                 'use_egracons',
-                'contact_address__city',
-                'contact_address__country__name',
+                'organization__entity__entityversion__entityversionaddress__city',
+                'organization__entity__entityversion__entityversionaddress__country__name',
                 'tags_list',
             )
         )

@@ -1,7 +1,6 @@
 from datetime import date
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
@@ -11,7 +10,9 @@ from base.utils.search import SearchMixin
 from partnership.api.serializers import PartnershipAdminSerializer
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.filter import PartnershipAdminFilter
-from partnership.models import AgreementStatus, Partnership, PartnershipType
+from partnership.models import (
+    Partnership, PartnershipType,
+)
 
 __all__ = [
     'PartnershipsListView',
@@ -28,27 +29,31 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     cache_search = False
 
     def get_queryset(self):
-        validity_end_year = Subquery(AcademicYear.objects.filter(
-            partnership_agreements_end__partnership=OuterRef('pk'),
-            partnership_agreements_end__status=AgreementStatus.VALIDATED.name,
-        ).order_by('-end_date').values('year')[:1])
-
         return (
             Partnership.objects
-            .add_acronyms()
-            .select_related(
-                'ucl_entity',
-                'partner__contact_address__country', 'partner_entity',
-                'supervisor',
+            .annotate_partner_address(
+                'country__continent_id',
+                'country__name',
+                'country_id',
+                'city',
             )
-            .annotate(
-                validity_end_year=validity_end_year,
+            # TODO remove when Entity city field is dropped (conflict)
+            .defer("ucl_entity__city")
+            .add_acronyms()
+            .for_validity_end()
+            .select_related(
+                'ucl_entity__uclmanagement_entity__academic_responsible',
+                'partner__organization',
+                'partner_entity',
+                'supervisor',
             )
         ).distinct()
 
     def get_context_data(self, **kwargs):
-        user = self.request.user
         context = super().get_context_data(**kwargs)
+        if "application/json" in self.request.headers.get("Accept", ""):
+            return context
+        user = self.request.user
         context['can_change_configuration'] = is_linked_to_adri_entity(user)
         context['can_add_partnership'] = any([
             t for t in PartnershipType

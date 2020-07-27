@@ -85,6 +85,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
         ).filter(academic_year=self.academic_year)
         queryset = (
             queryset
+            .annotate_partner_address('country__continent__name')
             .annotate(
                 tags_list=StringAgg('tags__value', ', '),
                 is_valid=Case(
@@ -100,15 +101,15 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                     )
                 ),
                 financing_source=Subquery(Financing.objects.filter(
-                    countries=OuterRef('partner__contact_address__country'),
+                    countries=OuterRef('country_id'),
                     academic_year=self.academic_year,
                 ).values('type__program__source')[:1]),
                 financing_program=Subquery(Financing.objects.filter(
-                    countries=OuterRef('partner__contact_address__country'),
+                    countries=OuterRef('country_id'),
                     academic_year=self.academic_year,
                 ).values('type__program')[:1]),
                 financing_type=Subquery(Financing.objects.filter(
-                    countries=OuterRef('partner__contact_address__country'),
+                    countries=OuterRef('country_id'),
                     academic_year=self.academic_year,
                 ).values('type')[:1]),
             )
@@ -127,18 +128,9 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                     queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
                     to_attr='reverse_years',
                 ),
-                Prefetch(
-                    'agreements',
-                    queryset=PartnershipAgreement.objects.filter(
-                        status=AgreementStatus.VALIDATED.name,
-                    ).select_related('end_academic_year').order_by('-end_date'),
-                    to_attr='last_agreement',
-                ),
             )
             .select_related(
                 'author__user',
-                'partner__organization',
-                'partner__contact_address__country__continent',
             )
             .filter(
                 years__academic_year=self.academic_year,
@@ -146,7 +138,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
         )
         for partnership in queryset.distinct():
             year = partnership.selected_year[0]
-            last_agreement = partnership.last_agreement[0] if partnership.last_agreement else None
+            last_agreement = partnership.last_valid_agreements[0] if partnership.last_valid_agreements else None
 
             # Replace funding values if financing is eligible for mobility
             if partnership.is_mobility and year.eligible and partnership.financing_type:
@@ -161,8 +153,8 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(year.funding_source or ''),
                 str(year.funding_program or ''),
                 str(year.funding_type or ''),
-                str(partnership.partner.contact_address.country.continent or ''),
-                str(partnership.partner.contact_address.country or ''),
+                str(partnership.country_continent_name),
+                str(partnership.country_name),
                 str(partnership.partner),
                 str(partnership.partner.organization.code or ''),
                 str(partnership.partner.erasmus_code or ''),

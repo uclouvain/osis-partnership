@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 
 from django.core import mail
-from django.test import TestCase
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -12,6 +11,7 @@ from partnership.models import (
     MediaVisibility,
     PartnershipType,
 )
+from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
@@ -45,6 +45,11 @@ class PartnershipAgreementsListViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
 
+    def test_num_queries_serializer(self):
+        self.client.force_login(self.user)
+        with self.assertNumQueriesLessThan(10):
+            self.client.get(self.url, HTTP_ACCEPT='application/json')
+
     def test_get_list_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
@@ -57,7 +62,8 @@ class PartnershipAgreementsListViewTest(TestCase):
 
     def test_export_as_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.export_url, follow=True)
+        with self.assertNumQueriesLessThan(18):
+            response = self.client.get(self.export_url, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_export_as_adri(self):

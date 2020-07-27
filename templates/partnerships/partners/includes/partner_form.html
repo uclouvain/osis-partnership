@@ -88,25 +88,25 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
-    {% bootstrap_field form_address.name %}
+  <div class="col-sm-2">
+    {% bootstrap_field form_address.street_number %}
+  </div>
+  <div class="col-sm-10">
+    {% bootstrap_field form_address.street %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
-    {% bootstrap_field form_address.address %}
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-sm-12 col-md-3">
+  <div class="col-sm-12 col-md-2">
     {% bootstrap_field form_address.postal_code %}
   </div>
-  <div class="col-sm-12 col-md-4">
+  <div class="col-sm-12 col-md-3">
     {% bootstrap_field form_address.city %}
   </div>
-  <div class="col-sm-12 col-md-5">
+  <div class="col-sm-12 col-md-3">
+    {% bootstrap_field form_address.state %}
+  </div>
+  <div class="col-sm-12 col-md-4">
     {% bootstrap_field form_address.country %}
   </div>
 </div>

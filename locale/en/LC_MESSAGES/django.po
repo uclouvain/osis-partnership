@@ -342,9 +342,6 @@ msgstr "Add partnership agreements"
 msgid "address"
 msgstr "Address"
 
-msgid "address_name_help_text"
-msgstr "Name of the faculty, the company, …"
-
 msgid "administrative_responsible"
 msgstr "Administrative responsible"
 
@@ -395,12 +392,6 @@ msgstr "Changed"
 
 msgid "city"
 msgstr "City"
-
-msgid "city_english"
-msgstr "City in english"
-
-msgid "city_french"
-msgstr "City in french"
 
 msgid "close"
 msgstr "Close"
@@ -1103,6 +1094,7 @@ msgstr "Show all years."
 msgid "partnerships_export"
 msgstr "Export partnerships"
 
+#, python-format
 msgid "partnerships_export_yearly %(year)s"
 msgstr "Yearly data for %(year)s"
 
@@ -1180,6 +1172,9 @@ msgstr "The end date is after the from date."
 msgid "start_date_gt_end_date_error"
 msgstr "The start date can't be later than the end date"
 
+msgid "state"
+msgstr "State"
+
 msgid "status"
 msgstr "Status"
 
@@ -1194,6 +1189,9 @@ msgstr "Waiting"
 
 msgid "still_actif"
 msgstr "Still active"
+
+msgid "street_number"
+msgstr "Street num."
 
 msgid "submit"
 msgstr "Submit"

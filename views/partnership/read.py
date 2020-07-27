@@ -51,7 +51,10 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             Partnership.objects
             .add_acronyms()
             .select_related(
-                'partner', 'partner_entity', 'ucl_entity', 'author__user',
+                'partner__organization',
+                'partner_entity',
+                'ucl_entity',
+                'author__user',
                 'supervisor',
                 'ucl_entity__uclmanagement_entity__academic_responsible',
                 'ucl_entity__uclmanagement_entity__contact_in_person',

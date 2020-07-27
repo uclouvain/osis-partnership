@@ -291,12 +291,8 @@ class PartnershipAdminSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='partnerships:detail',
     )
-    country = serializers.CharField(
-        source='partner.contact_address.country',
-    )
-    city = serializers.CharField(
-        source='partner.contact_address.city',
-    )
+    country = serializers.ReadOnlyField(source='country_name')
+    city = serializers.ReadOnlyField()
     supervisor = serializers.CharField(source='get_supervisor')
     partner = serializers.CharField(source='partner.organization.name')
     type = serializers.CharField(source='get_partnership_type_display')

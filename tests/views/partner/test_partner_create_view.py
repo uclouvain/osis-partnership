@@ -119,7 +119,6 @@ class PartnerCreateViewTest(TestCase):
         response = self.client.post(self.url, data, follow=True)
         self.assertIn('country', response.context_data['form_address'].errors)
         self.assertIn('city', response.context_data['form_address'].errors)
-        self.assertIn('name', response.context_data['form_address'].errors)
         self.assertTemplateNotUsed(response, self.detail_template)
 
     def test_post_as_adri(self):
