@@ -54,6 +54,7 @@ class PartnersListView(generics.ListAPIView):
                 'country__iso_code',
                 'country__name',
                 'city',
+                'location',
             )
             .filter(pk__in=self.counts.keys())
             .distinct().order_by('pk').only(

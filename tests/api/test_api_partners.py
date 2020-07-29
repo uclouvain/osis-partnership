@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import Point
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -44,6 +45,9 @@ class PartnersApiViewTest(TestCase):
             partner__organization__name="University of Albania",
             partner__contact_address__country=cls.country,
             partner__contact_address__city="Tirana",
+            partner__contact_address__location=Point(
+                19.8186, 41.3275
+            ),
             ucl_entity=EntityFactory(),
         )
         year = PartnershipYearFactory(

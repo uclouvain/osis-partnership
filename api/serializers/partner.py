@@ -1,5 +1,4 @@
-from django.contrib.gis.geos import Point
-from faker import Faker
+import json
 from rest_framework import serializers
 
 from partnership.models import Partner
@@ -18,7 +17,6 @@ class PartnerListSerializer(serializers.ModelSerializer):
     country_iso = serializers.CharField(source='country_iso_code')
     partnerships_count = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
-    faker = Faker()
 
     class Meta:
         model = Partner
@@ -31,9 +29,8 @@ class PartnerListSerializer(serializers.ModelSerializer):
         return self.context['counts'][obj.pk]
 
     def get_location(self, obj):
-        coords = self.faker.location_on_land(coords_only=True)
-        import json
-        return json.loads(Point(x=float(coords[1]), y=float(coords[0])).json)
+        if obj.location:
+            return json.loads(obj.location.json)
 
 
 class PartnerDetailSerializer(PartnerListSerializer):
