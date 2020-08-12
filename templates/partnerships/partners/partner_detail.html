@@ -97,7 +97,13 @@
           </dd>
 
           <dt>{% trans "contact_address" %}</dt>
-          <dd>{{ partner.contact_address|address_one_line }}</dd>
+          <dd>
+            {{ partner.contact_address|address_one_line }}
+            {% static_map_url partner.contact_address.location as map_url %}
+            {% if map_url %}
+              <img src="{{ map_url }}" />
+            {% endif %}
+          </dd>
 
           {% with website=partner.website %}
             {% if website %}

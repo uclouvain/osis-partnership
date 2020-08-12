@@ -276,7 +276,8 @@ class Partner(models.Model):
     def contact_address(self):
         if not hasattr(self, '_prefetched_objects_cache'):
             return EntityVersionAddress.objects.filter(
-                entity_version__entity__organization_id=self.organization_id
+                entity_version__entity__organization_id=self.organization_id,
+                entity_version__parent__isnull=True,
             ).first()
         # We surely have a entity and a version, but we may not have an address
         address = self.organization.entities[0].versions[0].address

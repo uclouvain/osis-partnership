@@ -48,6 +48,8 @@ class PartnerCreateViewTest(TestCase):
             'contact_address-postal_code': 'test',
             'contact_address-city': 'test',
             'contact_address-country': cls.country.pk,
+            'contact_address-location_0': -30,
+            'contact_address-location_1': 20,
         }
 
         cls.url = reverse('partnerships:partners:create')

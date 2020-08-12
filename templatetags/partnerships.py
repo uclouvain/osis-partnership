@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.urls import reverse
 
 from base.models.entity_version_address import EntityVersionAddress
@@ -41,3 +42,22 @@ def address_one_line(address: EntityVersionAddress):
     if address.country:
         components.append(str(address.country).upper())
     return ', '.join(components)
+
+
+@register.simple_tag
+def static_map_url(location, zoom=3, width=300, height=250, marker_name='pin-l'):
+    if not location:
+        return ''
+    return (
+        "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        "{marker_name}({lon},{lat})/{lon},{lat},{zoom}/{width}x{height}"
+        "?access_token={token}".format(
+            marker_name=marker_name,
+            lon=location.x,
+            lat=location.y,
+            zoom=zoom,
+            width=width,
+            height=height,
+            token=settings.MAPBOX['ACCESS_TOKEN'],
+        )
+    )
