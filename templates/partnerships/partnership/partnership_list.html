@@ -167,7 +167,7 @@
                       {% bootstrap_field form.supervisor %}
                     </div>
                   </div>
-                  <div class="row collapse fade in" id="mobility-fields">
+                  <div class="row collapse fade in only-mobility">
                     <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.is_sms %}
                     </div>
@@ -196,24 +196,24 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
                       <label class="control-label" for="{{ form.partnership_in.id_for_label  }}">
                         {{ form.partnership_in.label }}
                         <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
                       <label class="control-label" for="{{ form.partnership_ending_in.id_for_label  }}">
                         {{ form.partnership_ending_in.label }}
                         <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_ending_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_ending_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
                       {% bootstrap_field form.partnership_valid_in %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
                       {% bootstrap_field form.partnership_not_valid_in %}
                     </div>
                   </div>

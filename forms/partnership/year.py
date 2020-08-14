@@ -309,7 +309,7 @@ class PartnershipYearCourseForm(PartnershipYearSubtypeMixin, PartnershipYearWith
         self.fields['education_levels'].required = True
 
 
-class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearBaseForm):
+class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
             'subtype',

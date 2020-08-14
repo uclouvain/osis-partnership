@@ -49,10 +49,17 @@ class PartnershipAgreementsListViewTest(TestCase):
             person__user=cls.user_adri,
         )
 
-        for i in range(3):
-            PartnershipAgreementFactory(
-                partnership__ucl_entity=cls.ucl_university_labo,
-            )
+        PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
+        )
+        PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
+        )
+        PartnershipAgreementFactory(
+            partnership__partnership_type=PartnershipType.COURSE.name,
+            start_date=date(2017, 9, 1),
+            end_date=date(2025, 9, 1),
+        )
 
         cls.url = reverse('partnerships:agreements-list')
         cls.export_url = reverse('partnerships:export_agreements')

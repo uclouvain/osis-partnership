@@ -205,7 +205,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
     pass
 
 
-class PartnershipDoctorateForm(PartnershipWithDatesMixin):
+class PartnershipDoctorateForm(PartnershipBaseForm):
     pass
 
 

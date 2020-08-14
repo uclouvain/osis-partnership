@@ -60,16 +60,22 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     var type = $('#id_partnership_type')
     function collapseMobilityFields () {
         var value = type.val();
-        $('#mobility-fields').collapse(value === 'MOBILITY' ? 'show' : 'hide');
+        $('.only-mobility').collapse(value === 'MOBILITY' ? 'show' : 'hide');
         if (value !== 'MOBILITY') {
-            $('#mobility-fields select').val('')
+            $('.only-mobility select').val('')
         }
         $('#project-fields').collapse(value === 'PROJECT' ? 'show' : 'hide');
         if (value !== 'PROJECT') {
             $('#project-fields select').val('')
         }
-        $('#subtype-field select').val('').trigger('change');
         $('#subtype-field').collapse(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        if (['', 'MOBILITY', 'PROJECT'].includes(value)) {
+            $('#subtype-field select').val('')
+        }
+        $('.except-general-project').collapse(['GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        if (['GENERAL', 'PROJECT'].includes(value)) {
+            $('.except-general-project select').val('')
+        }
     }
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);

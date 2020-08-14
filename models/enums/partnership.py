@@ -12,4 +12,8 @@ class PartnershipType(ChoiceEnum):
 
     @classmethod
     def with_synced_dates(cls):
-        return [PartnershipType.MOBILITY.name, PartnershipType.COURSE.name]
+        return [
+            PartnershipType.MOBILITY.name,
+            PartnershipType.COURSE.name,
+            PartnershipType.DOCTORATE.name,
+        ]

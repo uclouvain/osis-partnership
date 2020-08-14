@@ -48,6 +48,9 @@ msgstr ""
 msgid "Counsellzing body"
 msgstr ""
 
+msgid "Coverage"
+msgstr ""
+
 msgid "EU-wide network"
 msgstr ""
 
@@ -347,6 +350,9 @@ msgstr "Administrative responsible"
 
 msgid "agreements_export"
 msgstr "Agreements export"
+
+msgid "agreements_or_conventions"
+msgstr "Agreements or Conventions"
 
 msgid "all_entities"
 msgstr "Entities"
