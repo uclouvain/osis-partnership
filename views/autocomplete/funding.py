@@ -1,4 +1,5 @@
 from dal.views import ViewMixin
+from dal_select2.views import Select2QuerySetView
 from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.http import JsonResponse
@@ -7,7 +8,11 @@ from django.views import View
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.models import FundingProgram, FundingSource, FundingType
 
-__all__ = ['FundingAutocompleteView']
+__all__ = [
+    'FundingAutocompleteView',
+    'FundingProgramAutocompleteView',
+    'FundingTypeAutocompleteView',
+]
 
 
 class FundingAutocompleteView(PermissionRequiredMixin, ViewMixin, View):
@@ -45,3 +50,31 @@ class FundingAutocompleteView(PermissionRequiredMixin, ViewMixin, View):
         return JsonResponse({
             'results': [dict(id=x['value'], text=x['text']) for x in results]
         }, content_type='application/json')
+
+
+class FundingProgramAutocompleteView(PermissionRequiredMixin,
+                                     Select2QuerySetView):
+    login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
+    model = FundingProgram
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        source = self.forwarded.get('funding_source', None)
+        if source:
+            return qs.filter(source_id=source)
+        return qs.none()
+
+
+class FundingTypeAutocompleteView(PermissionRequiredMixin,
+                                  Select2QuerySetView):
+    login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
+    model = FundingType
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        program = self.forwarded.get('funding_program', None)
+        if program:
+            return qs.filter(program_id=program)
+        return qs.none()

@@ -11,6 +11,7 @@ from partnership.models import (
     PartnerEntity,
     Partnership,
     PartnershipConfiguration,
+    PartnershipSubtype,
     PartnershipType,
 )
 from .faculty import FacultyEntityAutocompleteView
@@ -22,6 +23,7 @@ __all__ = [
     'PartnershipYearEntitiesAutocompleteView',
     'PartnershipYearOffersAutocompleteView',
     'YearsEntityAutocompleteFilterView',
+    'PartnershipSubtypeAutocompleteView',
 ]
 
 
@@ -184,3 +186,18 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
             partnerships_years__isnull=False,
             pk__in=qs,
         )
+
+
+class PartnershipSubtypeAutocompleteView(PermissionRequiredMixin,
+                                         autocomplete.Select2QuerySetView):
+    login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships'
+    model = PartnershipSubtype
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        partnership_type = self.forwarded.get('partnership_type', None)
+        if not partnership_type:
+            return queryset.none()
+
+        return queryset.filter(types__contains=[partnership_type])

@@ -2,11 +2,12 @@ from datetime import date
 
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Exists, F, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Q, Subquery, F
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
+from base.models.enums.organization_type import MAIN
 from base.utils.cte import CTESubquery
 
 __all__ = [
@@ -44,7 +45,10 @@ class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
                     entity_id=(OuterRef('pk')),
                 ).filter(entity_type=FACULTY).values('acronym')[:1]
             ),
-        ).filter(is_valid=True).order_by(
+        ).filter(
+            is_valid=True,
+            organization__type=MAIN,
+        ).order_by(
             'sector_acronym',
             F('faculty_acronym').asc(nulls_first=True),
             'most_recent_acronym',

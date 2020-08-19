@@ -214,11 +214,19 @@ class PartnershipFilterForm(forms.Form):
     subtype = forms.ModelChoiceField(
         label=_('partnership_subtype'),
         queryset=PartnershipSubtype.objects.filter(years__isnull=False).distinct(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:subtype',
+            forward=['partnership_type'],
+        ),
         required=False,
     )
     funding_type = forms.ModelChoiceField(
         label=_('funding_type'),
         queryset=FundingType.objects.filter(years__isnull=False).distinct(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:funding_type',
+            forward=['funding_program'],
+        ),
         required=False,
     )
     funding_program = forms.ModelChoiceField(
@@ -226,6 +234,10 @@ class PartnershipFilterForm(forms.Form):
         queryset=FundingProgram.objects.filter(
             fundingtype__years__isnull=False,
         ).distinct(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:funding_program',
+            forward=['funding_source'],
+        ),
         required=False,
     )
     funding_source = forms.ModelChoiceField(
