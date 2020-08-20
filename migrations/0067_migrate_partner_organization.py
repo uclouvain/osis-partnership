@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from django.db import migrations
-from django.db.models import OuterRef, Subquery, Value
+from django.db.models import OuterRef, Subquery, Value, Exists, ProtectedError
 from django.db.models.functions import Concat
 
 from base.models.enums.organization_type import *
@@ -101,6 +101,28 @@ def forward(apps, schema_editor):
         organization__isnull=False,
     )
     assert not no_entity_version.exists()
+
+    # Remove all organizations which do not have a matching one in partnership
+    names = [
+        "University of Tampere",
+        "Tampere University of Technology",
+        "Universidad de los Andes",
+        "Universidad Mayor de San Simon",
+        "Georgian National Centre of Manuscripts",
+        "Universidad de los Andes",
+        "Université de Grenoble Alpes",
+        "National Taiwan University",
+        "KLAIPEDOS UNIVERSITETAS",
+    ]
+    qs = Organization.objects.annotate(
+        matching_id=Exists(Partner.objects.filter(
+            organization_id=OuterRef('pk'),
+        )),
+    ).filter(
+        matching_id=False,
+        name__in=names,
+    ).order_by('name')
+    _, deleted = qs.delete()
 
 
 def backward(apps, schema_editor):
