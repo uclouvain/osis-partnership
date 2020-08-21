@@ -22,7 +22,7 @@ class ConfigurationApiViewTest(TestCase):
     def setUpTestData(cls):
         cls.url = reverse('partnership_api_v1:configuration')
 
-        AcademicYearFactory.produce_in_future(quantity=3)
+        AcademicYearFactory.produce_in_future(quantity=2)
         current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
 
         # Partnerships
@@ -48,12 +48,12 @@ class ConfigurationApiViewTest(TestCase):
         root = EntityWithVersionFactory()
         parent = EntityVersionFactory(acronym="SSH", entity_type=SECTOR, parent=root)
         partnership = PartnershipFactory(
-            years=[],
+            partner__contact_address=True,
+            years__academic_year=current_academic_year,
             ucl_entity=EntityVersionFactory(
                 acronym="FIAL", entity_type=FACULTY, parent=parent.entity,
             ).entity,
         )
-        PartnershipYearFactory(partnership=partnership, academic_year=current_academic_year)
         PartnershipAgreementFactory(
             partnership=partnership,
             start_academic_year=current_academic_year,

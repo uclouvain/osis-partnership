@@ -12,7 +12,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus, PartnershipType
 from partnership.utils import merge_agreement_ranges

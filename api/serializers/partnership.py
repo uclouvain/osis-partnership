@@ -275,8 +275,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
         ume = partnership.ucl_entity.uclmanagement_entity
         administrative_person = ume.administrative_responsible
-        email = ume.contact_in_email
 
+        email = ume.contact_in_email
         if email is None:
             email = getattr(administrative_person, 'email', None)
 

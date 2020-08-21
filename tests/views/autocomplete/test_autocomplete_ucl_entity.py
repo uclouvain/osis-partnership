@@ -4,7 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
-from base.tests.factories.entity_version import EntityVersionFactory
+from base.models.enums.organization_type import MAIN
+from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory, UCLManagementEntityFactory,
@@ -14,10 +15,12 @@ from partnership.tests.factories import (
 class UclEntityAutocompleteTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
+        class EntityVersionFactory(BaseEntityVersionFactory):
+            entity__organization__type = MAIN
+            entity__country = None
+
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
-        entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()

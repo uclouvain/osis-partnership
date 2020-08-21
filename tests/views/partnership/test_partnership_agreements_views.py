@@ -24,7 +24,12 @@ class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # ucl_university
-        parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
+        root = EntityVersionFactory(parent=None).entity
+        parent = EntityVersionFactory(
+            acronym='AAA',
+            entity_type=SECTOR,
+            parent=root,
+        ).entity
         cls.ucl_university = EntityVersionFactory(
             parent=parent,
             entity_type=FACULTY,
@@ -35,18 +40,20 @@ class PartnershipAgreementsListViewTest(TestCase):
             acronym='AAA',
         ).entity
 
+        cls.user = PartnershipEntityManagerFactory().person.user
+        cls.user_adri = UserFactory()
+
+        root = EntityVersionFactory(parent=None).entity
+        PartnershipEntityManagerFactory(
+            entity=EntityVersionFactory(acronym='ADRI', parent=root).entity,
+            person__user=cls.user_adri,
+        )
+
         for i in range(3):
             PartnershipAgreementFactory(
                 partnership__ucl_entity=cls.ucl_university_labo,
             )
-        cls.user = PartnershipEntityManagerFactory().person.user
-        cls.user_adri = UserFactory()
 
-        entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(
-            entity=entity_version.entity,
-            person__user=cls.user_adri,
-        )
         cls.url = reverse('partnerships:agreements-list')
         cls.export_url = reverse('partnerships:export_agreements')
 

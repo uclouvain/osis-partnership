@@ -155,11 +155,9 @@ class PartnersListViewTest(TestCase):
 
 
 class PartnersExportViewTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
-        for i in range(21):
-            PartnerFactory(is_ies=False)
+        PartnerFactory(is_ies=False)
         cls.partner_erasmus_last = PartnerFactory(erasmus_code='ZZZ', is_ies=False)
         cls.partner_name = PartnerFactory(organization__name='foobar', is_ies=False)
         cls.partner_partner_type = PartnerFactory(is_ies=False)

@@ -2,7 +2,6 @@ import django_filters as filters
 from django.db.models import Exists, Max, OuterRef, Q
 
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.forms import (
     PartnerFilterForm, PartnershipFilterForm,

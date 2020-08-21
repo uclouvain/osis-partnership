@@ -24,7 +24,7 @@ from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
-PARTNERSHIP_COUNT = 4
+PARTNERSHIP_COUNT = 5
 
 
 class PartnershipApiViewTest(TestCase):
@@ -46,6 +46,9 @@ class PartnershipApiViewTest(TestCase):
         CountryFactory()
 
         # Partnerships
+        root = EntityVersionFactory(parent=None, acronym="UCL").entity
+        sector = EntityVersionFactory(parent=root, acronym="SSH").entity
+        entity = EntityVersionFactory(parent=sector, acronym="FIAL").entity
         cls.supervisor_partnership = PersonFactory()
         cls.supervisor_management_entity = PersonFactory()
         cls.funding_type = FundingTypeFactory()
@@ -54,16 +57,17 @@ class PartnershipApiViewTest(TestCase):
         cls.subtype = PartnershipSubtypeFactory()
 
         cls.partnership = PartnershipFactory(
+            ucl_entity=entity,
             supervisor=cls.supervisor_partnership,
             years=[],
             partner__contact_address__country=cls.country,
             partner__contact_address__city="Tirana",
-            ucl_entity=EntityVersionFactory().entity,
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
             academic_year=current_academic_year,
             is_smp=True,
+            eligible=False,
             funding_source=cls.funding_source,
             funding_program=cls.funding_program,
             funding_type=cls.funding_type,
@@ -82,12 +86,32 @@ class PartnershipApiViewTest(TestCase):
             entity=cls.partnership.ucl_entity,
         )
 
+        partnership_without_funding = PartnershipFactory(
+            ucl_entity=EntityVersionFactory(parent=sector, acronym="DRT").entity,
+            years=[],
+        )
+        PartnershipYearFactory(
+            partnership=partnership_without_funding,
+            academic_year=current_academic_year,
+        )
+        PartnershipAgreementFactory(
+            partnership=partnership_without_funding,
+            start_academic_year=current_academic_year,
+            end_academic_year__year=current_academic_year.year + 1,
+            status=AgreementStatus.VALIDATED.name,
+        )
+        UCLManagementEntityFactory(
+            entity=partnership_without_funding.ucl_entity,
+            contact_in_person=None,
+            contact_out_person=None,
+        )
+
         cls.partnership_2 = PartnershipFactory(
             supervisor=None,
+            years__academic_year=current_academic_year,
             partner__contact_address__country__name="Zambia",
             partner__contact_address__country__iso_code="ZM",
             partner__contact_address__city="Lusaka",
-            years=[PartnershipYearFactory(academic_year=current_academic_year)],
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_2,
@@ -138,10 +162,9 @@ class PartnershipApiViewTest(TestCase):
         cls.partnership_without_agreement = PartnershipFactory()
         cls.partnership_not_public = PartnershipFactory(is_public=False)
 
-        cls.partnership_with_agreement_not_validated = PartnershipFactory(supervisor=None, years=[])
-        PartnershipYearFactory(
-            partnership=cls.partnership_with_agreement_not_validated,
-            academic_year=current_academic_year,
+        cls.partnership_with_agreement_not_validated = PartnershipFactory(
+            supervisor=None,
+            years__academic_year=current_academic_year,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_with_agreement_not_validated,

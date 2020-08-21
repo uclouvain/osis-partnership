@@ -12,18 +12,19 @@ from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import AgreementStatus, PartnershipType
 from partnership.tests import TestCase
-from partnership.tests.factories import FinancingFactory
-from partnership.tests.factories import FundingTypeFactory
 from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
     PartnerTagFactory,
-    PartnershipAgreementFactory,
+    PartnershipAgreementFactory as BasePartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory,
+    PartnershipFactory as BasePartnershipFactory,
     PartnershipTagFactory,
     PartnershipYearEducationLevelFactory,
     PartnershipYearFactory,
+    FinancingFactory,
+    MediaFactory,
+    FundingTypeFactory,
 )
 from partnership.tests.factories import PartnershipSubtypeFactory
 from reference.models.continent import Continent
@@ -37,18 +38,27 @@ class PartnershipsListViewTest(TestCase):
         class EntityVersionFactory(BaseEntityVersionFactory):
             entity__organization = None
 
+        root = EntityVersionFactory(parent=None).entity
+
         class EducationGroupYearFactory(BaseEducationGroupYearFactory):
             management_entity = None
             administration_entity = None
             enrollment_campus = None
             main_teaching_campus = None
 
-        cls.partnership_first_name = PartnershipFactory(
+        class PartnershipAgreementFactory(BasePartnershipAgreementFactory):
+            media = MediaFactory()
+
+        class PartnershipFactory(BasePartnershipFactory):
+            ucl_entity = EntityVersionFactory(parent=root).entity
+            partner = PartnerFactory()
+
+        cls.partnership_first_name = BasePartnershipFactory(
+            ucl_entity=PartnershipFactory.ucl_entity,
             partner__organization__name='Albania School',
         )
 
         # ucl_university
-        root = EntityVersionFactory(parent=None).entity
         parent = EntityVersionFactory(
             acronym='AAA',
             entity_type=SECTOR,
@@ -74,7 +84,7 @@ class PartnershipsListViewTest(TestCase):
 
         # university_offer
         cls.university_offer = EducationGroupYearFactory()
-        cls.partnership_university_offer = PartnershipFactory()
+        cls.partnership_university_offer = PartnershipFactory(years=[])
         partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_university_offer,
             academic_year__year=2101,
@@ -88,7 +98,8 @@ class PartnershipsListViewTest(TestCase):
             contact_address__country__iso_code='AL',
         )
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
-        cls.partnership_partner_type = PartnershipFactory(
+        cls.partnership_partner_type = BasePartnershipFactory(
+            ucl_entity=PartnershipFactory.ucl_entity,
             partner__organization__type=ACADEMIC_PARTNER,
         )
 
@@ -97,10 +108,14 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_partner_entity = PartnershipFactory(partner_entity=cls.partner_entity)
 
         # use_egracons
-        cls.partnership_use_egracons = PartnershipFactory(partner__use_egracons=True)
+        cls.partnership_use_egracons = BasePartnershipFactory(
+            ucl_entity=PartnershipFactory.ucl_entity,
+            partner__use_egracons=True,
+        )
 
         # city
-        cls.partnership_city = PartnershipFactory(
+        cls.partnership_city = BasePartnershipFactory(
+            ucl_entity=PartnershipFactory.ucl_entity,
             partner__contact_address__city='Berat',
             partner__contact_address__country__iso_code='AL',
         )
@@ -138,27 +153,35 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_education_level = partnership_year.partnership
 
         # is_sms
-        cls.partnership_is_sms = PartnershipYearFactory(is_sms=True, academic_year__year=2150).partnership
-
+        cls.partnership_is_sms = PartnershipYearFactory(
+            is_sms=True,
+            academic_year__year=2150,
+        ).partnership
         # is_smp
-        cls.partnership_is_smp = PartnershipYearFactory(is_smp=True, academic_year__year=2151).partnership
+        cls.partnership_is_smp = PartnershipYearFactory(
+            is_smp=True,
+            academic_year__year=2151,
+        ).partnership
         # is_sta
-        cls.partnership_is_sta = PartnershipYearFactory(is_sta=True, academic_year__year=2152).partnership
+        cls.partnership_is_sta = PartnershipYearFactory(
+            is_sta=True,
+            academic_year__year=2152,
+        ).partnership
         # is_stt
-        cls.partnership_is_stt = PartnershipYearFactory(is_stt=True, academic_year__year=2153).partnership
+        cls.partnership_is_stt = PartnershipYearFactory(
+            is_stt=True,
+            academic_year__year=2153,
+        ).partnership
 
         # partnership_type
         cls.partnership_type = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
+            years__academic_year__year=2154,
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_type,
             status=AgreementStatus.VALIDATED.name,
             end_date=date(2020, 7, 1),
-        )
-        PartnershipYearFactory(
-            partnership=cls.partnership_type,
-            academic_year__year=2154,
         )
 
         # tags
@@ -198,10 +221,8 @@ class PartnershipsListViewTest(TestCase):
             end_academic_year__year=2120,
         )
         # partnership_no_agreement_in
-        cls.partnership_partnership_no_agreement_in = PartnershipFactory(years=[])
-        PartnershipYearFactory(
-            partnership=cls.partnership_partnership_no_agreement_in,
-            academic_year__year=2180,
+        cls.partnership_partnership_no_agreement_in = PartnershipFactory(
+            years__academic_year__year=2180,
         )
         # All filters
         cls.country_all_filters = CountryFactory(
@@ -235,6 +256,7 @@ class PartnershipsListViewTest(TestCase):
             partner_entity=PartnerEntityFactory(
                 partner=cls.partner_all_filters,
             ),
+            years=[],
         )
         partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_all_filters,
@@ -279,6 +301,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
+        self.assertEqual(response.context['paginator'].count, 27)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     def test_get_num_queries_serializer(self):
@@ -288,26 +311,23 @@ class PartnershipsListViewTest(TestCase):
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=partner')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(context['partnerships'][0], self.partnership_first_name)
+        response = self.client.get(self.url + '?ordering=partner', HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(results[0]['uuid'], str(self.partnership_first_name.uuid))
 
     def test_get_list_ordering_country(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=country')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(context['partnerships'][0], self.partnership_city)
-        self.assertEqual(context['partnerships'][1], self.partnership_partner)
+        response = self.client.get(self.url + '?ordering=country', HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(results[0]['uuid'], str(self.partnership_city.uuid))
+        self.assertEqual(results[1]['uuid'], str(self.partnership_partner.uuid))
 
     def test_get_list_ordering_ucl(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=ucl')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
-        self.assertEqual(context['partnerships'][1], self.partnership_ucl_university)
+        response = self.client.get(self.url + '?ordering=ucl', HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
+        self.assertEqual(results[1]['uuid'], str(self.partnership_ucl_university_labo.uuid))
 
     def test_filter_ucl_university(self):
         self.client.force_login(self.user)
@@ -315,147 +335,165 @@ class PartnershipsListViewTest(TestCase):
             'ucl_entity': self.ucl_university.pk,
             'ucl_entity_with_child': True,
             'ordering': 'ucl',
-        })
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 2)
-        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
-        self.assertEqual(context['partnerships'][1], self.partnership_ucl_university)
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
+        self.assertEqual(results[1]['uuid'], str(self.partnership_ucl_university_labo.uuid))
 
         response = self.client.get(self.url, {
             'ucl_entity': self.ucl_university.pk,
             'ucl_entity_with_child': False,
-        })
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university)
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
 
     def test_filter_ucl_university_labo(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ucl_entity=' + str(self.ucl_university_labo.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_ucl_university_labo)
+        response = self.client.get(self.url, {
+            'ucl_entity': self.ucl_university_labo.pk
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university_labo.uuid))
 
     def test_filter_university_offers(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?university_offer=' + str(self.university_offer.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(context['paginator'].count, 27)  # Include partnerships with offers at None
+        response = self.client.get(self.url, {
+            'university_offer': self.university_offer.pk,
+        }, HTTP_ACCEPT='application/json')
+        json = response.json()
+        uuids = [o['uuid'] for o in json['object_list']]
+        self.assertIn(str(self.partnership_university_offer.uuid), uuids)
+        # Include partnerships with offers at None (27 total - 2 with other offers)
+        self.assertEqual(json['total'], 25)
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partner=' + str(self.partner.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner)
+        response = self.client.get(self.url, {
+            'partner': self.partner.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partner.uuid))
 
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partner_entity=' + str(self.partner_entity.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner_entity)
+        response = self.client.get(self.url, {
+            'partner_entity': self.partner_entity.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partner_entity.uuid))
         
     def test_filter_use_egracons(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?use_egracons=True')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_use_egracons)
+        response = self.client.get(self.url, {
+            'use_egracons': True
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_use_egracons.uuid))
 
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partner_type=' + ACADEMIC_PARTNER)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner_type)
+        response = self.client.get(self.url, {
+            'partner_type': ACADEMIC_PARTNER,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partner_type.uuid))
 
     def test_filter_city(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?city=Berat')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_city)
+        response = self.client.get(self.url, {
+            'city': 'Berat',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_city.uuid))
 
     def test_filter_country(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?country=' + str(self.country.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_country)
+        response = self.client.get(self.url, {
+            'country': self.country.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_country.uuid))
 
     def test_filter_continent(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?continent=' + str(self.continent.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_continent)
+        response = self.client.get(self.url, {
+            'continent': self.continent.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_continent.uuid))
 
     def test_filter_partner_tags(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?partner_tags=' + str(self.partner_tag.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partner_tags)
+        response = self.client.get(self.url, {
+            'partner_tags': self.partner_tag.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partner_tags.uuid))
 
     def test_filter_education_field(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?education_field=' + str(self.education_field.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_education_field)
+        response = self.client.get(self.url, {
+            'education_field': self.education_field.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_education_field.uuid))
 
     def test_filter_education_level(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?education_level=' + str(self.education_level.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_education_level)
+        response = self.client.get(self.url, {
+            'education_level': self.education_level.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_education_level.uuid))
 
     def test_filter_is_sms(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_sms=True')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_is_sms)
+        response = self.client.get(self.url, {
+            'is_sms': True,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_is_sms.uuid))
 
     def test_filter_is_smp(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_smp=True')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_is_smp)
+        response = self.client.get(self.url, {
+            'is_smp': True,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_is_smp.uuid))
 
     def test_filter_is_sta(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_sta=True')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_is_sta)
+        response = self.client.get(self.url, {
+            'is_sta': True,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_is_sta.uuid))
 
     def test_filter_is_stt(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_stt=True')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_is_stt)
+        response = self.client.get(self.url, {
+            'is_stt': True,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_is_stt.uuid))
 
     def test_filter_partnership_type(self):
         self.client.force_login(self.user)
@@ -469,66 +507,73 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?tags=' + str(self.tag.pk))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_tag)
+        response = self.client.get(self.url, {
+            'tags': self.tag.pk,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_tag.uuid))
 
     def test_filter_comment(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?comment=foo')
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_comment)
+        response = self.client.get(self.url, {
+            'comment': 'foo',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_comment.uuid))
 
     def test_filter_partnership_in(self):
         self.client.force_login(self.user)
         academic_year = self.partnership_partnership_in.agreements.first().start_academic_year_id
-        response = self.client.get(self.url + '?partnership_in=' + str(academic_year))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partnership_in)
+        response = self.client.get(self.url, {
+            'partnership_in': academic_year,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_in.uuid))
 
     def test_filter_partnership_ending_in(self):
         self.client.force_login(self.user)
         academic_year = self.partnership_partnership_ending_in.agreements.first().end_academic_year_id
-        response = self.client.get(self.url + '?partnership_ending_in=' + str(academic_year))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partnership_ending_in)
+        response = self.client.get(self.url, {
+            'partnership_ending_in': academic_year,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_ending_in.uuid))
 
     def test_filter_partnership_valid_in(self):
         self.client.force_login(self.user)
         academic_year = self.partnership_partnership_valid_in.agreements.first().start_academic_year_id
-        response = self.client.get(self.url + '?partnership_valid_in=' + str(academic_year))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partnership_valid_in)
-        self.assertEqual(context['partnerships'][0].validity_end, "2118-19")
+        response = self.client.get(self.url, {
+            'partnership_valid_in': academic_year,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_valid_in.uuid))
+        self.assertEqual(results[0]['validity_end'], "2118-19")
 
     def test_filter_partnership_not_valid_in(self):
         self.client.force_login(self.user)
         academic_year = self.partnership_partnership_not_valid_in.agreements.first().start_academic_year_id
-        response = self.client.get(self.url + '?partnership_not_valid_in=' + str(academic_year))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partnership_not_valid_in)
-        self.assertIsNone(context['partnerships'][0].validity_end)
+        response = self.client.get(self.url, {
+            'partnership_not_valid_in': academic_year,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_not_valid_in.uuid))
+        self.assertIsNone(results[0]['validity_end'])
 
     def test_filter_partnership_no_agreements_in(self):
         self.client.force_login(self.user)
         academic_year = self.partnership_partnership_no_agreement_in.years.first().academic_year_id
-        response = self.client.get(self.url + '?partnership_with_no_agreements_in=' + str(academic_year))
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_partnership_no_agreement_in)
+        response = self.client.get(self.url, {
+            'partnership_with_no_agreements_in': academic_year,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_no_agreement_in.uuid))
 
     def test_all_filters(self):
         self.client.force_login(self.user)
@@ -555,18 +600,20 @@ class PartnershipsListViewTest(TestCase):
             'partnership_valid_in': str(AcademicYear.objects.get(year=2127).pk),
             'partnership_not_valid_in': str(AcademicYear.objects.get(year=2126).pk),
         }.items()])
-        response = self.client.get(self.url + '?' + query)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partnerships']), 1)
-        self.assertEqual(context['partnerships'][0], self.partnership_all_filters)
+        response = self.client.get(self.url + '?' + query, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
 
     def test_export_all(self):
         self.client.force_login(self.user)
 
         # We need more precise objects (on the correct academic year)
         year = AcademicYearFactory(year=2136)
-        partnership1 = PartnershipFactory()
+        partnership1 = BasePartnershipFactory(
+            years=[],
+            partner__contact_address=True,
+        )
         partnership_year = PartnershipYearFactory(
             partnership=partnership1,
             academic_year=year,
@@ -576,7 +623,7 @@ class PartnershipsListViewTest(TestCase):
             PartnershipYearEducationLevelFactory(),
         )
         partnership1.tags.add(PartnershipTagFactory(), PartnershipTagFactory())
-        PartnershipAgreementFactory(
+        BasePartnershipAgreementFactory(
             partnership=partnership1,
             status=AgreementStatus.VALIDATED.name,
             start_academic_year=year,
@@ -585,16 +632,13 @@ class PartnershipsListViewTest(TestCase):
         financing = FinancingFactory(academic_year=year)
         financing.countries.add(partnership1.partner.contact_address.country)
 
-        partnership2 = PartnershipFactory(
+        partnership2 = BasePartnershipFactory(
             partnership_type=PartnershipType.PROJECT.name,
+            years__academic_year=year,
+            years__subtype=PartnershipSubtypeFactory(),
+            years__funding_type=FundingTypeFactory(),
         )
-        PartnershipYearFactory(
-            partnership=partnership2,
-            academic_year=year,
-            subtype=PartnershipSubtypeFactory(),
-            funding_type=FundingTypeFactory(),
-        )
-        PartnershipAgreementFactory(
+        BasePartnershipAgreementFactory(
             partnership=partnership2,
             status=AgreementStatus.VALIDATED.name,
             start_academic_year=year,

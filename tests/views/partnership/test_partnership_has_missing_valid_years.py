@@ -1,11 +1,12 @@
 from django.test import TestCase
 
 from base.tests.factories.academic_year import AcademicYearFactory, get_current_year
+from base.tests.factories.entity import EntityWithVersionFactory
 from partnership.models import AgreementStatus
 from partnership.tests.factories import (
-    PartnershipAgreementFactory,
-    PartnershipFactory,
-    PartnershipYearFactory
+    PartnershipAgreementFactory as BasePartnershipAgreementFactory,
+    PartnershipFactory as BasePartnershipFactory,
+    PartnershipYearFactory, PartnerFactory, MediaFactory,
 )
 
 
@@ -13,6 +14,14 @@ class PartnershipHasMissingValidYearsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        # Performance fix: don't bother recreating linked objects
+        class PartnershipFactory(BasePartnershipFactory):
+            partner = PartnerFactory()
+            ucl_entity = EntityWithVersionFactory(organization=None)
+
+        class PartnershipAgreementFactory(BasePartnershipAgreementFactory):
+            media = MediaFactory()
+
         # Years :
         current_year = get_current_year()
         cls.academic_year_less_3 = AcademicYearFactory(year=current_year - 3)
@@ -22,26 +31,20 @@ class PartnershipHasMissingValidYearsTest(TestCase):
         cls.academic_year_more_1 = AcademicYearFactory(year=current_year + 1)
 
         # Partnerships :
-        cls.partnership_no_agreement = PartnershipFactory()
-        cls.partnership_missing_before = PartnershipFactory()
-        cls.partnership_missing_after = PartnershipFactory()
-        cls.partnership_missing_middle = PartnershipFactory()
-        cls.partnership_missing_before_middle_after = PartnershipFactory()
-        cls.partnership_full = PartnershipFactory()
-        cls.partnership_no_years = PartnershipFactory(years=[])
-        cls.partnership_with_adjacent = PartnershipFactory()
-        cls.partnership_with_extra_agreements_before = PartnershipFactory()
-        cls.partnership_with_extra_agreements_after = PartnershipFactory()
-
-        # PartnershipYears :
-        # No agreement :
-        PartnershipYearFactory(
-            partnership=cls.partnership_no_agreement,
-            academic_year=cls.academic_year_less_3,
+        cls.partnership_no_agreement = PartnershipFactory(
+            years__academic_year=cls.academic_year_less_3
         )
-        PartnershipYearFactory(
-            partnership=cls.partnership_no_agreement,
-            academic_year=cls.academic_year_more_1,
+        cls.partnership_missing_before = PartnershipFactory(years=[])
+        cls.partnership_missing_after = PartnershipFactory(years=[])
+        cls.partnership_missing_middle = PartnershipFactory(years=[])
+        cls.partnership_missing_before_middle_after = PartnershipFactory(
+            years=[],
+        )
+        cls.partnership_full = PartnershipFactory(years=[])
+        cls.partnership_no_years = PartnershipFactory(years=[])
+        cls.partnership_with_adjacent = PartnershipFactory(years=[])
+        cls.partnership_with_extra_agreements_before = PartnershipFactory(
+            years=[],
         )
 
         # missing before :

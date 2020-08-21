@@ -54,7 +54,6 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
         # Years
-        cls.academic_year_2000 = AcademicYearFactory(year=2000)
         cls.academic_year_2149 = AcademicYearFactory(year=2149)
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.from_academic_year = AcademicYearFactory(year=2151)
@@ -104,12 +103,23 @@ class PartnershipUpdateViewTest(TestCase):
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user_gf.person,
-            years=[
-                PartnershipYearFactory(academic_year=cls.start_academic_year, missions=[mission]),
-                PartnershipYearFactory(academic_year=cls.from_academic_year, missions=[mission]),
-                PartnershipYearFactory(academic_year=cls.end_academic_year, missions=[mission]),
-            ],
+            years=[],
             ucl_entity=cls.ucl_university,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.start_academic_year,
+            missions=[mission],
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.from_academic_year,
+            missions=[mission],
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.end_academic_year,
+            missions=[mission],
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 

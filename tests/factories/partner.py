@@ -67,7 +67,7 @@ class PartnerFactory(factory.DjangoModelFactory):
 
     @factory.post_generation
     def contact_address(obj, create, extracted, **kwargs):
-        if create:
+        if create and (extracted or kwargs):
             entity = obj.organization.entity_set.first()
             EntityVersionAddressFactory(
                 entity_version_id=entity.entityversion_set.first().pk,

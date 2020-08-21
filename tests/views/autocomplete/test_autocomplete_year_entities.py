@@ -9,7 +9,8 @@ from base.models.enums.entity_type import (
     SCHOOL,
     SECTOR,
 )
-from base.tests.factories.entity_version import EntityVersionFactory
+from base.models.enums.organization_type import MAIN
+from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from partnership.models import PartnershipType
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory,
@@ -20,6 +21,10 @@ from partnership.tests.factories import (
 class YearEntitiesAutocompleteTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
+        class EntityVersionFactory(BaseEntityVersionFactory):
+            entity__organization__type = MAIN
+            entity__country = None
+
         cls.user = PartnershipEntityManagerFactory().person.user
 
         cls.url = reverse(
@@ -32,9 +37,9 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         # Ucl
         root = EntityVersionFactory(parent=None).entity
         cls.sector = EntityVersionFactory(
+            parent=root,
             entity_type=SECTOR,
             acronym='A',
-            parent=root,
         ).entity
         cls.commission = EntityVersionFactory(
             parent=cls.sector,

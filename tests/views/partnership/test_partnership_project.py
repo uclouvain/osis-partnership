@@ -134,12 +134,20 @@ class PartnershipUpdateProjectViewTest(TestCase):
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user.person,
-            years=[
-                PartnershipYearFactory(academic_year=cls.start_academic_year),
-                PartnershipYearFactory(academic_year=cls.from_academic_year),
-                PartnershipYearFactory(academic_year=cls.end_academic_year),
-            ],
+            years=[],
             ucl_entity=cls.ucl_university,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.start_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.from_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.end_academic_year,
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
@@ -175,6 +183,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         year = self.partnership.years.last()
+        self.assertTrue(year.is_valid)
         self.assertEqual(year.funding_source_id, self.type.program.source_id)
         self.assertEqual(year.funding_program_id, self.type.program_id)
         self.assertEqual(year.funding_type_id, self.type.pk)

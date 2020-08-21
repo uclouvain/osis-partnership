@@ -44,7 +44,9 @@ class PartnershipFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def years(obj, create, extracted, **kwargs):
         if create:
-            if extracted is not None:
+            if extracted is None:
+                obj.years.set([
+                    PartnershipYearFactory(partnership=obj, **kwargs),
+                ])
+            elif extracted:
                 obj.years.set(extracted)
-            else:
-                obj.years.set([PartnershipYearFactory(partnership=obj)])
