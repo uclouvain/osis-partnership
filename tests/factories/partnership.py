@@ -26,8 +26,9 @@ class PartnershipFactory(factory.DjangoModelFactory):
     partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(
-        'base.tests.factories.entity.EntityFactory',
+        'base.tests.factories.entity.EntityWithVersionFactory',
         organization=None,
+        version__acronym="SO"
     )
 
     @factory.post_generation

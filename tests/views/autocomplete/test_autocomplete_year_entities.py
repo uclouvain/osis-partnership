@@ -9,8 +9,6 @@ from base.models.enums.entity_type import (
     SCHOOL,
     SECTOR,
 )
-from base.models.enums.organization_type import MAIN
-from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from partnership.models import PartnershipType
 from partnership.tests.factories import (
@@ -32,56 +30,44 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         )
 
         # Ucl
-        cls.sector = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.sector,
+        root = EntityVersionFactory(parent=None).entity
+        cls.sector = EntityVersionFactory(
             entity_type=SECTOR,
             acronym='A',
-        )
-        cls.commission = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.commission,
+            parent=root,
+        ).entity
+        cls.commission = EntityVersionFactory(
             parent=cls.sector,
             entity_type=DOCTORAL_COMMISSION,
             acronym='DA',
-        )
-        cls.ucl_university = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.ucl_university,
+        ).entity
+        cls.ucl_university = EntityVersionFactory(
             parent=cls.sector,
             entity_type=FACULTY,
             acronym='AA',
-        )
-        cls.labo = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.labo,
+        ).entity
+        cls.labo = EntityVersionFactory(
             parent=cls.ucl_university,
             entity_type=SCHOOL,
             acronym='AA1',
-        )
+        ).entity
 
-        cls.labo_2 = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.labo_2,
+        cls.labo_2 = EntityVersionFactory(
             parent=cls.ucl_university,
             entity_type=SCHOOL,
             acronym='AA2',
-        )
+        ).entity
 
-        cls.ucl_university_2 = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.ucl_university_2,
+        cls.ucl_university_2 = EntityVersionFactory(
             parent=cls.sector,
             entity_type=FACULTY,
             acronym='AB',
-        )
-        cls.labo_2 = EntityFactory(organization__type=MAIN)
-        EntityVersionFactory(
-            entity=cls.labo_2,
+        ).entity
+        cls.labo_2 = EntityVersionFactory(
             parent=cls.ucl_university_2,
             entity_type=SCHOOL,
             acronym='AB1',
-        )
+        ).entity
 
     def test_year_entities_autocomplete(self):
         self.client.force_login(self.user)

@@ -32,23 +32,11 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_entities_acronyms(agreement):
         entities = []
-        if agreement.partnership_ucl_sector_most_recent_acronym:
+        for i in range(1, len(agreement.acronym_path)):
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                agreement.partnership_ucl_sector_most_recent_title,
-                agreement.partnership_ucl_sector_most_recent_acronym,
-            ))
-        if agreement.partnership_ucl_faculty_most_recent_acronym:
-            entities.append(format_html(
-                '<abbr title="{0}">{1}</abbr>',
-                agreement.partnership_ucl_faculty_most_recent_title,
-                agreement.partnership_ucl_faculty_most_recent_acronym,
-            ))
-        if agreement.partnership_ucl_entity_most_recent_acronym:
-            entities.append(format_html(
-                '<abbr title="{0}">{1}</abbr>',
-                agreement.partnership_ucl_entity_most_recent_title,
-                agreement.partnership_ucl_entity_most_recent_acronym,
+                agreement.title_path[i],
+                agreement.acronym_path[i],
             ))
         return mark_safe(' / '.join(entities))
 

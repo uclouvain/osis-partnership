@@ -43,41 +43,16 @@ class PartnershipQuerySet(models.QuerySet):
     def add_acronyms(self):
         ref = models.OuterRef('ucl_entity_id')
 
-        cte = EntityVersion.objects.with_children(entity_id=ref)
-        qs = cte.join(
-            EntityVersion, id=cte.col.id
-        ).with_cte(cte).order_by('-start_date')
-
-        last_version = EntityVersion.objects.filter(
-            entity=ref
-        ).order_by('-start_date')
-
         return self.annotate(
-            ucl_sector_most_recent_acronym=CTESubquery(
-                qs.filter(entity_type=SECTOR).values('acronym')[:1]
+            acronym_path=CTESubquery(
+                EntityVersion.objects.with_acronym_path(
+                    entity_id=ref
+                ).values('acronym_path')[:1]
             ),
-            ucl_sector_most_recent_title=CTESubquery(
-                qs.filter(entity_type=SECTOR).values('title')[:1]
-            ),
-            ucl_faculty_most_recent_acronym=CTESubquery(
-                qs.filter(
-                    entity_type=FACULTY,
-                ).exclude(
-                    entity_id=ref,
-                ).values('acronym')[:1]
-            ),
-            ucl_faculty_most_recent_title=CTESubquery(
-                qs.filter(
-                    entity_type=FACULTY,
-                ).exclude(
-                    entity_id=ref,
-                ).values('title')[:1]
-            ),
-            ucl_entity_most_recent_acronym=CTESubquery(
-                last_version.values('acronym')[:1]
-            ),
-            ucl_entity_most_recent_title=CTESubquery(
-                last_version.values('title')[:1]
+            title_path=CTESubquery(
+                EntityVersion.objects.with_acronym_path(
+                    entity_id=ref
+                ).values('title_path')[:1]
             ),
         )
 
@@ -403,23 +378,11 @@ class Partnership(models.Model):
         The following attributes come from add_acronyms() annotations
         """
         entities = []
-        if self.ucl_sector_most_recent_acronym:
+        for i in range(1, len(self.acronym_path)):
             entities.append(format_html(
                 '<abbr title="{0}">{1}</abbr>',
-                self.ucl_sector_most_recent_title,
-                self.ucl_sector_most_recent_acronym,
-            ))
-        if self.ucl_faculty_most_recent_acronym:
-            entities.append(format_html(
-                '<abbr title="{0}">{1}</abbr>',
-                self.ucl_faculty_most_recent_title,
-                self.ucl_faculty_most_recent_acronym,
-            ))
-        if self.ucl_entity_most_recent_acronym:
-            entities.append(format_html(
-                '<abbr title="{0}">{1}</abbr>',
-                self.ucl_entity_most_recent_title,
-                self.ucl_entity_most_recent_acronym,
+                self.title_path[i],
+                self.acronym_path[i],
             ))
         return mark_safe(' / '.join(entities))
 

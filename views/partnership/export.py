@@ -146,6 +146,8 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 partnership.funding_program = partnership.financing_program
                 partnership.funding_type = partnership.financing_type
 
+            parts = partnership.acronym_path[1:] if partnership.acronym_path else []
+
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
@@ -161,11 +163,9 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(partnership.partner.pic_code or ''),
                 str(partnership.partner_entity or ''),
 
-                str(partnership.ucl_sector_most_recent_acronym),
-                str(partnership.ucl_faculty_most_recent_acronym
-                    or partnership.ucl_entity_most_recent_acronym),
-                str(partnership.ucl_faculty_most_recent_acronym
-                    and partnership.ucl_entity_most_recent_acronym or ''),
+                str(parts[0] if len(parts) > 0 else ''),
+                str(parts[1] if len(parts) > 1 else ''),
+                str(parts[2] if len(parts) > 2 else ''),
 
                 str(partnership.supervisor or ''),
                 ', '.join(map(lambda x: x.most_recent_acronym, year.entities.all())),

@@ -2,6 +2,7 @@ from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from partnership.models import PartnershipConfiguration, FundingSource
@@ -44,7 +45,8 @@ class ConfigurationApiViewTest(TestCase):
             end_academic_year__year=current_academic_year.year + 1,
         )
 
-        parent = EntityVersionFactory(acronym="SSH", entity_type=SECTOR)
+        root = EntityWithVersionFactory()
+        parent = EntityVersionFactory(acronym="SSH", entity_type=SECTOR, parent=root)
         partnership = PartnershipFactory(
             years=[],
             ucl_entity=EntityVersionFactory(

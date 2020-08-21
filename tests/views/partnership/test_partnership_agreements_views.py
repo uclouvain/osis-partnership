@@ -94,11 +94,12 @@ class PartnershipAgreementCreateViewTest(TestCase):
         # User creation
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
-        entity_version = EntityVersionFactory(acronym='ADRI')
+        root = EntityVersionFactory(parent=None).entity
+        entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
-        EntityVersionFactory(entity=entity_manager.entity)
+        EntityVersionFactory(entity=entity_manager.entity, parent=root)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
@@ -247,11 +248,12 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         # User creation
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
-        entity_version = EntityVersionFactory(acronym='ADRI')
+        root = EntityVersionFactory(parent=None).entity
+        entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
         entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
-        EntityVersionFactory(entity=entity_manager.entity)
+        EntityVersionFactory(entity=entity_manager.entity, parent=root)
         cls.user_other_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 

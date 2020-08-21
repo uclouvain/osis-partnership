@@ -48,7 +48,12 @@ class PartnershipsListViewTest(TestCase):
         )
 
         # ucl_university
-        parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
+        root = EntityVersionFactory(parent=None).entity
+        parent = EntityVersionFactory(
+            acronym='AAA',
+            entity_type=SECTOR,
+            parent=root,
+        ).entity
         cls.ucl_university = EntityVersionFactory(
             parent=parent,
             entity_type=FACULTY,
@@ -206,6 +211,7 @@ class PartnershipsListViewTest(TestCase):
         sector = EntityVersionFactory(
             acronym='ZZZ',
             entity_type=SECTOR,
+            parent=root,
         )
         faculty = EntityVersionFactory(
             acronym='ZZZ',
