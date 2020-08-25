@@ -71,6 +71,34 @@ components:
         email:
           type: string
           format: email
+    PartnerListItem:
+      type: object
+      description: A partner for list display
+      example:
+        uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        name: Middle East Technical University
+        city: Ankara
+        country: Turquie
+        country_iso: TK
+        location: [10.0, 7.0]
+        partnerships_count: 1
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        country_iso:
+          type: string
+        partnerships_count:
+          type: number
+        location:
+          type: array
+          items:
+            type: number
     Partner:
       type: object
       description: A complete description of a partner
@@ -252,13 +280,13 @@ components:
                 type: string
         bilateral_agreements:
           type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                url:
-                  type: string
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
         out_education_levels:
           type: array
           items:
@@ -357,13 +385,6 @@ components:
       schema:
         type: integer
         example: 51
-    continent:
-      name: continent
-      in: query
-      description: The continent name
-      schema:
-        type: string
-        example: Asia
     country:
       name: country
       in: query
@@ -392,20 +413,32 @@ components:
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    supervisor:
-      name: supervisor
+    with_children:
+      name: with_children
       in: query
-      description: The uuid of the supervisor
+      description: If children of ucl_entity should be taken into account
+      schema:
+        type: boolean
+    education_level:
+      name: education_level
+      in: query
+      description: The education level code
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    education_field:
-      name: education_field
+        example: ISCED-5
+    type:
+      name: type
       in: query
-      description: The uuid of the education field
+      description: The type of partnership
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: MOBILITY
+        enum:
+          - GENERAL
+          - MOBILITY
+          - COURSE
+          - DOCTORATE
+          - PROJECT
     mobility_type:
       name: mobility_type
       in: query
@@ -416,13 +449,27 @@ components:
         enum:
           - student
           - staff
-    funding:
-      name: funding
+    funding_source:
+      name: funding_source
       in: query
-      description: The type of funding if there is any
+      description: The source id of funding
       schema:
-        type: string
-        example: erasmus
+        type: number
+        example: 10
+    funding_program:
+      name: funding_program
+      in: query
+      description: The program id of funding
+      schema:
+        type: number
+        example: 10
+    funding_type:
+      name: funding_type
+      in: query
+      description: The type id of funding
+      schema:
+        type: number
+        example: 10
   responses:
     BadRequest:
       description: Bad request
@@ -475,25 +522,31 @@ paths:
                     items:
                       $ref: '#/components/schemas/ValueLabel'
                   ucl_universities:
-                    type: object
-                    items:
-                      allOf:
-                        - $ref: '#/components/schemas/ValueLabel'
-                        - type: object
-                          properties:
-                            ucl_university_labos:
-                              type: array
-                              items:
-                                $ref: '#/components/schemas/ValueLabel'
-                  supervisors:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  education_fields:
+                  education_levels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                  partnership_types:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
                   fundings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                        text:
+                          type: string
+                  partner_tags:
+                    type: array
+                    items:
+                      type: string
+                  tags:
                     type: array
                     items:
                       type: string
@@ -504,8 +557,6 @@ paths:
         - partners
       operationId: getPartnersList
       parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
         - in: query
           name: ordering
           description: The ordering of the items returned
@@ -517,37 +568,27 @@ paths:
               - partner
               - country_en
               - city
-              - ucl_entity
-              - subject_area
-        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
-        - $ref: '#/components/parameters/supervisor'
-        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/with_children'
+        - $ref: '#/components/parameters/education_level'
+        - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/mobility_type'
         - $ref: '#/components/parameters/funding'
+        - $ref: '#/components/parameters/funding_type'
+        - $ref: '#/components/parameters/funding_program'
+        - $ref: '#/components/parameters/funding_source'
       responses:
         '200':
-          description: A paged array of partners
+          description: An array of partners
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  count:
-                    type: integer
-                  next:
-                    type: string
-                    format: uri
-                  previous:
-                    type: string
-                    format: uri
-                  results:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Partner"
+                type: array
+                items:
+                  $ref: '#/components/schemas/Partner'
         '400':
           $ref: '#/components/responses/BadRequest'
   /partnerships:
@@ -559,29 +600,17 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - in: query
-          name: ordering
-          description: The ordering of the items returned
-          schema:
-            type: string
-            default: partner
-            example: country_en
-            enum:
-              - partner
-              - country_en
-              - city
-              - ucl_entity
-              - type
-              - subject_area
-        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
-        - $ref: '#/components/parameters/supervisor'
-        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/with_children'
+        - $ref: '#/components/parameters/education_level'
         - $ref: '#/components/parameters/mobility_type'
-        - $ref: '#/components/parameters/funding'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/funding_type'
+        - $ref: '#/components/parameters/funding_program'
+        - $ref: '#/components/parameters/funding_source'
       responses:
         '200':
           description: A paged array of partnerships
@@ -601,7 +630,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Partnership"
+                      $ref: '#/components/schemas/Partnership'
         '400':
           $ref: '#/components/responses/BadRequest'
   /partnerships/{uuid}:
@@ -617,13 +646,13 @@ paths:
           schema:
             type: string
             format: uuid
-            example: "abcd-efgh-ijkl-mnop-1234-5678"
+            example: 'abcd-efgh-ijkl-mnop-1234-5678'
       responses:
         '200':
           description: A partnership
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Partnership"
+                $ref: '#/components/schemas/Partnership'
         '404':
           $ref: '#/components/responses/NotFound'
