@@ -99,6 +99,8 @@ components:
           type: array
           items:
             type: number
+          minItems: 2
+          maxItems: 2
     Partner:
       type: object
       description: A complete description of a partner
@@ -143,37 +145,44 @@ components:
       description: A complete description of a partnership
       example:
         uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        url: http://example.com/partnerships/v1/partnerships/a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
         partner:
+          uuid: 9ffd7092-22b2-40b0-a95a-28beb6fe8ed8
           name: Middle East Technical University
           website: https://example.com
-          partner_entity: Faculdade de Odontologia de Piracicaba
           erasmus_code: TR ANKARA04
           partner_type: Université ou IES
           city: Ankara
           country: Turquie
           country_iso: TK
-          partnerships_count: 1
-          faculties:
-            - FIAL
-          subject_area:
-            - Subject 1
-            - Subject 2
-        education_fields:
-          - Field 1
-          - Field 2
-        ucl_faculty: FIAL
+        supervisor: John DOE
+        type: Partneriat de mobilité
+        partnership_type: MOBILITY
+        ucl_sector: SSH
+        ucl_faculty:
+          title: Faculté des sciences
+          acronym: FIAL
         ucl_entity:
           title: science
           acronym: SC
-        supervisor: John DOE
         is_sms: false
         is_smp: false
         is_smst: false
         is_sta: true
         is_stt: false
+        missions: Enseignement
+        subtype: Collaboration
+        description: Lorem ipsum dolor amet et consectuer
+        id_number: 16-6429845-FR
+        project_title: Project X
+        funding_program: Funding B
+        education_fields:
+          - Field 1
+          - Field 2
         status:
           status: validated
           valid_years: 2019-2022
+        partner_entity: Entity ABC
         medias:
           - url: http://example.com/file1
             name: file 1
@@ -232,22 +241,25 @@ components:
       properties:
         uuid:
           type: string
+        url:
+          type: string
         partner:
           $ref: '#/components/schemas/Partner'
-        education_fields:
-          type: array
-          items:
-            type: string
+        supervisor:
+          type: string
+        type:
+          type: string
+          description: Human-readable label of the type
+        partnership_type:
+          type: string
+          description: Enum value of the type
         ucl_sector:
           type: string
           description: Acronym of the sector
         ucl_faculty:
-          type: string
-          description: Acronym of the faculty
+          $ref: '#/components/schemas/Entity'
         ucl_entity:
           $ref: '#/components/schemas/Entity'
-        supervisor:
-          type: string
         is_sms:
           type: boolean
         is_smp:
@@ -258,6 +270,22 @@ components:
           type: boolean
         is_stt:
           type: boolean
+        missions:
+          type: string
+        subtype:
+          type: string
+        description:
+          type: string
+        id_number:
+          type: string
+        project_title:
+          type: string
+        funding_program:
+          type: string
+        education_fields:
+          type: array
+          items:
+            type: string
         status:
           type: object
           properties:
@@ -576,7 +604,6 @@ paths:
         - $ref: '#/components/parameters/education_level'
         - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/mobility_type'
-        - $ref: '#/components/parameters/funding'
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
         - $ref: '#/components/parameters/funding_source'
