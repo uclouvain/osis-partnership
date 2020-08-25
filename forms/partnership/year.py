@@ -105,7 +105,7 @@ class PartnershipYearSubtypeMixin:
         # Allow inactive types already set only for update
         if self.instance.pk:
             condition |= Q(pk=self.instance.subtype_id)
-        field_subtype.queryset = field_subtype.queryset.filter(condition).order_by('label')
+        field_subtype.queryset = field_subtype.queryset.filter(condition)
 
         # Prevent empty value from showing
         field_subtype.empty_label = None

@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import OuterRef, Subquery
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from ordered_model.models import OrderedModel
 
 from base.models.entity_version import EntityVersion
 from ..enums.partnership import PartnershipType
@@ -226,7 +227,7 @@ class PartnershipMission(models.Model):
         return "{} - {}".format(self.code, self.label)
 
 
-class PartnershipSubtype(models.Model):
+class PartnershipSubtype(OrderedModel):
     label = models.CharField(max_length=100)
     code = models.CharField(max_length=100, unique=True)
     types = ArrayField(
@@ -236,6 +237,7 @@ class PartnershipSubtype(models.Model):
 
     class Meta:
         verbose_name = _('partnership_subtype')
+        ordering = ('order',)
 
     def __str__(self):
         return "{} - {}".format(self.code, self.label)

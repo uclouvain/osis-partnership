@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext_lazy as _
+from ordered_model.admin import OrderedModelAdmin
 
 from osis_role.contrib.admin import EntityRoleModelAdmin
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
@@ -199,9 +200,15 @@ class PartnershipMissionAdmin(admin.ModelAdmin):
     type_values.short_description = _('partnership_type')
 
 
-class PartnershipSubtypeAdmin(PartnershipMissionAdmin):
-    list_display = PartnershipMissionAdmin.list_display + ('is_active',)
+class PartnershipSubtypeAdmin(OrderedModelAdmin, PartnershipMissionAdmin):
+    list_display = PartnershipMissionAdmin.list_display + (
+        'is_active',
+        'order',
+        'move_up_down_links',
+    )
+    readonly_fields = ['order']
     list_filter = (PartnershipTypeListFilter, 'is_active')
+    ordering = ('order', )
 
 
 class UCLManagementEntityAdmin(admin.ModelAdmin):
