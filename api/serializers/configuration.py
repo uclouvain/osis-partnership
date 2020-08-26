@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from base.models.entity import Entity
 from base.models.person import Person
-from partnership.models import Partner
+from partnership.models import Partner, PartnershipYearEducationLevel
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
@@ -17,6 +17,8 @@ __all__ = [
     'UCLUniversityLaboConfigurationSerializer',
     'EducationFieldConfigurationSerializer',
     'SupervisorConfigurationSerializer',
+    'EducationLevelSerializer',
+    'PartnershipTypeSerializer',
 ]
 
 
@@ -84,7 +86,16 @@ class SupervisorConfigurationSerializer(serializers.ModelSerializer):
         fields = ['value', 'label']
 
 
-class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
+class EducationLevelSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='code')
+    label = serializers.CharField()
+
+    class Meta:
+        model = PartnershipYearEducationLevel
+        fields = ['value', 'label']
+
+
+class EducationFieldConfigurationSerializer(serializers.ModelSerializer):  # pragma: no cover
     value = serializers.CharField(source='uuid')
     label = serializers.SerializerMethodField()
 
@@ -96,3 +107,8 @@ class EducationFieldConfigurationSerializer(serializers.ModelSerializer):
     def get_label(result):
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return result[label]
+
+
+class PartnershipTypeSerializer(serializers.Serializer):
+    value = serializers.CharField(source='name')
+    label = serializers.CharField(source='value')

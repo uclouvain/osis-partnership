@@ -14,6 +14,7 @@ class MediaType(models.Model):
     Type de média configurable dans l'administration Django.
     """
     SUMMARY_TABLE = 'summary-table'
+    USEFUL_LINK = 'useful-link'
 
     code = models.CharField(
         _('code'),

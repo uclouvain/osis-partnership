@@ -1250,6 +1250,15 @@ msgstr "État"
 msgid "status"
 msgstr "État"
 
+msgid "status_archived"
+msgstr "Archivé"
+
+msgid "status_finished"
+msgstr "Terminé"
+
+msgid "status_ongoing"
+msgstr "En cours"
+
 msgid "status_refused"
 msgstr "Refusé"
 

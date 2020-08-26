@@ -71,6 +71,36 @@ components:
         email:
           type: string
           format: email
+    PartnerListItem:
+      type: object
+      description: A partner for list display
+      example:
+        uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        name: Middle East Technical University
+        city: Ankara
+        country: Turquie
+        country_iso: TK
+        location: [10.0, 7.0]
+        partnerships_count: 1
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        country_iso:
+          type: string
+        partnerships_count:
+          type: number
+        location:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
     Partner:
       type: object
       description: A complete description of a partner
@@ -115,37 +145,44 @@ components:
       description: A complete description of a partnership
       example:
         uuid: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        url: http://example.com/partnerships/v1/partnerships/a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
         partner:
+          uuid: 9ffd7092-22b2-40b0-a95a-28beb6fe8ed8
           name: Middle East Technical University
           website: https://example.com
-          partner_entity: Faculdade de Odontologia de Piracicaba
           erasmus_code: TR ANKARA04
           partner_type: Université ou IES
           city: Ankara
           country: Turquie
           country_iso: TK
-          partnerships_count: 1
-          faculties:
-            - FIAL
-          subject_area:
-            - Subject 1
-            - Subject 2
-        education_fields:
-          - Field 1
-          - Field 2
-        ucl_faculty: FIAL
+        supervisor: John DOE
+        type: Partneriat de mobilité
+        partnership_type: MOBILITY
+        ucl_sector: SSH
+        ucl_faculty:
+          title: Faculté des sciences
+          acronym: FIAL
         ucl_entity:
           title: science
           acronym: SC
-        supervisor: John DOE
         is_sms: false
         is_smp: false
         is_smst: false
         is_sta: true
         is_stt: false
+        missions: Enseignement
+        subtype: Collaboration
+        description: Lorem ipsum dolor amet et consectuer
+        id_number: 16-6429845-FR
+        project_title: Project X
+        funding_program: Funding B
+        education_fields:
+          - Field 1
+          - Field 2
         status:
           status: validated
           valid_years: 2019-2022
+        partner_entity: Entity ABC
         medias:
           - url: http://example.com/file1
             name: file 1
@@ -204,22 +241,25 @@ components:
       properties:
         uuid:
           type: string
+        url:
+          type: string
         partner:
           $ref: '#/components/schemas/Partner'
-        education_fields:
-          type: array
-          items:
-            type: string
+        supervisor:
+          type: string
+        type:
+          type: string
+          description: Human-readable label of the type
+        partnership_type:
+          type: string
+          description: Enum value of the type
         ucl_sector:
           type: string
           description: Acronym of the sector
         ucl_faculty:
-          type: string
-          description: Acronym of the faculty
+          $ref: '#/components/schemas/Entity'
         ucl_entity:
           $ref: '#/components/schemas/Entity'
-        supervisor:
-          type: string
         is_sms:
           type: boolean
         is_smp:
@@ -230,6 +270,22 @@ components:
           type: boolean
         is_stt:
           type: boolean
+        missions:
+          type: string
+        subtype:
+          type: string
+        description:
+          type: string
+        id_number:
+          type: string
+        project_title:
+          type: string
+        funding_program:
+          type: string
+        education_fields:
+          type: array
+          items:
+            type: string
         status:
           type: object
           properties:
@@ -252,13 +308,13 @@ components:
                 type: string
         bilateral_agreements:
           type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                url:
-                  type: string
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
         out_education_levels:
           type: array
           items:
@@ -357,13 +413,6 @@ components:
       schema:
         type: integer
         example: 51
-    continent:
-      name: continent
-      in: query
-      description: The continent name
-      schema:
-        type: string
-        example: Asia
     country:
       name: country
       in: query
@@ -392,20 +441,32 @@ components:
       schema:
         type: string
         example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    supervisor:
-      name: supervisor
+    with_children:
+      name: with_children
       in: query
-      description: The uuid of the supervisor
+      description: If children of ucl_entity should be taken into account
+      schema:
+        type: boolean
+    education_level:
+      name: education_level
+      in: query
+      description: The education level code
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
-    education_field:
-      name: education_field
+        example: ISCED-5
+    type:
+      name: type
       in: query
-      description: The uuid of the education field
+      description: The type of partnership
       schema:
         type: string
-        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+        example: MOBILITY
+        enum:
+          - GENERAL
+          - MOBILITY
+          - COURSE
+          - DOCTORATE
+          - PROJECT
     mobility_type:
       name: mobility_type
       in: query
@@ -416,13 +477,27 @@ components:
         enum:
           - student
           - staff
-    funding:
-      name: funding
+    funding_source:
+      name: funding_source
       in: query
-      description: The type of funding if there is any
+      description: The source id of funding
       schema:
-        type: string
-        example: erasmus
+        type: number
+        example: 10
+    funding_program:
+      name: funding_program
+      in: query
+      description: The program id of funding
+      schema:
+        type: number
+        example: 10
+    funding_type:
+      name: funding_type
+      in: query
+      description: The type id of funding
+      schema:
+        type: number
+        example: 10
   responses:
     BadRequest:
       description: Bad request
@@ -475,25 +550,31 @@ paths:
                     items:
                       $ref: '#/components/schemas/ValueLabel'
                   ucl_universities:
-                    type: object
-                    items:
-                      allOf:
-                        - $ref: '#/components/schemas/ValueLabel'
-                        - type: object
-                          properties:
-                            ucl_university_labos:
-                              type: array
-                              items:
-                                $ref: '#/components/schemas/ValueLabel'
-                  supervisors:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
-                  education_fields:
+                  education_levels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
+                  partnership_types:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
                   fundings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                        text:
+                          type: string
+                  partner_tags:
+                    type: array
+                    items:
+                      type: string
+                  tags:
                     type: array
                     items:
                       type: string
@@ -504,8 +585,6 @@ paths:
         - partners
       operationId: getPartnersList
       parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
         - in: query
           name: ordering
           description: The ordering of the items returned
@@ -517,37 +596,26 @@ paths:
               - partner
               - country_en
               - city
-              - ucl_entity
-              - subject_area
-        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
-        - $ref: '#/components/parameters/supervisor'
-        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/with_children'
+        - $ref: '#/components/parameters/education_level'
+        - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/mobility_type'
-        - $ref: '#/components/parameters/funding'
+        - $ref: '#/components/parameters/funding_type'
+        - $ref: '#/components/parameters/funding_program'
+        - $ref: '#/components/parameters/funding_source'
       responses:
         '200':
-          description: A paged array of partners
+          description: An array of partners
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  count:
-                    type: integer
-                  next:
-                    type: string
-                    format: uri
-                  previous:
-                    type: string
-                    format: uri
-                  results:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Partner"
+                type: array
+                items:
+                  $ref: '#/components/schemas/Partner'
         '400':
           $ref: '#/components/responses/BadRequest'
   /partnerships:
@@ -559,29 +627,17 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
-        - in: query
-          name: ordering
-          description: The ordering of the items returned
-          schema:
-            type: string
-            default: partner
-            example: country_en
-            enum:
-              - partner
-              - country_en
-              - city
-              - ucl_entity
-              - type
-              - subject_area
-        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
-        - $ref: '#/components/parameters/supervisor'
-        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/with_children'
+        - $ref: '#/components/parameters/education_level'
         - $ref: '#/components/parameters/mobility_type'
-        - $ref: '#/components/parameters/funding'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/funding_type'
+        - $ref: '#/components/parameters/funding_program'
+        - $ref: '#/components/parameters/funding_source'
       responses:
         '200':
           description: A paged array of partnerships
@@ -601,7 +657,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Partnership"
+                      $ref: '#/components/schemas/Partnership'
         '400':
           $ref: '#/components/responses/BadRequest'
   /partnerships/{uuid}:
@@ -617,13 +673,13 @@ paths:
           schema:
             type: string
             format: uuid
-            example: "abcd-efgh-ijkl-mnop-1234-5678"
+            example: 'abcd-efgh-ijkl-mnop-1234-5678'
       responses:
         '200':
           description: A partnership
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Partnership"
+                $ref: '#/components/schemas/Partnership'
         '404':
           $ref: '#/components/responses/NotFound'

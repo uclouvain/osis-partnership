@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from django.core import mail
 from django.urls import reverse
 
+from base.models.enums.entity_type import SECTOR, FACULTY
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
@@ -22,8 +23,22 @@ from partnership.tests.factories import (
 class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        # ucl_university
+        parent = EntityVersionFactory(acronym='AAA', entity_type=SECTOR).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=parent,
+            entity_type=FACULTY,
+            acronym='ZZZ',
+        ).entity
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+            acronym='AAA',
+        ).entity
+
         for i in range(3):
-            PartnershipAgreementFactory()
+            PartnershipAgreementFactory(
+                partnership__ucl_entity=cls.ucl_university_labo,
+            )
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
 

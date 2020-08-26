@@ -2,7 +2,8 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min, Prefetch, OuterRef, Subquery
+from django.db.models import Max, Min, Prefetch, OuterRef, Subquery, Q
+from django.db.models.functions import Now
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -10,7 +11,6 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from base.models.academic_year import AcademicYear
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
@@ -115,6 +115,62 @@ class PartnershipQuerySet(models.QuerySet):
             qs = qs.annotate(**{field.replace('__', '_'): lookup})
         return qs
 
+    def filter_for_api(self, academic_year):
+        from partnership.models import PartnershipYear, PartnershipAgreement
+        return self.annotate(
+            current_academic_year=models.Value(
+                academic_year.id, output_field=models.AutoField()
+            ),
+        ).annotate(
+            has_years_in=models.Exists(
+                PartnershipYear.objects.filter(
+                    partnership=OuterRef('pk'),
+                    academic_year=academic_year,
+                )
+            ),
+            has_valid_agreement_in_current_year=models.Exists(
+                PartnershipAgreement.objects.filter(
+                    partnership=OuterRef('pk'),
+                    status=AgreementStatus.VALIDATED.name,
+                    start_academic_year__year__lte=academic_year.year,
+                    end_academic_year__year__gte=academic_year.year,
+                )
+            ),
+            has_valid_agreement=models.Exists(
+                PartnershipAgreement.objects.filter(
+                    partnership=OuterRef('pk'),
+                    status=AgreementStatus.VALIDATED.name,
+                    start_date__lte=Now(),
+                    end_date__gte=Now(),
+                )
+            ),
+        ).filter(
+            # Should have agreement for current year if mobility
+            Q(
+                partnership_type=PartnershipType.MOBILITY.name,
+                has_valid_agreement_in_current_year=True
+            )
+            # Or else should have at least an agreement if not mobility
+            | (
+                    ~Q(partnership_type=PartnershipType.MOBILITY.name)
+                    & Q(has_valid_agreement=True)
+            )
+            # Or nothing at all if project
+            | Q(partnership_type=PartnershipType.PROJECT.name),
+
+            # Should have a partnership year for current year if mobility
+            Q(
+                partnership_type=PartnershipType.MOBILITY.name,
+                has_years_in=True
+            )
+            # Or else just have a end_date > now
+            | (
+                    ~Q(partnership_type=PartnershipType.MOBILITY.name)
+                    & Q(end_date__gte=Now())
+            ),
+            is_public=True,
+        )
+
 
 class Partnership(models.Model):
     """
@@ -131,6 +187,7 @@ class Partnership(models.Model):
         _('partnership_type'),
         max_length=255,
         choices=PartnershipType.choices(),
+        db_index=True,
     )
 
     external_id = models.CharField(

@@ -4,12 +4,12 @@ from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
-from partnership.models import PartnershipConfiguration
+from partnership.models import PartnershipConfiguration, FundingSource
 from partnership.tests import TestCase
 from partnership.tests.factories import (
-    FinancingFactory, PartnerFactory,
+    PartnerFactory,
     PartnershipAgreementFactory, PartnershipFactory, PartnershipYearFactory,
-    UCLManagementEntityFactory,
+    UCLManagementEntityFactory, FundingTypeFactory,
 )
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
@@ -61,8 +61,8 @@ class ConfigurationApiViewTest(TestCase):
             entity=partnership.ucl_entity,
             academic_responsible=cls.supervisor_management_entity
         )
-        financing = FinancingFactory(academic_year=current_academic_year)
-        financing.countries.add(partnership.partner.contact_address.country)
+        FundingSource.objects.all().delete()
+        FundingTypeFactory()
 
         # Some noises
         PartnerFactory()
@@ -75,7 +75,7 @@ class ConfigurationApiViewTest(TestCase):
         CountryFactory()
 
     def test_num_queries(self):
-        with self.assertNumQueriesLessThan(10):
+        with self.assertNumQueriesLessThan(12):
             self.client.get(self.url)
 
     def test_continents(self):
@@ -101,26 +101,9 @@ class ConfigurationApiViewTest(TestCase):
         self.assertEqual(len(data['ucl_universities']), 2)
         self.assertIn("SSH / FIAL -", data['ucl_universities'][0]['label'])
 
-    def test_education_fields(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn('education_fields', data)
-        self.assertEqual(len(data['education_fields']), 1)
-
-    def test_get_label_case_language_in_english(self):
-        response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='en')
-        data = response.json()
-        self.assertEqual(data['education_fields'][0]['label'], 'foo')
-
-    def test_get_label_case_language_in_french(self):
-        response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='fr')
-        data = response.json()
-        self.assertEqual(data['education_fields'][0]['label'], 'bar')
-
     def test_fundings(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn('fundings', data)
-        self.assertEqual(len(data['fundings']), 1)
+        self.assertEqual(len(data['fundings']), 3)  # source, type and program

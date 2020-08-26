@@ -58,6 +58,8 @@ class PartnerUpdateViewTest(TestCase):
             'contact_address-postal_code': 'test',
             'contact_address-city': 'test',
             'contact_address-country': cls.country.pk,
+            'contact_address-location_0': 10,
+            'contact_address-location_1': -12,
         }
 
         cls.url = reverse('partnerships:partners:update', kwargs={'pk': cls.partner.pk})

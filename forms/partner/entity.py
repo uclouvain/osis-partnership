@@ -2,6 +2,7 @@ from django import forms
 from django.db.models import Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
 
+from base.forms.widgets import LatLonField
 from base.models.entity import Entity
 from base.models.entity_version_address import EntityVersionAddress
 from partnership.models import Contact, PartnerEntity
@@ -14,9 +15,11 @@ __all__ = [
 
 
 class EntityVersionAddressForm(forms.ModelForm):
+    location = LatLonField()
+
     class Meta:
         model = EntityVersionAddress
-        exclude = ['entity_version', 'location', 'is_main']
+        exclude = ['entity_version', 'is_main']
         labels = {
             'street_number': _('street_number'),
             'street': _('address'),
@@ -61,9 +64,6 @@ class PartnerEntityForm(forms.ModelForm):
         partner = kwargs.pop('partner')
         super().__init__(*args, **kwargs)
 
-        qs = PartnerEntity.objects.filter(
-            entity_version__entity__organization__partner=partner,
-        )
         qs = Entity.objects.filter(
             entityversion__parent__organization__partner=partner,
         ).annotate(

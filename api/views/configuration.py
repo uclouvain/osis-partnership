@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
-from django.utils.translation import get_language
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,16 +10,25 @@ from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.api.serializers import (
     ContinentConfigurationSerializer,
-    EducationFieldConfigurationSerializer, PartnerConfigurationSerializer,
+    PartnerConfigurationSerializer,
     UCLUniversityConfigurationSerializer,
 )
-from partnership.models import (
-    Financing, Partner, PartnershipAgreement,
-    PartnershipConfiguration,
+from partnership.api.serializers.configuration import (
+    EducationLevelSerializer,
+    PartnershipTypeSerializer,
 )
+from partnership.models import (
+    Partner,
+    PartnerTag,
+    PartnershipAgreement,
+    PartnershipConfiguration,
+    PartnershipTag,
+    PartnershipType,
+    PartnershipYearEducationLevel,
+)
+from partnership.views import FundingAutocompleteView
 from reference.models.continent import Continent
 from reference.models.country import Country
-from reference.models.domain_isced import DomainIsced
 
 
 class ConfigurationView(APIView):
@@ -94,26 +101,49 @@ class ConfigurationView(APIView):
             )
         )
 
-        label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
-        education_fields = (
-            DomainIsced.objects
-            .filter(partnershipyear__academic_year=current_year)
-            .distinct()
-            .values('uuid', label)
+        # label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
+        # education_fields = (
+        #     DomainIsced.objects
+        #     .filter(partnershipyear__academic_year=current_year)
+        #     .distinct()
+        #     .values('uuid', label)
+        # )
+        education_levels = (
+            PartnershipYearEducationLevel.objects
+                .filter(partnerships_years__academic_year=current_year,
+                        partnerships_years__partnership__isnull=False)
+                .distinct()
+                .values('code', 'label')
         )
-        fundings = (
-             Financing.objects
-             .filter(academic_year=current_year)
-             .values_list('type__name', flat=True)
-             .distinct('type__name')
-             .order_by('type__name')
+
+        view = FundingAutocompleteView()
+        view.q = ''
+        fundings = view.get_list()
+
+        tags = (
+             PartnershipTag.objects
+             .filter(partnerships__isnull=False)
+             .values_list('value', flat=True)
+             .distinct('value')
+             .order_by('value')
+        )
+        partner_tags = (
+             PartnerTag.objects
+             .filter(partners__partnerships__isnull=False)
+             .values_list('value', flat=True)
+             .distinct('value')
+             .order_by('value')
         )
 
         data = {
             'continents': ContinentConfigurationSerializer(continents, many=True).data,
             'partners': PartnerConfigurationSerializer(partners, many=True).data,
             'ucl_universities': UCLUniversityConfigurationSerializer(ucl_universities, many=True).data,
-            'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
+            # 'education_fields': EducationFieldConfigurationSerializer(education_fields, many=True).data,
+            'education_levels': EducationLevelSerializer(education_levels, many=True).data,
             'fundings': list(fundings),
+            'partnership_types': PartnershipTypeSerializer(PartnershipType.all(), many=True).data,
+            'tags': list(tags),
+            'partner_tags': list(partner_tags),
         }
         return Response(data)
