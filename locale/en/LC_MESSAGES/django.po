@@ -594,7 +594,7 @@ msgid "faculty"
 msgstr "Faculty"
 
 msgid "faculty_entity_filter"
-msgstr "Faculty or Entity"
+msgstr "UCLouvain entity responsible"
 
 msgid "fax"
 msgstr "Fax"
@@ -1212,7 +1212,7 @@ msgid "ucl"
 msgstr "UCLouvain"
 
 msgid "ucl_entity"
-msgstr "UCLouvain university or School / Laboratory"
+msgstr "UCLouvain entity"
 
 msgid "ucl_entity_partner"
 msgstr "UCL entity partner"

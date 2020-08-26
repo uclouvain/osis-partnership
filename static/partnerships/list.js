@@ -68,10 +68,8 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         if (value !== 'PROJECT') {
             $('#project-fields select').val('')
         }
-        $('#subtype-field').collapse(['MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
-        if (['MOBILITY', 'PROJECT'].includes(value)) {
-            $('#subtype-field select').val('')
-        }
+        $('#subtype-field select').val('').trigger('change');
+        $('#subtype-field').collapse(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
     }
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);

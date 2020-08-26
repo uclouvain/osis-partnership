@@ -80,6 +80,9 @@ urlpatterns = [
         path('faculty_entity/', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
         path('ucl_entity/', UclEntityAutocompleteView.as_view(), name='ucl_entity'),
         path('funding/', FundingAutocompleteView.as_view(), name='funding'),
+        path('funding_program/', FundingProgramAutocompleteView.as_view(), name='funding_program'),
+        path('funding_type/', FundingTypeAutocompleteView.as_view(), name='funding_type'),
+        path('subtype/', PartnershipSubtypeAutocompleteView.as_view(), name='subtype'),
         path(
             'partnership_year_entities/',
             PartnershipYearEntitiesAutocompleteView.as_view(),

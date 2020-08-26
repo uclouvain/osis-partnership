@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SCHOOL, SECTOR
+from base.models.enums.organization_type import MAIN
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
@@ -27,13 +28,13 @@ class UclEntityAutocompleteTestCase(TestCase):
         cls.url = reverse('partnerships:autocomplete:ucl_entity')
 
         # Ucl
-        cls.sector = EntityFactory()
+        cls.sector = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.sector,
             entity_type=SECTOR,
             acronym='A',
         )
-        cls.ucl_university = EntityFactory()
+        cls.ucl_university = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university,
             parent=cls.sector,
@@ -41,7 +42,7 @@ class UclEntityAutocompleteTestCase(TestCase):
             acronym='AA',
         )
         UCLManagementEntityFactory(entity=cls.ucl_university)
-        cls.ucl_university_labo = EntityFactory()
+        cls.ucl_university_labo = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university_labo,
             parent=cls.ucl_university,
@@ -50,7 +51,7 @@ class UclEntityAutocompleteTestCase(TestCase):
         )
         UCLManagementEntityFactory(entity=cls.ucl_university_labo)
 
-        cls.ucl_university_2 = EntityFactory()
+        cls.ucl_university_2 = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university_2,
             parent=cls.sector,
@@ -58,7 +59,7 @@ class UclEntityAutocompleteTestCase(TestCase):
             acronym='AB',
         )
         UCLManagementEntityFactory(entity=cls.ucl_university_2)
-        cls.ucl_university_labo_2 = EntityFactory()
+        cls.ucl_university_labo_2 = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university_labo_2,
             parent=cls.ucl_university_2,
@@ -67,13 +68,13 @@ class UclEntityAutocompleteTestCase(TestCase):
         )
         UCLManagementEntityFactory(entity=cls.ucl_university_labo_2)
 
-        sector_b = EntityFactory()
+        sector_b = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=sector_b,
             entity_type=SECTOR,
             acronym='B',
         )
-        cls.ucl_university_3 = EntityFactory()
+        cls.ucl_university_3 = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university_3,
             parent=sector_b,
@@ -81,7 +82,7 @@ class UclEntityAutocompleteTestCase(TestCase):
             acronym='BA',
         )
         UCLManagementEntityFactory(entity=cls.ucl_university_3)
-        cls.ucl_university_labo_3 = EntityFactory()
+        cls.ucl_university_labo_3 = EntityFactory(organization__type=MAIN)
         EntityVersionFactory(
             entity=cls.ucl_university_labo_3,
             parent=cls.ucl_university_3,
@@ -150,4 +151,4 @@ class UclEntityAutocompleteTestCase(TestCase):
             data={'forward': json.dumps({'partnership_type': 'GENERAL'})},
         )
         results = response.json()['results']
-        self.assertEqual(len(results), 9)
+        self.assertEqual(len(results), 8)
