@@ -76,6 +76,10 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         if (['GENERAL', 'PROJECT'].includes(value)) {
             $('.except-general-project select').val('')
         }
+        $('.special-dates-filter').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
+        if (!['', 'GENERAL', 'PROJECT'].includes(value)) {
+            $('.special-dates-filter select').val('')
+        }
     }
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);
@@ -95,6 +99,20 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     }
 
     $form.on('submit', function () {
+        // Validate some fields
+        if ($('#id_partnership_special_dates_type').val()) {
+            // Dates must be set
+            var from = moment($('#id_partnership_special_dates_0').val(), "DD/MM/YYYY");
+            var to = moment($('#id_partnership_special_dates_1').val(), "DD/MM/YYYY");
+            if (!from.isValid() || !to.isValid()) {
+                alert("Veuillez compléter les dates de recherche");
+                return false;
+            } else if (from > to) {
+                alert("Les dates de recherche doivent se suivre");
+                return false;
+            }
+        }
+
         $('#result-list').DataTable().ajax.reload();
         updateExportButton();
         return false;
@@ -113,6 +131,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         $form.find('select').not('[data-autocomplete-light-function=select2]').each(function () {
             this.selectedIndex = 0;
         }).trigger('change');
+
+        $('#id_partnership_special_dates_0').val(moment().format('DD/MM/YYYY'))
+        $('#id_partnership_special_dates_1').val(moment().format('DD/MM/YYYY'))
 
         // Prevent browser default reset
         e.preventDefault();

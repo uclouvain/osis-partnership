@@ -10,6 +10,7 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory 
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
+from partnership.forms import PartnershipFilterForm
 from partnership.models import AgreementStatus, PartnershipType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
@@ -261,6 +262,8 @@ class PartnershipsListViewTest(TestCase):
                 partner=cls.partner_all_filters,
             ),
             years=[],
+            start_date=date(2160, 9, 1),
+            end_date=date(2161, 6, 30),
         )
         partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_all_filters,
@@ -586,6 +589,49 @@ class PartnershipsListViewTest(TestCase):
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_no_agreement_in.uuid))
+
+    def test_filter_special_dates_errors(self):
+        form = PartnershipFilterForm({
+            'partnership_special_dates_type': 'ongoing',
+        }, user=self.user)
+        self.assertIn('partnership_special_dates_0', form.errors)
+        self.assertIn('partnership_special_dates_1', form.errors)
+
+        form = PartnershipFilterForm({
+            'partnership_special_dates_type': 'ongoing',
+            'partnership_special_dates_0': '10/09/2020',
+            'partnership_special_dates_1': '01/09/2020',
+        }, user=self.user)
+        self.assertIn('partnership_special_dates_1', form.errors)
+
+        form = PartnershipFilterForm({
+            'partnership_special_dates_type': 'ongoing',
+            'partnership_special_dates_0': '01/09/2020',
+            'partnership_special_dates_1': '10/09/2020',
+        }, user=self.user)
+        self.assertFalse(form.errors)
+
+    def test_filter_special_dates_ongoing(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, {
+            'partnership_special_dates_type': 'ongoing',
+            'partnership_special_dates_0': '25/10/2160',
+            'partnership_special_dates_1': '25/10/2160',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
+
+    def test_filter_special_dates_stopping(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, {
+            'partnership_special_dates_type': 'stopping',
+            'partnership_special_dates_0': '25/06/2020',
+            'partnership_special_dates_1': '05/07/2020',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
 
     def test_all_filters(self):
         self.client.force_login(self.user)

@@ -56,7 +56,10 @@ class PartnershipAgreementsListViewTest(TestCase):
             partnership__ucl_entity=cls.ucl_university_labo,
         )
         PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
             partnership__partnership_type=PartnershipType.COURSE.name,
+            partnership__start_date=date(2017, 9, 1),
+            partnership__end_date=date(2030, 9, 1),
             start_date=date(2017, 9, 1),
             end_date=date(2025, 9, 1),
         )
@@ -83,6 +86,16 @@ class PartnershipAgreementsListViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
+
+    def test_filter_special_dates_stopping(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url, {
+            'partnership_special_dates_type': 'stopping',
+            'partnership_special_dates_0': '25/06/2024',
+            'partnership_special_dates_1': '05/07/2026',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
 
     def test_export_anonymous(self):
         response = self.client.get(self.export_url, follow=True)

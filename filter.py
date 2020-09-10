@@ -1,5 +1,6 @@
 import django_filters as filters
 from django.db.models import Exists, Max, OuterRef, Q
+from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
@@ -201,6 +202,12 @@ class PartnershipAdminFilter(filters.FilterSet):
     partnership_with_no_agreements_in = filters.CharFilter(
         method='filter_partnership_with_no_agreements_in'
     )
+    partnership_special_dates_type = filters.CharFilter(
+        method='filter_partnership_special_dates'
+    )
+    # Noop filters
+    partnership_special_dates_0 = filters.DateFilter(method=lambda qs, *_: qs)
+    partnership_special_dates_1 = filters.DateFilter(method=lambda qs, *_: qs)
     comment = filters.CharFilter(lookup_expr='icontains')
     is_public = filters.BooleanFilter(widget=CustomNullBooleanSelect())
 
@@ -239,6 +246,9 @@ class PartnershipAdminFilter(filters.FilterSet):
             'partnership_valid_in',
             'partnership_not_valid_in',
             'partnership_with_no_agreements_in',
+            'partnership_special_dates_type',
+            'partnership_special_dates_0',
+            'partnership_special_dates_1',
             'comment',
             'is_public',
         ]
@@ -380,6 +390,23 @@ class PartnershipAdminFilter(filters.FilterSet):
             )
         return queryset
 
+    def filter_partnership_special_dates(self, queryset, name, value):
+        # Prevent filtering on partnership when agreement filter
+        if isinstance(self, PartnershipAgreementAdminFilter) and queryset.model == Partnership:
+            return queryset
+
+        date_from = self.form.cleaned_data['partnership_special_dates_0']
+        date_to = self.form.cleaned_data['partnership_special_dates_1']
+        if value == 'ongoing':
+            return queryset.filter(
+                Q(start_date__lte=date_from) | Q(end_date__gte=date_to),
+            )
+        elif value == 'stopping':
+            return queryset.filter(
+                end_date__gte=date_from,
+                end_date__lte=date_to,
+            )
+
 
 class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
     ordering = MultipleOrderingFilter(
@@ -397,6 +424,12 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             ],
         }
     )
+
+    @property
+    def form(self):
+        form = super().form
+        form.fields['partnership_special_dates_type'].label = _("Agreements")
+        return form
 
     @property
     def qs(self):
@@ -430,6 +463,13 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
                 'end_academic_year',
             )
         )
+
+        # Apply special filtering if needed
+        special_filter = self.data.get('partnership_special_dates_type')
+        if special_filter:
+            queryset = self.filter_partnership_special_dates(
+                queryset, '', special_filter,
+            )
 
         # Reapply ordering
         if self.is_bound:
