@@ -1,14 +1,18 @@
+from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
+from django.utils.translation import get_language
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.api.serializers import (
     ContinentConfigurationSerializer,
+    OfferSerializer,
     PartnerConfigurationSerializer,
     UCLUniversityConfigurationSerializer,
 )
@@ -101,6 +105,11 @@ class ConfigurationView(APIView):
                 .values('code', 'label')
         )
 
+        label = 'title' if get_language() == settings.LANGUAGE_CODE_FR else 'title_english'
+        year_offers = EducationGroupYear.objects.filter(
+            partnerships__isnull=False,
+        ).values('uuid', 'acronym', label).distinct().order_by('acronym', label)
+
         view = FundingAutocompleteView()
         view.q = ''
         fundings = view.get_list()
@@ -130,5 +139,6 @@ class ConfigurationView(APIView):
             'partnership_types': PartnershipTypeSerializer(PartnershipType.all(), many=True).data,
             'tags': list(tags),
             'partner_tags': list(partner_tags),
+            'offers': OfferSerializer(year_offers, many=True).data,
         }
         return Response(data)

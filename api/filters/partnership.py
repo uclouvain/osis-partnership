@@ -71,12 +71,15 @@ class PartnershipFilter(filters.FilterSet):
         label=_('partnership_supervisor'),
         method='filter_supervisor',
     )
+    tag = filters.CharFilter(field_name='tags__value')
+    partner_tag = filters.CharFilter(field_name='partner__tags__value')
 
     # Depends on the current year
     education_field = filters.UUIDFilter(
         label=_('education_field'),
         field_name='years__education_fields__uuid',
     )
+    offer = filters.UUIDFilter(field_name='years__offers__uuid')
     mobility_type = filters.ChoiceFilter(
         label=_('mobility_type'),
         choices=(('student', "Student"), ('staff', "Staff")),

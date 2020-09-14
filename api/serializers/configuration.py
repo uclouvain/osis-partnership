@@ -2,6 +2,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 from rest_framework import serializers
 
+from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.person import Person
 from partnership.models import Partner, PartnershipYearEducationLevel
@@ -18,6 +19,7 @@ __all__ = [
     'EducationFieldConfigurationSerializer',
     'SupervisorConfigurationSerializer',
     'EducationLevelSerializer',
+    'OfferSerializer',
     'PartnershipTypeSerializer',
 ]
 
@@ -103,6 +105,20 @@ class EducationFieldConfigurationSerializer(serializers.ModelSerializer):  # pra
     def get_label(result):
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return result[label]
+
+
+class OfferSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='uuid')
+    label = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EducationGroupYear
+        fields = ['value', 'label']
+
+    @staticmethod
+    def get_label(result):
+        label = 'title' if get_language() == settings.LANGUAGE_CODE_FR else 'title_english'
+        return "{} - {}".format(result['acronym'], result[label])
 
 
 class PartnershipTypeSerializer(serializers.Serializer):
