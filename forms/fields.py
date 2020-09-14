@@ -26,7 +26,7 @@ class EntityChoiceFieldMixin(forms.ModelChoiceField):
         try:
             entity_version = get_last_version(obj)
             return '{0} - {1}'.format(entity_version.acronym, entity_version.title)
-        except EntityVersion.DoesNotExist:
+        except EntityVersion.DoesNotExist:  # pragma: no cover
             return str(obj)
 
 

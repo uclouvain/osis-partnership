@@ -28,6 +28,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
     def get_xls_data(self):
         for agreement in self.filterset.qs:
             years = academic_years(agreement.start_academic_year, agreement.end_academic_year)
+            parts = agreement.acronym_path
             yield [
                 agreement.pk,
                 agreement.partnership.get_partnership_type_display(),
@@ -35,8 +36,8 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
                 str(agreement.country_name),
                 str(agreement.city),
                 str(agreement.partnership.supervisor),
-                agreement.partnership_ucl_faculty_most_recent_acronym,
-                agreement.partnership_ucl_entity_most_recent_acronym,
+                parts[1] if len(parts) > 1 else "",
+                parts[2] if len(parts) > 2 else "",
                 years,
                 agreement.start_academic_year.year,
                 agreement.end_academic_year.year + 1,

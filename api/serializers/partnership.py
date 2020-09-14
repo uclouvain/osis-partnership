@@ -36,10 +36,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         source='get_supervisor',
         allow_null=True,
     )
-    ucl_sector = serializers.CharField(
-        source='ucl_sector_most_recent_acronym',
-        allow_null=True,
-    )
+    ucl_sector = serializers.CharField(source='acronym_path.1', allow_null=True)
     ucl_faculty = serializers.SerializerMethodField()
     ucl_entity = EntitySerializer()
     is_sms = serializers.SerializerMethodField()
@@ -278,8 +275,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
         ume = partnership.ucl_entity.uclmanagement_entity
         administrative_person = ume.administrative_responsible
-        email = ume.contact_in_email
 
+        email = ume.contact_in_email
         if email is None:
             email = getattr(administrative_person, 'email', None)
 
@@ -343,9 +340,11 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_ucl_faculty(partnership):
+        if len(partnership.acronym_path) < 3:
+            return {}
         return {
-            'acronym': partnership.ucl_faculty_most_recent_acronym,
-            'title': partnership.ucl_faculty_most_recent_title,
+            'acronym': partnership.acronym_path[2],
+            'title': partnership.title_path[2],
         }
 
 

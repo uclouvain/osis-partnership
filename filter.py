@@ -2,7 +2,6 @@ import django_filters as filters
 from django.db.models import Exists, Max, OuterRef, Q
 
 from base.models.entity_version import EntityVersion
-from base.models.enums.entity_type import FACULTY, SECTOR
 from base.utils.cte import CTESubquery
 from partnership.forms import (
     PartnerFilterForm, PartnershipFilterForm,
@@ -125,6 +124,7 @@ class PartnershipAdminFilter(filters.FilterSet):
         fields=(
             ('partner__organization__name', 'partner'),
             ('city', 'city'),
+            ('acronym_path', 'ucl')
         ),
         multiples={
             'country': [
@@ -132,11 +132,6 @@ class PartnershipAdminFilter(filters.FilterSet):
                 'city',
                 'partner__organization__name'
             ],
-            'ucl': [
-                'ucl_sector_most_recent_acronym',
-                'ucl_faculty_most_recent_acronym',
-                'ucl_entity_most_recent_acronym',
-            ]
         },
     )
     continent = filters.CharFilter(
@@ -392,7 +387,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             ('partnership__partner__organization__name', 'partner'),
             ('country', 'country'),
             ('city', 'city'),
-            ('ucl', 'ucl'),
+            ('acronym_path', 'ucl'),
         ),
         multiples={
             'country': [
@@ -400,22 +395,12 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
                 'city',
                 'partnership__partner__organization__name',
             ],
-            'ucl': [
-                'partnership_ucl_sector_most_recent_acronym',
-                'partnership_ucl_faculty_most_recent_acronym',
-                'partnership_ucl_entity_most_recent_acronym',
-            ]
         }
     )
 
     @property
     def qs(self):
         # See also Partnership.objects.add_acronyms()
-        ref = OuterRef('partnership__ucl_entity__pk')
-
-        cte = EntityVersion.objects.with_children(entity_id=ref)
-        qs = cte.join(EntityVersion, id=cte.col.id).with_cte(cte).order_by('-start_date')
-
         queryset = (
             PartnershipAgreement.objects
             .annotate_partner_address(
@@ -425,38 +410,15 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             # TODO remove when Entity city field is dropped (conflict)
             .defer("partnership__ucl_entity__city")
             .annotate(
-                # Used for ordering
-                partnership_ucl_sector_most_recent_acronym=CTESubquery(
-                    qs.filter(entity_type=SECTOR).values('acronym')[:1]
+                acronym_path=CTESubquery(
+                    EntityVersion.objects.with_acronym_path(
+                        entity_id=OuterRef('partnership__ucl_entity__pk')
+                    ).values('acronym_path')[:1]
                 ),
-                partnership_ucl_sector_most_recent_title=CTESubquery(
-                    qs.filter(entity_type=SECTOR).values('title')[:1]
-                ),
-                partnership_ucl_faculty_most_recent_acronym=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref,
-                    ).values('acronym')[:1]
-                ),
-                partnership_ucl_faculty_most_recent_title=CTESubquery(
-                    qs.filter(
-                        entity_type=FACULTY,
-                    ).exclude(
-                        entity_id=ref,
-                    ).values('title')[:1]
-                ),
-                partnership_ucl_entity_most_recent_acronym=CTESubquery(
-                    EntityVersion.objects
-                        .filter(entity=ref)
-                        .order_by('-start_date')
-                        .values('acronym')[:1]
-                ),
-                partnership_ucl_entity_most_recent_title=CTESubquery(
-                    EntityVersion.objects
-                        .filter(entity=ref)
-                        .order_by('-start_date')
-                        .values('title')[:1]
+                title_path=CTESubquery(
+                    EntityVersion.objects.with_acronym_path(
+                        entity_id=OuterRef('partnership__ucl_entity__pk')
+                    ).values('title_path')[:1]
                 ),
             ).filter(
                 partnership__in=super().qs

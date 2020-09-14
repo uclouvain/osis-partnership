@@ -48,7 +48,6 @@ class PartnersApiViewTest(TestCase):
             partner__contact_address__location=Point(
                 19.8186, 41.3275
             ),
-            ucl_entity=EntityFactory(),
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
@@ -66,9 +65,7 @@ class PartnersApiViewTest(TestCase):
 
         cls.partnership_2 = PartnershipFactory(
             supervisor=None,
-            years=[
-                PartnershipYearFactory(academic_year=cls.current_academic_year),
-            ],
+            years__academic_year=cls.current_academic_year,
             partner__organization__name="Art school",
             partner__contact_address__country__iso_code="ZM",
             partner__contact_address__country__name="Zambia",
@@ -191,6 +188,11 @@ class PartnersApiViewTest(TestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
 
+        response = self.client.get(self.url + '?mobility_type=staff')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
     def test_filter_funding(self):
         response = self.client.get(self.url, {
             'funding_type':  self.financing.type_id,
@@ -200,8 +202,9 @@ class PartnersApiViewTest(TestCase):
         self.assertEqual(data[0]['uuid'], str(self.partnership_2.partner.uuid))
 
     def test_partnerships_count(self):
-        partnership = PartnershipFactory()
-        PartnershipYearFactory(partnership=partnership, academic_year=self.current_academic_year)
+        partnership = PartnershipFactory(
+            years__academic_year=self.current_academic_year,
+        )
         PartnershipAgreementFactory(
             partnership=partnership,
             start_academic_year=self.current_academic_year,

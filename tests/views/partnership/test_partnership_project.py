@@ -7,7 +7,6 @@ from django.urls import reverse
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
@@ -50,12 +49,15 @@ class PartnershipCreateProjectViewTest(TestCase):
         )
 
         # Ucl
-        sector = EntityFactory()
-        EntityVersionFactory(entity=sector, entity_type=SECTOR)
-        cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
-        cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        root = EntityVersionFactory(parent=None).entity
+        sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=sector,
+            entity_type=FACULTY,
+        ).entity
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
 
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
@@ -115,13 +117,16 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.education_level = PartnershipYearEducationLevelFactory()
 
         # Ucl
-        sector = EntityFactory()
-        EntityVersionFactory(entity=sector, entity_type=SECTOR)
-        cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
+        root = EntityVersionFactory(parent=None).entity
+        sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=sector,
+            entity_type=FACULTY,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
-        cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university_labo)
 
         cls.partnership = PartnershipFactory(
@@ -129,12 +134,20 @@ class PartnershipUpdateProjectViewTest(TestCase):
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user.person,
-            years=[
-                PartnershipYearFactory(academic_year=cls.start_academic_year),
-                PartnershipYearFactory(academic_year=cls.from_academic_year),
-                PartnershipYearFactory(academic_year=cls.end_academic_year),
-            ],
+            years=[],
             ucl_entity=cls.ucl_university,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.start_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.from_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.end_academic_year,
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
@@ -170,6 +183,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         year = self.partnership.years.last()
+        self.assertTrue(year.is_valid)
         self.assertEqual(year.funding_source_id, self.type.program.source_id)
         self.assertEqual(year.funding_program_id, self.type.program_id)
         self.assertEqual(year.funding_type_id, self.type.pk)

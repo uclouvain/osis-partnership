@@ -69,12 +69,8 @@ class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_label(result):
-        acronyms = filter(None, [
-            result.sector_acronym,
-            result.faculty_acronym,
-            result.most_recent_acronym,
-        ])
-        return '{} - {}'.format(' / '.join(acronyms), result.most_recent_title)
+        parts = result.acronym_path[1:] if result.acronym_path[1:] else result.acronym_path
+        return '{} - {}'.format(' / '.join(parts), result.most_recent_title)
 
 
 class SupervisorConfigurationSerializer(serializers.ModelSerializer):

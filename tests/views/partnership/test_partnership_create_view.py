@@ -29,12 +29,17 @@ class PartnershipCreateViewTest(TestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
-        entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
         cls.user_2_types = UserFactory()
+
+        root = EntityVersionFactory(parent=None).entity
+        entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
+        PartnershipEntityManagerFactory(
+            entity=entity_version.entity,
+            person__user=cls.user_adri,
+        )
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
             person__user=cls.user_2_types,
@@ -61,22 +66,26 @@ class PartnershipCreateViewTest(TestCase):
         )
 
         # Ucl
-        sector = EntityFactory()
-        EntityVersionFactory(entity=sector, entity_type=SECTOR)
-        cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
-        cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        sector = EntityVersionFactory(
+            parent=root,
+            entity_type=SECTOR,
+        ).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=sector,
+            entity_type=FACULTY,
+        ).entity
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
         UCLManagementEntityFactory()
 
-        cls.ucl_university_not_choice = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_not_choice, entity_type=FACULTY)
-        cls.ucl_university_labo_not_choice = EntityFactory()
-        EntityVersionFactory(
-            entity=cls.ucl_university_labo_not_choice,
+        cls.ucl_university_not_choice = EntityVersionFactory(
+            entity_type=FACULTY,
+        ).entity
+        cls.ucl_university_labo_not_choice = EntityVersionFactory(
             parent=cls.ucl_university_not_choice,
-        )
+        ).entity
         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
 
         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)

@@ -22,7 +22,10 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
         'base.tests.factories.academic_year.AcademicYearFactory',
         year=2020,  # BUG: OP-348 - dirty fix
     )
-    partnership = factory.SubFactory('partnership.tests.factories.PartnershipFactory')
+    partnership = factory.SubFactory(
+        'partnership.tests.factories.PartnershipFactory',
+        years=[],
+    )
 
     @factory.post_generation
     def missions(obj, create, extracted, **kwargs):

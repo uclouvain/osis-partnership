@@ -15,6 +15,7 @@ class UCLManagementEntityFactory(factory.DjangoModelFactory):
     )
     academic_responsible = factory.SubFactory(
         'base.tests.factories.person.PersonFactory',
+        user=None,
     )
     # Reuse person to speed up tests
     administrative_responsible = factory.SelfAttribute('academic_responsible')

@@ -26,8 +26,9 @@ class PartnershipFactory(factory.DjangoModelFactory):
     partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(
-        'base.tests.factories.entity.EntityFactory',
+        'base.tests.factories.entity.EntityWithVersionFactory',
         organization=None,
+        version__acronym="SO"
     )
 
     @factory.post_generation
@@ -43,7 +44,9 @@ class PartnershipFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def years(obj, create, extracted, **kwargs):
         if create:
-            if extracted is not None:
+            if extracted is None:
+                obj.years.set([
+                    PartnershipYearFactory(partnership=obj, **kwargs),
+                ])
+            elif extracted:
                 obj.years.set(extracted)
-            else:
-                obj.years.set([PartnershipYearFactory(partnership=obj)])

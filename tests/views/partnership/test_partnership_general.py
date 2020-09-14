@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
@@ -50,18 +49,20 @@ class PartnershipCreateGeneralViewTest(TestCase):
                               type=PartnershipType.GENERAL)
 
         # Ucl
-        sector = EntityFactory()
-        EntityVersionFactory(entity=sector, entity_type=SECTOR)
-        cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector,
-                             entity_type=FACULTY)
-        cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo,
-                             parent=cls.ucl_university)
+        root = EntityVersionFactory(parent=None).entity
+        sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=sector,
+            entity_type=FACULTY,
+        ).entity
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
 
         cls.university_offer = EducationGroupYearFactory(
-            administration_entity=cls.ucl_university_labo)
+            administration_entity=cls.ucl_university_labo,
+        )
 
         cls.data = {
             'partnership_type': PartnershipType.GENERAL.name,
@@ -138,13 +139,16 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         cls.education_level = PartnershipYearEducationLevelFactory()
 
         # Ucl
-        sector = EntityFactory()
-        EntityVersionFactory(entity=sector, entity_type=SECTOR)
-        cls.ucl_university = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
+        root = EntityVersionFactory(parent=None).entity
+        sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
+        cls.ucl_university = EntityVersionFactory(
+            parent=sector,
+            entity_type=FACULTY,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
-        cls.ucl_university_labo = EntityFactory()
-        EntityVersionFactory(entity=cls.ucl_university_labo, parent=cls.ucl_university)
+        cls.ucl_university_labo = EntityVersionFactory(
+            parent=cls.ucl_university,
+        ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university_labo)
 
         cls.partnership = PartnershipFactory(
@@ -152,12 +156,20 @@ class PartnershipUpdateGeneralViewTest(TestCase):
             partner=cls.partner,
             partner_entity=cls.partner_entity,
             author=cls.user.person,
-            years=[
-                PartnershipYearFactory(academic_year=cls.start_academic_year),
-                PartnershipYearFactory(academic_year=cls.from_academic_year),
-                PartnershipYearFactory(academic_year=cls.end_academic_year),
-            ],
+            years=[],
             ucl_entity=cls.ucl_university,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.start_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.from_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.end_academic_year,
         )
         cls.url = resolve_url('partnerships:update', pk=cls.partnership.pk)
 
