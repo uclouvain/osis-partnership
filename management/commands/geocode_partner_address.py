@@ -62,5 +62,7 @@ class Command(ProgressBarMixin, BaseCommand):
             len(obj_list),
             len(not_found),
         ))
+        if not_found:
+            self.stdout.write(" - " + "\n - ".join(not_found))
 
         EntityVersionAddress.objects.bulk_update(obj_list, fields=['location'])

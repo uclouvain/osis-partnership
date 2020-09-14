@@ -158,7 +158,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
         partner = self.forwarded.get('partner', None)
         if partner:
             qs = qs.filter(
-                entity_version__parent__organization__partner=partner,
+                entity__entityversion__parent__organization__partner=partner,
             )
         else:
             return PartnerEntity.objects.none()

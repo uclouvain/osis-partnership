@@ -4,6 +4,7 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.entity_version_address import (
     EntityVersionAddressFactory
@@ -80,14 +81,15 @@ class PartnerEntityFactory(factory.DjangoModelFactory):
         model = PartnerEntity
 
     name = factory.Sequence(lambda n: 'PartnerEntity-é-{0}'.format(n))
-    entity_version = factory.SubFactory(EntityVersionFactory, parent=None)
+    entity = factory.SubFactory(EntityWithVersionFactory)
 
     @factory.post_generation
     def partner(obj, create, extracted, **kwargs):
         if create:
             partner = extracted or PartnerFactory()
-            if not obj.entity_version.parent_id:
-                obj.entity_version.parent = partner.organization.entity_set.first()
-                obj.entity_version.save()
-            obj.entity_version.entity.organization = partner.organization
-            obj.entity_version.entity.save()
+            version = obj.entity.most_recent_entity_version
+            if not version.parent_id:
+                version.parent = partner.organization.entity_set.first()
+                version.save()
+            obj.entity.organization = partner.organization
+            obj.entity.save()

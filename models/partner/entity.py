@@ -11,8 +11,8 @@ class PartnerEntity(models.Model):
     Une entité d'un partenaire.
     Il peut y avoir plusieurs entités par partenaire.
     """
-    entity_version = models.OneToOneField(
-        'base.EntityVersion',
+    entity = models.OneToOneField(
+        'base.Entity',
         verbose_name=_('partner'),
         on_delete=models.PROTECT,
     )
@@ -59,8 +59,8 @@ class PartnerEntity(models.Model):
 
     @cached_property
     def partner(self):
-        return self.entity_version.entity.organization.partner
+        return self.entity.organization.partner
 
     @cached_property
     def parent_entity(self):
-        return self.entity_version.parent.most_recent_entity_version.partnerentity
+        return self.entity.most_recent_entity_version.parent.partnerentity

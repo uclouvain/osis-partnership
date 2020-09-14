@@ -33,11 +33,11 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         kwargs['entities'] = PartnerEntity.objects.filter(
-            entity_version__parent__organization__partner=self.object,
+            entity__entityversion__parent__organization__partner=self.object,
         ).select_related(
             'contact_in', 'contact_out', 'author__user',
         ).prefetch_related(
-            'entity_version__parent__entityversion_set__partnerentity',
-            'entity_version__entityversionaddress_set__country',
-        )
+            'entity__entityversion_set__parent__partnerentity',
+            'entity__entityversion_set__entityversionaddress_set__country',
+        ).distinct()
         return super().get_context_data(**kwargs)
