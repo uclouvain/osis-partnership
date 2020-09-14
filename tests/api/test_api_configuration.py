@@ -2,6 +2,7 @@ from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.education_group_year import EducationGroupYearFactory as BaseEducationGroupYearFactory
 from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
@@ -20,6 +21,12 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 class ConfigurationApiViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+
+        class EducationGroupYearFactory(BaseEducationGroupYearFactory):
+            management_entity = None
+            administration_entity = None
+            enrollment_campus = None
+
         cls.url = reverse('partnership_api_v1:configuration')
 
         AcademicYearFactory.produce_in_future(quantity=2)
@@ -37,6 +44,7 @@ class ConfigurationApiViewTest(TestCase):
             partnership=partnership,
             academic_year=current_academic_year,
         )
+        year.offers.add(EducationGroupYearFactory())
         education_field = DomainIscedFactory(title_en='foo', title_fr='bar')
         year.education_fields.add(education_field)
         PartnershipAgreementFactory(
@@ -77,7 +85,7 @@ class ConfigurationApiViewTest(TestCase):
         CountryFactory()
 
     def test_num_queries(self):
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(13):
             self.client.get(self.url)
 
     def test_continents(self):
