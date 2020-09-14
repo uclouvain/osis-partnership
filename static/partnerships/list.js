@@ -104,10 +104,10 @@ function initDataTable (storageKey, url, columnDefs, extra) {
             // Dates must be set
             var from = moment($('#id_partnership_special_dates_0').val(), "DD/MM/YYYY");
             var to = moment($('#id_partnership_special_dates_1').val(), "DD/MM/YYYY");
-            if (!from.isValid() || !to.isValid()) {
+            if (!from.isValid()) {
                 alert("Veuillez compléter les dates de recherche");
                 return false;
-            } else if (from > to) {
+            } else if (to.isValid() && from > to) {
                 alert("Les dates de recherche doivent se suivre");
                 return false;
             }

@@ -595,7 +595,6 @@ class PartnershipsListViewTest(TestCase):
             'partnership_special_dates_type': 'ongoing',
         }, user=self.user)
         self.assertIn('partnership_special_dates_0', form.errors)
-        self.assertIn('partnership_special_dates_1', form.errors)
 
         form = PartnershipFilterForm({
             'partnership_special_dates_type': 'ongoing',
@@ -617,6 +616,14 @@ class PartnershipsListViewTest(TestCase):
             'partnership_special_dates_type': 'ongoing',
             'partnership_special_dates_0': '25/10/2160',
             'partnership_special_dates_1': '25/10/2160',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
+
+        response = self.client.get(self.url, {
+            'partnership_special_dates_type': 'ongoing',
+            'partnership_special_dates_0': '25/10/2160',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)

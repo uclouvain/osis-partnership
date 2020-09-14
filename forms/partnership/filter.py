@@ -379,8 +379,6 @@ class PartnershipFilterForm(forms.Form):
         date_to = data.get('partnership_special_dates_1')
         if special and not date_from:
             self.add_error('partnership_special_dates_0', _("required"))
-        if special and not date_to:
-            self.add_error('partnership_special_dates_1', _("required"))
         if date_from and date_to and date_from > date_to:
             self.add_error(
                 'partnership_special_dates_1',

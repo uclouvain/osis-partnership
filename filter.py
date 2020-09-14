@@ -205,7 +205,7 @@ class PartnershipAdminFilter(filters.FilterSet):
     partnership_special_dates_type = filters.CharFilter(
         method='filter_partnership_special_dates'
     )
-    # Noop filters
+    # Noop filter, their logic is in filter_partnership_special_dates()
     partnership_special_dates_0 = filters.DateFilter(method=lambda qs, *_: qs)
     partnership_special_dates_1 = filters.DateFilter(method=lambda qs, *_: qs)
     comment = filters.CharFilter(lookup_expr='icontains')
@@ -396,12 +396,21 @@ class PartnershipAdminFilter(filters.FilterSet):
             return queryset
 
         date_from = self.form.cleaned_data['partnership_special_dates_0']
-        date_to = self.form.cleaned_data['partnership_special_dates_1']
+        date_to = self.form.cleaned_data.get('partnership_special_dates_1')
         if value == 'ongoing':
+            if not date_to:
+                # start_date < filter_date < end_date
+                return queryset.filter(
+                    start_date__lte=date_from,
+                    end_date__gte=date_from,
+                )
+            # periods must intersect
             return queryset.filter(
-                Q(start_date__lte=date_from) | Q(end_date__gte=date_to),
+                Q(start_date__lte=date_from, end_date__gte=date_from)
+                | Q(start_date__lte=date_to, end_date__gte=date_to),
             )
         elif value == 'stopping':
+            # filter_date_0 < end_date < filter_date_1
             return queryset.filter(
                 end_date__gte=date_from,
                 end_date__lte=date_to,

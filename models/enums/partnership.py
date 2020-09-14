@@ -12,6 +12,8 @@ class PartnershipType(ChoiceEnum):
 
     @classmethod
     def with_synced_dates(cls):
+        """ Types for which their start_date and end_date are synchronized
+        with the academic_year of their partnership_years """
         return [
             PartnershipType.MOBILITY.name,
             PartnershipType.COURSE.name,
