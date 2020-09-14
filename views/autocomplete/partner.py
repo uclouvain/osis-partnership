@@ -44,7 +44,7 @@ class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select
         if not partner:
             return PartnerEntity.objects.none()
         qs = PartnerEntity.objects.filter(
-            entity_version__entity__organization__partner=partner,
+            entity__organization__partner=partner,
         )
         if self.q:
             qs = qs.filter(name__icontains=self.q)

@@ -17,6 +17,7 @@ from partnership.forms import PartnerEntityForm, PartnerForm
 from partnership.forms.partner.entity import (
     PartnerEntityContactForm,
     EntityVersionAddressForm,
+    PartnerEntityAddressForm,
 )
 from partnership.forms.partner.partner import OrganizationForm
 from partnership.models import Partner, PartnerEntity
@@ -195,8 +196,8 @@ class PartnerEntityMixin(PermissionRequiredMixin):
 
     def get_queryset(self):
         return PartnerEntity.objects.filter(
-            entity_version__parent__organization__partner=self.partner,
-        )
+            entity__entityversion__parent__organization__partner=self.partner,
+        ).distinct()
 
     def get_success_url(self):
         return self.partner.get_absolute_url()
@@ -239,7 +240,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         if not self.forms:
             address = None
             if self.object:
-                address = self.object.entity_version.entityversionaddress_set.first()
+                address = self.object.entity.most_recent_entity_version.entityversionaddress_set.first()
             self.forms = {
                 self.PARTNER_ENTITY_FORM: self.get_form(),
                 self.CONTACT_IN_FORM: PartnerEntityContactForm(
@@ -252,7 +253,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
                     prefix=self.CONTACT_OUT_FORM,
                     instance=getattr(self.object, 'contact_out', None),
                 ),
-                self.ADDRESS_FORM: EntityVersionAddressForm(
+                self.ADDRESS_FORM: PartnerEntityAddressForm(
                     self.request.POST or None,
                     prefix=self.ADDRESS_FORM,
                     instance=address,
@@ -284,28 +285,29 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         if not entity_form.instance.pk:
             entity_form.instance.author = self.request.user.person
 
-        entity_version = self.save_entity_version(changed, entity_form)
+        entity = self.save_entity(changed, entity_form)
 
         # Save partner entity
-        entity_form.instance.entity_version = entity_version
+        entity_form.instance.entity = entity
         entity_form.instance.partner = self.partner
         entity_form.instance.contact_in = forms[self.CONTACT_IN_FORM].save()
         entity_form.instance.contact_out = forms[self.CONTACT_OUT_FORM].save()
         entity_form.save()
 
         # Save address
-        self.save_address(entity_version, address_form)
+        self.save_address(entity.most_recent_entity_version, address_form)
 
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)
 
-    def save_entity_version(self, changed, entity_form):
+    def save_entity(self, changed, entity_form):
         today = timezone.now().date()
         if not entity_form.instance.pk:
             # Save a new entity and entity version
             organization = self.partner.organization
-            return EntityVersion.objects.create(
-                entity=Entity.objects.create(organization_id=organization.pk),
+            entity = Entity.objects.create(organization_id=organization.pk)
+            EntityVersion.objects.create(
+                entity=entity,
                 start_date=today,
                 acronym=self.generate_unique_acronym(organization.code),
                 parent=(
@@ -314,9 +316,10 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
                 ),
                 title=entity_form.cleaned_data.get('name'),
             )
+            return entity
 
         elif changed:
-            entity_version = entity_form.instance.entity_version
+            entity_version = entity_form.instance.entity.most_recent_entity_version
             if entity_version.start_date != today:
                 # End the previous entity, if started not today
                 entity_version.end_date = (
@@ -335,7 +338,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             entity_version.title = entity_form.cleaned_data.get('name')
             entity_version.start_date = today
             entity_version.save()
-            return entity_version
+            return entity_version.entity
 
     @staticmethod
     def save_address(last_version, form_address):

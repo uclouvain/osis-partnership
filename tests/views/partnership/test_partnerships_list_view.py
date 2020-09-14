@@ -44,7 +44,6 @@ class PartnershipsListViewTest(TestCase):
             management_entity = None
             administration_entity = None
             enrollment_campus = None
-            main_teaching_campus = None
 
         class PartnershipAgreementFactory(BasePartnershipAgreementFactory):
             media = MediaFactory()

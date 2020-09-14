@@ -11,6 +11,7 @@ __all__ = [
     'PartnerEntityForm',
     'PartnerEntityContactForm',
     'EntityVersionAddressForm',
+    'PartnerEntityAddressForm',
 ]
 
 
@@ -20,6 +21,20 @@ class EntityVersionAddressForm(forms.ModelForm):
     class Meta:
         model = EntityVersionAddress
         exclude = ['entity_version', 'is_main']
+        labels = {
+            'street_number': _('street_number'),
+            'street': _('address'),
+            'postal_code': _('postal_code'),
+            'state': _('state'),
+            'city': _('city'),
+            'country': _('country'),
+        }
+
+
+class PartnerEntityAddressForm(forms.ModelForm):
+    class Meta:
+        model = EntityVersionAddress
+        exclude = ['entity_version', 'is_main', 'location']
         labels = {
             'street_number': _('street_number'),
             'street': _('address'),
@@ -54,7 +69,7 @@ class PartnerEntityForm(forms.ModelForm):
 
     class Meta:
         model = PartnerEntity
-        exclude = ('entity_version', 'contact_in', 'contact_out')
+        exclude = ('entity', 'contact_in', 'contact_out')
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': _('name')}),
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
@@ -68,16 +83,16 @@ class PartnerEntityForm(forms.ModelForm):
             entityversion__parent__organization__partner=partner,
         ).annotate(
             name=Subquery(PartnerEntity.objects.filter(
-                entity_version__entity=OuterRef('pk'),
+                entity=OuterRef('pk'),
             ).values('name')[:1])
         ).distinct('pk')
         if self.instance.pk:
             qs = qs.exclude(
-                pk=self.instance.entity_version.entity_id,
+                pk=self.instance.entity_id,
             ).exclude(
                 # Prevent circle dependency
-                entityversion__parent=self.instance.entity_version.entity,
+                entityversion__parent=self.instance.entity,
             )
-            self.fields['parent'].initial = self.instance.entity_version.parent
+            self.fields['parent'].initial = self.instance.entity.most_recent_entity_version.parent
         self.fields['parent'].label_from_instance = lambda obj: str(obj.name)
         self.fields['parent'].queryset = qs

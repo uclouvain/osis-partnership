@@ -28,7 +28,7 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
 class PartnerEntityAdmin(admin.ModelAdmin):
     model = PartnerEntity
     raw_id_fields = (
-        'entity_version',
+        'entity',
         'contact_in',
         'contact_out',
     )

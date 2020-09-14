@@ -119,7 +119,7 @@ class PartnerEntityUpdateViewTest(TestCase):
         cls.partner_entity = PartnerEntityFactory(
             partner=cls.partner,
             author=cls.partner.author,
-            entity_version__parent=cls.parent_entity.entity_version.entity,
+            entity__version__parent=cls.parent_entity.entity,
         )
 
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
@@ -211,9 +211,9 @@ class PartnerEntityUpdateViewTest(TestCase):
             'contact_out-mobile_phone': 'test',
             'contact_out-fax': 'test',
             'contact_out-email': 'test@test.test',
-            'parent': self.parent_entity.entity_version.entity_id,
+            'parent': self.parent_entity.entity_id,
         }
-        current_entity = self.partner_entity.entity_version.entity
+        current_entity = self.partner_entity.entity
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
         self.assertEqual(current_entity.entityversion_set.count(), 1)
 
