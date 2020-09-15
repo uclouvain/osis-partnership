@@ -10,7 +10,9 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory 
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
+from partnership.forms import PartnershipFilterForm
 from partnership.models import AgreementStatus, PartnershipType
+from partnership.models.enums.filter import DateFilterType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnerEntityFactory,
@@ -173,14 +175,19 @@ class PartnershipsListViewTest(TestCase):
         ).partnership
 
         # partnership_type
-        cls.partnership_type = PartnershipFactory(
+        cls.partnership_general = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
             years__academic_year__year=2154,
+            end_date=date(2020, 7, 1),
         )
         PartnershipAgreementFactory(
-            partnership=cls.partnership_type,
+            partnership=cls.partnership_general,
             status=AgreementStatus.VALIDATED.name,
-            end_date=date(2020, 7, 1),
+        )
+
+        cls.partnership_course = PartnershipFactory(
+            partnership_type=PartnershipType.COURSE.name,
+            years__academic_year__year=2154,
         )
 
         # tags
@@ -256,6 +263,8 @@ class PartnershipsListViewTest(TestCase):
                 partner=cls.partner_all_filters,
             ),
             years=[],
+            start_date=date(2160, 9, 1),
+            end_date=date(2161, 6, 30),
         )
         partnership_year = PartnershipYearFactory(
             partnership=cls.partnership_all_filters,
@@ -300,12 +309,12 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertEqual(response.context['paginator'].count, 27)
+        self.assertEqual(response.context['paginator'].count, 28)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
-        with self.assertNumQueriesLessThan(11):
+        with self.assertNumQueriesLessThan(12):
             self.client.get(self.url, HTTP_ACCEPT='application/json')
 
     def test_get_list_ordering(self):
@@ -365,8 +374,8 @@ class PartnershipsListViewTest(TestCase):
         json = response.json()
         uuids = [o['uuid'] for o in json['object_list']]
         self.assertIn(str(self.partnership_university_offer.uuid), uuids)
-        # Include partnerships with offers at None (27 total - 2 with other offers)
-        self.assertEqual(json['total'], 25)
+        # Include partnerships with offers at None (28 total - 2 with other offers)
+        self.assertEqual(json['total'], 26)
 
     def test_filter_partner(self):
         self.client.force_login(self.user)
@@ -501,8 +510,16 @@ class PartnershipsListViewTest(TestCase):
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['uuid'], str(self.partnership_type.uuid))
+        self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
         self.assertEqual(results[0]['validity_end'], "01/07/2020")
+
+        response = self.client.get(self.url, {
+            'partnership_type': PartnershipType.COURSE.name,
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_course.uuid))
+        self.assertEqual(results[0]['validity_end'], "2154-55")
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
@@ -573,6 +590,56 @@ class PartnershipsListViewTest(TestCase):
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_no_agreement_in.uuid))
+
+    def test_filter_special_dates_errors(self):
+        form = PartnershipFilterForm({
+            'partnership_date_type': DateFilterType.ONGOING.name,
+        }, user=self.user)
+        self.assertIn('partnership_date_from', form.errors)
+
+        form = PartnershipFilterForm({
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '10/09/2020',
+            'partnership_date_to': '01/09/2020',
+        }, user=self.user)
+        self.assertIn('partnership_date_to', form.errors)
+
+        form = PartnershipFilterForm({
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '01/09/2020',
+            'partnership_date_to': '10/09/2020',
+        }, user=self.user)
+        self.assertFalse(form.errors)
+
+    def test_filter_special_dates_ongoing(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, {
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/10/2160',
+            'partnership_date_to': '25/10/2160',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
+
+        response = self.client.get(self.url, {
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/10/2160',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
+
+    def test_filter_special_dates_stopping(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, {
+            'partnership_date_type': DateFilterType.STOPPING.name,
+            'partnership_date_from': '25/06/2020',
+            'partnership_date_to': '05/07/2020',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
 
     def test_all_filters(self):
         self.client.force_login(self.user)
@@ -645,7 +712,7 @@ class PartnershipsListViewTest(TestCase):
         )
 
         url = resolve_url('partnerships:export', academic_year_pk=year.pk)
-        with self.assertNumQueriesLessThan(24):
+        with self.assertNumQueriesLessThan(25):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')

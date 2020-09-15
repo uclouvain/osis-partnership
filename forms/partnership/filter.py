@@ -1,8 +1,10 @@
 from dal import autocomplete
 from django import forms
 from django.db.models import Q
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
@@ -20,6 +22,7 @@ from partnership.models import (
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
+from ...models.enums.filter import DateFilterType
 from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
 from ...auth.predicates import (
@@ -291,6 +294,29 @@ class PartnershipFilterForm(forms.Form):
         queryset=AcademicYear.objects.all(),
         required=False,
     )
+    partnership_date_type = forms.ChoiceField(
+        label=_('Partnerships'),
+        choices=((None, '---------'),) + DateFilterType.choices(),
+        required=False,
+    )
+    partnership_date_from = forms.DateField(
+        label=_('during (all or part of) the period from'),
+        required=False,
+        widget=DatePickerInput(
+            format=DATE_FORMAT,
+            attrs={'class': 'datepicker', 'autocomplete': 'off'},
+        ),
+        initial=now,
+    )
+    partnership_date_to = forms.DateField(
+        label=_('to'),
+        required=False,
+        widget=DatePickerInput(
+            format=DATE_FORMAT,
+            attrs={'class': 'datepicker', 'autocomplete': 'off'},
+        ),
+        initial=now,
+    )
     comment = forms.CharField(
         label=_('comment'),
         required=False,
@@ -342,3 +368,17 @@ class PartnershipFilterForm(forms.Form):
         ordering = self.cleaned_data.get('ordering')
         if ordering:
             return [ordering]
+
+    def clean(self):
+        data = super().clean()
+        special = data.get('partnership_date_type')
+        date_from = data.get('partnership_date_from')
+        date_to = data.get('partnership_date_to')
+        if special and not date_from:
+            self.add_error('partnership_date_from', _("required"))
+        if date_from and date_to and date_from > date_to:
+            self.add_error(
+                'partnership_date_to',
+                _("End date must be after start date"),
+            )
+        return data

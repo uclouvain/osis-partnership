@@ -19,13 +19,9 @@ class PartnershipAgreementsMixin(PartnershipRelatedMixin):
 
 class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
     def get_form_class(self):
-        if self.partnership.partnership_type in [
-            PartnershipType.GENERAL.name,
-            PartnershipType.COURSE.name,
-            PartnershipType.DOCTORATE.name,
-        ]:
-            return PartnershipAgreementWithDatesForm
-        return PartnershipAgreementWithAcademicYearsForm
+        if self.partnership.partnership_type == PartnershipType.MOBILITY.name:
+            return PartnershipAgreementWithAcademicYearsForm
+        return PartnershipAgreementWithDatesForm
 
     def get_template_names(self):
         if self.request.is_ajax():

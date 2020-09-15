@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
+from partnership.models import PartnershipConfiguration
 from partnership.tests.factories import (
     PartnershipEntityManagerFactory, PartnershipYearEducationLevelFactory,
 )
@@ -15,10 +16,15 @@ class YearOffersAutocompleteTestCase(TestCase):
     def setUpTestData(cls):
         cls.url = reverse('partnerships:autocomplete:partnership_year_offers')
 
+        academic_year = AcademicYearFactory.produce_in_future(quantity=3)[-1]
+        PartnershipConfiguration.objects.create(
+            partnership_creation_update_min_year=academic_year,
+        )
+
         # university_offer
         cls.university_offer = EducationGroupYearFactory(
             joint_diploma=True,
-            academic_year=AcademicYearFactory.produce_in_future(quantity=3)[-1]
+            academic_year=academic_year
         )
 
         # education_level

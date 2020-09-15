@@ -12,6 +12,7 @@ from partnership.models import (
     MediaVisibility,
     PartnershipType,
 )
+from partnership.models.enums.filter import DateFilterType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
@@ -49,10 +50,20 @@ class PartnershipAgreementsListViewTest(TestCase):
             person__user=cls.user_adri,
         )
 
-        for i in range(3):
-            PartnershipAgreementFactory(
-                partnership__ucl_entity=cls.ucl_university_labo,
-            )
+        PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
+        )
+        PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
+        )
+        PartnershipAgreementFactory(
+            partnership__ucl_entity=cls.ucl_university_labo,
+            partnership__partnership_type=PartnershipType.COURSE.name,
+            partnership__start_date=date(2017, 9, 1),
+            partnership__end_date=date(2030, 9, 1),
+            start_date=date(2017, 9, 1),
+            end_date=date(2025, 9, 1),
+        )
 
         cls.url = reverse('partnerships:agreements-list')
         cls.export_url = reverse('partnerships:export_agreements')
@@ -76,6 +87,16 @@ class PartnershipAgreementsListViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
+
+    def test_filter_special_dates_stopping(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.get(self.url, {
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/06/2024',
+            'partnership_date_to': '05/07/2026',
+        }, HTTP_ACCEPT='application/json')
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
 
     def test_export_anonymous(self):
         response = self.client.get(self.export_url, follow=True)

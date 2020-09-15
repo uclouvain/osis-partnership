@@ -60,16 +60,26 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     var type = $('#id_partnership_type')
     function collapseMobilityFields () {
         var value = type.val();
-        $('#mobility-fields').collapse(value === 'MOBILITY' ? 'show' : 'hide');
+        $('.only-mobility').collapse(value === 'MOBILITY' ? 'show' : 'hide');
         if (value !== 'MOBILITY') {
-            $('#mobility-fields select').val('')
+            $('.only-mobility select').val('')
         }
         $('#project-fields').collapse(value === 'PROJECT' ? 'show' : 'hide');
         if (value !== 'PROJECT') {
             $('#project-fields select').val('')
         }
-        $('#subtype-field select').val('').trigger('change');
         $('#subtype-field').collapse(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        if (['', 'MOBILITY', 'PROJECT'].includes(value)) {
+            $('#subtype-field select').val('')
+        }
+        $('.except-general-project').collapse(['GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        if (['GENERAL', 'PROJECT'].includes(value)) {
+            $('.except-general-project select').val('')
+        }
+        $('.special-dates-filter').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
+        if (!['', 'GENERAL', 'PROJECT'].includes(value)) {
+            $('.special-dates-filter select').val('')
+        }
     }
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);
@@ -89,6 +99,20 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     }
 
     $form.on('submit', function () {
+        // Validate some fields
+        if ($('#id_partnership_date_type').val()) {
+            // Dates must be set
+            var from = moment($('#id_partnership_date_from').val(), "DD/MM/YYYY");
+            var to = moment($('#id_partnership_date_to').val(), "DD/MM/YYYY");
+            if (!from.isValid()) {
+                alert("Veuillez compléter les dates de recherche");
+                return false;
+            } else if (to.isValid() && from > to) {
+                alert("Les dates de recherche doivent se suivre");
+                return false;
+            }
+        }
+
         $('#result-list').DataTable().ajax.reload();
         updateExportButton();
         return false;
@@ -107,6 +131,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         $form.find('select').not('[data-autocomplete-light-function=select2]').each(function () {
             this.selectedIndex = 0;
         }).trigger('change');
+
+        $('#id_partnership_date_from').val(moment().format('DD/MM/YYYY'))
+        $('#id_partnership_date_to').val(moment().format('DD/MM/YYYY'))
 
         // Prevent browser default reset
         e.preventDefault();

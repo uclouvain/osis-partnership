@@ -3,7 +3,6 @@ from django.utils.safestring import mark_safe
 from rest_framework import serializers
 
 from partnership.models import PartnershipAgreement
-from partnership.utils import academic_years
 
 
 class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
@@ -19,14 +18,14 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
         source='partnership.partner.organization.name'
     )
     entities_acronyms = serializers.SerializerMethodField()
-    academic_years = serializers.SerializerMethodField()
+    coverage = serializers.SerializerMethodField()
     status = serializers.CharField(source='get_status_display')
 
     class Meta:
         model = PartnershipAgreement
         fields = [
             'url', 'country', 'city', 'supervisor', 'partner',
-            'entities_acronyms', 'academic_years', 'status',
+            'entities_acronyms', 'coverage', 'status',
         ]
 
     @staticmethod
@@ -41,8 +40,13 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
         return mark_safe(' / '.join(entities))
 
     @staticmethod
-    def get_academic_years(agreement):
-        return academic_years(
-            agreement.start_academic_year,
-            agreement.end_academic_year,
+    def get_coverage(agreement):
+        if agreement.partnership.is_mobility:
+            return "{} > {}".format(
+                agreement.start_academic_year,
+                agreement.end_academic_year,
+            )
+        return "{:%d/%m/%Y} > {:%d/%m/%Y}".format(
+            agreement.start_date,
+            agreement.end_date,
         )

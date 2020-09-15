@@ -7,10 +7,18 @@
 {% endblock %}
 
 {% block style %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+  <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
 {% endblock %}
 
 {% block script %}
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'js/daterangepicker.js' %}"></script>
+  <script src="{% static 'js/dates-input.js' %}"></script>
   <script src="{% static "js/osis_datatable.js" %}"></script>
   <script src="{% static "partnerships/list.js" %}"></script>
   {% block datatable %}
@@ -167,7 +175,7 @@
                       {% bootstrap_field form.supervisor %}
                     </div>
                   </div>
-                  <div class="row collapse fade in" id="mobility-fields">
+                  <div class="row collapse fade in only-mobility">
                     <div class="col-sm-12 col-md-4">
                       {% bootstrap_field form.is_sms %}
                     </div>
@@ -196,29 +204,36 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
                       <label class="control-label" for="{{ form.partnership_in.id_for_label  }}">
                         {{ form.partnership_in.label }}
                         <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
                       <label class="control-label" for="{{ form.partnership_ending_in.id_for_label  }}">
                         {{ form.partnership_ending_in.label }}
                         <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_ending_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_ending_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
                       {% bootstrap_field form.partnership_valid_in %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
                       {% bootstrap_field form.partnership_not_valid_in %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-xs-12 collapse fade in form-inline special-dates-filter">
+                      {% bootstrap_field form.partnership_date_from %}
+                      {% bootstrap_field form.partnership_date_to %}
+                      {% bootstrap_field form.partnership_date_type %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
                       <label class="control-label" for="{{ form.partnership_with_no_agreements_in.id_for_label  }}">
                         {{ form.partnership_with_no_agreements_in.label }}
                         <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_with_no_agreements_in.help_text }}"></i>

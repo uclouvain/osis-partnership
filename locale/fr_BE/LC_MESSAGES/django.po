@@ -48,6 +48,9 @@ msgstr "Coordinateur"
 msgid "Counsellzing body"
 msgstr ""
 
+msgid "Coverage"
+msgstr "Couverture"
+
 msgid "EU-wide network"
 msgstr ""
 
@@ -408,6 +411,9 @@ msgstr "Responsable administratif"
 msgid "agreements_export"
 msgstr "Export des accords"
 
+msgid "agreements_or_conventions"
+msgstr "Accords ou Conventions"
+
 msgid "all_entities"
 msgstr "Toutes les entités"
 
@@ -594,6 +600,9 @@ msgstr "Supprimer l'entité de gestion mobilité"
 msgid "description"
 msgstr "Description"
 
+msgid "during (all or part of) the period from"
+msgstr "pendant (toute ou partie) de la période du"
+
 msgid "edit_partnership"
 msgstr "Mettre à jour le partenariat"
 
@@ -696,9 +705,6 @@ msgstr "Financements importés avec succès"
 msgid "financings_imported_error"
 msgstr "Les financements n'ont pas pu être importés."
 
-msgid "first"
-msgstr "Premier"
-
 msgid "first_name"
 msgstr "Prénom"
 
@@ -800,9 +806,6 @@ msgstr "Juin"
 msgid "label"
 msgstr "Libellé"
 
-msgid "last"
-msgstr "Dernier"
-
 msgid "last_name"
 msgstr "Nom"
 
@@ -857,9 +860,6 @@ msgstr "Nouveau média"
 msgid "new_partner"
 msgstr "Nouveau partenaire"
 
-msgid "next"
-msgstr "Suivant"
-
 msgid "no_agreement_yet"
 msgstr "Il n'y a pas encore d'accord."
 
@@ -883,6 +883,9 @@ msgstr "Est devenu / Fait partie de"
 
 msgid "october"
 msgstr "Octobre"
+
+msgid "ongoing"
+msgstr "En cours"
 
 msgid "parent_entity"
 msgstr "Entité parente"
@@ -1191,9 +1194,6 @@ msgstr "Portail"
 msgid "postal_code"
 msgstr "Code postal"
 
-msgid "previous"
-msgstr "Précédent"
-
 msgid "required"
 msgstr "Obligatoire"
 
@@ -1271,6 +1271,9 @@ msgstr "En attente de validation"
 msgid "still_actif"
 msgstr "Actif"
 
+msgid "stopping"
+msgstr "Venant à échéance"
+
 msgid "street_number"
 msgstr "N°"
 
@@ -1282,6 +1285,9 @@ msgstr "Superviseur"
 
 msgid "tags"
 msgstr "Tags"
+
+msgid "to"
+msgstr "à"
 
 msgid "to_synchronize_with_epc"
 msgstr "Pour synchroniser avec EPC"
@@ -1355,9 +1361,6 @@ msgstr "Utilise le système de conversion de note Égracons ?"
 msgid "valid"
 msgstr "Validé"
 
-msgid "validated_agreements"
-msgstr "Accords validés"
-
 msgid "validity_end"
 msgstr "Fin de validité"
 
@@ -1378,6 +1381,3 @@ msgstr "Visible sur l'interface publique"
 
 msgid "website"
 msgstr "Site web"
-
-msgid "years"
-msgstr "Années"

@@ -57,6 +57,7 @@ class PartnershipQuerySet(models.QuerySet):
 
     def for_validity_end(self):
         from .agreement import PartnershipAgreement
+        from .partnership_year import PartnershipYear
         return self.prefetch_related(
             Prefetch(
                 'agreements',
@@ -66,6 +67,13 @@ class PartnershipQuerySet(models.QuerySet):
                     '-end_academic_year__end_date'
                 ),
                 to_attr='last_valid_agreements',
+            ),
+            Prefetch(
+                'years',
+                PartnershipYear.objects.order_by(
+                    '-academic_year__end_date',
+                ).select_related('academic_year'),
+                to_attr='last_years',
             ),
         )
 
@@ -315,14 +323,15 @@ class Partnership(models.Model):
 
     @cached_property
     def validity_end(self):
-        # Queryset must be annotated with for_validity_end()
-        if self.is_project:
+        if (self.is_general or self.is_project) and self.end_date:
             return self.end_date.strftime("%d/%m/%Y")
-        if not self.last_valid_agreements:
-            return None
-        if self.is_mobility:
+        # Queryset must be annotated with for_validity_end()
+        if self.is_mobility and self.last_valid_agreements:
+            # End academic year of the agreement
             return str(self.last_valid_agreements[0].end_academic_year)
-        return self.last_valid_agreements[0].end_date.strftime("%d/%m/%Y")
+        if (self.is_course or self.is_doctorate) and self.last_years:
+            # Academic year of the last partnership year
+            return str(self.last_years[0].academic_year)
 
     @cached_property
     def valid_agreements_dates_ranges(self):
@@ -363,13 +372,11 @@ class Partnership(models.Model):
                 .first()
         )
 
-    @cached_property
-    def is_mobility(self):
-        return self.partnership_type == PartnershipType.MOBILITY.name
-
-    @cached_property
-    def is_project(self):
-        return self.partnership_type == PartnershipType.PROJECT.name
+    is_general = property(lambda self: self.partnership_type == PartnershipType.GENERAL.name)
+    is_mobility = property(lambda self: self.partnership_type == PartnershipType.MOBILITY.name)
+    is_course = property(lambda self: self.partnership_type == PartnershipType.COURSE.name)
+    is_doctorate = property(lambda self: self.partnership_type == PartnershipType.DOCTORATE.name)
+    is_project = property(lambda self: self.partnership_type == PartnershipType.PROJECT.name)
 
     @cached_property
     def entities_acronyms(self):

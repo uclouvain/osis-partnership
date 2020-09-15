@@ -83,19 +83,30 @@
 
             {% block administrative_responsible %}{% endblock %}
 
-            <dt>{% trans "validated_agreements" %}</dt>
-            <dd>{% academic_dates start_date=partnership.valid_start_date end_date=partnership.valid_end_date %}</dd>
-
-            <dt>{% trans "years" %}</dt>
+            <dt>{% trans "partnership_duration" %}</dt>
             <dd>
-              {% academic_years start_year=partnership.start_academic_year end_year=partnership.end_academic_year %}
-              {% if partnership.has_missing_valid_years %}<span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>{% endif %}
+              {% if partnership.is_mobility or partnership.is_course or partnership.is_doctorate %}
+                {{ partnership.start_academic_year }} > {{ partnership.end_academic_year }}
+              {% else %}
+                  {{ partnership.start_date|date:"d/m/Y" }}
+                  >
+                  {{ partnership.end_date|date:"d/m/Y" }}
+              {% endif %}
             </dd>
 
-            <dt>Dates</dt>
-            <dd>
-              {{ partnership.start_date|date:"d/m/Y" }} > {{ partnership.end_date|date:"d/m/Y" }}
-            </dd>
+            {% if not partnership.is_project %}
+              <dt>{% trans "agreements_or_conventions" %}</dt>
+              <dd>
+                {% if partnership.is_mobility %}
+                  {% academic_dates start_date=partnership.valid_start_date end_date=partnership.valid_end_date %}
+                  {% if partnership.has_missing_valid_years %}
+                    <span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>
+                  {% endif %}
+                {% else %}
+                  {% academic_dates start_date=partnership.validated_agreements.first.start_date end_date=partnership.validated_agreements.last.end_date %}
+                {% endif %}
+              </dd>
+            {% endif %}
 
             <dt>{% trans "partnership_is_public" %}</dt>
             <dd>

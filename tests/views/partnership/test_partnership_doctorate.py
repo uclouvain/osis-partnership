@@ -41,6 +41,8 @@ class PartnershipCreateDoctorateViewTest(TestCase):
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
+        cls.start_academic_year = AcademicYearFactory(year=2150)
+        cls.end_academic_year = AcademicYearFactory(year=2151)
         AcademicYearFactory.produce_in_future(date.today().year, 3)
 
         cls.education_field = DomainIscedFactory()
@@ -66,7 +68,9 @@ class PartnershipCreateDoctorateViewTest(TestCase):
         ).entity
         UCLManagementEntityFactory(entity=cls.ucl_university)
 
-        cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
+        cls.university_offer = EducationGroupYearFactory(
+            administration_entity=cls.ucl_university_labo,
+        )
 
         cls.data = {
             'partnership_type': PartnershipType.DOCTORATE.name,
@@ -76,8 +80,8 @@ class PartnershipCreateDoctorateViewTest(TestCase):
             'supervisor': PersonFactory().pk,
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
-            'start_date': date.today(),
-            'end_date': date.today() + timedelta(days=365),
+            'year-start_academic_year': cls.start_academic_year.pk,
+            'year-end_academic_year': cls.end_academic_year.pk,
             'year-education_fields': [cls.education_field.pk],
             'year-entities': [],
             'year-offers': [],
@@ -163,8 +167,9 @@ class PartnershipUpdateDoctorateViewTest(TestCase):
             'partner_entity': cls.partner_entity.pk,
             'supervisor': cls.user.person.pk,
             'ucl_entity': cls.ucl_university_labo.pk,
-            'start_date': cls.from_academic_year.start_date,
-            'end_date': cls.end_academic_year.end_date,
+            'year-start_academic_year': cls.start_academic_year.pk,
+            'year-end_academic_year': cls.end_academic_year.pk,
+            'year-from_academic_year': cls.from_academic_year.pk,
             'year-education_fields': [cls.education_field.pk],
             'year-entities': [],
             'year-offers': [],

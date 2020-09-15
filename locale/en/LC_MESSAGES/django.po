@@ -48,6 +48,9 @@ msgstr ""
 msgid "Counsellzing body"
 msgstr ""
 
+msgid "Coverage"
+msgstr ""
+
 msgid "EU-wide network"
 msgstr ""
 
@@ -348,6 +351,9 @@ msgstr "Administrative responsible"
 msgid "agreements_export"
 msgstr "Agreements export"
 
+msgid "agreements_or_conventions"
+msgstr "Agreements or Conventions"
+
 msgid "all_entities"
 msgstr "Entities"
 
@@ -532,6 +538,9 @@ msgstr "Delete mobility management entity"
 msgid "description"
 msgstr "Description"
 
+msgid "during (all or part of) the period from"
+msgstr ""
+
 msgid "edit_partnership"
 msgstr "Edit partnership"
 
@@ -634,9 +643,6 @@ msgstr "Financings successfully imported."
 msgid "financings_imported_error"
 msgstr "Financings could not be imported."
 
-msgid "first"
-msgstr "First"
-
 msgid "first_name"
 msgstr "First name"
 
@@ -736,9 +742,6 @@ msgstr "June"
 msgid "label"
 msgstr "Label"
 
-msgid "last"
-msgstr "Last"
-
 msgid "last_name"
 msgstr "Last name"
 
@@ -790,9 +793,6 @@ msgstr "New media"
 msgid "new_partner"
 msgstr "New partner"
 
-msgid "next"
-msgstr "Next"
-
 msgid "no_agreement_yet"
 msgstr "No agreement yet"
 
@@ -816,6 +816,9 @@ msgstr "Now known as"
 
 msgid "october"
 msgstr "October"
+
+msgid "ongoing"
+msgstr ""
 
 msgid "parent_entity"
 msgstr "Parent entity"
@@ -1119,9 +1122,6 @@ msgstr "Portal"
 msgid "postal_code"
 msgstr "Postal code"
 
-msgid "previous"
-msgstr "Previous"
-
 msgid "required"
 msgstr "Required"
 
@@ -1199,6 +1199,9 @@ msgstr "Waiting"
 msgid "still_actif"
 msgstr "Still active"
 
+msgid "stopping"
+msgstr ""
+
 msgid "street_number"
 msgstr "Street num."
 
@@ -1210,6 +1213,9 @@ msgstr "Supervisor"
 
 msgid "tags"
 msgstr "Tags"
+
+msgid "to"
+msgstr ""
 
 msgid "to_synchronize_with_epc"
 msgstr "To synchronize with EPC"
@@ -1283,9 +1289,6 @@ msgstr "Use egracons conversion system"
 msgid "valid"
 msgstr "Valid"
 
-msgid "validated_agreements"
-msgstr "Validated agreements"
-
 msgid "validity_end"
 msgstr "Validity end"
 
@@ -1306,6 +1309,3 @@ msgstr "Visible on the public interface"
 
 msgid "website"
 msgstr "Website"
-
-msgid "years"
-msgstr "Years"
