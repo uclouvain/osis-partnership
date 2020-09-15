@@ -12,6 +12,7 @@ from partnership.models import (
     MediaVisibility,
     PartnershipType,
 )
+from partnership.models.enums.filter import DateFilterType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
@@ -90,9 +91,9 @@ class PartnershipAgreementsListViewTest(TestCase):
     def test_filter_special_dates_stopping(self):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url, {
-            'partnership_special_dates_type': 'stopping',
-            'partnership_special_dates_0': '25/06/2024',
-            'partnership_special_dates_1': '05/07/2026',
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/06/2024',
+            'partnership_date_to': '05/07/2026',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)

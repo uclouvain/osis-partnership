@@ -4,6 +4,7 @@ from django.test import TestCase
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import PartnershipConfiguration
 from partnership.tests.factories import (
     FinancingFactory,
     PartnershipEntityManagerFactory,
@@ -21,6 +22,9 @@ class FinancingListViewTest(TestCase):
         cls.selected_countries_2 = Country.objects.all()[20:30]
         cls.academic_year_1 = AcademicYearFactory.produce_in_future(quantity=3)[-1]
         cls.academic_year_2 = AcademicYearFactory()
+        PartnershipConfiguration.objects.create(
+            partnership_creation_update_min_year=cls.academic_year_1,
+        )
         cls.financing_1 = FinancingFactory(academic_year=cls.academic_year_1)
         cls.financing_1.countries.set(cls.selected_countries_1)
         cls.financing_2 = FinancingFactory(academic_year=cls.academic_year_2)

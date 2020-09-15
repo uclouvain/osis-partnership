@@ -12,6 +12,7 @@ from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.forms import PartnershipFilterForm
 from partnership.models import AgreementStatus, PartnershipType
+from partnership.models.enums.filter import DateFilterType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnerEntityFactory,
@@ -592,38 +593,38 @@ class PartnershipsListViewTest(TestCase):
 
     def test_filter_special_dates_errors(self):
         form = PartnershipFilterForm({
-            'partnership_special_dates_type': 'ongoing',
+            'partnership_date_type': DateFilterType.ONGOING.name,
         }, user=self.user)
-        self.assertIn('partnership_special_dates_0', form.errors)
+        self.assertIn('partnership_date_from', form.errors)
 
         form = PartnershipFilterForm({
-            'partnership_special_dates_type': 'ongoing',
-            'partnership_special_dates_0': '10/09/2020',
-            'partnership_special_dates_1': '01/09/2020',
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '10/09/2020',
+            'partnership_date_to': '01/09/2020',
         }, user=self.user)
-        self.assertIn('partnership_special_dates_1', form.errors)
+        self.assertIn('partnership_date_to', form.errors)
 
         form = PartnershipFilterForm({
-            'partnership_special_dates_type': 'ongoing',
-            'partnership_special_dates_0': '01/09/2020',
-            'partnership_special_dates_1': '10/09/2020',
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '01/09/2020',
+            'partnership_date_to': '10/09/2020',
         }, user=self.user)
         self.assertFalse(form.errors)
 
     def test_filter_special_dates_ongoing(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
-            'partnership_special_dates_type': 'ongoing',
-            'partnership_special_dates_0': '25/10/2160',
-            'partnership_special_dates_1': '25/10/2160',
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/10/2160',
+            'partnership_date_to': '25/10/2160',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
 
         response = self.client.get(self.url, {
-            'partnership_special_dates_type': 'ongoing',
-            'partnership_special_dates_0': '25/10/2160',
+            'partnership_date_type': DateFilterType.ONGOING.name,
+            'partnership_date_from': '25/10/2160',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
@@ -632,9 +633,9 @@ class PartnershipsListViewTest(TestCase):
     def test_filter_special_dates_stopping(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
-            'partnership_special_dates_type': 'stopping',
-            'partnership_special_dates_0': '25/06/2020',
-            'partnership_special_dates_1': '05/07/2020',
+            'partnership_date_type': DateFilterType.STOPPING.name,
+            'partnership_date_from': '25/06/2020',
+            'partnership_date_to': '05/07/2020',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)

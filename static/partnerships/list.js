@@ -100,10 +100,10 @@ function initDataTable (storageKey, url, columnDefs, extra) {
 
     $form.on('submit', function () {
         // Validate some fields
-        if ($('#id_partnership_special_dates_type').val()) {
+        if ($('#id_partnership_date_type').val()) {
             // Dates must be set
-            var from = moment($('#id_partnership_special_dates_0').val(), "DD/MM/YYYY");
-            var to = moment($('#id_partnership_special_dates_1').val(), "DD/MM/YYYY");
+            var from = moment($('#id_partnership_date_from').val(), "DD/MM/YYYY");
+            var to = moment($('#id_partnership_date_to').val(), "DD/MM/YYYY");
             if (!from.isValid()) {
                 alert("Veuillez compléter les dates de recherche");
                 return false;
@@ -132,8 +132,8 @@ function initDataTable (storageKey, url, columnDefs, extra) {
             this.selectedIndex = 0;
         }).trigger('change');
 
-        $('#id_partnership_special_dates_0').val(moment().format('DD/MM/YYYY'))
-        $('#id_partnership_special_dates_1').val(moment().format('DD/MM/YYYY'))
+        $('#id_partnership_date_from').val(moment().format('DD/MM/YYYY'))
+        $('#id_partnership_date_to').val(moment().format('DD/MM/YYYY'))
 
         // Prevent browser default reset
         e.preventDefault();

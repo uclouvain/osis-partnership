@@ -22,6 +22,7 @@ from partnership.models import (
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
+from ...models.enums.filter import DateFilterType
 from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
 from ...auth.predicates import (
@@ -293,16 +294,12 @@ class PartnershipFilterForm(forms.Form):
         queryset=AcademicYear.objects.all(),
         required=False,
     )
-    partnership_special_dates_type = forms.ChoiceField(
+    partnership_date_type = forms.ChoiceField(
         label=_('Partnerships'),
-        choices=(
-            (None, '---------'),
-            ("ongoing", _('ongoing')),
-            ("stopping", _('stopping')),
-        ),
+        choices=((None, '---------'),) + DateFilterType.choices(),
         required=False,
     )
-    partnership_special_dates_0 = forms.DateField(
+    partnership_date_from = forms.DateField(
         label=_('during (all or part of) the period from'),
         required=False,
         widget=DatePickerInput(
@@ -311,7 +308,7 @@ class PartnershipFilterForm(forms.Form):
         ),
         initial=now,
     )
-    partnership_special_dates_1 = forms.DateField(
+    partnership_date_to = forms.DateField(
         label=_('to'),
         required=False,
         widget=DatePickerInput(
@@ -374,14 +371,14 @@ class PartnershipFilterForm(forms.Form):
 
     def clean(self):
         data = super().clean()
-        special = data.get('partnership_special_dates_type')
-        date_from = data.get('partnership_special_dates_0')
-        date_to = data.get('partnership_special_dates_1')
+        special = data.get('partnership_date_type')
+        date_from = data.get('partnership_date_from')
+        date_to = data.get('partnership_date_to')
         if special and not date_from:
-            self.add_error('partnership_special_dates_0', _("required"))
+            self.add_error('partnership_date_from', _("required"))
         if date_from and date_to and date_from > date_to:
             self.add_error(
-                'partnership_special_dates_1',
+                'partnership_date_to',
                 _("End date must be after start date"),
             )
         return data

@@ -15,6 +15,7 @@ from partnership.models import (
     PartnershipAgreement,
     PartnershipYear,
 )
+from partnership.models.enums.filter import DateFilterType
 
 
 def filter_pk_from_annotation(queryset, name, value):
@@ -202,12 +203,12 @@ class PartnershipAdminFilter(filters.FilterSet):
     partnership_with_no_agreements_in = filters.CharFilter(
         method='filter_partnership_with_no_agreements_in'
     )
-    partnership_special_dates_type = filters.CharFilter(
-        method='filter_partnership_special_dates'
+    partnership_date_type = filters.CharFilter(
+        method='filter_partnership_date'
     )
     # Noop filter, their logic is in filter_partnership_special_dates()
-    partnership_special_dates_0 = filters.DateFilter(method=lambda qs, *_: qs)
-    partnership_special_dates_1 = filters.DateFilter(method=lambda qs, *_: qs)
+    partnership_date_from = filters.DateFilter(method=lambda qs, *_: qs)
+    partnership_date_to = filters.DateFilter(method=lambda qs, *_: qs)
     comment = filters.CharFilter(lookup_expr='icontains')
     is_public = filters.BooleanFilter(widget=CustomNullBooleanSelect())
 
@@ -246,9 +247,9 @@ class PartnershipAdminFilter(filters.FilterSet):
             'partnership_valid_in',
             'partnership_not_valid_in',
             'partnership_with_no_agreements_in',
-            'partnership_special_dates_type',
-            'partnership_special_dates_0',
-            'partnership_special_dates_1',
+            'partnership_date_type',
+            'partnership_date_from',
+            'partnership_date_to',
             'comment',
             'is_public',
         ]
@@ -390,14 +391,14 @@ class PartnershipAdminFilter(filters.FilterSet):
             )
         return queryset
 
-    def filter_partnership_special_dates(self, queryset, name, value):
+    def filter_partnership_date(self, queryset, name, value):
         # Prevent filtering on partnership when agreement filter
         if isinstance(self, PartnershipAgreementAdminFilter) and queryset.model == Partnership:
             return queryset
 
-        date_from = self.form.cleaned_data['partnership_special_dates_0']
-        date_to = self.form.cleaned_data.get('partnership_special_dates_1')
-        if value == 'ongoing':
+        date_from = self.form.cleaned_data['partnership_date_from']
+        date_to = self.form.cleaned_data.get('partnership_date_to')
+        if value == DateFilterType.ONGOING.name:
             if not date_to:
                 # start_date < filter_date < end_date
                 return queryset.filter(
@@ -409,7 +410,7 @@ class PartnershipAdminFilter(filters.FilterSet):
                 Q(start_date__lte=date_from, end_date__gte=date_from)
                 | Q(start_date__lte=date_to, end_date__gte=date_to),
             )
-        elif value == 'stopping':
+        elif value == DateFilterType.STOPPING.name:
             # filter_date_0 < end_date < filter_date_1
             return queryset.filter(
                 end_date__gte=date_from,
@@ -437,7 +438,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
     @property
     def form(self):
         form = super().form
-        form.fields['partnership_special_dates_type'].label = _("Agreements")
+        form.fields['partnership_date_type'].label = _("Agreements")
         return form
 
     @property
@@ -474,9 +475,9 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
         )
 
         # Apply special filtering if needed
-        special_filter = self.data.get('partnership_special_dates_type')
+        special_filter = self.data.get('partnership_date_type')
         if special_filter:
-            queryset = self.filter_partnership_special_dates(
+            queryset = self.filter_partnership_date(
                 queryset, '', special_filter,
             )
 
