@@ -278,7 +278,7 @@ class Partner(models.Model):
             return EntityVersionAddress.objects.filter(
                 entity_version__entity__organization_id=self.organization_id,
                 entity_version__parent__isnull=True,
-            ).first()
+            ).order_by('-entity_version__start_date').first()
         # We surely have a entity and a version, but we may not have an address
         address = self.organization.entities[0].versions[0].address
         if address:
