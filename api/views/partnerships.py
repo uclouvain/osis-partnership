@@ -1,11 +1,16 @@
+from django.contrib.postgres.aggregates import StringAgg
 from django.db import models
 from django.db.models.aggregates import Count
-from django.db.models.expressions import F, OuterRef, Subquery, Value
+from django.db.models.expressions import (
+    F, OuterRef, Subquery, Value,
+)
 from django.db.models.functions import Concat, Now
 from django.db.models.query import Prefetch
+from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.views import FilterMixin
 from rest_framework import generics
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 
 from base.models.academic_year import AcademicYear
@@ -23,14 +28,16 @@ from partnership.models import (
 )
 from ..filters import PartnershipFilter
 from ..serializers import PartnershipSerializer
+from ...views import ExportView
 
 __all__ = [
     'PartnershipsRetrieveView',
     'PartnershipsListView',
+    'PartnershipExportView',
 ]
 
 
-class PartnershipsMixinView(GenericAPIView):
+class PartnershipsMixinView:
     serializer_class = PartnershipSerializer
     permission_classes = (AllowAny,)
 
@@ -145,7 +152,7 @@ class PartnershipsMixinView(GenericAPIView):
                     'agreements',
                     queryset=(
                         PartnershipAgreement.objects
-                        .select_related('media')
+                        .select_related('media', 'end_academic_year')
                         .filter(status=AgreementStatus.VALIDATED.name)
                         .filter(
                             start_academic_year__year__lte=academic_year.year,
@@ -230,3 +237,84 @@ class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
 
 class PartnershipsRetrieveView(PartnershipsMixinView, generics.RetrieveAPIView):
     lookup_field = 'uuid'
+
+
+class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
+    filterset_class = PartnershipFilter
+
+    def get_xls_headers(self):
+        return [
+            _('id'),
+            _('partnership_type'),
+            _('partnership_subtype'),
+            _('continent'),
+            _('country'),
+            _('partner'),
+            _('partner_code'),
+            _('erasmus_code'),
+            _('pic_code'),
+            _('partner_entity'),
+            _('sector'),
+            _('ucl_university'),
+            _('ucl_university_labo'),
+            _('supervisor'),
+            _('tags'),
+            _('created'),
+            _('modified'),
+            _('author'),
+            _('end_valid_agreement'),
+            _('external_id'),
+        ]
+
+    def get_xls_data(self):
+        queryset = self.filterset.qs
+        queryset = (
+            queryset
+            .annotate(
+                tags_list=StringAgg('tags__value', ', '),
+            )
+            .select_related('author__user')
+        )
+        for partnership in queryset.distinct():
+            last_agreement = (partnership.valid_current_agreements[0]
+                              if partnership.valid_current_agreements else None)
+
+            parts = partnership.acronym_path[1:] if partnership.acronym_path else []
+
+            yield [
+                partnership.pk,
+                partnership.get_partnership_type_display(),
+                # Let's say that the subtype is not changing over years
+                str(partnership.current_year_for_api[0].subtype or ''),
+                str(partnership.country_continent_name),
+                str(partnership.country_name),
+                str(partnership.partner),
+                str(partnership.partner.organization.code or ''),
+                str(partnership.partner.erasmus_code or ''),
+                str(partnership.partner.pic_code or ''),
+                str(partnership.partner_entity or ''),
+
+                str(parts[0] if len(parts) > 0 else ''),
+                str(parts[1] if len(parts) > 1 else ''),
+                str(parts[2] if len(parts) > 2 else ''),
+
+                str(partnership.supervisor or ''),
+                partnership.tags_list,
+                partnership.created.strftime('%Y-%m-%d'),
+                partnership.modified.strftime('%Y-%m-%d'),
+                str(partnership.author.user) if partnership.author else '',
+
+                getattr(
+                    last_agreement,
+                    'end_academic_year' if partnership.is_mobility else 'end_date',
+                    '',
+                ),
+
+                partnership.external_id,
+            ]
+
+    def get_filename(self):
+        return now().strftime('partnerships-%Y-%m-%d-%H-%M-%S')
+
+    def get_title(self):
+        return _('Partnerships')
