@@ -111,13 +111,7 @@ class Command(BaseCommand):
 
             # Check that the address has changed
             existing_address = partners[int(row[ID])] if int(row[ID]) in partners else None
-            if existing_address and all([
-                row[STREET_NUM] == existing_address.street_number,
-                row[STREET] == existing_address.street,
-                row[POSTAL_CODE] == existing_address.postal_code,
-                row[CITY] == existing_address.city,
-                row[COUNTRY] == (existing_address.country and existing_address.country.name),
-            ]):
+            if self._is_address_unchanged(row, existing_address):
                 if options['verbosity'] >= 2:
                     self.stdout.write(self.style.WARNING(
                         'Skipping partner id {}: same address'.format(row[ID])
@@ -164,26 +158,16 @@ class Command(BaseCommand):
                 ))
 
             # Handle entity version
-            start_date = date.today()
             last_version = None
             if existing_address:
-                last_version = existing_address.entity_version
-
-                if last_version and last_version.start_date != start_date:
-                    # End the previous version if start_date is changed
-                    last_version.end_date = start_date - timedelta(days=1)
-                    last_version.save()
-                    last_version = None
-                else:
-                    # Delete the related address
-                    last_version.entityversionaddress_set.all().delete()
+                last_version = self._override_current_version(existing_address)
 
             if not last_version:
                 # Create a new entity version
                 last_version = EntityVersion.objects.create(
                     entity_id=entity_ids[int(row[ID])],
                     parent=None,
-                    start_date=start_date,
+                    start_date=date.today(),
                     end_date=None,
                 )
 
@@ -211,3 +195,42 @@ class Command(BaseCommand):
                 self.counts['existing'],
             )
         ))
+
+    @staticmethod
+    def _override_current_version(existing_address):
+        """
+        Update a previous version of an address, or override an existing one
+
+        :param existing_address: existing EntityVersionAddress
+        :return: EntityVersion or None if a new vesion must be created
+        """
+        today = date.today()
+        last_version = existing_address.entity_version
+
+        if last_version.start_date != today:
+            # End the previous version if start_date is changed
+            last_version.end_date = today - timedelta(days=1)
+            last_version.save()
+            # We can safely create a new version
+            last_version = None
+        else:
+            # Latest version date is today, delete the related address (if existing)
+            last_version.entityversionaddress_set.all().delete()
+        return last_version
+
+    @staticmethod
+    def _is_address_unchanged(row, address):
+        """
+        Check if there are differences between imported address and existing
+
+        :param row: Dict address from CSV file
+        :param address: existing EntityVersionAddress or None
+        :return: True if the two address are the same
+        """
+        return address and all([
+            row[STREET_NUM] == address.street_number,
+            row[STREET] == address.street,
+            row[POSTAL_CODE] == address.postal_code,
+            row[CITY] == address.city,
+            row[COUNTRY] == address.country and address.country.name,
+        ])
