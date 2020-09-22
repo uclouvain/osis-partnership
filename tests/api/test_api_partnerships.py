@@ -5,6 +5,7 @@ from django.urls import reverse
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
+from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import (
     AgreementStatus,
     PartnershipConfiguration,
@@ -320,3 +321,9 @@ class PartnershipApiViewTest(TestCase):
         )
         response = self.client.get(url)
         self.assertEqual(len(response.json()['bilateral_agreements']), 0)
+
+    def test_export(self):
+        url = reverse('partnership_api_v1:partnerships:export')
+        with self.assertNumQueriesLessThan(17):
+            response = self.client.get(url)
+            self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
