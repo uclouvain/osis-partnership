@@ -6,6 +6,8 @@ from django.db.models.expressions import (
 )
 from django.db.models.functions import Concat, Now
 from django.db.models.query import Prefetch
+from django.http import JsonResponse
+from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
@@ -34,6 +36,7 @@ __all__ = [
     'PartnershipsRetrieveView',
     'PartnershipsListView',
     'PartnershipExportView',
+    'partnership_get_export_url',
 ]
 
 
@@ -237,6 +240,18 @@ class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
 
 class PartnershipsRetrieveView(PartnershipsMixinView, generics.RetrieveAPIView):
     lookup_field = 'uuid'
+
+
+def partnership_get_export_url(request):  # pragma: no cover
+    # TODO: Fix when authentication is done in ESB (use already X-Forwarded-Host) / Shibb
+    url = reverse('partnership_api_v1:partnerships:export')
+    return JsonResponse({
+        'url': '{scheme}://{host}{path}'.format(
+            scheme=request.scheme,
+            host=request.META["HTTP_HOST"],
+            path=url + '?' + request.GET.urlencode()
+        ),
+    })
 
 
 class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
