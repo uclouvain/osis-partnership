@@ -47,20 +47,29 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page-header">
-    <h1>
-      {% trans 'financings' %}
-    </h1>
-  </div>
+<div class="page-header">
+  <h1>
+    {% trans 'financings' %}
+  </h1>
+</div>
 
-  {% has_perm 'partnership.import_financing' user as can_import_financing %}
-  {% has_perm 'partnership.export_financing' user as can_export_financing %}
+<div class="panel">
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      {% trans "Funding sources, programs and types" %}
-    </div>
-    <div class="panel-body">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#financing-tab" aria-controls="financing-tab" role="tab" data-toggle="tab">
+        {% blocktrans %}Per country in {{ academic_year }}{% endblocktrans %}
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#funding-tab" aria-controls="funding-tab" role="tab" data-toggle="tab">
+        {% trans "Funding sources, programs and types" %}
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane" id="funding-tab">
       <div class="list-group list-group-root">
         {% for source in fundings %}
           <div class="list-group-item clearfix">
@@ -125,16 +134,11 @@
         {% trans "Add a funding source" %}
       </a>
     </div>
-  </div>
 
+    {% has_perm 'partnership.import_financing' user as can_import_financing %}
+    {% has_perm 'partnership.export_financing' user as can_export_financing %}
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        {% blocktrans %}Per country in {{ academic_year }}{% endblocktrans %}
-      </h3>
-    </div>
-    <div class="panel-body">
+    <div role="tabpanel" class="tab-pane active" id="financing-tab">
       <div class="well">
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active"><a href="#filter-financings" aria-controls="filter-financings" role="tab" data-toggle="tab">{% trans "change_year" %}</a></li>
@@ -194,5 +198,8 @@
         </div>
       </div>
     </div>
+
   </div>
+
+</div>
 {% endblock %}
