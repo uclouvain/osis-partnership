@@ -6,13 +6,9 @@
   <li><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
   <li class="active">
     {% if form.instance.pk %}
-      {% blocktrans with model=verbose_name|lower %}
-        Edit a {{ model }}
-      {% endblocktrans %}
+      {% blocktrans with model=verbose_name|lower %}Edit a {{ model }}{% endblocktrans %}
     {% else %}
-      {% blocktrans with model=verbose_name|lower %}
-        Add a {{ model }}
-      {% endblocktrans %}
+      {% blocktrans with model=verbose_name|lower %}Add a {{ model }}{% endblocktrans %}
     {% endif %}
   </li>
 {% endblock %}
@@ -22,13 +18,9 @@
   <div class="page-header">
     <h1>
     {% if form.instance.pk %}
-      {% blocktrans with model=verbose_name|lower %}
-        Edit a {{ model }}
-      {% endblocktrans %}
+      {% blocktrans with model=verbose_name|lower %}Edit a {{ model }}{% endblocktrans %}
     {% else %}
-      {% blocktrans with model=verbose_name|lower %}
-        Add a {{ model }}
-      {% endblocktrans %}
+      {% blocktrans with model=verbose_name|lower %}Add a {{ model }}{% endblocktrans %}
     {% endif %}
     </h1>
   </div>

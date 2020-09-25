@@ -23,6 +23,19 @@ msgstr ""
 msgid "Accreditation, _(certification or qualification body"
 msgstr ""
 
+#, python-format
+msgid "Add a %(model)s"
+msgstr ""
+
+msgid "Add a funding source"
+msgstr ""
+
+msgid "Add a funding type to this program"
+msgstr ""
+
+msgid "Add a program to this source"
+msgstr ""
+
 msgid "Agreements"
 msgstr "Agreements"
 
@@ -54,6 +67,10 @@ msgstr ""
 msgid "EU-wide network"
 msgstr ""
 
+#, python-format
+msgid "Edit a %(model)s"
+msgstr ""
+
 msgid "End date must be after start date"
 msgstr ""
 
@@ -64,6 +81,9 @@ msgid "European grouping of territorial cooperation"
 msgstr ""
 
 msgid "Foundation"
+msgstr ""
+
+msgid "Funding sources, programs and types"
 msgstr ""
 
 msgid "Group of young people active in youth work"
@@ -258,6 +278,10 @@ msgstr ""
 msgid "Partnerships"
 msgstr "Partnerships"
 
+#, python-format
+msgid "Per country in %(academic_year)s"
+msgstr ""
+
 msgid "Projet financé"
 msgstr "Project"
 
@@ -265,6 +289,9 @@ msgid "Regional Public body"
 msgstr ""
 
 msgid "Research Institute/Centre"
+msgstr ""
+
+msgid "Save"
 msgstr ""
 
 msgid "School/Institute/Educational centre – Adult education"
@@ -304,6 +331,9 @@ msgid "Sport federation"
 msgstr ""
 
 msgid "Sport league"
+msgstr ""
+
+msgid "Warning! This will also delete all linked objects."
 msgstr ""
 
 msgid "Yes"
