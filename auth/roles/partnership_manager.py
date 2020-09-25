@@ -67,6 +67,9 @@ class PartnershipEntityManager(EntityRoleModel):
                 (is_linked_to_adri_entity & ~ume_has_partnerships) & has_mobility_scope,
 
             # Financing
+            'partnership.add_funding': is_linked_to_adri_entity,
+            'partnership.change_funding': is_linked_to_adri_entity,
+            'partnership.delete_funding': is_linked_to_adri_entity,
             'partnership.change_financing': has_mobility_scope,
             'partnership.import_financing': is_linked_to_adri_entity & has_mobility_scope,
             'partnership.export_financing': is_linked_to_adri_entity & has_mobility_scope,

@@ -1,9 +1,10 @@
 from django.urls import include, path, re_path, register_converter
 
-from .converters import PartnershipTypeConverter
+from .converters import PartnershipTypeConverter, FundingModelConverter
 from .views import *
 
 register_converter(PartnershipTypeConverter, 'partnership_type')
+register_converter(FundingModelConverter, 'funding')
 
 app_name = "partnerships"
 urlpatterns = [
@@ -70,6 +71,9 @@ urlpatterns = [
         re_path(r'^(?:(?P<year>\d{4})/)?$', FinancingListView.as_view(), name='list'),
         re_path(r'^(?:(?P<year>\d{4})/)?export/$', FinancingExportView.as_view(), name='export'),
         path('import/', FinancingImportView.as_view(), name='import'),
+        path('add/<funding:model>/', FundingAddView.as_view(), name='add'),
+        path('edit/<funding:model>/<int:pk>', FundingEditView.as_view(), name='edit'),
+        path('delete/<funding:model>/<int:pk>', FundingDeleteView.as_view(), name='delete'),
     ], 'partnerships'), namespace='financings')),
 
     path('autocomplete/', include(([

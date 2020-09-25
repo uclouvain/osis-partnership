@@ -23,6 +23,20 @@ msgstr ""
 msgid "Accreditation, _(certification or qualification body"
 msgstr ""
 
+#, python-format
+msgid "Add a %(model)s"
+msgstr "Ajouter un(e) %(model)s"
+
+#, fuzzy
+msgid "Add a funding source"
+msgstr "Ajouter une source de financement"
+
+msgid "Add a funding type to this program"
+msgstr "Ajouter un type de financement à ce programme"
+
+msgid "Add a program to this source"
+msgstr "Ajouter un programme de financement à cette source"
+
 msgid "Agreements"
 msgstr "Accords"
 
@@ -54,6 +68,10 @@ msgstr "Couverture"
 msgid "EU-wide network"
 msgstr ""
 
+#, python-format
+msgid "Edit a %(model)s"
+msgstr "Modifier un(e) %(model)s"
+
 msgid "End date must be after start date"
 msgstr ""
 
@@ -65,6 +83,9 @@ msgstr ""
 
 msgid "Foundation"
 msgstr ""
+
+msgid "Funding sources, programs and types"
+msgstr "Sources, programmes et types de financement"
 
 msgid "Group of young people active in youth work"
 msgstr ""
@@ -317,6 +338,10 @@ msgstr "Gestionnaires de partenariat"
 msgid "Partnerships"
 msgstr "Partenariats"
 
+#, python-format
+msgid "Per country in %(academic_year)s"
+msgstr "Par pays en %(academic_year)s"
+
 msgid "Projet financé"
 msgstr "Projet"
 
@@ -325,6 +350,9 @@ msgstr ""
 
 msgid "Research Institute/Centre"
 msgstr ""
+
+msgid "Save"
+msgstr "Enregistrer"
 
 msgid "School/Institute/Educational centre – Adult education"
 msgstr ""
@@ -364,6 +392,9 @@ msgstr ""
 
 msgid "Sport league"
 msgstr ""
+
+msgid "Warning! This will also delete all linked objects."
+msgstr "Attention ! Ceci supprimera également les sous-objets liés."
 
 msgid "Yes"
 msgstr "Oui"

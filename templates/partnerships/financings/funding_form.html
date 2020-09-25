@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static osis_role %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
+  <li class="active">
+    {% if form.instance.pk %}
+      {% blocktrans with model=verbose_name|lower %}Edit a {{ model }}{% endblocktrans %}
+    {% else %}
+      {% blocktrans with model=verbose_name|lower %}Add a {{ model }}{% endblocktrans %}
+    {% endif %}
+  </li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="page-header">
+    <h1>
+    {% if form.instance.pk %}
+      {% blocktrans with model=verbose_name|lower %}Edit a {{ model }}{% endblocktrans %}
+    {% else %}
+      {% blocktrans with model=verbose_name|lower %}Add a {{ model }}{% endblocktrans %}
+    {% endif %}
+    </h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
+        <a href="{% url 'partnerships:financings:list' %}" class="text-danger">
+          Annuler
+        </a>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -53,7 +53,7 @@ class FundingTypeManager(models.Manager):
 
 class FundingType(models.Model):
     name = models.CharField(verbose_name=_('funding_type'), max_length=100)
-    url = models.URLField(_('url'))
+    url = models.URLField(_('url'), blank=True)
     program = models.ForeignKey(
         'partnership.FundingProgram',
         verbose_name=_('funding_program'),
@@ -64,6 +64,7 @@ class FundingType(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = _('funding_type')
 
     def __str__(self):
         return self.name
@@ -78,6 +79,7 @@ class FundingProgram(models.Model):
     )
 
     class Meta:
+        verbose_name = _('funding_program')
         ordering = ('name',)
 
     def __str__(self):
@@ -88,6 +90,7 @@ class FundingSource(models.Model):
     name = models.CharField(verbose_name=_('funding_source'), max_length=100)
 
     class Meta:
+        verbose_name = _('funding_source')
         ordering = ('name',)
 
     def __str__(self):

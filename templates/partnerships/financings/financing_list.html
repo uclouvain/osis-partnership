@@ -38,21 +38,107 @@
     ], {
       lengthMenu: [25],
     });
+    $('.list-group-item a').on('click', function () {
+        $('.glyphicon', this)
+            .toggleClass('glyphicon-chevron-right')
+            .toggleClass('glyphicon-chevron-down');
+    });
   </script>
 {% endblock %}
 
 {% block content %}
-  <div class="page-header">
-    <h1>
-      {% trans 'financings' %} : {{ academic_year }}
-    </h1>
-  </div>
+<div class="page-header">
+  <h1>
+    {% trans 'financings' %}
+  </h1>
+</div>
 
-  {% has_perm 'partnership.import_financing' user as can_import_financing %}
-  {% has_perm 'partnership.export_financing' user as can_export_financing %}
+<div class="panel">
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#financing-tab" aria-controls="financing-tab" role="tab" data-toggle="tab">
+        {% blocktrans %}Per country in {{ academic_year }}{% endblocktrans %}
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#funding-tab" aria-controls="funding-tab" role="tab" data-toggle="tab">
+        {% trans "Funding sources, programs and types" %}
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane" id="funding-tab">
+      <div class="list-group list-group-root">
+        {% for source in fundings %}
+          <div class="list-group-item clearfix">
+
+            {% if source.fundingprogram_set.count %}
+              <a href="#source-{{ source.pk }}" data-toggle="collapse">
+                <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            {% endif %}
+            {{ source }}
+
+            <div class="pull-right">
+              <a href="{% url 'partnerships:financings:add' 'program' %}?source={{ source.pk }}"
+                  class="btn btn-primary btn-sm glyphicon glyphicon-plus"
+                 data-toggle="tooltip" data-container="body"
+                 title="{% trans "Add a program to this source" %}"></a>
+              <a href="{% url 'partnerships:financings:edit' source source.pk %}"
+                 class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+              <a href="{% url 'partnerships:financings:delete' source source.pk %}"
+                 class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+            </div>
+          </div>
+          <div class="list-group collapse" id="source-{{ source.pk }}">
+
+            {% for program in source.fundingprogram_set.all %}
+              <div class="list-group-item clearfix">
+                {{ program }}
+                <div class="pull-right">
+                  <a href="{% url 'partnerships:financings:add' 'type' %}?program={{ program.pk }}"
+                     class="btn btn-primary btn-sm glyphicon glyphicon-plus"
+                     data-toggle="tooltip" data-container="body"
+                     title="{% trans "Add a funding type to this program" %}"></a>
+                  <a href="{% url 'partnerships:financings:edit' program program.pk %}"
+                     class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+                  <a href="{% url 'partnerships:financings:delete' program program.pk %}"
+                      class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+                </div>
+              </div>
+              <div class="list-group">
+
+                {% for type in program.fundingtype_set.all %}
+                  <div class="list-group-item clearfix">
+                    {{ type }}
+                    {% if type.url %}
+                      (<a href="{{ type.url }}">{{ type.url }}</a>)
+                    {% endif %}
+                    <div class="pull-right">
+                      <a href="{% url 'partnerships:financings:edit' type type.pk %}"
+                         class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+                      <a href="{% url 'partnerships:financings:delete' type type.pk %}"
+                          class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+                    </div>
+                  </div>
+                {% endfor %}
+
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'partnerships:financings:add' 'source' %}" class="btn btn-primary">
+        {% trans "Add a funding source" %}
+      </a>
+    </div>
+
+    {% has_perm 'partnership.import_financing' user as can_import_financing %}
+    {% has_perm 'partnership.export_financing' user as can_export_financing %}
+
+    <div role="tabpanel" class="tab-pane active" id="financing-tab">
       <div class="well">
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active"><a href="#filter-financings" aria-controls="filter-financings" role="tab" data-toggle="tab">{% trans "change_year" %}</a></li>
@@ -112,5 +198,8 @@
         </div>
       </div>
     </div>
+
   </div>
+
+</div>
 {% endblock %}

@@ -9,7 +9,11 @@ from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.api.serializers.financing import FinancingSerializer
 from partnership.filter import FinancingAdminFilter
 from partnership.forms import FinancingFilterForm, FinancingImportForm
-from partnership.models import Financing, PartnershipConfiguration
+from partnership.models import (
+    Financing,
+    PartnershipConfiguration,
+    FundingSource,
+)
 from reference.models.country import Country
 
 __all__ = [
@@ -56,6 +60,10 @@ class FinancingListView(PermissionRequiredMixin, SearchMixin, FormMixin, FilterV
         context = super().get_context_data(**kwargs)
         context['import_form'] = self.import_form
         context['academic_year'] = self.academic_year
+        context['fundings'] = FundingSource.objects.prefetch_related(
+            'fundingprogram_set',
+            'fundingprogram_set__fundingtype_set',
+        )
         return context
 
     def get_success_url(self, year=None):

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% load bootstrap3 i18n static osis_role %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="active">{% trans "financings" %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>
+      {% trans 'financings' %}
+    </h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form action="" method="post">
+        {% csrf_token %}
+        <p>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
+        <p class="text-danger">{% trans "Warning! This will also delete all linked objects." %}</p>
+        <input type="submit" value="{% trans "Confirm" %}" class="btn btn-danger">
+        <a href="{% url 'partnerships:financings:list' %}">
+          {% trans "Cancel" %}
+        </a>
+      </form>
+    </div>
+  </div>
+{% endblock %}
