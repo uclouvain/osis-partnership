@@ -154,7 +154,9 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = PartnerEntity.objects.filter(partnerships__isnull=False)
+        qs = PartnerEntity.objects.filter(
+            entity__partnerships_from_partnerentity__isnull=False,
+        )
         partner = self.forwarded.get('partner', None)
         if partner:
             qs = qs.filter(

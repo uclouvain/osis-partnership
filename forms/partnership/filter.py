@@ -116,7 +116,9 @@ class PartnershipFilterForm(forms.Form):
     )
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
-        queryset=PartnerEntity.objects.filter(partnerships__isnull=False).distinct(),
+        queryset=Entity.objects.filter(
+            partnerships_from_partnerentity__isnull=False
+        ).distinct(),
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},

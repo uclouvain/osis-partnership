@@ -8,7 +8,6 @@ from django.urls import reverse
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
-from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipType
@@ -97,7 +96,7 @@ class PartnershipCreateViewTest(TestCase):
             'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.pk,
+            'partner_entity': cls.partner_entity.entity_id,
             'supervisor': '',
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
