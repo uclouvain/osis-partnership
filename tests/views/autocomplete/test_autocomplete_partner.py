@@ -108,5 +108,5 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         })
         results = response.json()['results']
         self.assertEqual(len(results), 1, results)
-        self.assertEqual(results[0]['id'], str(self.entity.pk))
+        self.assertEqual(results[0]['id'], str(self.entity.entity_id))
 
