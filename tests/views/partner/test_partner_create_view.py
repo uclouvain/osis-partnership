@@ -43,8 +43,7 @@ class PartnerCreateViewTest(TestCase):
             'organization-website': 'http://localhost:8000',
             'partner-email': 'test@test.test',
             'partner-tags': [PartnerTagFactory().id],
-            'contact_address-name': 'test',
-            'contact_address-address': 'test',
+            'contact_address-street': 'test',
             'contact_address-postal_code': 'test',
             'contact_address-city': 'test',
             'contact_address-country': cls.country.pk,
@@ -107,17 +106,10 @@ class PartnerCreateViewTest(TestCase):
         data = self.data.copy()
         data['partner-is_ies'] = 'False'
         data['partner-pic_code'] = ''
-        data['contact_address-name'] = ''
         data['contact_address-city'] = ''
-
-        # If there is an error in the address form, do not check for ies/pic
-        data['contact_address-country'] = '-1'
-        response = self.client.post(self.url, data, follow=True)
-        self.assertIn('country', response.context_data['form_address'].errors)
-        self.assertNotIn('city', response.context_data['form_address'].errors)
-
-        # Otherwise name, city and country are mandatory
         data['contact_address-country'] = ''
+
+        # City and country are mandatory if not ies or pic_code empty
         response = self.client.post(self.url, data, follow=True)
         self.assertIn('country', response.context_data['form_address'].errors)
         self.assertIn('city', response.context_data['form_address'].errors)

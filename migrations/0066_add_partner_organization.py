@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('base', '0522_entity_external_id_nullable'),
+        ('base', '0540_prevent_empty_address'),
         ('partnership', '0065_sync_dates_years_agreements'),
     ]
 
