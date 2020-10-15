@@ -97,8 +97,8 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         self.assertEqual(len(response.json()['results']), 0)
 
         # No partner forwarded, return nothing
-        PartnershipFactory(partner_entity=self.entity)
-        response = self.client.get(url, {'q': 'tity',})
+        PartnershipFactory(partner_entity_id=self.entity.entity_id)
+        response = self.client.get(url, {'q': 'tity'})
         self.assertEqual(len(response.json()['results']), 0)
 
         # Return entity with partnership
@@ -108,5 +108,5 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         })
         results = response.json()['results']
         self.assertEqual(len(results), 1, results)
-        self.assertEqual(results[0]['id'], str(self.entity.pk))
+        self.assertEqual(results[0]['id'], str(self.entity.entity_id))
 

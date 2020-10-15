@@ -24,7 +24,7 @@ class Command(ProgressBarMixin, BaseCommand):
         cache = {}
         not_found = []
         obj_list = []
-        for i, address in enumerate(queryset):
+        for i, address in enumerate(queryset, start=1):
             parts = [
                 address.street_number,
                 address.street,

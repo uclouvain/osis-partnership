@@ -47,7 +47,11 @@ def forward(apps, schema_editor):
             acronym=generate_unique_acronym(organization.code, EntityVersion),
             parent_id=partner_entity.partner_entity_version_id,
         )
-        if partner_entity.address_id:
+        if (
+                partner_entity.address_id and
+                partner_entity.address.city and
+                partner_entity.address.country_id
+        ):
             EntityVersionAddress.objects.create(
                 city=partner_entity.address.city,
                 street=partner_entity.address.address,
@@ -81,7 +85,11 @@ def forward(apps, schema_editor):
             acronym=generate_unique_acronym(organization.code, EntityVersion),
             parent_id=parents_mapping[partner_entity.parent_id],
         )
-        if partner_entity.address_id:
+        if (
+                partner_entity.address_id and
+                partner_entity.address.city and
+                partner_entity.address.country_id
+        ):
             EntityVersionAddress.objects.create(
                 city=partner_entity.address.city,
                 street=partner_entity.address.address,
@@ -129,7 +137,7 @@ def backward(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('base', '0523_merge_20200703_1533'),
+        ('base', '0540_prevent_empty_address'),
         ('partnership', '0070_help_texts'),
     ]
 

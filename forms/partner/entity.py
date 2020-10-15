@@ -18,6 +18,12 @@ __all__ = [
 class EntityVersionAddressForm(forms.ModelForm):
     location = LatLonField()
 
+    def __init__(self, *args, **kwargs):
+        # Allow the address to be left out, but still require fields if filled
+        kwargs['empty_permitted'] = True
+        kwargs['use_required_attribute'] = False
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = EntityVersionAddress
         exclude = ['entity_version', 'is_main']
@@ -32,6 +38,12 @@ class EntityVersionAddressForm(forms.ModelForm):
 
 
 class PartnerEntityAddressForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Allow the address to be left out, but still require fields if filled
+        kwargs['empty_permitted'] = True
+        kwargs['use_required_attribute'] = False
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = EntityVersionAddress
         exclude = ['entity_version', 'is_main', 'location']

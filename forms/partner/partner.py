@@ -140,6 +140,7 @@ class OrganizationForm(forms.ModelForm):
         else:
             self.fields['start_date'].initial = self.instance.start_date
             self.fields['end_date'].initial = self.instance.end_date
+            self.fields['website'].initial = self.instance.website
         if not is_linked_to_adri_entity(user):
             del self.fields['code']
 

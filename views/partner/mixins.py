@@ -96,7 +96,8 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         form.save_m2m()
 
         # Save address
-        self.save_address(last_version, form_address)
+        if form_address.has_changed():
+            self.save_address(last_version, form_address)
 
         messages.success(self.request, _('partner_saved'))
         if is_creation and not is_linked_to_adri_entity(self.request.user):
@@ -164,7 +165,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         ))
 
     def check_form_address(self, form, form_address):
-        """ Return True if the conditional mandatory form are ok """
+        """ Address is mandatory if no pic_code or not is_ies """
         if not form_address.is_valid():
             return False
         if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
@@ -295,7 +296,8 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         entity_form.save()
 
         # Save address
-        self.save_address(entity.most_recent_entity_version, address_form)
+        if address_form.has_changed():
+            self.save_address(entity.most_recent_entity_version, address_form)
 
         messages.success(self.request, _('partner_entity_saved'))
         return redirect(self.partner)

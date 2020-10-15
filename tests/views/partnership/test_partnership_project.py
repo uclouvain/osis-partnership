@@ -66,7 +66,7 @@ class PartnershipCreateProjectViewTest(TestCase):
             'partnership_type': PartnershipType.PROJECT.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.pk,
+            'partner_entity': cls.partner_entity.entity_id,
             'supervisor': PersonFactory().pk,
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
@@ -132,7 +132,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.partnership = PartnershipFactory(
             partnership_type=PartnershipType.PROJECT.name,
             partner=cls.partner,
-            partner_entity=cls.partner_entity,
+            partner_entity_id=cls.partner_entity.entity_id,
             author=cls.user.person,
             years=[],
             ucl_entity=cls.ucl_university,
@@ -155,7 +155,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.data = {
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.pk,
+            'partner_entity': cls.partner_entity.entity_id,
             'supervisor': cls.user.person.pk,
             'ucl_entity': cls.ucl_university_labo.pk,
             'start_date': cls.from_academic_year.start_date,

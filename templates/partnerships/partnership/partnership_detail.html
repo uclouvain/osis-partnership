@@ -57,7 +57,7 @@
             <dt>{% trans "partner" %}</dt>
             <dd>
               <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
-              {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity }}</strong>{% endif %}
+              {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity.partnerentity }}</strong>{% endif %}
               {% if not partnership.partner.is_valid %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "invalid_partner" %}</span>{% endif %}
               {% if not partnership.partner.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
             </dd>

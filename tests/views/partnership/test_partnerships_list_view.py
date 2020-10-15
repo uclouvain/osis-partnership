@@ -106,7 +106,9 @@ class PartnershipsListViewTest(TestCase):
 
         # partner_entity
         cls.partner_entity = PartnerEntityFactory()
-        cls.partnership_partner_entity = PartnershipFactory(partner_entity=cls.partner_entity)
+        cls.partnership_partner_entity = PartnershipFactory(
+            partner_entity_id=cls.partner_entity.entity_id,
+        )
 
         # use_egracons
         cls.partnership_use_egracons = BasePartnershipFactory(
@@ -259,9 +261,9 @@ class PartnershipsListViewTest(TestCase):
             ucl_entity=labo.entity,
             partner=cls.partner_all_filters,
             comment='all_filters',
-            partner_entity=PartnerEntityFactory(
+            partner_entity_id=PartnerEntityFactory(
                 partner=cls.partner_all_filters,
-            ),
+            ).entity_id,
             years=[],
             start_date=date(2160, 9, 1),
             end_date=date(2161, 6, 30),
@@ -389,7 +391,7 @@ class PartnershipsListViewTest(TestCase):
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
-            'partner_entity': self.partner_entity.pk,
+            'partner_entity': self.partner_entity.entity_id,
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)

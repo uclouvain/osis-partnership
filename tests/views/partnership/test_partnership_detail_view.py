@@ -33,11 +33,11 @@ class PartnershipDetailViewTest(TestCase):
 
         academic_year = AcademicYearFactory()
         year = PartnershipYearFactory(
-            partnership__partner__contact_address__country=None,
+            partnership__partner__contact_address=None,
             academic_year=academic_year,
         )
 
-        # No financing because no country
+        # No financing because no address
         self.assertEqual(year.get_financing(), None)
 
         year = PartnershipYearFactory(

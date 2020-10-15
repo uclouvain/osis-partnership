@@ -105,7 +105,7 @@ class PartnershipBaseForm(forms.ModelForm):
         partner = self.cleaned_data.get('partner', None)
         partner_entity = self.cleaned_data.get('partner_entity', None)
 
-        if partner_entity and partner_entity.partner != partner:
+        if partner_entity and partner_entity.partnerentity.partner != partner:
             self.add_error('partner_entity', _('invalid_partner_entity'))
         return self.cleaned_data
 

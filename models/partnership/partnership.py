@@ -189,10 +189,10 @@ class Partnership(models.Model):
         related_name='partnerships',
     )
     partner_entity = models.ForeignKey(
-        'partnership.PartnerEntity',
+        'base.Entity',
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
-        related_name='partnerships',
+        related_name='partnerships_from_partnerentity',
         blank=True,
         null=True,
     )

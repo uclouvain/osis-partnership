@@ -101,7 +101,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
-            partner_entity=cls.partner_entity,
+            partner_entity_id=cls.partner_entity.entity_id,
             author=cls.user_gf.person,
             years=[],
             ucl_entity=cls.ucl_university,
@@ -132,7 +132,7 @@ class PartnershipUpdateViewTest(TestCase):
             'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.pk,
+            'partner_entity': cls.partner_entity.entity_id,
             'supervisor': '',
             'ucl_entity': cls.ucl_university_labo.pk,
             'year-is_sms': True,
@@ -398,7 +398,7 @@ class PartnershipUpdateViewTest(TestCase):
         self.assertFormError(response, 'form', 'partner', msg)
 
         data = self.data.copy()
-        data['partner_entity'] = PartnerEntityFactory().pk
+        data['partner_entity'] = PartnerEntityFactory().entity_id
         response = self.client.post(self.url, data=data)
         msg = _('invalid_partner_entity')
         self.assertFormError(response, 'form', 'partner_entity', msg)

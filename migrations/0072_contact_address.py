@@ -11,7 +11,12 @@ def forward(apps, schema_editor):
 
     # Every address info has at least a city so we will move all
     obj_list = []
-    qs = Address.objects.filter(partners__isnull=False).annotate(
+    qs = Address.objects.filter(
+        partners__isnull=False,
+        city__isnull=False,
+    ).exclude(
+        city="",
+    ).annotate(
         last_entity_version_id=Subquery(EntityVersion.objects.filter(
             entity__organization=OuterRef('partners__organization_id'),
             parent__isnull=True,

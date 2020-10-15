@@ -13,7 +13,6 @@ from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.person import Person
 from partnership.models import (
     FundingProgram, FundingSource, FundingType, Partner,
-    PartnerEntity,
     PartnerTag,
     PartnershipSubtype, PartnershipTag,
     PartnershipType,
@@ -22,13 +21,13 @@ from partnership.models import (
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
-from ...models.enums.filter import DateFilterType
 from ..fields import EntityChoiceField
 from ..widgets import CustomNullBooleanSelect
 from ...auth.predicates import (
     is_faculty_manager,
     is_linked_to_adri_entity, partnership_type_allowed_for_user_scope,
 )
+from ...models.enums.filter import DateFilterType
 
 __all__ = ['PartnershipFilterForm']
 
@@ -116,7 +115,9 @@ class PartnershipFilterForm(forms.Form):
     )
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
-        queryset=PartnerEntity.objects.filter(partnerships__isnull=False).distinct(),
+        queryset=Entity.objects.filter(
+            partnerships_from_partnerentity__isnull=False
+        ).distinct(),
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},

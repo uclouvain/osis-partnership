@@ -8,7 +8,6 @@ from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY, SECTOR
 from partnership.models import (
     Partner,
-    PartnerEntity,
     Partnership,
     PartnershipConfiguration,
     PartnershipSubtype,
@@ -154,17 +153,22 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = PartnerEntity.objects.filter(partnerships__isnull=False)
+        qs = Entity.objects.filter(
+            partnerships_from_partnerentity__isnull=False,
+        ).order_by('partnerentity__name')
         partner = self.forwarded.get('partner', None)
         if partner:
             qs = qs.filter(
-                entity__entityversion__parent__organization__partner=partner,
+                entityversion__parent__organization__partner=partner,
             )
         else:
-            return PartnerEntity.objects.none()
+            return Entity.objects.none()
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(partnerentity__name__icontains=self.q)
         return qs.distinct()
+
+    def get_result_label(self, result):
+        return str(result.partnerentity)
 
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
