@@ -8,7 +8,13 @@ from django.db.models.functions import Concat
 from base.models.enums.organization_type import *
 
 
-def forward(apps, schema_editor):
+def handle_existing_entity(apps, default_date):
+    """
+    If partners already an existing root entity and organization associated:
+      - link the entity
+      - update the entity website with partner's
+      - update the entity website with partner's
+    """
     Partner = apps.get_model('partnership', 'Partner')
     Organization = apps.get_model('base', 'Organization')
     EntityVersion = apps.get_model('base', 'EntityVersion')
@@ -24,15 +30,15 @@ def forward(apps, schema_editor):
         ).values('pk').order_by('pk'))
     )
 
-    # Copy over website if related entity has none
+    # Copy over website to root entity
     Entity.objects.filter(organization__partner__isnull=False).update(
         website=Subquery(Organization.objects.filter(
             pk=OuterRef('organization'),
         ).values('partner__website').order_by('pk')[:1])
     )
 
-    # Update entity version if start or end_date mismatch
-    date_mismatch = Partner.objects.annotate(
+    # Update entity versions
+    partners = Partner.objects.annotate(
         latest_start_date=Subquery(EntityVersion.objects.filter(
             entity__organization=OuterRef('organization_id'),
             parent__isnull=True,
@@ -50,58 +56,32 @@ def forward(apps, schema_editor):
             parent__isnull=True,
         ).values('entity_id').order_by('-start_date')[:1]),
     ).filter(
-        ~Q(latest_start_date=F('start_date')) |
-        ~Q(latest_end_date=F('end_date')),
         organization__entity__isnull=False,
-    )
-    for partner in date_mismatch:
-        if partner.start_date < partner.latest_start_date:
+    ).distinct('pk').order_by('pk')
+    for partner in partners:
+        new_start = partner.start_date if partner.start_date else default_date
+
+        if partner.latest_start_date != new_start:
             # Update start date with partner date
             EntityVersion.objects.filter(pk=partner.entityversion_id).update(
-                start_date=partner.start_date,
-            )
-        elif partner.start_date > partner.latest_start_date:
-            # Finish previous version and create new one
-            EntityVersion.objects.filter(pk=partner.entityversion_id).update(
-                start_date=partner.start_date - timedelta(days=1),
-            )
-            EntityVersion.objects.create(
-                entity_id=partner.entity_id,
-                start_date=partner.start_date,
+                start_date=new_start,
                 end_date=partner.end_date,
-                title=partner.name,
-                acronym=partner.partner_code,
             )
-        elif partner.end_date and partner.end_date < partner.latest_end_date:
-            # Update end_date
+        else:
             EntityVersion.objects.filter(pk=partner.entityversion_id).update(
                 end_date=partner.end_date,
             )
 
-    # Re evaluate queryset for sanity check
-    assert not date_mismatch.all().exists()
 
-    # Create Entity and EntityVersion if none associated
-    default_date = date(2020, 1, 1)
-    no_entity = Partner.objects.filter(
-        organization__entity__isnull=True,
-        organization__isnull=False,
-    )
-    for partner in no_entity:
-        # also create the corresponding Entity and EntityVersion
-        entity = Entity.objects.create(
-            organization_id=partner.organization_id,
-            website=partner.website,
-        )
-        EntityVersion.objects.create(
-            entity_id=entity.pk,
-            start_date=partner.start_date or default_date,
-            end_date=partner.end_date,
-            title=partner.name,
-            acronym=partner.partner_code,
-        )
-
-    unmatched = Partner.objects.filter(organization__isnull=True)
+def handle_new_organization(apps, default_date):
+    """
+    Create organization for those which have none, and create the root entity
+    for existing organization which have none
+    """
+    Partner = apps.get_model('partnership', 'Partner')
+    Organization = apps.get_model('base', 'Organization')
+    EntityVersion = apps.get_model('base', 'EntityVersion')
+    Entity = apps.get_model('base', 'Entity')
 
     type_mapping = {
         1: EMBASSY,
@@ -112,46 +92,57 @@ def forward(apps, schema_editor):
         6: NGO,
         7: ACADEMIC_PARTNER,
     }
-    # If unmatched, create a new organization and link it to partner
-    for partner in unmatched:
-        partner.organization_id = Organization.objects.create(
-            name=partner.name,
-            code=partner.partner_code,
-            type=type_mapping[partner.partner_type_id],
-            external_id='osis.organization_' + partner.external_id
-            if partner.external_id else '',
-        ).pk
-        # also create the corresponding Entity and EntityVersion
-        entity = Entity.objects.create(
-            organization_id=partner.organization_id,
-            website=partner.website,
-        )
-        EntityVersion.objects.create(
-            entity_id=entity.pk,
-            start_date=partner.start_date or partner.created,
-            end_date=partner.end_date,
-            title=partner.name,
-            acronym=partner.partner_code,
-        )
-    Partner.objects.bulk_update(unmatched, ['organization_id'])
-
-    unmatched = Partner.objects.filter(organization__isnull=True)
-    assert not unmatched.exists(), '{} unmatched'.format(unmatched.count())
-
-    # Check everything has an Entity
-    no_entity_version = Partner.objects.filter(
-        organization__entity__isnull=True,
-        organization__isnull=False,
+    partners = Partner.objects.select_related('organization').annotate(
+        entity_id=Subquery(EntityVersion.objects.filter(
+            entity__organization=OuterRef('organization_id'),
+            parent__isnull=True,
+        ).values('entity_id').order_by('-start_date')[:1]),
     )
-    assert not no_entity_version.exists()
+    for partner in partners:
+        # If unmatched, create a new organization and link it to partner
+        org_created = False
+        if not partner.organization_id:
+            partner.organization_id = Organization.objects.create(
+                name=partner.name,
+                code=partner.partner_code,
+                type=type_mapping[partner.partner_type_id],
+                external_id='osis.organization_' + partner.external_id
+                if partner.external_id else '',
+            ).pk
+            org_created = True
 
-    # Check everything has an EntityVersion
-    no_entity_version = Partner.objects.filter(
-        organization__entity__entityversion__isnull=True,
-        organization__entity__isnull=False,
-        organization__isnull=False,
+        # Also create the corresponding Entity and EntityVersion if needed
+        if org_created or not partner.entity_id:
+            entity = Entity.objects.create(
+                organization_id=partner.organization_id,
+                website=partner.website,
+            )
+            EntityVersion.objects.create(
+                entity_id=entity.pk,
+                start_date=partner.start_date or default_date,
+                end_date=partner.end_date,
+                title=partner.name,
+                acronym=partner.partner_code,
+            )
+    Partner.objects.bulk_update(partners, ['organization_id'])
+
+
+def forward(apps, schema_editor):
+    Partner = apps.get_model('partnership', 'Partner')
+
+    default_date = date(1900, 1, 1)
+
+    handle_existing_entity(apps, default_date)
+
+    handle_new_organization(apps, default_date)
+
+    # Check everything is correctly linked together
+    wrongly_linked = Partner.objects.filter(
+        Q(organization__entity__entityversion__isnull=True) |
+        Q(organization__entity__isnull=True) |
+        Q(organization__isnull=True)
     )
-    assert not no_entity_version.exists()
+    assert not wrongly_linked.exists()
 
 
 def backward(apps, schema_editor):
