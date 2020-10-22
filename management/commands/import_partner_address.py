@@ -90,6 +90,11 @@ class Command(BaseCommand):
 
         country_names = dict(list(Country.objects.values_list('name', 'pk')))
 
+        url = "{esb_api}/{endpoint}".format(
+            esb_api=settings.ESB_API_URL,
+            endpoint=settings.ESB_GEOCODING_ENDPOINT,
+        )
+
         for row in reader:
             # We need at least the street to update
             if not row[STREET]:
@@ -128,11 +133,8 @@ class Command(BaseCommand):
             ]
             search = ' '.join(filter(None, parts))
 
-            response = requests.get(settings.GEOCODING_URL, {
-                'address': search,
-                'language': 'fr',
-            }, headers={
-                'Authorization': 'Bearer {}'.format(settings.GEOCODING_TOKEN),
+            response = requests.get(url, {'address': search}, headers={
+                'Authorization': settings.ESB_AUTHORIZATION,
             })
             results = response.json()['results']
             if not results:
