@@ -9,16 +9,30 @@ from partnership.management.commands.progress_bar import ProgressBarMixin
 
 class Command(ProgressBarMixin, BaseCommand):
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--overwrite', action='store_true', default=False,
+            dest='overwrite',
+            help='Update every partner location, even if already set'
+        )
+
     def handle(self, *args, **options):
         # Fill the address for the partners only
         queryset = EntityVersionAddress.objects.filter(
-            location__isnull=True,
             entity_version__entity__organization__partner__isnull=False,
         ).select_related('country')
+
+        # Filter on empty location if not overwriting
+        if not options.get('overwrite'):
+            queryset = queryset.filter(location__isnull=True)
 
         count = queryset.count()
 
         self.print_progress_bar(0, count)
+        url = "{esb_api}/{endpoint}".format(
+            esb_api=settings.ESB_API_URL,
+            endpoint=settings.ESB_GEOCODING_ENDPOINT,
+        )
 
         # To prevent too many requests to geocoding, maintain a cache
         cache = {}
@@ -38,13 +52,12 @@ class Command(ProgressBarMixin, BaseCommand):
                 continue
 
             if search not in cache:
-                response = requests.get(settings.GEOCODING_URL, {
-                    'address': search,
-                }, headers={
-                    'Authorization': 'Bearer {}'.format(settings.GEOCODING_TOKEN),
+                response = requests.get(url, {'address': search}, headers={
+                    'Authorization': settings.ESB_AUTHORIZATION,
                 })
                 try:
-                    location = response.json()['results'][0]['geometry']['location']
+                    data = response.json()
+                    location = data['results'][0]['geometry']['location']
                     address.location = cache[search] = Point(
                         location['lng'],
                         location['lat'],
