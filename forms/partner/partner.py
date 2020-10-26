@@ -12,37 +12,22 @@ __all__ = ['PartnerForm', 'OrganizationForm']
 
 
 class PartnerForm(forms.ModelForm):
-    is_ies = forms.ChoiceField(
+    is_ies = forms.NullBooleanField(
         label=_('is_ies'),
         initial=None,
         required=True,
-        choices=(
-            (None, '---------'),
-            (True, _('Yes')),
-            (False, _('No')),
-        ),
     )
 
-    is_nonprofit = forms.ChoiceField(
+    is_nonprofit = forms.NullBooleanField(
         label=_('is_nonprofit'),
         help_text=_('mandatory_if_not_pic_ies'),
         required=False,
-        choices=(
-            (None, '---------'),
-            (True, _('Yes')),
-            (False, _('No')),
-        ),
     )
 
-    is_public = forms.ChoiceField(
+    is_public = forms.NullBooleanField(
         label=_('is_public'),
         help_text=_('mandatory_if_not_pic_ies'),
         required=False,
-        choices=(
-            (None, '---------'),
-            (True, _('Yes')),
-            (False, _('No')),
-        ),
     )
 
     class Meta:
@@ -102,6 +87,13 @@ class PartnerForm(forms.ModelForm):
             if not data['contact_type']:
                 self.add_error('contact_type', ValidationError(_('required')))
         return data
+
+    def get_is_valid_field(self):
+        # Workaround for templates to get 'is_valid' field and not method
+        try:
+            return self['is_valid']
+        except KeyError:
+            return None
 
 
 class OrganizationForm(forms.ModelForm):

@@ -8,9 +8,9 @@
   <div class="col-sm-12 col-md-6">
     {% bootstrap_field organization_form.name %}
   </div>
-  {% if form.is_valid %}
+  {% if form.get_is_valid_field %}
   <div class="col-sm-12 col-md-6">
-    {% bootstrap_field form.is_valid %}
+    {% bootstrap_field form.get_is_valid_field %}
   </div>
   {% endif %}
 </div>

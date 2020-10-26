@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType
+from partnership.models import ContactType, Partner
 from partnership.tests.factories import (
     PartnerFactory,
     PartnerTagFactory,
@@ -32,7 +32,6 @@ class PartnerUpdateViewTest(TestCase):
         cls.partner = PartnerFactory()
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
-        cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
 
         cls.data = {
@@ -102,6 +101,21 @@ class PartnerUpdateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+    def test_repost_and_not_ies(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['partner-pic_code'] = ''
+        data['partner-is_ies'] = 'False'
+        data['partner-contact_type'] = Partner.CONTACT_TYPE_CHOICES[-1][0]
+
+        # City and country are mandatory if not ies or pic_code empty, but provided
+        response = self.client.post(self.url, data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+        # If we repost it with same data, should not fail
+        response = self.client.post(self.url, data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
 
     def test_post_new_dates(self):

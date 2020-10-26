@@ -5,7 +5,6 @@ from django.urls import reverse
 from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType
 from partnership.tests.factories import (
     PartnerTagFactory,
     PartnershipEntityManagerFactory,
@@ -23,7 +22,6 @@ class PartnerCreateViewTest(TestCase):
         cls.user_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_gf)
 
-        cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.data = {
             'organization-name': 'test',
