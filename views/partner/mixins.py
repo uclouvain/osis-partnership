@@ -346,6 +346,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             entity_version.start_date = today
             entity_version.save()
             return entity_version.entity
+        return entity_form.instance.entity
 
     @staticmethod
     def save_address(last_version, form_address):
