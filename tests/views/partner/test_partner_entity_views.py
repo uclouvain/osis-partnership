@@ -219,6 +219,8 @@ class PartnerEntityUpdateViewTest(TestCase):
 
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        # Should find postal code of last version
+        self.assertContains(response, '13245')
         # Should have two versions
         self.assertEqual(current_entity.entityversion_set.count(), 2)
         # Should still be parent
