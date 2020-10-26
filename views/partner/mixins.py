@@ -171,9 +171,9 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
             return True
         cleaned_data = form_address.cleaned_data
-        if not cleaned_data['city']:
+        if not cleaned_data.get('city'):
             form_address.add_error('city', ValidationError(_('required')))
-        if not cleaned_data['country']:
+        if not cleaned_data.get('country'):
             form_address.add_error('country', ValidationError(_('required')))
         return form_address.is_valid()
 
