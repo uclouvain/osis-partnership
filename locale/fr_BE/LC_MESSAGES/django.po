@@ -27,7 +27,6 @@ msgstr ""
 msgid "Add a %(model)s"
 msgstr "Ajouter un(e) %(model)s"
 
-#, fuzzy
 msgid "Add a funding source"
 msgstr "Ajouter une source de financement"
 
