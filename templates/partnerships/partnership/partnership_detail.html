@@ -98,7 +98,7 @@
               <dt>{% trans "agreements_or_conventions" %}</dt>
               <dd>
                 {% if partnership.is_mobility %}
-                  {% academic_dates start_date=partnership.valid_start_date end_date=partnership.valid_end_date %}
+                  {% academic_years start_year=partnership.validated_agreements.first.academic_year end_year=partnership.validated_agreements.last.academic_year %}
                   {% if partnership.has_missing_valid_years %}
                     <span class="text-danger"> - {% trans "partnership_missing_valid_years" %}</span>
                   {% endif %}
