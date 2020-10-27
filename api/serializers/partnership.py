@@ -36,7 +36,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         source='get_supervisor',
         allow_null=True,
     )
-    ucl_sector = serializers.CharField(source='acronym_path.1', allow_null=True)
+    ucl_sector = serializers.SerializerMethodField()
     ucl_faculty = serializers.SerializerMethodField()
     ucl_entity = EntitySerializer()
     is_sms = serializers.SerializerMethodField()
@@ -337,6 +337,12 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return None
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
+
+    @staticmethod
+    def get_ucl_sector(partnership):
+        if len(partnership.acronym_path) < 2:
+            return ''
+        return partnership.acronym_path[1]
 
     @staticmethod
     def get_ucl_faculty(partnership):
