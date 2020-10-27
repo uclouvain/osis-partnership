@@ -72,8 +72,8 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         if (['', 'MOBILITY', 'PROJECT'].includes(value)) {
             $('#subtype-field select').val('')
         }
-        $('.except-general-project').collapse(['GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
-        if (['GENERAL', 'PROJECT'].includes(value)) {
+        $('.except-general-project').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        if (['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.except-general-project select').val('')
         }
         $('.special-dates-filter').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
