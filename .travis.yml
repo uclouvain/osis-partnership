@@ -43,5 +43,5 @@ script:
   - ./manage.py makemigrations --check partnership
 
 after_success:
- - pip install python-coveralls
- - coveralls --base_dir /home/travis/build/uclouvain/osis-partnership/
+ - pip install coveralls
+ - coveralls
