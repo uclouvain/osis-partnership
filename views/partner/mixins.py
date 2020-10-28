@@ -165,15 +165,20 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         ))
 
     def check_form_address(self, form, form_address):
-        """ Address is mandatory if no pic_code or not is_ies """
+        # Address form is not valid internally
         if not form_address.is_valid():
             return False
+        # Either address form is not changed nor form and we are updating
+        something_changed = form.has_changed() and form_address.has_changed()
+        if form.instance.pk and not something_changed:
+            return True
+        # Address is mandatory if no pic_code or not is_ies
         if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
             return True
         cleaned_data = form_address.cleaned_data
-        if not cleaned_data['city']:
+        if not cleaned_data.get('city'):
             form_address.add_error('city', ValidationError(_('required')))
-        if not cleaned_data['country']:
+        if not cleaned_data.get('country'):
             form_address.add_error('country', ValidationError(_('required')))
         return form_address.is_valid()
 
@@ -341,6 +346,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             entity_version.start_date = today
             entity_version.save()
             return entity_version.entity
+        return entity_form.instance.entity
 
     @staticmethod
     def save_address(last_version, form_address):

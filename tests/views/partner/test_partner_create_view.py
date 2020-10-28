@@ -5,7 +5,6 @@ from django.urls import reverse
 from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType
 from partnership.tests.factories import (
     PartnerTagFactory,
     PartnershipEntityManagerFactory,
@@ -23,7 +22,6 @@ class PartnerCreateViewTest(TestCase):
         cls.user_gf = UserFactory()
         PartnershipEntityManagerFactory(person__user=cls.user_gf)
 
-        cls.contact_type = ContactType.objects.create(value='foobar')
         cls.country = CountryFactory()
         cls.data = {
             'organization-name': 'test',
@@ -99,6 +97,24 @@ class PartnerCreateViewTest(TestCase):
         self.assertIn('email', response.context_data['form'].errors)
         self.assertIn('phone', response.context_data['form'].errors)
         self.assertIn('contact_type', response.context_data['form'].errors)
+        self.assertTemplateNotUsed(response, self.detail_template)
+
+    def test_without_address_and_not_ies(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['partner-pic_code'] = ''
+        data['partner-is_ies'] = 'False'
+        data['contact_address-street'] = ''
+        data['contact_address-city'] = ''
+        data['contact_address-country'] = ''
+        data['contact_address-postal_code'] = ''
+        data['contact_address-location_0'] = ''
+        data['contact_address-location_1'] = ''
+
+        # City and country are mandatory if not ies or pic_code empty
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn('country', response.context_data['form_address'].errors)
+        self.assertIn('city', response.context_data['form_address'].errors)
         self.assertTemplateNotUsed(response, self.detail_template)
 
     def test_ies_pic_address_requirements(self):

@@ -239,7 +239,6 @@ class PartnershipAdminFilter(filters.FilterSet):
             'funding_type',
             'funding_program',
             'funding_source',
-            'partnership_type',
             'supervisor',
             'tags',
             'partnership_in',

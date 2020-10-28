@@ -141,6 +141,38 @@ class PartnerEntityUpdateViewTest(TestCase):
             pk=cls.partner_entity_gf.pk,
         )
 
+        cls.data = {
+            'name': 'test',
+            'comment': 'test',
+            'address-street_number': 'test',
+            'address-street': 'test',
+            'address-postal_code': '13245',
+            'address-state': 'state',
+            'address-city': 'test',
+            'address-country': cls.country.pk,
+            'address-location_0': 30,
+            'address-location_1': 15,
+            'contact_in-type': cls.contact_type.pk,
+            'contact_in-title': ContactTitle.MISTER.name,
+            'contact_in-last_name': 'test',
+            'contact_in-first_name': 'test',
+            'contact_in-function': 'test',
+            'contact_in-phone': 'test',
+            'contact_in-mobile_phone': 'test',
+            'contact_in-fax': 'test',
+            'contact_in-email': 'test@test.test',
+            'contact_out-type': cls.contact_type.pk,
+            'contact_out-title': ContactTitle.MISTER.name,
+            'contact_out-last_name': 'test',
+            'contact_out-first_name': 'test',
+            'contact_out-function': 'test',
+            'contact_out-phone': 'test',
+            'contact_out-mobile_phone': 'test',
+            'contact_out-fax': 'test',
+            'contact_out-email': 'test@test.test',
+            'parent': cls.parent_entity.entity_id,
+        }
+
     def test_get_view_as_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_update.html')
@@ -182,48 +214,25 @@ class PartnerEntityUpdateViewTest(TestCase):
 
     def test_post(self):
         self.client.force_login(self.user_adri)
-        data = {
-            'name': 'test',
-            'comment': 'test',
-            'address-street_number': 'test',
-            'address-street': 'test',
-            'address-postal_code': '13245',
-            'address-state': 'state',
-            'address-city': 'test',
-            'address-country': self.country.pk,
-            'address-location_0': 30,
-            'address-location_1': 15,
-            'contact_in-type': self.contact_type.pk,
-            'contact_in-title': ContactTitle.MISTER.name,
-            'contact_in-last_name': 'test',
-            'contact_in-first_name': 'test',
-            'contact_in-function': 'test',
-            'contact_in-phone': 'test',
-            'contact_in-mobile_phone': 'test',
-            'contact_in-fax': 'test',
-            'contact_in-email': 'test@test.test',
-            'contact_out-type': self.contact_type.pk,
-            'contact_out-title': ContactTitle.MISTER.name,
-            'contact_out-last_name': 'test',
-            'contact_out-first_name': 'test',
-            'contact_out-function': 'test',
-            'contact_out-phone': 'test',
-            'contact_out-mobile_phone': 'test',
-            'contact_out-fax': 'test',
-            'contact_out-email': 'test@test.test',
-            'parent': self.parent_entity.entity_id,
-        }
         current_entity = self.partner_entity.entity
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
         self.assertEqual(current_entity.entityversion_set.count(), 1)
 
-        response = self.client.post(self.url, data=data, follow=True)
+        response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        # Should find postal code of last version
+        self.assertContains(response, '13245')
         # Should have two versions
         self.assertEqual(current_entity.entityversion_set.count(), 2)
         # Should still be parent
         self.partner_entity.refresh_from_db()
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
+
+        # If we set the same data
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        # Should still have only two versions
+        self.assertEqual(current_entity.entityversion_set.count(), 2)
 
 
 class PartnerEntityDeleteViewTest(TestCase):
