@@ -88,4 +88,7 @@ class PartnershipEntityManager(EntityRoleModel):
                 (is_linked_to_adri_entity | is_in_same_faculty_as_author)
                 & ~entity_has_partnerships
                 & ~entity_has_children,
+
+            # Configuration
+            'partnership.change_partnershipconfiguration': is_linked_to_adri_entity,
         })
