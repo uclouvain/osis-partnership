@@ -307,6 +307,7 @@ class PartnershipFilterForm(forms.Form):
             format=DATE_FORMAT,
             attrs={'class': 'datepicker', 'autocomplete': 'off'},
         ),
+        input_formats=[DATE_FORMAT],
         initial=now,
     )
     partnership_date_to = forms.DateField(
@@ -316,6 +317,7 @@ class PartnershipFilterForm(forms.Form):
             format=DATE_FORMAT,
             attrs={'class': 'datepicker', 'autocomplete': 'off'},
         ),
+        input_formats=[DATE_FORMAT],
         initial=now,
     )
     comment = forms.CharField(
