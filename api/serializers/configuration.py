@@ -71,6 +71,9 @@ class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_label(result):
+        if not result.acronym_path:  # pragma: no cover
+            # TODO: remove this edge case when entity is malformed
+            return result.most_recent_title or ''
         parts = result.acronym_path[1:] if result.acronym_path[1:] else result.acronym_path
         return '{} - {}'.format(' / '.join(parts), result.most_recent_title)
 
