@@ -63,7 +63,7 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
         """
         # entity is the hidden field of PartnershipYearForm
         entity_id = self.forwarded.get('entity', None)
-        if entity_id is None:
+        if not entity_id:
             return Entity.objects.none()
 
         partnership_type = self.forwarded.get('partnership_type', None)

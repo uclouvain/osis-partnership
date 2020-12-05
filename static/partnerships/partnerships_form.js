@@ -22,10 +22,9 @@
     });
 
     $('input[name="year-entity"]').val($('select[name="ucl_entity"]').val());
-    $('select[name="ucl_entity"]').change(function() {
+    document.querySelector('select[name="ucl_entity"]').onchange = function() {
         $('input[name="year-entity"]').val($(this).val());
         $('select[name="year-entities"]').val([]).trigger('change');
         $('select[name="year-offers"]').val([]).trigger('change');
-    });
-
+    };
 })(jQuery);
