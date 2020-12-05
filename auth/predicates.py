@@ -67,11 +67,11 @@ def is_faculty_manager_for_ume(self, user, ucl_management_entity):
 
 @rules.predicate(bind=True)
 def is_in_same_faculty_as_author(self, user, entity):
-    other_user = entity.author.user
-    return self.context['role_qs'].filter(
-        Q(entity__partnershipentitymanager__person__user=other_user)
-        | Q(entity__parent_of__entity__partnershipentitymanager__person__user=other_user)
-    ).exists()
+    from .roles.partnership_manager import PartnershipEntityManager
+    entities_managed_by_author = PartnershipEntityManager.objects.filter(person=entity.author).get_entities_ids()
+    entities_manager_by_current_user = self.context['role_qs'].get_entities_ids()
+
+    return bool(entities_managed_by_author & entities_manager_by_current_user)
 
 
 @rules.predicate

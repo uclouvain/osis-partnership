@@ -104,11 +104,11 @@ class PartnerEntityUpdateViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri, with_child=False)
         cls.user_gf = UserFactory()
-        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf, with_child=False)
         cls.user_other_gf = UserFactory()
-        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity, with_child=False)
 
         # Partner creation
         cls.partner = PartnerFactory(author=PersonFactory())
@@ -242,11 +242,11 @@ class PartnerEntityDeleteViewTest(TestCase):
         cls.user = UserFactory()
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri, with_child=False)
         cls.user_gf = UserFactory()
-        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf)
+        entity_manager = PartnershipEntityManagerFactory(person__user=cls.user_gf, with_child=False)
         cls.user_other_gf = UserFactory()
-        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
+        PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity, with_child=False)
 
         # Partner creation
         cls.partner = PartnerFactory(author=PersonFactory())

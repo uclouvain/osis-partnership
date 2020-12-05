@@ -18,6 +18,7 @@ from partnership.models import (
     PartnershipType,
     PartnershipYearEducationLevel,
 )
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
@@ -364,7 +365,7 @@ class PartnershipFilterForm(forms.Form):
 
         # Init ucl_entity for faculty manager
         if is_faculty_manager(user):
-            university = user.person.partnershipentitymanager_set.first().entity_id
+            university = PartnershipEntityManager.get_person_related_entities(user.person)[0]
             self.fields['ucl_entity'].initial = university
             self.fields['ucl_entity_with_child'].initial = True
 
