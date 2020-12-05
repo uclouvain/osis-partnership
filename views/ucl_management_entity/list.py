@@ -54,11 +54,11 @@ class UCLManagementEntityListView(PermissionRequiredMixin, ListView):
         if not is_linked_to_adri_entity(self.request.user):
             # get what the user manages
             person = self.request.user.person
-            entities_managed_by_user = PartnershipEntityManager.get_person_related_entities(person)
+            entities_managed_by_user = list(PartnershipEntityManager.get_person_related_entities(person))
 
             # get the children
             qs = cte.queryset().with_cte(cte).filter(
-                entity__in=entities_managed_by_user
+                entity_id__in=entities_managed_by_user
             ).annotate(
                 child_entity_id=Func(cte.col.children, function='unnest'),
             ).distinct('child_entity_id').values('child_entity_id')

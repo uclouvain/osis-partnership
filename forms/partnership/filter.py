@@ -18,6 +18,7 @@ from partnership.models import (
     PartnershipType,
     PartnershipYearEducationLevel,
 )
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from reference.models.continent import Continent
 from reference.models.country import Country
 from reference.models.domain_isced import DomainIsced
@@ -27,7 +28,6 @@ from ...auth.predicates import (
     is_faculty_manager,
     is_linked_to_adri_entity, partnership_type_allowed_for_user_scope,
 )
-from ...auth.roles.partnership_manager import PartnershipEntityManager
 from ...models.enums.filter import DateFilterType
 
 __all__ = ['PartnershipFilterForm']
