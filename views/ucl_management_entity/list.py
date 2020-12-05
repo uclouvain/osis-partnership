@@ -5,6 +5,7 @@ from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import FACULTY
 from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
+from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from partnership.models import UCLManagementEntity
 
 __all__ = [
@@ -53,7 +54,7 @@ class UCLManagementEntityListView(PermissionRequiredMixin, ListView):
         if not is_linked_to_adri_entity(self.request.user):
             # get what the user manages
             person = self.request.user.person
-            entities_managed_by_user = person.partnershipentitymanager_set.values('entity_id')
+            entities_managed_by_user = PartnershipEntityManager.get_person_related_entities(person)
 
             # get the children
             qs = cte.queryset().with_cte(cte).filter(
