@@ -54,7 +54,6 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             gettext('tags'),
             gettext('created'),
             gettext('modified'),
-            gettext('author'),
             gettext('is_sms'),
             gettext('is_smp'),
             gettext('is_sta'),
@@ -173,7 +172,6 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
-                str(partnership.author.user) if partnership.author else '',
 
                 year.is_sms,
                 year.is_smp,

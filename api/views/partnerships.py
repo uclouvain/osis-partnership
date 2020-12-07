@@ -276,7 +276,6 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
             _('tags'),
             _('created'),
             _('modified'),
-            _('author'),
             _('end_valid_agreement'),
             _('external_id'),
         ]
@@ -317,7 +316,6 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
-                str(partnership.author.user) if partnership.author else '',
 
                 getattr(
                     last_agreement,
