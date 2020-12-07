@@ -30,6 +30,8 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_entities_acronyms(agreement):
+        if not agreement.acronym_path:
+            return ''
         entities = []
         for i in range(1, len(agreement.acronym_path)):
             entities.append(format_html(

@@ -168,7 +168,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(parts[2] if len(parts) > 2 else ''),
 
                 str(partnership.supervisor or ''),
-                ', '.join(map(lambda x: x.most_recent_acronym, year.entities.all())),
+                ', '.join(map(lambda x: x.most_recent_acronym or '', year.entities.all())),
                 ', '.join(map(str, year.education_levels.all())),
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),

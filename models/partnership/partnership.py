@@ -383,6 +383,8 @@ class Partnership(models.Model):
         """
         The following attributes come from add_acronyms() annotations
         """
+        if not self.acronym_path:
+            return ''
         entities = []
         for i in range(1, len(self.acronym_path)):
             entities.append(format_html(
