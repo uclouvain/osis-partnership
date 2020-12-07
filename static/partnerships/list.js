@@ -119,6 +119,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         return false;
     });
 
+    // Update export buttons when changing history
+    updateExportButtons();
+
     // Use click handler and not reset event to be able to prevent default
     $form.on('reset', function (e) {
         // Manually reset autocomplete
