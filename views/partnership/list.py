@@ -42,9 +42,11 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
             .for_validity_end()
             .select_related(
                 'ucl_entity__uclmanagement_entity__academic_responsible',
-                'partner__organization',
-                'partner_entity',
+                'partner_entity__organization',
                 'supervisor',
+            )
+            .prefetch_related(
+                'partner_entity__organization__partner',
             )
         ).distinct()
 

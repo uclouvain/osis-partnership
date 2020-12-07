@@ -19,6 +19,13 @@ __all__ = [
 ]
 
 
+class PartnerTagQuerySet(models.QuerySet):
+    def of_partners_having_partnerships(self):
+        return self.filter(
+            partners__organization__entity__partner_of__isnull=False
+        ).distinct()
+
+
 class PartnerTag(models.Model):
     """
     Tags décrivant un partenaire.
@@ -27,6 +34,8 @@ class PartnerTag(models.Model):
     possibilité d'en mettre plusieurs par partenaire.
     """
     value = models.CharField(max_length=255, unique=True)
+
+    objects = PartnerTagQuerySet.as_manager()
 
     class Meta:
         ordering = ('value',)
@@ -88,6 +97,20 @@ class PartnerQueryset(models.QuerySet):
             qs = qs.annotate(**{field.replace('__', '_'): lookup})
         return qs
 
+    def annotate_partnerships_count(self):
+        """ Add annotation for partnerships count """
+        return self.annotate(
+            partnerships_count=Subquery(
+                EntityVersion.objects.current(datetime.now()).filter(
+                    entity__organization=OuterRef('organization_id'),
+                    parent__isnull=True,
+                ).order_by('-start_date').annotate(
+                    partnership_count=models.Count('entity__partner_of'),
+                ).values('partnership_count')[:1],
+                output_field=models.IntegerField(),
+            ),
+        )
+
     def prefetch_address(self):
         return self.prefetch_related(
             # We need to do this nested prefetch because every level has a
@@ -113,6 +136,9 @@ class PartnerQueryset(models.QuerySet):
             ),
 
         )
+
+    def having_partnerships(self):
+        return self.filter(organization__entity__partner_of__isnull=False)
 
 
 class PartnerManager(models.manager.BaseManager.from_queryset(PartnerQueryset)):
@@ -261,7 +287,7 @@ class Partner(models.Model):
         from ..partnership.partnership import Partnership
         return (
             PartnershipAgreement.objects
-            .filter(partnership__partner=self)
+            .filter(partnership__partner_entity__organization__partner=self)
             .select_related('start_academic_year', 'end_academic_year')
             .prefetch_related(
                 'media',

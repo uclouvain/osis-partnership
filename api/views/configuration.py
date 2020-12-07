@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
+from django.db.models import OuterRef, Prefetch, Subquery
 from django.utils.translation import get_language
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -51,7 +51,7 @@ class ConfigurationView(APIView):
         )
         partners = (
             Partner.objects
-            .filter(partnerships__isnull=False)
+            .filter(organization__entity__partner_of__isnull=False)
             .distinct()
             .values('uuid', 'organization__name')
         )
@@ -111,7 +111,7 @@ class ConfigurationView(APIView):
         )
         partner_tags = (
              PartnerTag.objects
-             .filter(partners__partnerships__isnull=False)
+             .filter(partners__organization__entity__partner_of__isnull=False)
              .values_list('value', flat=True)
              .distinct('value')
              .order_by('value')

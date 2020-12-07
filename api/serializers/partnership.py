@@ -26,11 +26,13 @@ class PartnershipSerializer(serializers.ModelSerializer):
         view_name='partnership_api_v1:partnerships:retrieve',
         lookup_field='uuid',
     )
-    partner = PartnerDetailSerializer()
+    partner = PartnerDetailSerializer(
+        source='partner_entity.organization.partner_prefetched'
+    )
     type = serializers.ReadOnlyField(source='get_partnership_type_display')
     subtype = serializers.StringRelatedField()
     partner_entity = serializers.CharField(
-        source='partner_entity.name',
+        source='partner_entity.partnerentity.name',
         allow_null=True,
     )
     supervisor = serializers.CharField(
@@ -248,7 +250,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
         ]
         medias += [
             MediaSerializer(media).data
-            for media in partnership.partner.medias.all()
+            for media in partnership.partner_entity.organization.partner_prefetched.medias.all()
             if (media.is_visible_in_portal and media.type is not None
                 and media.type.code == media_type)
         ]
@@ -355,7 +357,7 @@ class PartnershipAdminSerializer(serializers.ModelSerializer):
     country = serializers.ReadOnlyField(source='country_name')
     city = serializers.ReadOnlyField()
     supervisor = serializers.CharField(source='get_supervisor')
-    partner = serializers.CharField(source='partner.organization.name')
+    partner = serializers.CharField(source='partner_entity.organization.name')
     type = serializers.CharField(source='get_partnership_type_display')
 
     class Meta:

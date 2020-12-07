@@ -1,4 +1,4 @@
-from dal import autocomplete, forward
+from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Func, OuterRef, Q
@@ -12,6 +12,7 @@ from base.utils.cte import CTESubquery
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from partnership.models import Partnership
+from partnership.utils import format_partner_entity
 from ..fields import EntityChoiceField, PersonChoiceField
 
 __all__ = [
@@ -24,6 +25,14 @@ __all__ = [
 
 
 class PartnershipBaseForm(forms.ModelForm):
+    partner_entity = forms.ModelChoiceField(
+        label=_('partner'),
+        queryset=Entity.objects.filter(organization__partner__isnull=False),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:partner_entity'
+        ),
+    )
+
     ucl_entity = EntityChoiceField(
         label=_('ucl_entity'),
         # This is actually refined in form and autocomplete
@@ -50,7 +59,6 @@ class PartnershipBaseForm(forms.ModelForm):
         model = Partnership
         fields = (
             'partnership_type',
-            'partner',
             'partner_entity',
             'ucl_entity',
             'supervisor',
@@ -60,17 +68,6 @@ class PartnershipBaseForm(forms.ModelForm):
             'missions',
         )
         widgets = {
-            'partner': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:partner',
-                attrs={
-                    'class': 'resetting',
-                    'data-reset': '#id_partner_entity',
-                },
-            ),
-            'partner_entity': autocomplete.ModelSelect2(
-                url='partnerships:autocomplete:partner_entity',
-                forward=['partner'],
-            ),
             'tags': autocomplete.Select2Multiple(),
             'partnership_type': forms.HiddenInput(),
             'missions': forms.CheckboxSelectMultiple(),
@@ -86,9 +83,12 @@ class PartnershipBaseForm(forms.ModelForm):
         # Initialise partnership_type for creation
         kwargs['initial']['partnership_type'] = partnership_type
 
+        # TODO only allow sub-entities to be choosed on editing for faculty manager
+
         super().__init__(*args, **kwargs)
 
         self.fields['comment'].widget.attrs['rows'] = 3
+        self.fields['partner_entity'].label_from_instance = format_partner_entity
 
         # Prevent type modification for updating
         if self.instance.pk:
@@ -126,22 +126,13 @@ class PartnershipBaseForm(forms.ModelForm):
             field_missions.widget = forms.MultipleHiddenInput()
             field_missions.disabled = True
 
-    def clean_partner(self):
-        partner = self.cleaned_data['partner']
-        if self.instance.pk and partner == self.instance.partner:
-            return partner
-        if not partner.is_actif:
+    def clean_partner_entity(self):
+        partner_entity = self.cleaned_data['partner_entity']
+        if self.instance.pk and partner_entity == self.instance.partner_entity:
+            return partner_entity
+        if not partner_entity.organization.partner.is_actif:
             raise ValidationError(_('partnership_inactif_partner_error'))
-        return partner
-
-    def clean(self):
-        super().clean()
-        partner = self.cleaned_data.get('partner', None)
-        partner_entity = self.cleaned_data.get('partner_entity', None)
-
-        if partner_entity and partner_entity.partnerentity.partner != partner:
-            self.add_error('partner_entity', _('invalid_partner_entity'))
-        return self.cleaned_data
+        return partner_entity
 
 
 class PartnershipWithDatesMixin(PartnershipBaseForm):
@@ -204,15 +195,11 @@ class PartnershipMobilityForm(PartnershipBaseForm):
                 field.disabled = True
 
             if self.instance.pk is not None:
-                self.fields['partner'].disabled = True
+                # TODO This is a guess, need to check with Bart
+                self.fields['partner_entity'].disabled = True
                 field.disabled = True
 
             del self.fields['is_public']
-
-        if self.instance.partner_id:
-            self.fields['partner'].widget.forward.append(
-                forward.Const(self.instance.partner_id, 'partner_pk'),
-            )
 
         self.fields['supervisor'].required = False
         self.fields['supervisor'].widget.attrs = {

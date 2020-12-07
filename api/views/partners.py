@@ -44,8 +44,10 @@ class PartnersListView(generics.ListAPIView):
         # We query the partner id with the normal filters, do a count and pass
         # the count to the serializer, returning filtered partners on pk
         self.counts = defaultdict(int)
-        for result in partnerships_queryset.values('partner'):
-            self.counts[result['partner']] += 1
+        for result in partnerships_queryset.values(
+                'partner_entity__organization__partner',
+        ):
+            self.counts[result['partner_entity__organization__partner']] += 1
 
         return (
             Partner.objects

@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import (
@@ -228,10 +229,6 @@ class PartnershipUpdateViewTest(TestCase):
             data['comment'],
         )
         self.assertEqual(
-            str(partnership.partner_id),
-            str(data['partner']),
-        )
-        self.assertEqual(
             str(partnership.partner_entity_id),
             str(data['partner_entity']),
         )
@@ -389,16 +386,13 @@ class PartnershipUpdateViewTest(TestCase):
     def test_post_invalid_partner(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
-        partner = PartnerFactory(dates__end=timezone.now() - timedelta(days=1))
-        data['partner'] = partner.pk
+        partner = PartnerFactory(
+            dates__end=timezone.now() - timedelta(days=1),
+        )
+        entity = EntityWithVersionFactory(organization=partner.organization)
+        data['partner_entity'] = entity.pk
         response = self.client.post(self.url, data=data)
         msg = _('partnership_inactif_partner_error')
-        self.assertFormError(response, 'form', 'partner', msg)
-
-        data = self.data.copy()
-        data['partner_entity'] = PartnerEntityFactory().entity_id
-        response = self.client.post(self.url, data=data)
-        msg = _('invalid_partner_entity')
         self.assertFormError(response, 'form', 'partner_entity', msg)
 
     def test_post_invalid_ucl_university_labo(self):
