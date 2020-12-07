@@ -88,9 +88,10 @@ function initDataTable (storageKey, url, columnDefs, extra) {
 
     var $form = $('#filter-form');
 
-    function updateExportButton () {
-        var $export = $('#results .btn-export');
-        $export.attr('href', $export.data('base-href') + '?' + $form.serialize());
+    function updateExportButtons () {
+        $('#results .btn-export').each(function() {
+            $(this).attr('href', $(this).data('base-href') + '?' + $form.serialize());
+        });
 
         // Replace url to facilitate history
         var state = $form.serializeArray().filter(function (o) {return o.value !== ""});
@@ -114,7 +115,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         }
 
         $('#result-list').DataTable().ajax.reload();
-        updateExportButton();
+        updateExportButtons();
         return false;
     });
 
