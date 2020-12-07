@@ -127,6 +127,8 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     def get_missions(self, partnership):
         missions = self._get_current_year_attr(partnership, 'missions')
+        if not missions:
+            return ''
         return ', '.join([mission.label for mission in missions.all()])
 
     def get_description(self, partnership):
@@ -340,13 +342,13 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_ucl_sector(partnership):
-        if len(partnership.acronym_path) < 2:
+        if not partnership.acronym_path or len(partnership.acronym_path) < 2:
             return ''
         return partnership.acronym_path[1]
 
     @staticmethod
     def get_ucl_faculty(partnership):
-        if len(partnership.acronym_path) < 3:
+        if not partnership.acronym_path or len(partnership.acronym_path) < 3:
             return {}
         return {
             'acronym': partnership.acronym_path[2],

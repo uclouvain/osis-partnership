@@ -281,7 +281,7 @@ class Partnership(models.Model):
 
     @property
     def validated_agreements(self):
-        return self.agreements.filter(status=AgreementStatus.VALIDATED.name)
+        return self.agreements.filter(status=AgreementStatus.VALIDATED.name).order_by('start_academic_year__year')
 
     @cached_property
     def start_partnership_year(self):
@@ -383,6 +383,8 @@ class Partnership(models.Model):
         """
         The following attributes come from add_acronyms() annotations
         """
+        if not self.acronym_path:
+            return ''
         entities = []
         for i in range(1, len(self.acronym_path)):
             entities.append(format_html(

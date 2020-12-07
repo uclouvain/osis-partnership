@@ -89,9 +89,9 @@ class UtilAcademicDisplayTest(TestCase):
         end = AcademicYearFactory(year=2151)
         self.assertEqual(academic_years('', ''), "N/A")
         self.assertEqual(academic_years(None, None), "N/A")
-        self.assertEqual(academic_years(start, None), "2150 > N/A")
-        self.assertEqual(academic_years('', end), "N/A > 2152")
-        self.assertEqual(academic_years(start, end), "2150 > 2152")
+        self.assertEqual(academic_years(start, None), "2150-51 > N/A")
+        self.assertEqual(academic_years('', end), "N/A > 2151-52")
+        self.assertEqual(academic_years(start, end), "2150-51 > 2151-52")
 
 
 class UtilGetNestedAttributeTest(TestCase):
