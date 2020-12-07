@@ -281,7 +281,7 @@ class Partnership(models.Model):
 
     @property
     def validated_agreements(self):
-        return self.agreements.filter(status=AgreementStatus.VALIDATED.name)
+        return self.agreements.filter(status=AgreementStatus.VALIDATED.name).order_by('start_academic_year__year')
 
     @cached_property
     def start_partnership_year(self):

@@ -3,8 +3,8 @@ from rest_framework.fields import get_attribute as base_get_attribute
 
 def academic_years(start_year, end_year):
     if start_year or end_year:
-        start_year = start_year.year if start_year else "N/A"
-        end_year = end_year.year + 1 if end_year else "N/A"
+        start_year = start_year if start_year else "N/A"
+        end_year = end_year if end_year else "N/A"
         return '{} > {}'.format(start_year, end_year)
     return "N/A"
 
