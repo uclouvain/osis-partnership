@@ -128,9 +128,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         yl.jQuery('[data-autocomplete-light-function=select2]').val('').trigger('change');
 
         // Manually reset fields, because we don't want to reset hidden fields
-        $form.find(':input').not(':button, :submit, :reset, [type=hidden]')
-            .val('')
-            .prop('checked', false);
+        $form.find(':input').not(':button, :submit, :reset, [type=hidden], [type=checkbox]')
+            .val('');
+        $form.find(':input:checked').prop('checked', false);
         // Manually reset select
         $form.find('select').not('[data-autocomplete-light-function=select2]').each(function () {
             this.selectedIndex = 0;
