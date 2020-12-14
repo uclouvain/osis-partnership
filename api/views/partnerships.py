@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.db.models.expressions import (
     F, OuterRef, Subquery, Value,
 )
-from django.db.models.functions import Concat, Now
+from django.db.models.functions import Concat, Now, Right, Cast
 from django.db.models.query import Prefetch
 from django.http import JsonResponse
 from django.urls import reverse
@@ -52,6 +52,17 @@ class PartnershipsMixinView:
 
     def get_queryset(self):
         academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        academic_year_repr = Concat(
+            Cast(F('academic_year__year'), models.CharField()),
+            Value('-'),
+            Right(
+                Cast(
+                    F('academic_year__year') + 1,
+                    output_field=models.CharField()
+                ),
+                2
+            ),
+        )
 
         return (
             Partnership.objects
@@ -181,6 +192,20 @@ class PartnershipsMixinView:
                         start_date__lte=Now(),
                         end_date__gte=Now(),
                     ).order_by('-end_date').values('start_date')[:1]
+                ),
+                start_year=Subquery(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                    ).annotate(
+                        name=academic_year_repr
+                    ).order_by('academic_year').values('name')[:1]
+                ),
+                end_year=Subquery(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                    ).annotate(
+                        name=academic_year_repr
+                    ).order_by('-academic_year').values('name')[:1]
                 ),
                 agreement_end=Subquery(
                     PartnershipAgreement.objects.filter(

@@ -118,38 +118,20 @@ class PartnershipQuerySet(models.QuerySet):
                     end_academic_year__year__gte=academic_year.year,
                 )
             ),
-            has_valid_agreement=models.Exists(
-                PartnershipAgreement.objects.filter(
-                    partnership=OuterRef('pk'),
-                    status=AgreementStatus.VALIDATED.name,
-                    start_date__lte=Now(),
-                    end_date__gte=Now(),
-                )
-            ),
         ).filter(
-            # Should have agreement for current year if mobility
+            # If mobility, should have agreement for current year
+            # and have a partnership year for current year
             Q(
                 partnership_type=PartnershipType.MOBILITY.name,
-                has_valid_agreement_in_current_year=True
+                has_valid_agreement_in_current_year=True,
+                has_years_in=True,
             )
-            # Or else should have at least an agreement if not mobility
-            | (
-                    ~Q(partnership_type=PartnershipType.MOBILITY.name)
-                    & Q(has_valid_agreement=True)
-            )
-            # Or nothing at all if project
-            | Q(partnership_type=PartnershipType.PROJECT.name),
-
-            # Should have a partnership year for current year if mobility
-            Q(
-                partnership_type=PartnershipType.MOBILITY.name,
-                has_years_in=True
-            )
-            # Or else just have a end_date > now
+            # Else all other types do not need agreement
             | (
                     ~Q(partnership_type=PartnershipType.MOBILITY.name)
                     & Q(end_date__gte=Now())
             ),
+            # And must be public
             is_public=True,
         )
 

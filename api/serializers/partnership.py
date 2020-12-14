@@ -171,14 +171,22 @@ class PartnershipSerializer(serializers.ModelSerializer):
                 value = _('status_finished')
             elif threshold < today:
                 value = _('status_archived')
-        return {
-            'status': value,
-            # annotations on the queryset
-            'start_date': partnership.agreement_start.strftime('%d/%m/%Y')
-            if partnership.agreement_start else '',
-            'end_date': partnership.agreement_end.strftime('%d/%m/%Y')
-            if partnership.agreement_end else '',
-        }
+        if partnership.is_course or partnership.is_doctorate:
+            return {
+                'status': value,
+                # annotations on the queryset
+                'start_date': partnership.start_year,
+                'end_date': partnership.end_year,
+            }
+        else:
+            return {
+                'status': value,
+                # annotations on the queryset
+                'start_date': partnership.start_date.strftime('%d/%m/%Y')
+                if partnership.start_date else '',
+                'end_date': partnership.end_date.strftime('%d/%m/%Y')
+                if partnership.end_date else '',
+            }
 
     def get_bilateral_agreements(self, partnership):
         return [
@@ -318,7 +326,10 @@ class PartnershipSerializer(serializers.ModelSerializer):
         funding_type = self._get_current_year_attr(partnership, 'funding_type')
         if funding_type:
             label += ' / ' + str(funding_type)
-        return label
+        return {
+            'name': label,
+            'url': funding_type and funding_type.url,
+        }
 
     def get_staff_contact(self, partnership):
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
