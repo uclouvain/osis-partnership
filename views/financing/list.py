@@ -87,4 +87,6 @@ class FinancingListView(PermissionRequiredMixin, SearchMixin, FormMixin, FilterV
         return redirect(self.get_success_url(academic_year.year))
 
     def get_paginate_by(self, queryset):
+        if "application/json" not in self.request.headers.get("Accept", ""):
+            return None
         return self.paginate_by

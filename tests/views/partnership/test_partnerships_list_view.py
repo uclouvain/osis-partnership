@@ -311,7 +311,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertEqual(response.context['paginator'].count, 28)
+        self.assertEqual(response.context['object_list'].count(), 28)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     def test_get_num_queries_serializer(self):
