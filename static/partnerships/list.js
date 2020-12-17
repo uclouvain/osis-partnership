@@ -80,6 +80,10 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         if (!['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.special-dates-filter select').val('')
         }
+        $('.agreements-dates-filter').collapse(value !== 'MOBILITY' ? 'show' : 'hide');
+        if (value === 'MOBILITY') {
+            $('.agreements-dates-filter select').val('')
+        }
     }
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);
