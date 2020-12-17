@@ -74,6 +74,7 @@ class PartnershipsMixinView:
                 'country__name',
                 'country_id',
                 'city',
+                'location',
             )
             .select_related(
                 'supervisor',
