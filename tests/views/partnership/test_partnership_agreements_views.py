@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.core import mail
+from django.test import tag
 from django.urls import reverse
 
 from base.models.enums.entity_type import SECTOR, FACULTY
@@ -78,6 +79,7 @@ class PartnershipAgreementsListViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/agreements/agreement_list.html')
 
+    @tag('perf')
     def test_num_queries_serializer(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(10):
@@ -103,6 +105,7 @@ class PartnershipAgreementsListViewTest(TestCase):
         self.assertTemplateNotUsed(response, 'partnerships/agreements/agreement_list.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
+    @tag('perf')
     def test_export_as_authenticated(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(18):

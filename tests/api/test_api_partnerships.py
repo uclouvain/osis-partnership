@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.test import tag
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -174,6 +175,7 @@ class PartnershipApiViewTest(TestCase):
             status=AgreementStatus.WAITING.name,
         )
 
+    @tag('perf')
     def test_get(self):
         with self.assertNumQueriesLessThan(19):
             response = self.client.get(self.url)
@@ -322,8 +324,9 @@ class PartnershipApiViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(len(response.json()['bilateral_agreements']), 0)
 
+    @tag('perf')
     def test_export(self):
         url = reverse('partnership_api_v1:partnerships:export')
-        with self.assertNumQueriesLessThan(17):
+        with self.assertNumQueriesLessThan(19):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)

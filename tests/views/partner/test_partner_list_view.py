@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.test import tag
 from django.urls import reverse
 from django.utils import timezone
 
@@ -61,12 +62,14 @@ class PartnersListViewTest(TestCase):
         self.assertTemplateNotUsed(response, 'partnerships/partners/partners_list.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
+    @tag('perf')
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(24):
             response = self.client.get(self.url)
             self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
 
+    @tag('perf')
     def test_num_queries_serializer(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(10):

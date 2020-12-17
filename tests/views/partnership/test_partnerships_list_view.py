@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.shortcuts import resolve_url
+from django.test import tag
 
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
@@ -314,6 +315,7 @@ class PartnershipsListViewTest(TestCase):
         self.assertEqual(response.context['object_list'].count(), 28)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
+    @tag('perf')
     def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(12):
@@ -673,6 +675,7 @@ class PartnershipsListViewTest(TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
 
+    @tag('perf')
     def test_export_all(self):
         self.client.force_login(self.user)
 

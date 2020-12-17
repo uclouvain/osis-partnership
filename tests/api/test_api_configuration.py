@@ -1,3 +1,4 @@
+from django.test import tag
 from django.urls import reverse
 
 from base.models.enums.entity_type import FACULTY, SECTOR
@@ -84,6 +85,7 @@ class ConfigurationApiViewTest(TestCase):
         CountryFactory(continent=continent)
         CountryFactory()
 
+    @tag('perf')
     def test_num_queries(self):
         with self.assertNumQueriesLessThan(13):
             self.client.get(self.url)
