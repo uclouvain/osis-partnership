@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
-from partnership.models import AgreementStatus, PartnershipType
+from partnership.models import AgreementStatus, PartnershipType, Financing
 from partnership.utils import merge_agreement_ranges
 
 __all__ = [
@@ -96,6 +96,25 @@ class PartnershipQuerySet(models.QuerySet):
             )[:1])
             qs = qs.annotate(**{field.replace('__', '_'): lookup})
         return qs
+
+    def annotate_financing(self, academic_year):
+        """
+        Add annotations to get funding for an academic year based on country
+        """
+        return self.annotate(
+            financing_source=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__program__source__name')[:1]),
+            financing_program=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__program__name')[:1]),
+            financing_type=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__name')[:1]),
+        )
 
     def filter_for_api(self, academic_year):
         from partnership.models import PartnershipYear, PartnershipAgreement
