@@ -46,10 +46,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_stt = serializers.SerializerMethodField()
 
     missions = serializers.SerializerMethodField()
-    subtype = serializers.SerializerMethodField()
-    id_number = serializers.SerializerMethodField()
-    project_title = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
 
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
@@ -125,25 +121,9 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_is_stt(self, partnership):
         return self._get_current_year_attr(partnership, 'is_stt')
 
-    def get_missions(self, partnership):
-        missions = self._get_current_year_attr(partnership, 'missions')
-        if not missions:
-            return ''
-        return ', '.join([mission.label for mission in missions.all()])
-
-    def get_description(self, partnership):
-        return self._get_current_year_attr(partnership, 'description')
-
-    def get_id_number(self, partnership):
-        return self._get_current_year_attr(partnership, 'id_number')
-
-    def get_project_title(self, partnership):
-        return self._get_current_year_attr(partnership, 'project_title')
-
-    def get_subtype(self, partnership):
-        subtype = self._get_current_year_attr(partnership, 'subtype')
-        if subtype:
-            return subtype.label
+    @staticmethod
+    def get_missions(partnership):
+        return ', '.join([mission.label for mission in partnership.missions.all()])
 
     def get_education_fields(self, partnership):
         education_fields = self._get_current_year_attr(partnership, 'education_fields')

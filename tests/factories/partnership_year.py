@@ -27,11 +27,6 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
         years=[],
     )
 
-    @factory.post_generation
-    def missions(obj, create, extracted, **kwargs):
-        if create and extracted is not None:
-            obj.missions.set(extracted)
-
 
 class PartnershipMissionFactory(factory.DjangoModelFactory):
     class Meta:

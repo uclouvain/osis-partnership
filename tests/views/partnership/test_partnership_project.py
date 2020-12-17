@@ -74,11 +74,11 @@ class PartnershipCreateProjectViewTest(TestCase):
             'end_date': date.today() + timedelta(days=365),
             'year-education_fields': [cls.education_field.pk],
             'year-education_levels': [cls.education_level.pk],
-            'year-missions': PartnershipMissionFactory().pk,
+            'missions': PartnershipMissionFactory().pk,
             'year-funding': 'fundingtype-%s' % FundingTypeFactory().pk,
-            'year-project_title': "Project title 1",
-            'year-id_number': "#132456",
-            'year-ucl_status': "coordinator",
+            'project_title': "Project title 1",
+            'id_number': "#132456",
+            'ucl_status': "coordinator",
         }
         PartnershipMissionFactory()
 
@@ -162,14 +162,14 @@ class PartnershipUpdateProjectViewTest(TestCase):
             'end_date': cls.end_academic_year.end_date,
             'year-education_fields': [cls.education_field.pk],
             'year-education_levels': [cls.education_level.pk],
-            'year-missions': [
+            'missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
             'year-funding': 'fundingtype-%s' % cls.type.pk,
-            'year-project_title': "Project title 1",
-            'year-id_number': "#132456",
-            'year-ucl_status': "coordinator",
+            'project_title': "Project title 1",
+            'id_number': "#132456",
+            'ucl_status': "coordinator",
         }
 
     def test_get_own_partnership_as_adri(self):

@@ -77,10 +77,12 @@ class PartnershipsMixinView:
                 'location',
             )
             .select_related(
+                'subtype',
                 'supervisor',
                 'partner_entity',
             ).prefetch_related(
                 'contacts',
+                'missions',
                 Prefetch(
                     'medias',
                     queryset=Media.objects.select_related('type').filter(
@@ -132,7 +134,6 @@ class PartnershipsMixinView:
                         PartnershipYear.objects
                         .select_related(
                             'academic_year',
-                            'subtype',
                             'funding_source',
                             'funding_program',
                             'funding_type',
@@ -158,7 +159,6 @@ class PartnershipsMixinView:
                             'education_fields',
                             'education_levels',
                             'offers',
-                            'missions',
                         ).filter(academic_year=academic_year)
                     ),
                     to_attr='current_year_for_api',
@@ -324,8 +324,7 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
-                # Let's say that the subtype is not changing over years
-                str(partnership.current_year_for_api[0].subtype or ''),
+                str(partnership.subtype or ''),
                 str(partnership.country_continent_name),
                 str(partnership.country_name),
                 str(partnership.partner),

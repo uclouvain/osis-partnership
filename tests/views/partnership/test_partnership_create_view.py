@@ -110,7 +110,7 @@ class PartnershipCreateViewTest(TestCase):
             'year-offers': [],
             'year-start_academic_year': cls.start_academic_year.pk,
             'year-end_academic_year': cls.end_academic_year.pk,
-            'year-missions': [PartnershipMissionFactory().pk],
+            'missions': [PartnershipMissionFactory().pk],
         }
 
     def test_get_view_anonymous(self):

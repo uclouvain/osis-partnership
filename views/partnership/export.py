@@ -70,7 +70,6 @@ class PartnershipExportView(ExportView, PartnershipsListView):
         queryset = self.filterset.qs
         year_qs = PartnershipYear.objects.select_related(
             'academic_year',
-            'subtype',
             'funding_source',
             'funding_program',
             'funding_type',
@@ -129,6 +128,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 ),
             )
             .select_related(
+                'subtype',
                 'author__user',
             )
             .filter(
@@ -150,7 +150,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
-                str(year.subtype or ''),
+                str(partnership.subtype or ''),
                 str(year.funding_source or ''),
                 str(year.funding_program or ''),
                 str(year.funding_type or ''),

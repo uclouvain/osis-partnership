@@ -703,7 +703,7 @@ class PartnershipsListViewTest(TestCase):
         partnership2 = BasePartnershipFactory(
             partnership_type=PartnershipType.PROJECT.name,
             years__academic_year=year,
-            years__subtype=PartnershipSubtypeFactory(),
+            subtype=PartnershipSubtypeFactory(),
             years__funding_type=FundingTypeFactory(),
         )
         BasePartnershipAgreementFactory(

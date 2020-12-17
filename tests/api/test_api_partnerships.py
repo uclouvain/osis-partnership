@@ -63,6 +63,7 @@ class PartnershipApiViewTest(TestCase):
             years=[],
             partner__contact_address__country=cls.country,
             partner__contact_address__city="Tirana",
+            subtype=cls.subtype,
         )
         year = PartnershipYearFactory(
             partnership=cls.partnership,
@@ -72,7 +73,6 @@ class PartnershipApiViewTest(TestCase):
             funding_source=cls.funding_source,
             funding_program=cls.funding_program,
             funding_type=cls.funding_type,
-            subtype=cls.subtype,
         )
         cls.education_field = DomainIscedFactory()
         year.education_fields.add(cls.education_field)

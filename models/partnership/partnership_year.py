@@ -94,44 +94,6 @@ class PartnershipYear(models.Model):
         null=True,
         blank=True,
     )
-    missions = models.ManyToManyField(
-        'partnership.PartnershipMission',
-        verbose_name=_('partnership_missions'),
-    )
-    subtype = models.ForeignKey(
-        'partnership.PartnershipSubtype',
-        verbose_name=_('partnership_subtype'),
-        on_delete=models.PROTECT,
-        related_name='years',
-        null=True,
-    )
-    description = models.TextField(
-        _('partnership_year_description'),
-        help_text=_('visible_on_api'),
-        default='',
-        blank=True,
-    )
-
-    # For PROJECT type
-    ucl_status = models.CharField(
-        verbose_name=_('partnership_year_ucl_status'),
-        max_length=20,
-        default='',
-        choices=[
-            ('coordinator', _('Coordinator')),
-            ('partner', _('Partner')),
-        ],
-    )
-    id_number = models.CharField(
-        verbose_name=_('partnership_year_id_number'),
-        max_length=200,
-        default='',
-    )
-    project_title = models.CharField(
-        verbose_name=_('partnership_year_project_title'),
-        max_length=200,
-        default='',
-    )
 
     class Meta:
         unique_together = ('partnership', 'academic_year')

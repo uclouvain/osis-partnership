@@ -57,6 +57,7 @@ class PartnershipBaseForm(forms.ModelForm):
             'comment',
             'tags',
             'is_public',
+            'missions',
         )
         widgets = {
             'partner': autocomplete.ModelSelect2(
@@ -72,6 +73,7 @@ class PartnershipBaseForm(forms.ModelForm):
             ),
             'tags': autocomplete.Select2Multiple(),
             'partnership_type': forms.HiddenInput(),
+            'missions': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, partnership_type=None, *args, **kwargs):
@@ -91,6 +93,38 @@ class PartnershipBaseForm(forms.ModelForm):
         # Prevent type modification for updating
         if self.instance.pk:
             self.fields['partnership_type'].disabled = True
+
+        if 'subtype' in self.fields:
+            field_subtype = self.fields['subtype']
+
+            # Constraint according to partnership type
+            condition = Q(
+                types__contains=[self.partnership_type],
+                is_active=True
+            )
+
+            # Allow inactive types already set only for update
+            if self.instance.pk:
+                condition |= Q(pk=self.instance.subtype_id)
+            field_subtype.queryset = field_subtype.queryset.filter(condition)
+
+            # Prevent empty value from showing
+            field_subtype.empty_label = None
+
+        if 'description' in self.fields:
+            self.fields['description'].widget.attrs['rows'] = 3
+
+        # Fill the missions field according to the current type
+        field_missions = self.fields['missions']
+        field_missions.label_from_instance = lambda o: o.label
+        field_missions.queryset = field_missions.queryset.filter(
+            types__contains=[self.partnership_type],
+        ).order_by('label')
+        # If only one mission available, force it
+        if len(field_missions.queryset) == 1:
+            field_missions.initial = field_missions.queryset
+            field_missions.widget = forms.MultipleHiddenInput()
+            field_missions.disabled = True
 
     def clean_partner(self):
         partner = self.cleaned_data['partner']
@@ -138,7 +172,20 @@ class PartnershipWithDatesMixin(PartnershipBaseForm):
 
 
 class PartnershipGeneralForm(PartnershipWithDatesMixin):
-    pass
+    class Meta(PartnershipWithDatesMixin.Meta):
+        fields = PartnershipWithDatesMixin.Meta.fields + (
+            'subtype',
+            'description',
+        )
+        widgets = {
+            **PartnershipWithDatesMixin.Meta.widgets,
+            'subtype': forms.RadioSelect,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subtype'].label = _('partnership_subtype_agreement')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
 class PartnershipMobilityForm(PartnershipBaseForm):
@@ -202,12 +249,44 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 
 class PartnershipCourseForm(PartnershipBaseForm):
-    pass
+    class Meta(PartnershipBaseForm.Meta):
+        fields = PartnershipBaseForm.Meta.fields + (
+            'subtype',
+            'description',
+        )
+        widgets = {
+            **PartnershipBaseForm.Meta.widgets,
+            'subtype': forms.RadioSelect,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subtype'].label = _('partnership_subtype_course')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
-    pass
+    class Meta(PartnershipBaseForm.Meta):
+        fields = PartnershipBaseForm.Meta.fields + (
+            'subtype',
+            'description',
+        )
+        widgets = {
+            **PartnershipBaseForm.Meta.widgets,
+            'subtype': forms.RadioSelect,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subtype'].label = _('partnership_subtype_doctorate')
+        self.fields['subtype'].label_from_instance = lambda o: o.label
 
 
 class PartnershipProjectForm(PartnershipWithDatesMixin):
-    pass
+    class Meta(PartnershipWithDatesMixin.Meta):
+        fields = PartnershipWithDatesMixin.Meta.fields + (
+            'description',
+            'id_number',
+            'project_title',
+            'ucl_status',
+        )
