@@ -23,7 +23,6 @@ from partnership.api.serializers.configuration import (
 from partnership.models import (
     Partner,
     PartnerTag,
-    PartnershipAgreement,
     PartnershipConfiguration,
     PartnershipTag,
     PartnershipType,
@@ -39,7 +38,8 @@ class ConfigurationView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        current_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        config = PartnershipConfiguration.get_configuration()
+        current_year = config.get_current_academic_year_for_api()
 
         continents = Continent.objects.prefetch_related(
             Prefetch(
@@ -50,17 +50,7 @@ class ConfigurationView(APIView):
             )
         )
         partners = (
-            Partner.objects
-            .annotate(
-                has_in=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership__partner=OuterRef('pk'),
-                        start_academic_year__year__lte=current_year.year,
-                        end_academic_year__year__gte=current_year.year,
-                    )
-                )
-            )
-            .filter(has_in=True)
+            Partner.objects.filter(partnerships__isnull=False)
             .values('uuid', 'organization__name')
         )
 
@@ -68,8 +58,12 @@ class ConfigurationView(APIView):
             entity=OuterRef('pk')
         ).order_by('-start_date')
 
+        # Get UCL entity parents which children have a partnership
+        cte = EntityVersion.objects.with_children(entity__partnerships__isnull=False)
+        qs = cte.queryset().with_cte(cte).values('entity_id')
         ucl_universities = (
             Entity.objects
+            .filter(pk__in=qs)
             .annotate(
                 most_recent_title=Subquery(last_version.values('title')[:1]),
                 acronym_path=CTESubquery(
@@ -77,15 +71,7 @@ class ConfigurationView(APIView):
                         entity_id=OuterRef('pk'),
                     ).values('acronym_path')[:1]
                 ),
-                has_in=Exists(
-                    PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('partnerships'),
-                        start_academic_year__year__lte=current_year.year,
-                        end_academic_year__year__gte=current_year.year,
-                    )
-                )
             )
-            .filter(has_in=True)
             .distinct()
             .order_by('acronym_path')
         )

@@ -76,8 +76,8 @@ class ConfigurationApiViewTest(TestCase):
         FundingTypeFactory()
 
         # Some noises
-        PartnerFactory()
-        PartnershipFactory()
+        cls.noisy_partner = PartnerFactory()
+        cls.noisy_partnership = PartnershipFactory()
 
         # Continents
         continent = Continent.objects.create(code='AA', name='aaaaa')
@@ -103,15 +103,24 @@ class ConfigurationApiViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn('partners', data)
-        self.assertEqual(len(data['partners']), 2)
+        self.assertEqual(len(data['partners']), 3)
+        self.assertNotIn(
+            self.noisy_partner.uuid,
+            [p['value'] for p in data['partners']],
+        )
+        self.assertNotIn(
+            self.noisy_partnership.partner.uuid,
+            [p['value'] for p in data['partners']],
+        )
 
     def test_ucl_universities(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn('ucl_universities', data)
-        self.assertEqual(len(data['ucl_universities']), 2)
-        self.assertIn("SSH / FIAL -", data['ucl_universities'][0]['label'])
+        self.assertEqual(len(data['ucl_universities']), 5)
+        self.assertIn("SSH -", data['ucl_universities'][1]['label'])
+        self.assertIn("SSH / FIAL -", data['ucl_universities'][2]['label'])
 
     def test_fundings(self):
         response = self.client.get(self.url)
