@@ -50,7 +50,9 @@ class ConfigurationView(APIView):
             )
         )
         partners = (
-            Partner.objects.filter(partnerships__isnull=False)
+            Partner.objects
+            .filter(partnerships__isnull=False)
+            .distinct()
             .values('uuid', 'organization__name')
         )
 
