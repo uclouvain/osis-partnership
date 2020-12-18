@@ -164,6 +164,17 @@ class FundingMixin(forms.Form):
                     or self.instance.funding_source
             )
 
+    def clean_funding(self):
+        # Check funding is active if changed or new instance
+        funding = self.cleaned_data.get('funding')
+        if (
+                (not self.instance.pk or 'funding' in self.changed_data)
+                and isinstance(funding, (FundingType, FundingProgram))
+                and not funding.is_active
+        ):
+            raise forms.ValidationError(_('Funding is not active anymore'))
+        return funding
+
     def clean(self):
         data = super().clean()
 

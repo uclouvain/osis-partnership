@@ -92,6 +92,13 @@ class PartnershipCreateProjectViewTest(TestCase):
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
+    def test_inactive_funding(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['year-funding'] = 'fundingtype-%s' % FundingTypeFactory(is_active=False).pk
+        response = self.client.post(self.url, data=data)
+        self.assertIn('funding', response.context['form_year'].errors)
+
 
 class PartnershipUpdateProjectViewTest(TestCase):
     @classmethod
@@ -194,6 +201,19 @@ class PartnershipUpdateProjectViewTest(TestCase):
         data['year-funding'] = 'foobar'
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_post_funding_became_inactive(self):
+        self.client.force_login(self.user)
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+        self.type.is_active = False
+        self.type.save()
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+        self.type.is_active = True
+        self.type.save()
 
     def test_post_financing_program(self):
         self.client.force_login(self.user)

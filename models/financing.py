@@ -54,6 +54,7 @@ class FundingTypeManager(models.Manager):
 class FundingType(models.Model):
     name = models.CharField(verbose_name=_('funding_type'), max_length=100)
     url = models.URLField(_('url'), blank=True)
+    is_active = models.BooleanField(_('is_active'), default=True)
     program = models.ForeignKey(
         'partnership.FundingProgram',
         verbose_name=_('funding_program'),
@@ -72,6 +73,7 @@ class FundingType(models.Model):
 
 class FundingProgram(models.Model):
     name = models.CharField(verbose_name=_('funding_program'), max_length=100)
+    is_active = models.BooleanField(_('is_active'), default=True)
     source = models.ForeignKey(
         'partnership.FundingSource',
         verbose_name=_('funding_source'),
@@ -84,6 +86,12 @@ class FundingProgram(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not self.is_active:
+            # Disable all children
+            self.fundingtype_set.all().update(is_active=False)
 
 
 class FundingSource(models.Model):
