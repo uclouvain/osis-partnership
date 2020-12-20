@@ -43,28 +43,28 @@
   },
   {
     "model": "partnership.fundingsource",
-    "pk": 8,
+    "pk": 7,
     "fields": {
       "name": "Fonds européens"
     }
   },
   {
     "model": "partnership.fundingsource",
-    "pk": 10,
+    "pk": 8,
     "fields": {
       "name": "Fond privés"
     }
   },
   {
     "model": "partnership.fundingsource",
-    "pk": 11,
+    "pk": 9,
     "fields": {
       "name": "Fonds publics étrangers et internationaux"
     }
   },
   {
     "model": "partnership.fundingsource",
-    "pk": 12,
+    "pk": 10,
     "fields": {
       "name": "Néant"
     }
