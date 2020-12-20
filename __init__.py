@@ -18,6 +18,7 @@ def generate_sql(cls, connection, query, as_sql):
     # We need to cast the second part of the return value if it's a tuple
     if len(ret) == 2 and isinstance(ret[1], tuple):
         return ret[0], list(ret[1])
+    return ret
 
 
 CTECompiler.generate_sql = classmethod(generate_sql)
