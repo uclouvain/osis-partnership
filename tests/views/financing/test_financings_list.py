@@ -1,10 +1,11 @@
 from django.shortcuts import resolve_url
-from django.test import TestCase
+from django.test import tag
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipConfiguration
+from partnership.tests import TestCase
 from partnership.tests.factories import (
     FinancingFactory,
     PartnershipEntityManagerFactory,
@@ -73,3 +74,12 @@ class FinancingListViewTest(TestCase):
         # And post empty should redirect to current year for creation/modification
         response = self.client.post(self.url, {'year': ''})
         self.assertRedirects(response, self.url)
+
+    @tag('perf')
+    def test_queries_count(self):
+        self.client.force_login(self.user_adri)
+        with self.assertNumQueriesLessThan(27):
+            self.client.get(self.default_url)
+
+        with self.assertNumQueriesLessThan(12):
+            self.client.get(self.default_url, HTTP_ACCEPT='application/json')

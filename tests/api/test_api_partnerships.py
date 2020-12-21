@@ -1,7 +1,9 @@
 from datetime import date
 
+from django.contrib.gis.geos import Point
 from django.test import tag
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -26,7 +28,7 @@ from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
-PARTNERSHIP_COUNT = 4
+PARTNERSHIP_COUNT = 5
 
 
 class PartnershipApiViewTest(TestCase):
@@ -35,7 +37,9 @@ class PartnershipApiViewTest(TestCase):
         cls.url = reverse('partnership_api_v1:partnerships:list')
 
         AcademicYearFactory.produce_in_future(quantity=3)
-        current_academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.get_current_academic_year_for_api()
+        cls.current_academic_year = current_academic_year
 
         # Continents
         cls.continent = Continent.objects.create(code='AA', name='aaaaa')
@@ -114,6 +118,7 @@ class PartnershipApiViewTest(TestCase):
             partner__contact_address__country__name="Zambia",
             partner__contact_address__country__iso_code="ZM",
             partner__contact_address__city="Lusaka",
+            partner__contact_address__location=Point(-15.4166, 28.2822),
         )
         PartnershipAgreementFactory(
             partnership=cls.partnership_2,
@@ -143,13 +148,19 @@ class PartnershipApiViewTest(TestCase):
             academic_year=current_academic_year,
             funding_source=FundingSourceFactory(),
         )
+        cls.partnership_course = PartnershipFactory(
+            partnership_type=PartnershipType.COURSE.name,
+            start_date=date(current_academic_year.year, 1, 1),
+            end_date=date(current_academic_year.year + 1, 10, 1),
+        )
 
         cls.partnership_general = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
             start_date=date(current_academic_year.year - 1, 1, 1),
             end_date=date(current_academic_year.year + 3, 10, 1),
             partner__contact_address__country__iso_code="ZM",
-            partner__contact_address__city="Mpunde",
+            partner__contact_address__city="Kabwe",
+            partner__contact_address__location=Point(-14.4415250, 28.4441831),
             years=[PartnershipYearFactory(academic_year=current_academic_year)],
         )
         PartnershipAgreementFactory(
@@ -291,6 +302,27 @@ class PartnershipApiViewTest(TestCase):
         results = response.json()['results']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
+
+    def test_filter_bbox(self):
+        response = self.client.get(self.url,  {
+            'bbox': '-14.7058,27.7625,-16.6072,29.9707',
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
+
+    def test_status_course_display(self):
+        response = self.client.get(self.url,  {
+            'type': PartnershipType.COURSE.name,
+        })
+        results = response.json()['results']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_course.uuid))
+        self.assertEqual(results[0]['status'], {
+            'end_date': str(self.current_academic_year),
+            'start_date': str(self.current_academic_year),
+            'status': _('status_ongoing'),
+        })
 
     def test_retrieve_case_partnership_with_agreement_validated(self):
         url = reverse(
