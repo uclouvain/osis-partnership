@@ -83,8 +83,8 @@ class PartnershipCreateGeneralViewTest(TestCase):
             'year-entities': [],
             'year-offers': [],
             'year-funding_type': FundingTypeFactory().pk,
-            'year-missions': PartnershipMissionFactory().pk,
-            'year-subtype': PartnershipSubtypeFactory().pk,
+            'missions': PartnershipMissionFactory().pk,
+            'subtype': PartnershipSubtypeFactory().pk,
         }
 
     def test_get_view_as_adri(self):
@@ -192,11 +192,11 @@ class PartnershipUpdateGeneralViewTest(TestCase):
             'year-entities': [],
             'year-offers': [],
             'year-funding_type': FundingTypeFactory().pk,
-            'year-missions': [
+            'missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
-            'year-subtype': cls.subtype1.pk,
+            'subtype': cls.subtype1.pk,
         }
 
     def test_get_own_partnership_as_adri(self):
@@ -225,7 +225,7 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.client.post(self.url, data=self.data, follow=True)
 
         response = self.client.get(self.url)
-        field = response.context_data['form_year'].fields['subtype']
+        field = response.context_data['form'].fields['subtype']
         self.assertIn(self.subtype1, field.queryset)
         self.assertIn(self.subtype2, field.queryset)
 
@@ -236,6 +236,6 @@ class PartnershipUpdateGeneralViewTest(TestCase):
         self.subtype2.save()
 
         response = self.client.get(self.url)
-        field = response.context_data['form_year'].fields['subtype']
+        field = response.context_data['form'].fields['subtype']
         self.assertIn(self.subtype1, field.queryset)
         self.assertNotIn(self.subtype2, field.queryset)

@@ -6,7 +6,7 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import PartnershipConfiguration
 from partnership.tests.factories import (
-    PartnershipEntityManagerFactory, FundingSourceFactory,
+    PartnershipEntityManagerFactory, FundingSourceFactory, FundingTypeFactory,
 )
 
 
@@ -80,6 +80,24 @@ class FinancingCrudTest(TestCase):
         }, follow=True)
         self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
         self.assertContains(response, 'Foobarbaz')
+
+    def test_disable_children(self):
+        self.client.force_login(self.user_adri)
+        funding_type = FundingTypeFactory()
+        program = funding_type.program
+        url = resolve_url(
+            'partnerships:financings:edit', model=program, pk=program.pk
+        )
+        response = self.client.post(url, {
+            'name': 'Foobarbaz',
+            'is_active': False,
+            'source': program.source_id,
+        }, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/financings/financing_list.html')
+        self.assertContains(response, 'Foobarbaz')
+
+        funding_type.refresh_from_db()
+        self.assertFalse(funding_type.is_active)
 
     def test_delete_as_user(self):
         self.client.force_login(self.user)

@@ -74,11 +74,11 @@ class PartnershipCreateProjectViewTest(TestCase):
             'end_date': date.today() + timedelta(days=365),
             'year-education_fields': [cls.education_field.pk],
             'year-education_levels': [cls.education_level.pk],
-            'year-missions': PartnershipMissionFactory().pk,
+            'missions': PartnershipMissionFactory().pk,
             'year-funding': 'fundingtype-%s' % FundingTypeFactory().pk,
-            'year-project_title': "Project title 1",
-            'year-id_number': "#132456",
-            'year-ucl_status': "coordinator",
+            'project_title': "Project title 1",
+            'id_number': "#132456",
+            'ucl_status': "coordinator",
         }
         PartnershipMissionFactory()
 
@@ -91,6 +91,13 @@ class PartnershipCreateProjectViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_inactive_funding(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['year-funding'] = 'fundingtype-%s' % FundingTypeFactory(is_active=False).pk
+        response = self.client.post(self.url, data=data)
+        self.assertIn('funding', response.context['form_year'].errors)
 
 
 class PartnershipUpdateProjectViewTest(TestCase):
@@ -162,14 +169,14 @@ class PartnershipUpdateProjectViewTest(TestCase):
             'end_date': cls.end_academic_year.end_date,
             'year-education_fields': [cls.education_field.pk],
             'year-education_levels': [cls.education_level.pk],
-            'year-missions': [
+            'missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
             'year-funding': 'fundingtype-%s' % cls.type.pk,
-            'year-project_title': "Project title 1",
-            'year-id_number': "#132456",
-            'year-ucl_status': "coordinator",
+            'project_title': "Project title 1",
+            'id_number': "#132456",
+            'ucl_status': "coordinator",
         }
 
     def test_get_own_partnership_as_adri(self):
@@ -194,6 +201,19 @@ class PartnershipUpdateProjectViewTest(TestCase):
         data['year-funding'] = 'foobar'
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_post_funding_became_inactive(self):
+        self.client.force_login(self.user)
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+        self.type.is_active = False
+        self.type.save()
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+        self.type.is_active = True
+        self.type.save()
 
     def test_post_financing_program(self):
         self.client.force_login(self.user)

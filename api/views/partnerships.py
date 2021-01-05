@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.db.models.expressions import (
     F, OuterRef, Subquery, Value,
 )
-from django.db.models.functions import Concat, Now
+from django.db.models.functions import Concat, Now, Right, Cast
 from django.db.models.query import Prefetch
 from django.http import JsonResponse
 from django.urls import reverse
@@ -51,7 +51,20 @@ class PartnershipsMixinView:
         }
 
     def get_queryset(self):
-        academic_year = PartnershipConfiguration.get_configuration().get_current_academic_year_for_api()
+        config = PartnershipConfiguration.get_configuration()
+        academic_year = config.get_current_academic_year_for_api()
+        self.academic_year = academic_year
+        academic_year_repr = Concat(
+            Cast(F('academic_year__year'), models.CharField()),
+            Value('-'),
+            Right(
+                Cast(
+                    F('academic_year__year') + 1,
+                    output_field=models.CharField()
+                ),
+                2
+            ),
+        )
 
         return (
             Partnership.objects
@@ -63,12 +76,15 @@ class PartnershipsMixinView:
                 'country__name',
                 'country_id',
                 'city',
+                'location',
             )
             .select_related(
+                'subtype',
                 'supervisor',
                 'partner_entity',
             ).prefetch_related(
                 'contacts',
+                'missions',
                 Prefetch(
                     'medias',
                     queryset=Media.objects.select_related('type').filter(
@@ -120,7 +136,6 @@ class PartnershipsMixinView:
                         PartnershipYear.objects
                         .select_related(
                             'academic_year',
-                            'subtype',
                             'funding_source',
                             'funding_program',
                             'funding_type',
@@ -146,7 +161,6 @@ class PartnershipsMixinView:
                             'education_fields',
                             'education_levels',
                             'offers',
-                            'missions',
                         ).filter(academic_year=academic_year)
                     ),
                     to_attr='current_year_for_api',
@@ -181,6 +195,20 @@ class PartnershipsMixinView:
                         start_date__lte=Now(),
                         end_date__gte=Now(),
                     ).order_by('-end_date').values('start_date')[:1]
+                ),
+                start_year=Subquery(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                    ).annotate(
+                        name=academic_year_repr
+                    ).order_by('academic_year').values('name')[:1]
+                ),
+                end_year=Subquery(
+                    PartnershipYear.objects.filter(
+                        partnership=OuterRef('pk'),
+                    ).annotate(
+                        name=academic_year_repr
+                    ).order_by('-academic_year').values('name')[:1]
                 ),
                 agreement_end=Subquery(
                     PartnershipAgreement.objects.filter(
@@ -262,6 +290,9 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
             _('id'),
             _('partnership_type'),
             _('partnership_subtype'),
+            _('funding_source'),
+            _('funding_program'),
+            _('funding_type'),
             _('continent'),
             _('country'),
             _('partner'),
@@ -276,30 +307,59 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
             _('tags'),
             _('created'),
             _('modified'),
+            _('partnership_export_start'),
+            _('partnership_export_end'),
             _('end_valid_agreement'),
             _('external_id'),
         ]
 
     def get_xls_data(self):
         queryset = self.filterset.qs
+
         queryset = (
             queryset
+            .annotate_financing(self.academic_year)
             .annotate(
                 tags_list=StringAgg('tags__value', ', '),
             )
-            .select_related('author__user')
+            .prefetch_related(
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects.select_related('academic_year'),
+                ),
+                Prefetch(
+                    'years',
+                    queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
+                    to_attr='reverse_years',
+                ),
+                'partner_entity__entityversion_set',
+            )
         )
         for partnership in queryset.distinct():
+            year = (partnership.current_year_for_api[0]
+                    if partnership.current_year_for_api else '')
             last_agreement = (partnership.valid_current_agreements[0]
                               if partnership.valid_current_agreements else None)
+
+            # Replace funding values if financing is eligible for mobility and not overridden in year
+            if partnership.is_mobility and year and year.eligible and partnership.financing_source and not year.funding_source:
+                funding_source = partnership.financing_source
+                funding_program = partnership.financing_program
+                funding_type = partnership.financing_type
+            else:
+                funding_source = year and year.funding_source
+                funding_program = year and year.funding_program
+                funding_type = year and year.funding_type
 
             parts = partnership.acronym_path[1:] if partnership.acronym_path else []
 
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
-                # Let's say that the subtype is not changing over years
-                str(partnership.current_year_for_api[0].subtype or ''),
+                str(partnership.subtype or ''),
+                str(funding_source or ''),
+                str(funding_program or ''),
+                str(funding_type or ''),
                 str(partnership.country_continent_name),
                 str(partnership.country_name),
                 str(partnership.partner),
@@ -316,6 +376,12 @@ class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
+
+                str(partnership.years.first().academic_year)
+                if partnership.is_mobility else partnership.start_date,
+
+                str(partnership.reverse_years[0].academic_year)
+                if partnership.is_mobility else partnership.end_date,
 
                 getattr(
                     last_agreement,

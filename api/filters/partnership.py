@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import Polygon
 from django.db.models import Exists, OuterRef, Q, Case, When, Subquery, F
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
@@ -98,6 +99,8 @@ class PartnershipFilter(filters.FilterSet):
         method=filter_funding('funding_type_id', 'type_id'),
     )
 
+    bbox = filters.CharFilter(method='filter_bbox')
+
     class Meta:
         model = Partnership
         fields = [
@@ -142,3 +145,8 @@ class PartnershipFilter(filters.FilterSet):
             return queryset.filter(
                 Q(years__is_stt=True) | Q(years__is_sta=True)
             )
+
+    @staticmethod
+    def filter_bbox(queryset, name, value):
+        bbox = Polygon.from_bbox(value.split(','))
+        return queryset.filter(location__contained=bbox)

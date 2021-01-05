@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.shortcuts import resolve_url
 from django.test import TestCase
@@ -85,8 +85,8 @@ class PartnershipCreateDoctorateViewTest(TestCase):
             'year-education_fields': [cls.education_field.pk],
             'year-entities': [],
             'year-offers': [],
-            'year-missions': PartnershipMissionFactory().pk,
-            'year-subtype': PartnershipSubtypeFactory().pk,
+            'missions': PartnershipMissionFactory().pk,
+            'subtype': PartnershipSubtypeFactory().pk,
         }
 
     def test_get_view_as_adri(self):
@@ -173,11 +173,11 @@ class PartnershipUpdateDoctorateViewTest(TestCase):
             'year-education_fields': [cls.education_field.pk],
             'year-entities': [],
             'year-offers': [],
-            'year-missions': [
+            'missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
             ],
-            'year-subtype': PartnershipSubtypeFactory().pk,
+            'subtype': PartnershipSubtypeFactory().pk,
         }
 
     def test_get_own_partnership_as_adri(self):

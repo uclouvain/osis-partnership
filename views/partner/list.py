@@ -38,4 +38,6 @@ class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
         )
 
     def get_paginate_by(self, queryset):
+        if "application/json" not in self.request.headers.get("Accept", ""):
+            return None
         return 20

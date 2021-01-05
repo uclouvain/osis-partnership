@@ -88,8 +88,8 @@ ul.tags-list li {
   height: 6em;
 }
 
-#id_year-subtype .radio,
-#id_year-missions .checkbox
+#id_subtype .radio,
+#id_missions .checkbox
 {
   margin-right: 3em;
 }

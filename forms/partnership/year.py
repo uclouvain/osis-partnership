@@ -2,7 +2,6 @@ from dal import autocomplete
 from dal.forward import Const
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
@@ -64,51 +63,17 @@ class PartnershipYearBaseForm(forms.ModelForm):
             'entities',
             'offers',
             'eligible',
-            'missions',
         )
         widgets = {
             'education_fields': autocomplete.ModelSelect2Multiple(),
             'education_levels': autocomplete.ModelSelect2Multiple(),
             'eligible': forms.HiddenInput(),
-            'missions': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, partnership_type=None, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
-
-        if 'description' in self.fields:
-            self.fields['description'].widget.attrs['rows'] = 3
-
-        # Fill the missions field according to the current type
-        field_missions = self.fields['missions']
-        field_missions.label_from_instance = lambda o: o.label
-        field_missions.queryset = field_missions.queryset.filter(
-            types__contains=[self.partnership_type],
-        ).order_by('label')
-        # If only one mission available, force it
-        if len(field_missions.queryset) == 1:
-            field_missions.initial = field_missions.queryset
-            field_missions.widget = forms.MultipleHiddenInput()
-            field_missions.disabled = True
-
-
-class PartnershipYearSubtypeMixin:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        field_subtype = self.fields['subtype']
-
-        # Constraint according to partnership type
-        condition = Q(types__contains=[self.partnership_type], is_active=True)
-
-        # Allow inactive types already set only for update
-        if self.instance.pk:
-            condition |= Q(pk=self.instance.subtype_id)
-        field_subtype.queryset = field_subtype.queryset.filter(condition)
-
-        # Prevent empty value from showing
-        field_subtype.empty_label = None
 
 
 class PartnershipYearWithoutDatesForm(PartnershipYearBaseForm):
@@ -182,21 +147,8 @@ class PartnershipYearWithoutDatesForm(PartnershipYearBaseForm):
         return data
 
 
-class PartnershipYearGeneralForm(PartnershipYearSubtypeMixin, PartnershipYearBaseForm):
-    class Meta(PartnershipYearBaseForm.Meta):
-        fields = PartnershipYearBaseForm.Meta.fields + (
-            'subtype',
-            'description',
-        )
-        widgets = {
-            **PartnershipYearBaseForm.Meta.widgets,
-            'subtype': forms.RadioSelect
-        }
-
-    def __init__(self, partnership_type=None, *args, **kwargs):
-        super().__init__(partnership_type, *args, **kwargs)
-        self.fields['subtype'].label = _('partnership_subtype_agreement')
-        self.fields['subtype'].label_from_instance = lambda o: o.label
+class PartnershipYearGeneralForm(PartnershipYearBaseForm):
+    pass
 
 
 class FundingMixin(forms.Form):
@@ -211,6 +163,17 @@ class FundingMixin(forms.Form):
                     or self.instance.funding_program
                     or self.instance.funding_source
             )
+
+    def clean_funding(self):
+        # Check funding is active if changed or new instance
+        funding = self.cleaned_data.get('funding')
+        if (
+                (not self.instance.pk or 'funding' in self.changed_data)
+                and isinstance(funding, (FundingType, FundingProgram))
+                and not funding.is_active
+        ):
+            raise forms.ValidationError(_('Funding is not active anymore'))
+        return funding
 
     def clean(self):
         data = super().clean()
@@ -290,40 +253,16 @@ class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm)
         return data
 
 
-class PartnershipYearCourseForm(PartnershipYearSubtypeMixin, PartnershipYearWithoutDatesForm):
-    class Meta(PartnershipYearWithoutDatesForm.Meta):
-        fields = PartnershipYearWithoutDatesForm.Meta.fields + (
-            'subtype',
-            'description',
-        )
-        widgets = {
-            **PartnershipYearWithoutDatesForm.Meta.widgets,
-            'subtype': forms.RadioSelect
-        }
-
+class PartnershipYearCourseForm(PartnershipYearWithoutDatesForm):
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
-        self.fields['subtype'].label = _('partnership_subtype_course')
-        self.fields['subtype'].label_from_instance = lambda o: o.label
 
         self.fields['education_levels'].required = True
 
 
-class PartnershipYearDoctorateForm(PartnershipYearSubtypeMixin, PartnershipYearWithoutDatesForm):
-    class Meta(PartnershipYearBaseForm.Meta):
-        fields = PartnershipYearBaseForm.Meta.fields + (
-            'subtype',
-            'description',
-        )
-        widgets = {
-            **PartnershipYearBaseForm.Meta.widgets,
-            'subtype': forms.RadioSelect
-        }
-
+class PartnershipYearDoctorateForm(PartnershipYearWithoutDatesForm):
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
-        self.fields['subtype'].label = _('partnership_subtype_doctorate')
-        self.fields['subtype'].label_from_instance = lambda o: o.label
 
         fixed_level = PartnershipYearEducationLevel.objects.filter(
             education_group_types__name=TrainingType.PHD.name,
@@ -346,8 +285,4 @@ class PartnershipYearProjectForm(FundingMixin, PartnershipYearBaseForm):
             'funding_source',
             'funding_program',
             'funding_type',
-            'description',
-            'id_number',
-            'project_title',
-            'ucl_status',
         )

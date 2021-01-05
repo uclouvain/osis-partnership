@@ -1,4 +1,5 @@
 from django.contrib.gis.geos import Point
+from django.test import tag
 from django.urls import reverse
 
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -95,6 +96,7 @@ class PartnersApiViewTest(TestCase):
             ucl_entity=EntityFactory(),
         )
 
+    @tag('perf')
     def test_get(self):
         with self.assertNumQueriesLessThan(8):
             response = self.client.get(self.url)

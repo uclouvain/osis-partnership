@@ -46,10 +46,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
     is_stt = serializers.SerializerMethodField()
 
     missions = serializers.SerializerMethodField()
-    subtype = serializers.SerializerMethodField()
-    id_number = serializers.SerializerMethodField()
-    project_title = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
 
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
@@ -125,25 +121,9 @@ class PartnershipSerializer(serializers.ModelSerializer):
     def get_is_stt(self, partnership):
         return self._get_current_year_attr(partnership, 'is_stt')
 
-    def get_missions(self, partnership):
-        missions = self._get_current_year_attr(partnership, 'missions')
-        if not missions:
-            return ''
-        return ', '.join([mission.label for mission in missions.all()])
-
-    def get_description(self, partnership):
-        return self._get_current_year_attr(partnership, 'description')
-
-    def get_id_number(self, partnership):
-        return self._get_current_year_attr(partnership, 'id_number')
-
-    def get_project_title(self, partnership):
-        return self._get_current_year_attr(partnership, 'project_title')
-
-    def get_subtype(self, partnership):
-        subtype = self._get_current_year_attr(partnership, 'subtype')
-        if subtype:
-            return subtype.label
+    @staticmethod
+    def get_missions(partnership):
+        return ', '.join([mission.label for mission in partnership.missions.all()])
 
     def get_education_fields(self, partnership):
         education_fields = self._get_current_year_attr(partnership, 'education_fields')
@@ -171,14 +151,22 @@ class PartnershipSerializer(serializers.ModelSerializer):
                 value = _('status_finished')
             elif threshold < today:
                 value = _('status_archived')
-        return {
-            'status': value,
-            # annotations on the queryset
-            'start_date': partnership.agreement_start.strftime('%d/%m/%Y')
-            if partnership.agreement_start else '',
-            'end_date': partnership.agreement_end.strftime('%d/%m/%Y')
-            if partnership.agreement_end else '',
-        }
+        if partnership.is_course or partnership.is_doctorate:
+            return {
+                'status': value,
+                # annotations on the queryset
+                'start_date': partnership.start_year,
+                'end_date': partnership.end_year,
+            }
+        else:
+            return {
+                'status': value,
+                # annotations on the queryset
+                'start_date': partnership.start_date.strftime('%d/%m/%Y')
+                if partnership.start_date else '',
+                'end_date': partnership.end_date.strftime('%d/%m/%Y')
+                if partnership.end_date else '',
+            }
 
     def get_bilateral_agreements(self, partnership):
         return [
@@ -318,7 +306,10 @@ class PartnershipSerializer(serializers.ModelSerializer):
         funding_type = self._get_current_year_attr(partnership, 'funding_type')
         if funding_type:
             label += ' / ' + str(funding_type)
-        return label
+        return {
+            'name': label,
+            'url': funding_type and funding_type.url,
+        }
 
     def get_staff_contact(self, partnership):
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):

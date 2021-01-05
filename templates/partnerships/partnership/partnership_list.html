@@ -226,7 +226,7 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-12 collapse fade in form-inline special-dates-filter">
+                    <div class="col-xs-12 collapse fade in form-inline {% if is_agreements %}agreements-dates-filter{% else %}special-dates-filter{% endif %}">
                       {% bootstrap_field form.partnership_date_type %}
                       {% bootstrap_field form.partnership_date_from %}
                       {% bootstrap_field form.partnership_date_to %}

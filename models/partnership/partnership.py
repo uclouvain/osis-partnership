@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
-from partnership.models import AgreementStatus, PartnershipType
+from partnership.models import AgreementStatus, PartnershipType, Financing
 from partnership.utils import merge_agreement_ranges
 
 __all__ = [
@@ -97,6 +97,25 @@ class PartnershipQuerySet(models.QuerySet):
             qs = qs.annotate(**{field.replace('__', '_'): lookup})
         return qs
 
+    def annotate_financing(self, academic_year):
+        """
+        Add annotations to get funding for an academic year based on country
+        """
+        return self.annotate(
+            financing_source=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__program__source__name')[:1]),
+            financing_program=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__program__name')[:1]),
+            financing_type=Subquery(Financing.objects.filter(
+                countries=OuterRef('country_id'),
+                academic_year=academic_year,
+            ).values('type__name')[:1]),
+        )
+
     def filter_for_api(self, academic_year):
         from partnership.models import PartnershipYear, PartnershipAgreement
         return self.annotate(
@@ -118,38 +137,20 @@ class PartnershipQuerySet(models.QuerySet):
                     end_academic_year__year__gte=academic_year.year,
                 )
             ),
-            has_valid_agreement=models.Exists(
-                PartnershipAgreement.objects.filter(
-                    partnership=OuterRef('pk'),
-                    status=AgreementStatus.VALIDATED.name,
-                    start_date__lte=Now(),
-                    end_date__gte=Now(),
-                )
-            ),
         ).filter(
-            # Should have agreement for current year if mobility
+            # If mobility, should have agreement for current year
+            # and have a partnership year for current year
             Q(
                 partnership_type=PartnershipType.MOBILITY.name,
-                has_valid_agreement_in_current_year=True
+                has_valid_agreement_in_current_year=True,
+                has_years_in=True,
             )
-            # Or else should have at least an agreement if not mobility
-            | (
-                    ~Q(partnership_type=PartnershipType.MOBILITY.name)
-                    & Q(has_valid_agreement=True)
-            )
-            # Or nothing at all if project
-            | Q(partnership_type=PartnershipType.PROJECT.name),
-
-            # Should have a partnership year for current year if mobility
-            Q(
-                partnership_type=PartnershipType.MOBILITY.name,
-                has_years_in=True
-            )
-            # Or else just have a end_date > now
+            # Else all other types do not need agreement
             | (
                     ~Q(partnership_type=PartnershipType.MOBILITY.name)
                     & Q(end_date__gte=Now())
             ),
+            # And must be public
             is_public=True,
         )
 
@@ -223,6 +224,45 @@ class Partnership(models.Model):
         verbose_name=_('medias'),
         related_name='+',
         blank=True,
+    )
+
+    missions = models.ManyToManyField(
+        'partnership.PartnershipMission',
+        verbose_name=_('partnership_missions'),
+    )
+    subtype = models.ForeignKey(
+        'partnership.PartnershipSubtype',
+        verbose_name=_('partnership_subtype'),
+        on_delete=models.PROTECT,
+        related_name='years',
+        null=True,
+    )
+    description = models.TextField(
+        _('partnership_year_description'),
+        help_text=_('visible_on_api'),
+        default='',
+        blank=True,
+    )
+
+    # For PROJECT type
+    ucl_status = models.CharField(
+        verbose_name=_('partnership_year_ucl_status'),
+        max_length=20,
+        default='',
+        choices=[
+            ('coordinator', _('Coordinator')),
+            ('partner', _('Partner')),
+        ],
+    )
+    id_number = models.CharField(
+        verbose_name=_('partnership_year_id_number'),
+        max_length=200,
+        default='',
+    )
+    project_title = models.CharField(
+        verbose_name=_('partnership_year_project_title'),
+        max_length=200,
+        default='',
     )
 
     comment = models.TextField(

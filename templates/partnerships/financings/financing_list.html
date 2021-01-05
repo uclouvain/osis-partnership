@@ -112,10 +112,12 @@
 
                 {% for type in program.fundingtype_set.all %}
                   <div class="list-group-item clearfix">
+                  {% if not type.is_active %}<em>{% endif %}
                     {{ type }}
                     {% if type.url %}
                       (<a href="{{ type.url }}">{{ type.url }}</a>)
                     {% endif %}
+                  {% if not type.is_active %} (inactif)</em>{% endif %}
                     <div class="pull-right">
                       <a href="{% url 'partnerships:financings:edit' type type.pk %}"
                          class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
