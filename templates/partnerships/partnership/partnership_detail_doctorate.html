@@ -15,7 +15,7 @@
         </ul>
       </dd>
       <dt>{% trans "partnership_subtype_doctorate" %}</dt>
-      <dd>{{ partnership_year.subtype }}</dd>
+      <dd>{{ partnership.subtype }}</dd>
       <dt>{% trans "education_levels" %}</dt>
       <dd>
         {% for education_level in partnership_year.education_levels.all %}
@@ -51,7 +51,7 @@
         </ul>
       </dd>
       <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership_year.description|linebreaks }}</dd>
+      <dd>{{ partnership.description|linebreaks }}</dd>
     </dl>
   {% endwith %}
 {% endblock %}

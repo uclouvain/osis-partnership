@@ -1,10 +1,10 @@
 {% extends "partnerships/partnership/partnership_detail.html" %}{% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
-  {% if partnership.years.last.description %}
+  {% if partnership.description %}
     <dl class="dl-horizontal">
       <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership.years.last.description|linebreaks }}</dd>
+      <dd>{{ partnership.description|linebreaks }}</dd>
     </dl>
   {% endif %}
   <table class="table table-striped">
@@ -36,7 +36,7 @@
             {% endfor %}
           </ul>
         </td>
-        <td>{{ partnership_year.subtype }}</td>
+        <td>{{ partnership.subtype }}</td>
         <td>
           <ul class="list-unstyled">
             {% for education_level in partnership_year.education_levels.all %}
