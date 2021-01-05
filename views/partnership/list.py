@@ -1,6 +1,5 @@
-from datetime import date
-
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models import Subquery, F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
@@ -61,8 +60,10 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
         )
         context['url'] = reverse('partnerships:list')
         context['search_button_label'] = _('search_partnership')
-        context['export_years'] = AcademicYear.objects.filter(
-            year__gte=date.today().year,
+        context['export_years'] = AcademicYear.objects.annotate(
+            current_year=Subquery(AcademicYear.objects.currents().values('year')[:1]),
+        ).filter(
+            year__gte=F('current_year'),
         ).order_by('year')[:3]
         return context
 

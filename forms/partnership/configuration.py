@@ -1,6 +1,5 @@
-from datetime import date
-
 from django import forms
+from django.db.models import F, Subquery
 
 from base.models.academic_year import AcademicYear
 from partnership.models import PartnershipConfiguration
@@ -20,10 +19,11 @@ class PartnershipConfigurationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        current_year = date.today().year
-        qs = AcademicYear.objects.filter(
-            year__gte=current_year,
-            year__lte=current_year + 2,
+        qs = AcademicYear.objects.annotate(
+            current_year=Subquery(AcademicYear.objects.currents().values('year')[:1]),
+        ).filter(
+            year__gte=F('current_year'),
+            year__lte=F('current_year') + 2,
         )
         self.fields['partnership_creation_update_min_year'].queryset = qs
         self.fields['partnership_api_year'].queryset = qs

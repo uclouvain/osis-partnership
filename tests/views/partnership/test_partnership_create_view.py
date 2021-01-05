@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.core import mail
 from django.forms import ModelChoiceField
 from django.test import TestCase
@@ -50,10 +48,7 @@ class PartnershipCreateViewTest(TestCase):
 
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.end_academic_year = AcademicYearFactory(year=2151)
-        year = date.today().year
-        AcademicYearFactory(year=year)
-        AcademicYearFactory(year=year + 1)
-        AcademicYearFactory(year=year + 2)
+        AcademicYearFactory.produce_in_future(quantity=3)
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()

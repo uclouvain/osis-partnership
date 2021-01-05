@@ -1,6 +1,5 @@
-from datetime import date
-
 from django.db import models
+from django.db.models import Subquery, F
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
@@ -57,10 +56,12 @@ class PartnershipConfiguration(models.Model):
                 'partnership_creation_update_min_year',
             ).get()
         except PartnershipConfiguration.DoesNotExist:
-            current_year = date.today().year
             # By default, mostly for tests, select the logical academic years
-            year = AcademicYear.objects.filter(year=current_year).first()
-            next_year = AcademicYear.objects.filter(year=current_year + 1).first()
+            qs = AcademicYear.objects.annotate(
+                current_year=Subquery(AcademicYear.objects.currents().values('year')[:1]),
+            )
+            year = qs.filter(year=F('current_year')).first()
+            next_year = qs.filter(year=F('current_year') + 1).first()
             return PartnershipConfiguration.objects.create(
                 partnership_creation_update_min_year=next_year,
                 partnership_api_year=year,
