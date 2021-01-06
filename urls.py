@@ -72,7 +72,7 @@ urlpatterns = [
         re_path(r'^(?:(?P<year>\d{4})/)?export/$', FinancingExportView.as_view(), name='export'),
         path('import/', FinancingImportView.as_view(), name='import'),
         path('add/<funding:model>/', FundingAddView.as_view(), name='add'),
-        path('edit/<funding:model>/<int:pk>', FundingEditView.as_view(), name='edit'),
+        path('edit/<funding:model>/<int:pk>', FundingUpdateView.as_view(), name='edit'),
         path('delete/<funding:model>/<int:pk>', FundingDeleteView.as_view(), name='delete'),
     ], 'partnerships'), namespace='financings')),
 

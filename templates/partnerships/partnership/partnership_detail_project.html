@@ -28,7 +28,7 @@
       <dt>{% trans "partnership_missions" %}</dt>
       <dd>
         <ul class="list-unstyled">
-          {% for mission in partnership_year.missions.all %}
+          {% for mission in partnership.missions.all %}
             <li>
               <strong>{{ mission.code }}</strong> - {{ mission.label }}
             </li>
@@ -46,13 +46,13 @@
         <dd>{{ partnership_year.funding_type }}</dd>
       {% endif %}
       <dt>{% trans "partnership_year_project_title" %}</dt>
-      <dd>{{ partnership_year.project_title }}</dd>
+      <dd>{{ partnership.project_title }}</dd>
       <dt>{% trans "partnership_year_id_number" %}</dt>
-      <dd>{{ partnership_year.id_number }}</dd>
+      <dd>{{ partnership.id_number }}</dd>
       <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership_year.description|linebreaks }}</dd>
+      <dd>{{ partnership.description|linebreaks }}</dd>
       <dt>{% trans "partnership_year_ucl_status" %}</dt>
-      <dd>{{ partnership_year.get_ucl_status_display }}</dd>
+      <dd>{{ partnership.get_ucl_status_display }}</dd>
     </dl>
   {% endwith %}
 {% endblock %}

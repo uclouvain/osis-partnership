@@ -15,7 +15,7 @@
         </ul>
       </dd>
       <dt>{% trans "partnership_subtype_agreement" %}</dt>
-      <dd>{{ partnership_year.subtype }}</dd>
+      <dd>{{ partnership.subtype }}</dd>
       <dt>{% trans "education_levels" %}</dt>
       <dd>
         <ul class="list-unstyled">
@@ -30,7 +30,7 @@
       <dt>{% trans "partnership_missions" %}</dt>
       <dd>
         <ul class="list-unstyled">
-          {% for mission in partnership_year.missions.all %}
+          {% for mission in partnership.missions.all %}
             <li>
               <strong>{{ mission.code }}</strong> - {{ mission.label }}
             </li>
@@ -38,7 +38,7 @@
         </ul>
       </dd>
       <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership_year.description|linebreaks }}</dd>
+      <dd>{{ partnership.description|linebreaks }}</dd>
     </dl>
   {% endwith %}
 {% endblock %}

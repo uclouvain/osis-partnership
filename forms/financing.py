@@ -3,10 +3,12 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
+from partnership.models import FundingType
 
 __all__ = [
     'FinancingFilterForm',
     'FinancingImportForm',
+    'FundingUpdateFormMixin',
 ]
 
 
@@ -36,3 +38,14 @@ class FinancingImportForm(forms.Form):
         if not csv_file.name.endswith('.csv'):
             raise ValidationError(_('financing_csv_file_invalid_extension'))
         return csv_file
+
+
+class FundingUpdateFormMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Disable the is_active if parent is inactive
+        if isinstance(self.instance, FundingType) and not self.instance.program.is_active:
+            self.fields['is_active'].disabled = True
+            self.fields['is_active'].help_text = _(
+                "This funding type can not be enabled as its parent is not active."
+            )
