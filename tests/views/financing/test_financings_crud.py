@@ -99,6 +99,12 @@ class FinancingCrudTest(TestCase):
         funding_type.refresh_from_db()
         self.assertFalse(funding_type.is_active)
 
+        url = resolve_url(
+            'partnerships:financings:edit', model=funding_type, pk=funding_type.pk
+        )
+        response = self.client.get(url)
+        self.assertTrue(response.context_data['form'].fields['is_active'].disabled)
+
     def test_delete_as_user(self):
         self.client.force_login(self.user)
         response = self.client.get(self.delete_url, follow=True)

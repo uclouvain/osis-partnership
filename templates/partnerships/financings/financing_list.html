@@ -96,7 +96,9 @@
 
             {% for program in source.fundingprogram_set.all %}
               <div class="list-group-item clearfix">
+                {% if not program.is_active %}<em>{% endif %}
                 {{ program }}
+                {% if not program.is_active %} (inactif)</em>{% endif %}
                 <div class="pull-right">
                   <a href="{% url 'partnerships:financings:add' 'type' %}?program={{ program.pk }}"
                      class="btn btn-primary btn-sm glyphicon glyphicon-plus"
@@ -115,7 +117,9 @@
                   {% if not type.is_active %}<em>{% endif %}
                     {{ type }}
                     {% if type.url %}
-                      (<a href="{{ type.url }}">{{ type.url }}</a>)
+                      <a href="{{ type.url }}" target="_blank">
+                        <i class="glyphicon glyphicon-new-window"></i>
+                      </a>
                     {% endif %}
                   {% if not type.is_active %} (inactif)</em>{% endif %}
                     <div class="pull-right">

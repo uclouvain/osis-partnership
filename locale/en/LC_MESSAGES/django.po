@@ -83,6 +83,9 @@ msgstr ""
 msgid "Foundation"
 msgstr ""
 
+msgid "Funding is not active anymore"
+msgstr "This funding is no longer active."
+
 msgid "Funding sources, programs and types"
 msgstr ""
 
@@ -332,6 +335,9 @@ msgstr ""
 
 msgid "Sport league"
 msgstr ""
+
+msgid "This funding type can not be enabled as its parent is not active."
+msgstr "This funding type can not be enabled as its program is not active."
 
 msgid "Warning! This will also delete all linked objects."
 msgstr ""
