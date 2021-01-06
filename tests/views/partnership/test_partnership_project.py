@@ -38,7 +38,7 @@ class PartnershipCreateProjectViewTest(TestCase):
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
-        AcademicYearFactory.produce_in_future(date.today().year, 3)
+        AcademicYearFactory.produce_in_future(quantity=3)
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()

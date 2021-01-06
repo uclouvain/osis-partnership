@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -25,9 +23,7 @@ class ConfigurationUpdateViewTest(TestCase):
 
         cls.url = reverse('partnerships:configuration_update')
 
-        year = date.today().year
         cls.years = AcademicYearFactory.produce(
-            base_year=year,
             number_past=1,
             number_future=3,
         )

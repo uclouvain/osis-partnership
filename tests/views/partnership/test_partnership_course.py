@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
@@ -40,7 +38,7 @@ class PartnershipCreateCourseViewTest(TestCase):
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
 
-        AcademicYearFactory.produce_in_future(date.today().year, 3)
+        AcademicYearFactory.produce_in_future(quantity=3)
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
@@ -52,10 +50,6 @@ class PartnershipCreateCourseViewTest(TestCase):
 
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.end_academic_year = AcademicYearFactory(year=2151)
-        year = date.today().year
-        AcademicYearFactory(year=year)
-        AcademicYearFactory(year=year + 1)
-        AcademicYearFactory(year=year + 2)
 
         # Ucl
         root = EntityVersionFactory(parent=None).entity

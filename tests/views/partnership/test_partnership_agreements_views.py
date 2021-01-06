@@ -237,7 +237,7 @@ class PartnershipAgreementGeneralCreateViewTest(TestCase):
         cls.url = reverse('partnerships:agreements:create', kwargs={
             'partnership_pk': cls.partnership.pk,
         })
-        cls.years = AcademicYearFactory.produce_in_future(date.today().year, 3)
+        cls.years = AcademicYearFactory.produce_in_future(quantity=3)
 
         cls.data = {
             'start_date': date.today(),
