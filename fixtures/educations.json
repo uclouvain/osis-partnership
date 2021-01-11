@@ -937,15 +937,6 @@
       "label": "Services, inter-disciplinary programmes"
     }
   },
-
-
-  {
-    "model": "partnership.PartnershipYearEducationLevel",
-    "fields": {
-      "code": "ISCED-5",
-      "label": "Short cycle within the first cycle / Short-cycle tertiary education (EQF-5)"
-    }
-  },
   {
     "model": "partnership.PartnershipYearEducationLevel",
     "fields": {
@@ -965,13 +956,6 @@
     "fields": {
       "code": "ISCED-8",
       "label": "Third cycle / Doctoral or equivalent level (EQF-8)"
-    }
-  },
-  {
-    "model": "partnership.PartnershipYearEducationLevel",
-    "fields": {
-      "code": "ISCED-9",
-      "label": "Not elsewhere classified"
     }
   }
 ]
