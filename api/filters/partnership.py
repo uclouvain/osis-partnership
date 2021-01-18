@@ -68,10 +68,6 @@ class PartnershipFilter(filters.FilterSet):
         field_name='years__education_levels__code',
     )
 
-    supervisor = filters.UUIDFilter(
-        label=_('partnership_supervisor'),
-        method='filter_supervisor',
-    )
     tag = filters.CharFilter(field_name='tags__value')
     partner_tag = filters.CharFilter(field_name='partner__tags__value')
 
@@ -118,20 +114,6 @@ class PartnershipFilter(filters.FilterSet):
             return queryset.filter(ucl_entity__in=qs)
         else:
             return queryset.filter(ucl_entity__uuid=value)
-
-    @staticmethod
-    def filter_supervisor(queryset, name, value):
-        return queryset.annotate(
-            has_supervisor_with_entity=Exists(
-                UCLManagementEntity.objects.filter(
-                    entity=OuterRef('ucl_entity'),
-                    academic_responsible__uuid=value,
-                )
-            ),
-        ).filter(
-            Q(supervisor__uuid=value)
-            | Q(supervisor__isnull=True, has_supervisor_with_entity=True)
-        )
 
     @staticmethod
     def filter_mobility_type(queryset, name, value):
