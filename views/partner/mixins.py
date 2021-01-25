@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta, date
 from uuid import uuid4
 
 from django.contrib import messages
@@ -131,29 +131,66 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         :param organization_form:
         :return:
         """
-        last_version = entity.get_latest_entity_version()
+        qs = entity.entityversion_set.order_by('start_date')
+        start_date = organization_form.cleaned_data['start_date']
+        end_date = organization_form.cleaned_data['end_date']
 
-        if changed:
-            start_date = organization_form.cleaned_data['start_date']
-            end_date = organization_form.cleaned_data['end_date']
+        if not qs:
+            # This is a partner's creation
+            last_version = EntityVersion.objects.create(
+                entity_id=entity.pk,
+                parent=None,
+                start_date=start_date,
+                end_date=end_date,
+            )
+        elif changed:
+            # This is a partner's update
+            first_version = qs.first()
+            last_version = qs.last()
 
-            if last_version and last_version.start_date != start_date:
+            if first_version.start_date < start_date:
+                # Creation date has been changed, extend
+                first_version.start_date = start_date
+                first_version.save()
+            elif first_version.start_date > start_date:
+                # Creation date has been changed, truncate
+                qs.filter(end_date__lte=start_date).delete()
+                first_version = qs.all().first()
+                first_version.start_date = start_date
+                first_version.save()
+
+            if end_date != last_version.end_date:
+                if (
+                        # Either of dates is not set
+                        end_date and not last_version.end_date
+                        or not end_date and last_version.end_date
+                        # Ending date has been changed, extend
+                        or last_version.end_date > end_date
+                ):
+                    last_version.end_date = end_date
+                    last_version.save()
+                elif last_version.end_date < end_date:
+                    # Ending date has been changed, truncate
+                    qs.filter(start_date__gte=end_date).delete()
+                    last_version = qs.all().last()
+                    last_version.end_date = end_date
+                    last_version.save()
+
+            # Refresh version
+            last_version = qs.all().last()
+            if last_version.start_date < date.today():
                 # End the previous version if start_date is changed
-                last_version.end_date = start_date - timedelta(days=1)
+                last_version.end_date = date.today() - timedelta(days=1)
                 last_version.save()
-                last_version = None
-            elif last_version and end_date and last_version.end_date != end_date:
-                # End the previous version if end date
-                last_version.end_date = start_date
-                last_version.save()
-
-            if not last_version:
                 last_version = EntityVersion.objects.create(
                     entity_id=entity.pk,
                     parent=None,
-                    start_date=start_date or datetime.today(),
+                    start_date=date.today(),
                     end_date=end_date,
                 )
+        else:
+            last_version = qs.last()
+
         return last_version
 
     def form_invalid(self, form, form_address, organization_form):
