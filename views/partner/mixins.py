@@ -121,8 +121,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         form_address.instance.is_main = True
         form_address.save()
 
-    @staticmethod
-    def save_entity_version(changed, entity, organization_form):
+    def save_entity_version(self, changed, entity, organization_form):
         """
         Save entity version if anything changed
 
@@ -148,33 +147,10 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             first_version = qs.first()
             last_version = qs.last()
 
-            if first_version.start_date < start_date:
-                # Creation date has been changed, extend
-                first_version.start_date = start_date
-                first_version.save()
-            elif first_version.start_date > start_date:
-                # Creation date has been changed, truncate
-                qs.filter(end_date__lte=start_date).delete()
-                first_version = qs.all().first()
-                first_version.start_date = start_date
-                first_version.save()
+            self._update_earliest_version(start_date, qs, first_version)
 
             if end_date != last_version.end_date:
-                if (
-                        # Either of dates is not set
-                        end_date and not last_version.end_date
-                        or not end_date and last_version.end_date
-                        # Ending date has been changed, extend
-                        or last_version.end_date > end_date
-                ):
-                    last_version.end_date = end_date
-                    last_version.save()
-                elif last_version.end_date < end_date:
-                    # Ending date has been changed, truncate
-                    qs.filter(start_date__gte=end_date).delete()
-                    last_version = qs.all().last()
-                    last_version.end_date = end_date
-                    last_version.save()
+                self._update_latest_version(end_date, qs, last_version)
 
             # Refresh version
             last_version = qs.all().last()
@@ -192,6 +168,37 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             last_version = qs.last()
 
         return last_version
+
+    @staticmethod
+    def _update_earliest_version(start_date, qs, first_version):
+        if first_version.start_date < start_date:
+            # Creation date has been changed, extend
+            first_version.start_date = start_date
+            first_version.save()
+        elif first_version.start_date > start_date:
+            # Creation date has been changed, truncate
+            qs.filter(end_date__lte=start_date).delete()
+            first_version = qs.all().first()
+            first_version.start_date = start_date
+            first_version.save()
+
+    @staticmethod
+    def _update_latest_version(end_date, qs, last_version):
+        if (
+                # Either of dates is not set
+                end_date and not last_version.end_date
+                or not end_date and last_version.end_date
+                # Ending date has been changed, extend
+                or last_version.end_date > end_date
+        ):
+            last_version.end_date = end_date
+            last_version.save()
+        elif last_version.end_date < end_date:
+            # Ending date has been changed, truncate
+            qs.filter(start_date__gte=end_date).delete()
+            last_version = qs.all().last()
+            last_version.end_date = end_date
+            last_version.save()
 
     def form_invalid(self, form, form_address, organization_form):
         messages.error(self.request, _('partner_error'))
