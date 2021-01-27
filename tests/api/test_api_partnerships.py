@@ -236,23 +236,6 @@ class PartnershipApiViewTest(TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
 
-    def test_filter_supervisor(self):
-        response = self.client.get(self.url, {
-            'supervisor': self.supervisor_partnership.uuid,
-        })
-        self.assertEqual(response.status_code, 200)
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['uuid'], str(self.partnership.uuid))
-
-    def test_filter_supervisor_in_entity_manager(self):
-        response = self.client.get(self.url, {
-            'supervisor': self.supervisor_management_entity.uuid,
-        })
-        results = response.json()['results']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['uuid'], str(self.partnership_2.uuid))
-
     def test_filter_education_field(self):
         response = self.client.get(self.url, {
             'education_field': self.education_field.uuid,

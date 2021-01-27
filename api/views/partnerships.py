@@ -35,7 +35,7 @@ from ...views import ExportView
 __all__ = [
     'PartnershipsRetrieveView',
     'PartnershipsListView',
-    'PartnershipExportView',
+    'PartnershipsExportView',
     'partnership_get_export_url',
 ]
 
@@ -282,7 +282,7 @@ def partnership_get_export_url(request):  # pragma: no cover
     })
 
 
-class PartnershipExportView(FilterMixin, PartnershipsMixinView, ExportView):
+class PartnershipsExportView(FilterMixin, PartnershipsMixinView, ExportView):
     filterset_class = PartnershipFilter
 
     def get_xls_headers(self):

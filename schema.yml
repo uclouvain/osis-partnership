@@ -80,7 +80,9 @@ components:
         city: Ankara
         country: Turquie
         country_iso: TK
-        location: [10.0, 7.0]
+        location:
+          type: Point
+          coordinates: [10.0, 7.0]
         partnerships_count: 1
       properties:
         uuid:
@@ -175,13 +177,17 @@ components:
         description: Lorem ipsum dolor amet et consectuer
         id_number: 16-6429845-FR
         project_title: Project X
-        funding_program: Funding B
+        funding_program:
+          url: http://example.com/
+          name: Funding B
         education_fields:
           - Field 1
           - Field 2
         status:
           status: validated
           valid_years: 2019-2022
+          start_date: 06/01/2021
+          end_date: 31/01/2023
         partner_entity: Entity ABC
         medias:
           - url: http://example.com/file1
@@ -222,13 +228,21 @@ components:
         out_summary_tables:
           - url: http://example.com/file1
             name: file 1
+        out_useful_links:
+          - url: http://example.com/link1
+            name: link 1
         in_contact:
           first_name: John
           last_name: Doe
           phone: +33245678987
           email: john.doe@example.com
         in_portal: https://example.com
-        staff_contact_name: John DOE
+        staff_contact:
+          title: mr
+          first_name: John
+          last_name: Doe
+          phone: +33245678987
+          email: john.doe@example.com
         staff_partner_contacts:
           - title: mr
             first_name: John
@@ -281,13 +295,14 @@ components:
         project_title:
           type: string
         funding_program:
-          type: string
+          $ref: '#/components/schemas/Funding'
         education_fields:
           type: array
           items:
             type: string
         status:
           type: object
+          description: Either valid_years or start/end dates
           properties:
             status:
               type: string
@@ -296,6 +311,10 @@ components:
                 - validated
                 - refused
             valid_years:
+              type: string
+            start_date:
+              type: string
+            end_date:
               type: string
         medias:
           type: array
@@ -370,6 +389,15 @@ components:
                 type: string
               url:
                 type: string
+        out_useful_links:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
         in_contact:
           $ref: '#/components/schemas/Contact'
         in_portal:
@@ -427,6 +455,13 @@ components:
       schema:
         type: string
         example: Paris
+    continent:
+      name: continent
+      in: query
+      description: The continent name
+      schema:
+        type: string
+        example: Asia
     partner:
       name: partner
       in: query
@@ -454,6 +489,20 @@ components:
       schema:
         type: string
         example: ISCED-5
+    education_field:
+      name: education_field
+      in: query
+      description: The uuid of the education field
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
+    offer:
+      name: offer
+      in: query
+      description: The uuid of the offer
+      schema:
+        type: string
+        example: a84eda90-9f0a-4ea7-a70c-cab8cbdc3f21
     type:
       name: type
       in: query
@@ -498,6 +547,27 @@ components:
       schema:
         type: number
         example: 10
+    bbox:
+      name: bbox
+      in: query
+      description: The bounding box to export the partnerships
+      schema:
+        type: string
+        example: 5.2,10.5,5.7,10.9
+    tag:
+      name: tag
+      in: query
+      description: The tag of the partnership
+      schema:
+        type: string
+        example: KA107
+    partner_tag:
+      name: partner_tag
+      in: query
+      description: The tag of the partner
+      schema:
+        type: string
+        example: Circle U.
   responses:
     BadRequest:
       description: Bad request
@@ -549,6 +619,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ValueLabel'
+                  offers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValueLabel'
                   ucl_universities:
                     type: array
                     items:
@@ -596,13 +670,19 @@ paths:
               - partner
               - country_en
               - city
+        - $ref: '#/components/parameters/bbox'
+        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
         - $ref: '#/components/parameters/with_children'
-        - $ref: '#/components/parameters/education_level'
         - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/education_level'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/partner_tag'
+        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/offer'
         - $ref: '#/components/parameters/mobility_type'
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
@@ -615,7 +695,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Partner'
+                  $ref: '#/components/schemas/PartnerListItem'
         '400':
           $ref: '#/components/responses/BadRequest'
   /partnerships:
@@ -627,14 +707,19 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/continent'
         - $ref: '#/components/parameters/country'
         - $ref: '#/components/parameters/city'
         - $ref: '#/components/parameters/partner'
         - $ref: '#/components/parameters/ucl_entity'
         - $ref: '#/components/parameters/with_children'
-        - $ref: '#/components/parameters/education_level'
-        - $ref: '#/components/parameters/mobility_type'
         - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/education_level'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/partner_tag'
+        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/offer'
+        - $ref: '#/components/parameters/mobility_type'
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
         - $ref: '#/components/parameters/funding_source'
@@ -683,3 +768,41 @@ paths:
                 $ref: '#/components/schemas/Partnership'
         '404':
           $ref: '#/components/responses/NotFound'
+  /partnerships/export:
+    get:
+      summary: Export partnerships
+      tags:
+        - partnerships
+      operationId: exportPartnershipsList
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/continent'
+        - $ref: '#/components/parameters/country'
+        - $ref: '#/components/parameters/city'
+        - $ref: '#/components/parameters/partner'
+        - $ref: '#/components/parameters/ucl_entity'
+        - $ref: '#/components/parameters/with_children'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/education_level'
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/partner_tag'
+        - $ref: '#/components/parameters/education_field'
+        - $ref: '#/components/parameters/offer'
+        - $ref: '#/components/parameters/mobility_type'
+        - $ref: '#/components/parameters/funding_type'
+        - $ref: '#/components/parameters/funding_program'
+        - $ref: '#/components/parameters/funding_source'
+      responses:
+        '200':
+          description: A xls file with partnerships
+          content:
+            application/xls.ms-excel:
+              schema:
+                type: object
+                properties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Partnership'
+        '400':
+          $ref: '#/components/responses/BadRequest'

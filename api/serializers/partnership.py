@@ -28,6 +28,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
     )
     partner = PartnerDetailSerializer()
     type = serializers.ReadOnlyField(source='get_partnership_type_display')
+    subtype = serializers.StringRelatedField()
     partner_entity = serializers.CharField(
         source='partner_entity.name',
         allow_null=True,
