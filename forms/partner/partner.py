@@ -56,23 +56,6 @@ class PartnerForm(forms.ModelForm):
             self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.exclude(pk=self.instance.pk)
         self.fields['now_known_as'].queryset = self.fields['now_known_as'].queryset.order_by('organization__name')
 
-    def _clean_choice_boolean(self, value):
-        values = {
-            '': None,
-            'True': True,
-            'False': False,
-        }
-        return values.get(value, value)
-
-    def clean_is_ies(self):
-        return self._clean_choice_boolean(self.cleaned_data.get('is_ies', None))
-
-    def clean_is_nonprofit(self):
-        return self._clean_choice_boolean(self.cleaned_data.get('is_nonprofit', None))
-
-    def clean_is_public(self):
-        return self._clean_choice_boolean(self.cleaned_data.get('is_public', None))
-
     def clean(self):
         data = super().clean()
         if not data['pic_code'] or not data.get('is_ies', None):

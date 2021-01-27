@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import timedelta, date
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.urls import reverse
@@ -118,33 +119,145 @@ class PartnerUpdateViewTest(TestCase):
         response = self.client.post(self.url, data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
 
-    def test_post_new_dates(self):
-        self.client.force_login(self.user_adri)
-        entity = self.partner.organization.entity_set.first()
-        self.assertEqual(entity.entityversion_set.count(), 1)
-        data = self.data.copy()
-        data['organization-start_date'] = self.partner.organization.start_date + timedelta(days=30)
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-        self.assertEqual(entity.entityversion_set.count(), 2)
 
-    def test_post_end_date(self):
-        self.client.force_login(self.user_adri)
-        entity = self.partner.organization.entity_set.first()
-        self.assertEqual(entity.entityversion_set.count(), 1)
-        data = self.data.copy()
-        data['organization-end_date'] = self.partner.organization.start_date + timedelta(days=30)
-        response = self.client.post(self.url, data=data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-        self.assertEqual(entity.entityversion_set.count(), 1)
+class PartnerUpdateVersionsViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # User creation
+        cls.user_adri = UserFactory()
+        entity_version = EntityVersionFactory(acronym='ADRI')
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
 
-    def test_post_both_dates(self):
+    def setUp(self):
+        # Partner creation
+        self.partner = PartnerFactory(
+            is_valid=False,
+            erasmus_code=None,
+            is_ies=True,
+            is_nonprofit=None,
+            is_public=None,
+            email=None,
+            phone=None,
+        )
+        self.country = CountryFactory()
+
+        # For the start_date for the test
+        self.start_date = self.partner.organization.start_date
+        self.entity = self.partner.organization.entity_set.first()
+        version = self.entity.get_latest_entity_version()
+        version.start_date = date(2007, 7, 7)
+        version.save()
+        self.assertEqual(self.entity.entityversion_set.count(), 1)
+        self.start_date = self.partner.organization.start_date
+        self.data = {
+            'organization-name': self.partner.organization.name,
+            'organization-start_date': self.start_date,
+            'organization-type':  self.partner.organization.type,
+            'organization-end_date': '',
+            'partner-is_ies': 'True',
+            'partner-pic_code': self.partner.pic_code,
+            'organization-website': self.partner.organization.website,
+        }
+
+        self.url = reverse('partnerships:partners:update', kwargs={'pk': self.partner.pk})
         self.client.force_login(self.user_adri)
-        entity = self.partner.organization.entity_set.first()
-        self.assertEqual(entity.entityversion_set.count(), 1)
+        self.assertEqual(self.entity.entityversion_set.count(), 1)
+
+    def test_post_unchanged(self):
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 1)
+
+    def test_newer_start_date_truncates(self):
+        """New start date is after the original start, truncate first version"""
         data = self.data.copy()
-        data['organization-start_date'] = self.partner.organization.start_date + timedelta(days=30)
-        data['organization-end_date'] = self.partner.organization.start_date + timedelta(days=60)
+        data['organization-start_date'] = "01/01/2010"
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-        self.assertEqual(entity.entityversion_set.count(), 2)
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.start_date, date(2010, 1, 1))
+        self.assertEqual(self.partner.organization.end_date, None)
+
+    def test_older_start_date_extends(self):
+        """New start date is before the original start, extends first version"""
+        data = self.data.copy()
+        data['organization-start_date'] = "01/01/2005"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.start_date, date(2005, 1, 1))
+        self.assertEqual(self.partner.organization.end_date, None)
+
+    def test_post_wrong_end_date(self):
+        """Form should be invalid with non consecutive dates"""
+        data = self.data.copy()
+        data['organization-end_date'] = "01/01/2003"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateNotUsed(response, 'partnerships/partners/partner_detail.html')
+
+    def test_change_info_twice_in_the_same_day(self):
+        """The same version should be used if change twice within the day"""
+        data = self.data.copy()
+        data['organization-name'] = "Tic"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+        data['organization-name'] = "Tac"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+
+    def test_changing_start_date_with_two_versions(self):
+        # 2 entity versions (07/07/2007 -> 01/02/2015 | 02/02/2015 -> None)
+        data = self.data.copy()
+        data['organization-name'] = "Test2"
+
+        with patch('partnership.views.partner.mixins.date') as mock_date:
+            mock_date.today.return_value = date(2015, 2, 2)
+            response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.start_date, date(2007, 7, 7))
+        self.assertEqual(self.partner.organization.end_date, None)
+
+        # Before the already set date of the 1st version
+        data['organization-start_date'] = "01/01/2005"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 3)
+        self.assertEqual(self.partner.organization.start_date, date(2005, 1, 1))
+        self.assertEqual(self.partner.organization.end_date, None)
+
+    def test_newer_end_date_truncates(self):
+        """New start date is after the original start, truncate first version"""
+        data = self.data.copy()
+        data['organization-end_date'] = "01/01/2025"
+        with patch('partnership.views.partner.mixins.date') as mock_date:
+            mock_date.today.return_value = date(2020, 1, 1)
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 2)
+            self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
+
+            data['organization-end_date'] = "01/01/2023"
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 2)
+            self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
+
+    def test_older_end_date_extends(self):
+        """New end date is after the original end, extends first version"""
+        data = self.data.copy()
+        data['organization-end_date'] = "01/01/2023"
+        with patch('partnership.views.partner.mixins.date') as mock_date:
+            mock_date.today.return_value = date(2020, 1, 1)
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 2)
+            self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
+
+            data['organization-end_date'] = "01/01/2025"
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 2)
+            self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
