@@ -27,7 +27,7 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-sm-12">
-        {% if can_update_partner %}
+        {% if can_update_partner and partner.organization.type != "MAIN" %}
           <a href="{% url "partnerships:partners:update" partner.id %}" class="btn btn-default pull-right">
             <i class="fas fa-fw fa-pencil-alt"></i>
             {% trans "update_partner" %}

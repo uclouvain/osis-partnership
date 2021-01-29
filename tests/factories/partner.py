@@ -4,12 +4,13 @@ from datetime import timedelta
 import factory
 from django.utils import timezone
 
+from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.entity_version_address import (
     EntityVersionAddressFactory
 )
-from base.tests.factories.organization import MainOrganizationFactory
+from base.tests.factories.organization import OrganizationFactory
 from partnership.models import Partner, PartnerEntity, PartnerTag
 
 __all__ = [
@@ -34,8 +35,9 @@ class PartnerFactory(factory.DjangoModelFactory):
     is_valid = True
     is_ies = factory.Faker('boolean')
     organization = factory.SubFactory(
-        MainOrganizationFactory,
+        OrganizationFactory,
         name=factory.Sequence(lambda n: 'Partner-é-{0}'.format(n)),
+        type=ACADEMIC_PARTNER,
     )
     pic_code = factory.Sequence(lambda n: 'pic_code-é-{0}-{1}'.format(n, uuid.uuid4()))
     erasmus_code = factory.Sequence(lambda n: 'erasmus_code-é-{0}-{1}'.format(n, uuid.uuid4()))

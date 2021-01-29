@@ -5,7 +5,7 @@ from django.test import tag
 
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
-from base.models.enums.organization_type import ACADEMIC_PARTNER
+from base.models.enums.organization_type import RESEARCH_CENTER
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory as BaseEducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
@@ -102,7 +102,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_partner = PartnershipFactory(partner=cls.partner)
         cls.partnership_partner_type = BasePartnershipFactory(
             ucl_entity=PartnershipFactory.ucl_entity,
-            partner__organization__type=ACADEMIC_PARTNER,
+            partner__organization__type=RESEARCH_CENTER,
         )
 
         # partner_entity
@@ -411,7 +411,7 @@ class PartnershipsListViewTest(TestCase):
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
-            'partner_type': ACADEMIC_PARTNER,
+            'partner_type': RESEARCH_CENTER,
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
