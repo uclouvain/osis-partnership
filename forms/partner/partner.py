@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
+from base.models.enums.organization_type import MAIN
 from base.models.organization import Organization
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import Partner
@@ -108,6 +109,9 @@ class OrganizationForm(forms.ModelForm):
         self.fields['name'].label = _('partner_name')
         self.fields['type'].label = _('partner_type')
         self.fields['type'].required = True
+        self.fields['type'].choices = [
+            c for c in self.fields['type'].choices if c[0] != MAIN
+        ]
         self.fields['code'].label = _('partner_code')
 
         if not self.instance.pk:

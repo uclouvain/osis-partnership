@@ -4,7 +4,7 @@ from django.test import tag
 from django.urls import reverse
 from django.utils import timezone
 
-from base.models.enums.organization_type import ACADEMIC_PARTNER
+from base.models.enums.organization_type import RESEARCH_CENTER
 from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnerFactory,
@@ -23,7 +23,7 @@ class PartnersListViewTest(TestCase):
             is_ies=False,
         )
         cls.partner_partner_type = PartnerFactory(
-            organization__type=ACADEMIC_PARTNER,
+            organization__type=RESEARCH_CENTER,
             is_ies=False,
         )
         cls.partner_pic_code = PartnerFactory(
@@ -92,7 +92,7 @@ class PartnersListViewTest(TestCase):
 
     def test_filter_partner_type(self):
         self.client.force_login(self.user)
-        url = self.url + '?partner_type={0}'.format(ACADEMIC_PARTNER)
+        url = self.url + '?partner_type={0}'.format(RESEARCH_CENTER)
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data

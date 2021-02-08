@@ -2,7 +2,7 @@ from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.organization_type import ACADEMIC_PARTNER
+from base.models.enums.organization_type import ACADEMIC_PARTNER, MAIN
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
@@ -129,6 +129,16 @@ class PartnerCreateViewTest(TestCase):
         response = self.client.post(self.url, data, follow=True)
         self.assertIn('country', response.context_data['form_address'].errors)
         self.assertIn('city', response.context_data['form_address'].errors)
+        self.assertTemplateNotUsed(response, self.detail_template)
+
+    def test_cant_create_main_partner(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['organization-type'] = MAIN
+
+        # City and country are mandatory if not ies or pic_code empty
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn('type', response.context_data['organization_form'].errors)
         self.assertTemplateNotUsed(response, self.detail_template)
 
     def test_post_as_adri(self):

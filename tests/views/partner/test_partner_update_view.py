@@ -4,6 +4,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 
+from base.models.enums.organization_type import MAIN
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import Partner
@@ -79,6 +80,13 @@ class PartnerUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_update.html')
+
+    def test_update_main_partner(self):
+        self.client.force_login(self.user_adri)
+        partner_main = PartnerFactory(organization__type=MAIN)
+        url = reverse('partnerships:partners:update', kwargs={'pk': partner_main.pk})
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_other_partner_as_gf(self):
         self.client.force_login(self.user_gf)
