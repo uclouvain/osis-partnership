@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -75,7 +76,11 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         organization = organization_form.save()
 
         # Save related entity
-        entity, created = Entity.objects.update_or_create(
+        entity, created = Entity.objects.annotate(
+            is_root=Exists(EntityVersion.objects.filter(
+                entity_id=OuterRef('pk'),
+            ).current(date.today()).only_roots()),
+        ).filter(is_root=True).update_or_create(
             defaults=dict(
                 website=organization_form.cleaned_data['website'],
             ),

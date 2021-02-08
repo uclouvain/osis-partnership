@@ -1,4 +1,4 @@
-from datetime import timedelta, date
+from datetime import date
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -6,8 +6,9 @@ from django.urls import reverse
 
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactType, Partner
+from partnership.models import Partner
 from partnership.tests.factories import (
+    PartnerEntityFactory,
     PartnerFactory,
     PartnerTagFactory,
     PartnershipEntityManagerFactory,
@@ -100,6 +101,14 @@ class PartnerUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_post(self):
+        self.client.force_login(self.user_adri)
+        response = self.client.post(self.url, data=self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+
+    def test_post_with_child_entity(self):
+        # Create a child partner entity on the same organization
+        PartnerEntityFactory(partner=self.partner)
+
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
