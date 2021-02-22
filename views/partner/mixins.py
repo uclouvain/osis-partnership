@@ -22,6 +22,7 @@ from partnership.forms.partner.entity import (
 )
 from partnership.forms.partner.partner import OrganizationForm
 from partnership.models import Partner, PartnerEntity
+from partnership.utils import generate_unique_acronym
 from partnership.views.mixins import NotifyAdminMailMixin
 
 
@@ -143,6 +144,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             # This is a partner's creation
             last_version = EntityVersion.objects.create(
                 entity_id=entity.pk,
+                acronym=entity.organization.acronym,
                 parent=None,
                 start_date=start_date,
                 end_date=end_date,
@@ -165,6 +167,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
                 last_version.save()
                 last_version = EntityVersion.objects.create(
                     entity_id=entity.pk,
+                    acronym=entity.organization.acronym,
                     parent=None,
                     start_date=date.today(),
                     end_date=end_date,
@@ -320,16 +323,6 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
         kwargs.update(**self.get_forms())
         return super().get_context_data(**kwargs)
 
-    @staticmethod
-    def generate_unique_acronym(base_acronym):
-        existing = EntityVersion.objects.filter(
-            acronym__istartswith=base_acronym
-        ).values_list('acronym', flat=True)
-        i = 1
-        while '{}-{}'.format(base_acronym, i) in existing:  # pragma: no cover
-            i += 1
-        return '{}-{}'.format(base_acronym, i)
-
     @transaction.atomic
     def form_valid(self, forms):
         changed = any(map(lambda f: f.has_changed(), forms.values()))
@@ -365,7 +358,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             EntityVersion.objects.create(
                 entity=entity,
                 start_date=today,
-                acronym=self.generate_unique_acronym(organization.code),
+                acronym=generate_unique_acronym(organization.acronym),
                 parent=(
                         entity_form.cleaned_data.get('parent')  # from form
                         or organization.entity_set.first()  # default is partner

@@ -1,5 +1,12 @@
+import re
+from itertools import product
+from string import ascii_uppercase
+
 from rest_framework.fields import get_attribute as base_get_attribute
 
+from base.models.entity_version import EntityVersion
+
+RE_FIRST_LETTERS = re.compile(r'\b[a-z]', re.IGNORECASE)
 
 def academic_years(start_year, end_year):
     if start_year or end_year:
@@ -43,3 +50,40 @@ def get_attribute(obj, path, default='', cast_str=True):
         return default if value is None else (str(value) if cast_str else value)
     except (KeyError, AttributeError):
         return default
+
+
+def generate_unique_acronym(base_acronym, existing=None):
+    if not existing:
+        existing = EntityVersion.objects.filter(
+            acronym__istartswith=base_acronym
+        ).values_list('acronym', flat=True)
+
+    # Else generate the remaining letters
+    suffix_length = max(5 - len(base_acronym), 1)
+    for suffix in product(ascii_uppercase, repeat=suffix_length):
+        if (base_acronym + ''.join(suffix)) not in existing:
+            return base_acronym + ''.join(suffix)
+
+
+def generate_partner_acronym(name, existing=None):
+    """
+    Return an acronym of minimum 5 uppercase letters beginning by 'X' and first
+    letter of each word, following is generataed depending of existing acronyms
+
+    :param name: Title to base the acronym upon
+    :param existing: Set if generating a list of acronyms not yet save in DB
+    """
+    first_letters = ''.join(RE_FIRST_LETTERS.findall(name))
+    base_acronym = 'X' + first_letters.upper()
+
+    if not existing:
+        existing = EntityVersion.objects.filter(
+            acronym__istartswith=base_acronym
+        ).values_list('acronym', flat=True)
+
+    # Early return if it satisfies the conditions
+    if len(base_acronym) >= 5 and base_acronym not in existing:
+        return base_acronym
+
+    # Else generate the remaining letters
+    return generate_unique_acronym(base_acronym, existing)

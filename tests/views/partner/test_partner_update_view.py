@@ -32,7 +32,7 @@ class PartnerUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partner creation
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(organization__acronym='XABCDE')
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.country = CountryFactory()
@@ -112,6 +112,12 @@ class PartnerUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.partner.refresh_from_db()
+        org = self.partner.organization
+        self.assertEqual(org.acronym, 'XABCDE')
+        self.assertEqual(org.entity_set.count(), 1)
+        entity = org.entity_set.first()
+        self.assertEqual(entity.most_recent_acronym, 'XABCDE')
 
     def test_post_with_child_entity(self):
         # Create a child partner entity on the same organization

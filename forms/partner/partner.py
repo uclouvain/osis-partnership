@@ -8,6 +8,7 @@ from base.models.enums.organization_type import MAIN
 from base.models.organization import Organization
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import Partner
+from partnership.utils import generate_partner_acronym
 
 __all__ = ['PartnerForm', 'OrganizationForm']
 
@@ -132,3 +133,9 @@ class OrganizationForm(forms.ModelForm):
                 ValidationError(_('start_date_gt_end_date_error')),
             )
         return data
+
+    def save(self, commit=True):
+        # Generate an acronym upon creation
+        if not self.instance.pk:
+            self.instance.acronym = generate_partner_acronym(self.instance.name)
+        return super().save(commit)
