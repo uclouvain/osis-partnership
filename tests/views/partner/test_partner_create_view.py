@@ -5,6 +5,7 @@ from django.urls import reverse
 from base.models.enums.organization_type import ACADEMIC_PARTNER, MAIN
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.models import Partner
 from partnership.tests.factories import (
     PartnerTagFactory,
     PartnershipEntityManagerFactory,
@@ -144,6 +145,8 @@ class PartnerCreateViewTest(TestCase):
     def test_post_as_adri(self):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
+        partner = Partner.objects.last()
+        self.assertEqual(partner.organization.prefix, 'XTAAA')
         self.assertTemplateUsed(response, self.detail_template)
         self.assertEqual(len(mail.outbox), 0)
 

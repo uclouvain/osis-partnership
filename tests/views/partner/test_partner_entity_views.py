@@ -4,7 +4,7 @@ from django.test import TestCase
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import ContactTitle, ContactType
+from partnership.models import ContactTitle, ContactType, PartnerEntity
 from partnership.tests.factories import (
     PartnerEntityFactory, PartnerFactory,
     PartnershipEntityManagerFactory,
@@ -26,7 +26,9 @@ class PartnerEntityCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partner creation
-        cls.partner = PartnerFactory()
+        cls.partner = PartnerFactory(
+            organization__prefix='XABCDE',
+        )
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.contact_type = ContactType.objects.create(value='foobar')
@@ -95,6 +97,9 @@ class PartnerEntityCreateViewTest(TestCase):
         }
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        partner_entity = PartnerEntity.objects.last()
+        last_version = partner_entity.entity.entityversion_set.last()
+        self.assertEqual(last_version.acronym, 'XABCDEA')
 
 
 class PartnerEntityUpdateViewTest(TestCase):
@@ -215,6 +220,7 @@ class PartnerEntityUpdateViewTest(TestCase):
     def test_post(self):
         self.client.force_login(self.user_adri)
         current_entity = self.partner_entity.entity
+        acronym = current_entity.entityversion_set.last().acronym
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
         self.assertEqual(current_entity.entityversion_set.count(), 1)
 
@@ -227,6 +233,9 @@ class PartnerEntityUpdateViewTest(TestCase):
         # Should still be parent
         self.partner_entity.refresh_from_db()
         self.assertEqual(self.partner_entity.parent_entity, self.parent_entity)
+
+        last_version = self.partner_entity.entity.entityversion_set.last()
+        self.assertEqual(last_version.acronym, acronym)
 
         # If we set the same data
         response = self.client.post(self.url, data=self.data, follow=True)
