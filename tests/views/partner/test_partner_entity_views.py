@@ -27,7 +27,7 @@ class PartnerEntityCreateViewTest(TestCase):
 
         # Partner creation
         cls.partner = PartnerFactory(
-            organization__acronym='XABCDE',
+            organization__prefix='XABCDE',
         )
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc

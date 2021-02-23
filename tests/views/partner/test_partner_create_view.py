@@ -146,7 +146,7 @@ class PartnerCreateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
         partner = Partner.objects.last()
-        self.assertEqual(partner.organization.acronym, 'XTAAA')
+        self.assertEqual(partner.organization.prefix, 'XTAAA')
         self.assertTemplateUsed(response, self.detail_template)
         self.assertEqual(len(mail.outbox), 0)
 

@@ -9,7 +9,7 @@ from partnership.utils import (
     academic_years,
     merge_agreement_ranges,
     get_attribute,
-    generate_partner_acronym,
+    generate_partner_prefix,
 )
 
 
@@ -110,10 +110,10 @@ class UtilGetNestedAttributeTest(TestCase):
 class UtilGenerateAcronymTest(TestCase):
     def test_generate_partner_acronym(self):
         EntityVersionFactory(acronym='XUDNA')
-        self.assertEqual(generate_partner_acronym('MIT'), 'XMAAA')
-        self.assertEqual(generate_partner_acronym('University of Toronto'), 'XUOTA')
-        self.assertEqual(generate_partner_acronym('Université de Nantes'), 'XUDNB')
-        self.assertEqual(generate_partner_acronym('Lorem ipsum dolor amet'), 'XLIDA')
+        self.assertEqual(generate_partner_prefix('MIT'), 'XMAAA')
+        self.assertEqual(generate_partner_prefix('University of Toronto'), 'XUOTA')
+        self.assertEqual(generate_partner_prefix('Université de Nantes'), 'XUDNB')
+        self.assertEqual(generate_partner_prefix('Lorem ipsum dolor amet'), 'XLIDA')
         EntityVersionFactory(acronym='XLIDA')
-        self.assertEqual(generate_partner_acronym('Lorem ipsum dolor amet'), 'XLIDAA')
-        self.assertEqual(generate_partner_acronym('Lorem ipsum dolor amet et'), 'XLIDAE')
+        self.assertEqual(generate_partner_prefix('Lorem ipsum dolor amet'), 'XLIDAA')
+        self.assertEqual(generate_partner_prefix('Lorem ipsum dolor amet et'), 'XLIDAE')

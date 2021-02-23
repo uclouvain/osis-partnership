@@ -3,7 +3,7 @@ from django.db import migrations
 from django.db.models import F, Subquery, OuterRef
 
 from base.models.enums.organization_type import MAIN
-from partnership.utils import generate_partner_acronym, generate_unique_acronym
+from partnership.utils import generate_partner_prefix, generate_unique_acronym
 
 
 def forward(apps, schema_editor):
@@ -12,25 +12,25 @@ def forward(apps, schema_editor):
 
     # Set all missing acronyms on organizations
     missing_acronym = Organization.objects.filter(
-        acronym="",
+        prefix="",
         partner__isnull=False,
     ).exclude(type=MAIN).order_by('name')
     existing_acronyms = list(Organization.objects.exclude(
-        acronym="",
-    ).order_by('acronym').distinct('acronym').values_list('acronym', flat=True))
+        prefix="",
+    ).order_by('prefix').distinct('prefix').values_list('prefix', flat=True))
 
     for org in missing_acronym:
-        org.acronym = generate_partner_acronym(org.name, existing_acronyms)
-        existing_acronyms.append(org.acronym)
+        org.prefix = generate_partner_prefix(org.name, existing_acronyms)
+        existing_acronyms.append(org.prefix)
 
-    Organization.objects.bulk_update(missing_acronym, ['acronym'])
+    Organization.objects.bulk_update(missing_acronym, ['prefix'])
 
     # Update all acronyms for root entityversions
     # -- somehow a simple update won't work, so doing a bulk update
     versions = EntityVersion.objects.annotate(
         org_acronym=Subquery(Organization.objects.filter(
             pk=OuterRef('entity__organization_id')
-        ).order_by('name').values('acronym'))
+        ).order_by('name').values('prefix'))
     ).filter(
         entity__organization__partner__isnull=False,
         parent__isnull=True,
@@ -48,7 +48,7 @@ def forward(apps, schema_editor):
     sub_versions = EntityVersion.objects.annotate(
         org_acronym=Subquery(Organization.objects.filter(
             pk=OuterRef('entity__organization_id')
-        ).order_by('name').values('acronym'))
+        ).order_by('name').values('prefix'))
     ).filter(
         entity__organization__partner__isnull=False,
         parent__isnull=False,

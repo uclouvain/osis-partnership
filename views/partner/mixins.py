@@ -144,7 +144,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             # This is a partner's creation
             last_version = EntityVersion.objects.create(
                 entity_id=entity.pk,
-                acronym=entity.organization.acronym,
+                acronym=entity.organization.prefix,
                 parent=None,
                 start_date=start_date,
                 end_date=end_date,
@@ -167,7 +167,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
                 last_version.save()
                 last_version = EntityVersion.objects.create(
                     entity_id=entity.pk,
-                    acronym=entity.organization.acronym,
+                    acronym=entity.organization.prefix,
                     parent=None,
                     start_date=date.today(),
                     end_date=end_date,
@@ -358,7 +358,7 @@ class PartnerEntityFormMixin(PartnerEntityMixin, FormMixin):
             EntityVersion.objects.create(
                 entity=entity,
                 start_date=today,
-                acronym=generate_unique_acronym(organization.acronym),
+                acronym=generate_unique_acronym(organization.prefix),
                 parent=(
                         entity_form.cleaned_data.get('parent')  # from form
                         or organization.entity_set.first()  # default is partner

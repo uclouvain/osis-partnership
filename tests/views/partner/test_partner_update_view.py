@@ -32,7 +32,7 @@ class PartnerUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=entity_manager.entity)
 
         # Partner creation
-        cls.partner = PartnerFactory(organization__acronym='XABCDE')
+        cls.partner = PartnerFactory(organization__prefix='XABCDE')
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         # Misc
         cls.country = CountryFactory()
@@ -114,7 +114,7 @@ class PartnerUpdateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
         self.partner.refresh_from_db()
         org = self.partner.organization
-        self.assertEqual(org.acronym, 'XABCDE')
+        self.assertEqual(org.prefix, 'XABCDE')
         self.assertEqual(org.entity_set.count(), 1)
         entity = org.entity_set.first()
         self.assertEqual(entity.most_recent_acronym, 'XABCDE')

@@ -65,7 +65,7 @@ def generate_unique_acronym(base_acronym, existing=None):
             return base_acronym + ''.join(suffix)
 
 
-def generate_partner_acronym(name, existing=None):
+def generate_partner_prefix(name, existing=None):
     """
     Return an acronym of minimum 5 uppercase letters beginning by 'X' and first
     letter of each word, following is generataed depending of existing acronyms
