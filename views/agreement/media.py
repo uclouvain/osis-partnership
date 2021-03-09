@@ -12,6 +12,7 @@ __all__ = ['PartnershipAgreementMediaDownloadView']
 
 class PartnershipAgreementMediaDownloadView(PartnershipAgreementsMixin, SingleObjectMixin, View):
     login_url = 'access_denied'
+    permission_required = 'partnership.can_access_partnerships_agreements'
 
     @set_download_cookie
     def get(self, request, *args, **kwargs):

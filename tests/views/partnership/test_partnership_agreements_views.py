@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.core import mail
+from django.core.files.base import ContentFile
 from django.test import tag
 from django.urls import reverse
 
@@ -18,7 +19,7 @@ from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory,
+    PartnershipFactory, MediaFactory,
 )
 
 
@@ -57,13 +58,15 @@ class PartnershipAgreementsListViewTest(TestCase):
         PartnershipAgreementFactory(
             partnership__ucl_entity=cls.ucl_university_labo,
         )
-        PartnershipAgreementFactory(
+        cls.media = MediaFactory(file=ContentFile(b'', 'something.pdf'))
+        cls.agreement = PartnershipAgreementFactory(
             partnership__ucl_entity=cls.ucl_university_labo,
             partnership__partnership_type=PartnershipType.COURSE.name,
             partnership__start_date=date(2017, 9, 1),
             partnership__end_date=date(2030, 9, 1),
             start_date=date(2017, 9, 1),
             end_date=date(2025, 9, 1),
+            media=cls.media,
         )
 
         cls.url = reverse('partnerships:agreements-list')
@@ -110,6 +113,15 @@ class PartnershipAgreementsListViewTest(TestCase):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(18):
             response = self.client.get(self.export_url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_download_media_as_authenticated(self):
+        self.client.force_login(self.user)
+        download_url = reverse('partnerships:agreements:download_media', kwargs={
+            'partnership_pk': self.agreement.partnership_id,
+            'pk': self.agreement.pk,
+        })
+        response = self.client.get(download_url)
         self.assertEqual(response.status_code, 200)
 
     def test_export_as_adri(self):
