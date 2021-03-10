@@ -1,6 +1,7 @@
 try:
     from .contact import *
     from .enums import *
+    from .entity_proxy import *
     from .financing import *
     from .media import *
     from .partner import *
@@ -8,7 +9,7 @@ try:
     from .ucl_management_entity import *
 
     # Prevent polluting the namespace with module names
-    for name in ['contact', 'financing', 'media', 'partner',
+    for name in ['contact', 'financing', 'media', 'partner', 'entity_proxy',
                  'partnership', 'ucl_management_entity']:
         del globals()[name]
 except RuntimeError as e:  # pragma: no cover

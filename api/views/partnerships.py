@@ -15,9 +15,8 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from base.models.academic_year import AcademicYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
 from partnership.models import (
+    EntityProxy,
     AgreementStatus,
     Financing,
     Media,
@@ -116,25 +115,15 @@ class PartnershipsMixinView:
                 ),
                 Prefetch(
                     'ucl_entity',
-                    queryset=Entity.objects
+                    queryset=EntityProxy.objects
                     .select_related(
                         'uclmanagement_entity__academic_responsible',
                         'uclmanagement_entity__administrative_responsible',
                         'uclmanagement_entity__contact_out_person',
                         'uclmanagement_entity__contact_in_person',
                     )
-                    .annotate(
-                        most_recent_acronym=Subquery(
-                            EntityVersion.objects.filter(
-                                entity=OuterRef('pk')
-                            ).order_by('-start_date').values('acronym')[:1]
-                        ),
-                        most_recent_title=Subquery(
-                            EntityVersion.objects.filter(
-                                entity=OuterRef('pk')
-                            ).order_by('-start_date').values('title')[:1]
-                        ),
-                    )
+                    .with_title()
+                    .with_acronym()
                 ),
                 Prefetch(
                     'years',
@@ -149,20 +138,9 @@ class PartnershipsMixinView:
                         .prefetch_related(
                             Prefetch(
                                 'entities',
-                                queryset=Entity.objects.annotate(
-                                    most_recent_acronym=Subquery(
-                                        EntityVersion.objects
-                                        .filter(entity=OuterRef('pk'))
-                                        .order_by('-start_date')
-                                        .values('acronym')[:1]
-                                    ),
-                                    most_recent_title=Subquery(
-                                        EntityVersion.objects
-                                        .filter(entity=OuterRef('pk'))
-                                        .order_by('-start_date')
-                                        .values('title')[:1]
-                                    ),
-                                )
+                                queryset=EntityProxy.objects
+                                .with_title()
+                                .with_acronym()
                             ),
                             'education_fields',
                             'education_levels',
@@ -263,7 +241,8 @@ class PartnershipsMixinView:
                     ).values('type__url')[:1]
                 ),
             )
-            .distinct()
+            .distinct('pk')
+            .order_by('pk')
         )
 
 

@@ -3,10 +3,10 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q, F
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY, SECTOR
 from partnership.models import (
+    EntityProxy,
     Partnership,
     PartnershipConfiguration,
     PartnershipSubtype,
@@ -63,7 +63,7 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
         # entity is the hidden field of PartnershipYearForm
         entity_id = self.forwarded.get('entity', None)
         if not entity_id:
-            return Entity.objects.none()
+            return EntityProxy.objects.none()
 
         partnership_type = self.forwarded.get('partnership_type', None)
         if partnership_type == PartnershipType.DOCTORATE.name:
@@ -141,7 +141,7 @@ class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, a
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = Entity.objects.filter(partner_of__isnull=False).order_by(
+        qs = EntityProxy.objects.partners_having_partnership().order_by(
             'organization__name',
             F('partnerentity__name').asc(nulls_first=True),
         )
@@ -164,7 +164,7 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
     def get_queryset(self):
         entity = self.forwarded.get('ucl_entity', None)
         if entity is None:
-            return Entity.objects.none()
+            return EntityProxy.objects.none()
 
         # Get all children of faculty
         faculty = get_parent_id(entity, FACULTY)

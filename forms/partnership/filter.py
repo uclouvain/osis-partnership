@@ -7,12 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
 from base.models.entity_version_address import EntityVersionAddress
 from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.person import Person
 from partnership.models import (
     FundingProgram, FundingSource, FundingType,
+    EntityProxy,
     PartnerTag,
     PartnershipSubtype, PartnershipTag,
     PartnershipType,
@@ -38,7 +38,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_entity = EntityChoiceField(
         label=_('faculty_entity_filter'),
-        queryset=Entity.objects.filter(partnerships__isnull=False).distinct(),
+        queryset=EntityProxy.objects.ucl_entities(),
         empty_label=_('ucl_entity'),
         required=False,
         widget=autocomplete.ModelSelect2(
@@ -69,7 +69,7 @@ class PartnershipFilterForm(forms.Form):
 
     years_entity = forms.ModelChoiceField(
         label=_('entity_filter'),
-        queryset=Entity.objects.filter(partnerships_years__isnull=False).distinct(),
+        queryset=EntityProxy.objects.year_entities(),
         required=False,
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:years_entity_filter',
@@ -101,7 +101,7 @@ class PartnershipFilterForm(forms.Form):
     # Partner
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
-        queryset=Entity.objects.filter(partner_of__isnull=False).distinct(),
+        queryset=EntityProxy.objects.partners_having_partnership(),
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
