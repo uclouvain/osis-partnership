@@ -1,18 +1,16 @@
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Case, Exists, OuterRef, Prefetch, Subquery, When
+from django.db.models import Case, Exists, OuterRef, Prefetch, When
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
 
 from base.models.academic_year import AcademicYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
 from partnership.models import (
+    EntityProxy,
     PartnershipAgreement,
     PartnershipType,
     PartnershipYear,
     AgreementStatus,
-    Financing,
 )
 from .list import PartnershipsListView
 from ..export import ExportView
@@ -74,11 +72,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             'funding_program',
             'funding_type',
         ).prefetch_related(
-            Prefetch('entities', queryset=Entity.objects.annotate(
-                most_recent_acronym=Subquery(EntityVersion.objects.filter(
-                    entity=OuterRef('pk')
-                ).order_by('-start_date').values('acronym')[:1]),
-            )),
+            Prefetch('entities', queryset=EntityProxy.objects.with_acronym()),
             'education_levels',
         ).filter(academic_year=self.academic_year)
         queryset = (
@@ -164,7 +158,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(parts[2] if len(parts) > 2 else ''),
 
                 str(partnership.supervisor or ''),
-                year and ', '.join(map(lambda x: x.most_recent_acronym or '', year.entities.all())),
+                year and ', '.join(map(lambda x: x.acronym or '', year.entities.all())),
                 year and ', '.join(map(str, year.education_levels.all())),
                 partnership.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),

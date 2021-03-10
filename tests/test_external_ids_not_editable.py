@@ -12,6 +12,7 @@ class ExternalIdNotEditableTest(TestCase):
         self.model_containing_external_id = [
             model_class for model_class in models_in_partnership_app
             if 'external_id' in [f.name for f in model_class._meta.fields]
+               and not model_class._meta.proxy
         ]
 
     def test_external_id_is_not_updatable(self):
