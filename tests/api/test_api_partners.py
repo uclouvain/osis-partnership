@@ -83,7 +83,11 @@ class PartnersApiViewTest(TestCase):
             academic_responsible=cls.supervisor_management_entity
         )
         cls.financing = FinancingFactory(academic_year=cls.current_academic_year)
-        cls.financing.countries.add(cls.partnership_2.partner.contact_address.country)
+        partner = cls.partnership_2.partner_entities.first().organization.partner
+        cls.financing.countries.add(partner.contact_address.country)
+
+        cls.partner_uuid = cls.partnership.partner_entities.first().organization.partner.uuid
+        cls.partner_2_uuid = cls.partnership_2.partner_entities.first().organization.partner.uuid
 
         # Some noises
         PartnerFactory()
@@ -108,19 +112,19 @@ class PartnersApiViewTest(TestCase):
         response = self.client.get(self.url + '?ordering=partner')
         data = response.json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['uuid'], str(self.partnership_2.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_2_uuid))
 
     def test_ordering_country_en(self):
         response = self.client.get(self.url + '?ordering=country_en')
         data = response.json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_ordering_city(self):
         response = self.client.get(self.url + '?ordering=city')
         data = response.json()
         self.assertEqual(len(data), 2)
-        self.assertEqual(data[0]['uuid'], str(self.partnership_2.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_2_uuid))
 
     def test_filter_continent(self):
         response = self.client.get(self.url, {
@@ -128,7 +132,7 @@ class PartnersApiViewTest(TestCase):
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_filter_country(self):
         response = self.client.get(self.url, {
@@ -136,21 +140,21 @@ class PartnersApiViewTest(TestCase):
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_filter_city(self):
         response = self.client.get(self.url, {'city': "Lusaka"})
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership_2.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_2_uuid))
 
     def test_filter_partner(self):
         response = self.client.get(self.url, {
-            'partner': self.partnership.partner.uuid,
+            'partner': self.partner_uuid,
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_filter_ucl_university(self):
         response = self.client.get(self.url, {
@@ -158,7 +162,7 @@ class PartnersApiViewTest(TestCase):
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_filter_education_field(self):
         response = self.client.get(self.url, {
@@ -166,13 +170,13 @@ class PartnersApiViewTest(TestCase):
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
     def test_filter_mobility_type(self):
         response = self.client.get(self.url + '?mobility_type=student')
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_uuid))
 
         response = self.client.get(self.url + '?mobility_type=staff')
         self.assertEqual(response.status_code, 200)
@@ -185,7 +189,7 @@ class PartnersApiViewTest(TestCase):
         })
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['uuid'], str(self.partnership_2.partner.uuid))
+        self.assertEqual(data[0]['uuid'], str(self.partner_2_uuid))
 
     def test_partnerships_count(self):
         partnership = PartnershipFactory(
@@ -203,7 +207,8 @@ class PartnersApiViewTest(TestCase):
             end_academic_year__year=self.current_academic_year.year + 5,
             status=AgreementStatus.VALIDATED.name,
         )
-        response = self.client.get(self.url + '?partner=' + str(partnership.partner.uuid))
+        partner = partnership.partner_entities.first().organization.partner
+        response = self.client.get(self.url + '?partner=' + str(partner.uuid))
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 1)

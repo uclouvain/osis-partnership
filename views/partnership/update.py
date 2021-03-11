@@ -38,7 +38,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
         if (new_end_year and new_end_year != self.object.end_academic_year
                 and not is_linked_to_adri_entity(self.request.user)):
             title = _('partnership_end_year_updated_{partner}_{faculty}').format(
-                partner=partnership.partner,
+                partner=partnership.first_partner_name,
                 faculty=partnership.ucl_entity.most_recent_acronym,
             )
             self.notify_admin_mail(title, 'partnership_update.html', {

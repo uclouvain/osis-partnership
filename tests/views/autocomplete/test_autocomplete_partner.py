@@ -35,7 +35,7 @@ class PartnerEntityAutocompleteTestCase(TestCase):
         self.assertEqual(len(response.json()['results']), 0)
 
         PartnershipFactory(
-            partner_entity_id=self.entity.entity_id,
+            partner_entity=self.entity.entity,
             partner=self.partner,
         )
 

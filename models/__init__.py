@@ -6,11 +6,12 @@ try:
     from .media import *
     from .partner import *
     from .partnership import *
+    from .relation import *
     from .ucl_management_entity import *
 
     # Prevent polluting the namespace with module names
     for name in ['contact', 'financing', 'media', 'partner', 'entity_proxy',
-                 'partnership', 'ucl_management_entity']:
+                 'partnership', 'ucl_management_entity', 'relation']:
         del globals()[name]
 except RuntimeError as e:  # pragma: no cover
     # There's a weird bug when running tests, the test runner seeing a models
