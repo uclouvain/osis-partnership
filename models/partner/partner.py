@@ -287,7 +287,7 @@ class Partner(models.Model):
         from ..partnership.partnership import Partnership
         return (
             PartnershipAgreement.objects
-            .filter(partnership__partner_entity__organization__partner=self)
+            .filter(partnership__partner_entities__organization__partner=self)
             .select_related('start_academic_year', 'end_academic_year')
             .prefetch_related(
                 'media',

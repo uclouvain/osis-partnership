@@ -5,9 +5,13 @@ from django.test import tag
 
 from base.models.academic_year import AcademicYear
 from base.models.enums.entity_type import FACULTY, SECTOR
-from base.models.enums.organization_type import RESEARCH_CENTER
+from base.models.enums.organization_type import (
+    RESEARCH_CENTER,
+    ACADEMIC_PARTNER,
+)
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory as BaseEducationGroupYearFactory
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
@@ -144,7 +148,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partner_tag = PartnerTagFactory()
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
         cls.partnership_partner_tags = PartnershipFactory(
-            partner_entity_id=partner_tag.organization.entity_set.first().pk,
+            partner_entity=partner_tag.organization.entity_set.first(),
         )
 
         # education_field
@@ -187,6 +191,10 @@ class PartnershipsListViewTest(TestCase):
             years__academic_year__year=2154,
             end_date=date(2020, 7, 1),
         )
+        # Add another partner
+        entity = EntityWithVersionFactory(organization__type=ACADEMIC_PARTNER)
+        cls.partnership_general.partner_entities.add(entity)
+        PartnerFactory(organization=entity.organization)
         PartnershipAgreementFactory(
             partnership=cls.partnership_general,
             status=AgreementStatus.VALIDATED.name,
@@ -268,7 +276,7 @@ class PartnershipsListViewTest(TestCase):
         cls.partnership_all_filters = PartnershipFactory(
             ucl_entity=labo.entity,
             comment='all_filters',
-            partner_entity_id=partner_entity.entity_id,
+            partner_entity=partner_entity.entity,
             years=[],
             start_date=date(2160, 9, 1),
             end_date=date(2161, 6, 30),
@@ -316,7 +324,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertEqual(response.context['object_list'].count(), 28)
+        self.assertEqual(response.context['object_list'].count(), 29)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     @tag('perf')
@@ -382,8 +390,8 @@ class PartnershipsListViewTest(TestCase):
         json = response.json()
         uuids = [o['uuid'] for o in json['object_list']]
         self.assertIn(str(self.partnership_university_offer.uuid), uuids)
-        # Include partnerships with offers at None (28 total - 2 with other offers)
-        self.assertEqual(json['total'], 26)
+        # Include partnerships with offers at None (29 total - 2 with other offers)
+        self.assertEqual(json['total'], 27)
 
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
@@ -508,8 +516,9 @@ class PartnershipsListViewTest(TestCase):
             'partnership_type': PartnershipType.GENERAL.name,
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
+        self.assertEqual(results[1]['uuid'], str(self.partnership_general.uuid))
         self.assertEqual(results[0]['validity_end'], "01/07/2020")
 
         response = self.client.get(self.url, {
@@ -637,8 +646,9 @@ class PartnershipsListViewTest(TestCase):
             'partnership_date_to': '05/07/2020',
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
+        self.assertEqual(results[1]['uuid'], str(self.partnership_general.uuid))
 
     def test_with_all_filters(self):
         self.client.force_login(self.user)
@@ -647,7 +657,7 @@ class PartnershipsListViewTest(TestCase):
             'ucl_entity': self.partnership_all_filters.ucl_entity_id,
             'university_offers': first_year.offers.first().pk,
             'use_egracons': False,
-            'partner_entity': self.partnership_all_filters.partner_entity_id,
+            'partner_entity': self.partnership_all_filters.partner_entities.first().pk,
             'city': 'all_filters',
             'country': self.country_all_filters.pk,
             'continent': self.country_all_filters.continent_id,
@@ -696,7 +706,8 @@ class PartnershipsListViewTest(TestCase):
             end_academic_year__year=2137,
         )
         financing = FinancingFactory(academic_year=year)
-        financing.countries.add(partnership1.partner.contact_address.country)
+        partner = partnership1.partner_entities.first().organization.partner
+        financing.countries.add(partner.contact_address.country)
 
         partnership2 = BasePartnershipFactory(
             partnership_type=PartnershipType.PROJECT.name,

@@ -102,7 +102,7 @@ class PartnershipUpdateViewTest(TestCase):
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,
-            partner_entity_id=cls.partner_entity.entity_id,
+            partner_entity=cls.partner_entity.entity,
             author=cls.user_gf.person,
             years=[],
             ucl_entity=cls.ucl_university,
@@ -131,7 +131,7 @@ class PartnershipUpdateViewTest(TestCase):
             'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.entity_id,
+            'partner_entities': [cls.partner_entity.entity_id],
             'supervisor': '',
             'ucl_entity': cls.ucl_university_labo.pk,
             'year-is_sms': True,
@@ -229,8 +229,8 @@ class PartnershipUpdateViewTest(TestCase):
             data['comment'],
         )
         self.assertEqual(
-            str(partnership.partner_entity_id),
-            str(data['partner_entity']),
+            str(partnership.partner_entities.first().pk),
+            str(data['partner_entities'][0]),
         )
         self.assertEqual(
             str(partnership.supervisor_id if partnership.supervisor is not None else None),
@@ -390,10 +390,10 @@ class PartnershipUpdateViewTest(TestCase):
             dates__end=timezone.now() - timedelta(days=1),
         )
         entity = EntityWithVersionFactory(organization=partner.organization)
-        data['partner_entity'] = entity.pk
+        data['partner_entities'] = [entity.pk]
         response = self.client.post(self.url, data=data)
         msg = _('partnership_inactif_partner_error')
-        self.assertFormError(response, 'form', 'partner_entity', msg)
+        self.assertFormError(response, 'form', 'partner_entities', msg)
 
     def test_post_invalid_ucl_university_labo(self):
         self.client.force_login(self.user_adri)

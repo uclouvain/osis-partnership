@@ -109,7 +109,7 @@ class ConfigurationApiViewTest(TestCase):
             [p['value'] for p in data['partners']],
         )
         self.assertNotIn(
-            self.noisy_partnership.partner.uuid,
+            self.noisy_partnership.partner_entities.first().organization.partner.uuid,
             [p['value'] for p in data['partners']],
         )
 
