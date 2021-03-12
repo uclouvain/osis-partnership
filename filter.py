@@ -124,7 +124,7 @@ class MultipleOrderingFilter(filters.OrderingFilter):
 class PartnershipAdminFilter(filters.FilterSet):
     ordering = MultipleOrderingFilter(
         fields=(
-            ('partner__organization__name', 'partner'),
+            ('partner_entity__organization__name', 'partner'),
             ('city', 'city'),
             ('acronym_path', 'ucl')
         ),
@@ -132,7 +132,7 @@ class PartnershipAdminFilter(filters.FilterSet):
             'country': [
                 'country_name',
                 'city',
-                'partner__organization__name'
+                'partner_entity__organization__name'
             ],
         },
     )
@@ -148,18 +148,18 @@ class PartnershipAdminFilter(filters.FilterSet):
     ucl_entity = filters.ModelChoiceFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
     ucl_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
-    partner_type = filters.CharFilter(field_name='partner__organization__type')
+    partner_type = filters.CharFilter(field_name='partner_entity__organization__type')
     education_level = filters.CharFilter(field_name='years__education_levels')
     education_field = filters.CharFilter(field_name='years__education_fields')
     years_entity = filters.CharFilter(method='filter_years_entity')
     university_offer = filters.CharFilter(method='filter_university_offer')
     partner_tags = filters.CharFilter(method='filter_partner_tags')
     erasmus_code = filters.CharFilter(
-        field_name='partner__erasmus_code',
+        field_name='partner_entity__organization__partner__erasmus_code',
         lookup_expr='icontains',
     )
     use_egracons = filters.BooleanFilter(
-        field_name='partner__use_egracons',
+        field_name='partner_entity__organization__partner__use_egracons',
         widget=CustomNullBooleanSelect()
     )
     is_sms = filters.BooleanFilter(
@@ -222,7 +222,6 @@ class PartnershipAdminFilter(filters.FilterSet):
             'education_level',
             'years_entity',
             'university_offer',
-            'partner',
             'partner_entity',
             'erasmus_code',
             'use_egracons',
@@ -292,7 +291,7 @@ class PartnershipAdminFilter(filters.FilterSet):
     @staticmethod
     def filter_partner_tags(queryset, name, value):
         if value:
-            queryset = queryset.filter(partner__tags__in=value)
+            queryset = queryset.filter(partner_entity__organization__partner__tags__in=value)
         return queryset
 
     @staticmethod
@@ -420,7 +419,7 @@ class PartnershipAdminFilter(filters.FilterSet):
 class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
     ordering = MultipleOrderingFilter(
         fields=(
-            ('partnership__partner__organization__name', 'partner'),
+            ('partnership__partner_entity__organization__name', 'partner'),
             ('country', 'country'),
             ('city', 'city'),
             ('acronym_path', 'ucl'),
@@ -429,7 +428,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             'country': [
                 'country_name',
                 'city',
-                'partnership__partner__organization__name',
+                'partnership__partner_entity__organization__name',
             ],
         }
     )
@@ -467,7 +466,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
             ).select_related(
                 'partnership__supervisor',
                 'partnership__ucl_entity__uclmanagement_entity__academic_responsible',
-                'partnership__partner__organization',
+                'partnership__partner_entity__organization',
                 'start_academic_year',
                 'end_academic_year',
             )

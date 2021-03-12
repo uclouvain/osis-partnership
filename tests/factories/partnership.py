@@ -22,7 +22,10 @@ class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
 
-    partner = factory.SubFactory(PartnerFactory, organization__type=ACADEMIC_PARTNER)
+    partner_entity = factory.SubFactory(
+        'base.tests.factories.entity.EntityWithVersionFactory',
+        organization__type=ACADEMIC_PARTNER,
+    )
     partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(
@@ -55,3 +58,11 @@ class PartnershipFactory(factory.DjangoModelFactory):
     def missions(obj, create, extracted, **kwargs):
         if create and extracted is not None:
             obj.missions.set(extracted)
+
+    @factory.post_generation
+    def partner(obj, create, extracted, **kwargs):
+        if create and extracted is None and not hasattr(obj.partner_entity.organization, 'partner'):
+            PartnerFactory(
+                organization=obj.partner_entity.organization,
+                **kwargs,
+            )

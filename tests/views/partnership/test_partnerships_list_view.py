@@ -53,11 +53,9 @@ class PartnershipsListViewTest(TestCase):
 
         class PartnershipFactory(BasePartnershipFactory):
             ucl_entity = EntityVersionFactory(parent=root).entity
-            partner = PartnerFactory()
 
-        cls.partnership_first_name = BasePartnershipFactory(
-            ucl_entity=PartnershipFactory.ucl_entity,
-            partner__organization__name='Albania School',
+        cls.partnership_first_name = PartnershipFactory(
+            partner_entity__organization__name='Albania School',
         )
 
         # ucl_university
@@ -99,17 +97,17 @@ class PartnershipsListViewTest(TestCase):
             contact_address__country__name='Albania',
             contact_address__country__iso_code='AL',
         )
-        cls.partnership_partner = PartnershipFactory(partner=cls.partner)
+        cls.partnership_partner = PartnershipFactory(
+            partner_entity__organization=cls.partner.organization,
+        )
         cls.partnership_partner_type = BasePartnershipFactory(
             ucl_entity=PartnershipFactory.ucl_entity,
-            partner__organization__type=RESEARCH_CENTER,
+            partner_entity__organization__type=RESEARCH_CENTER,
         )
 
         # partner_entity
-        cls.partner_entity = PartnerEntityFactory()
-        cls.partnership_partner_entity = PartnershipFactory(
-            partner_entity_id=cls.partner_entity.entity_id,
-        )
+        cls.partnership_partner_entity = PartnershipFactory()
+        cls.partner_entity = cls.partnership_partner_entity.partner_entity
 
         # use_egracons
         cls.partnership_use_egracons = BasePartnershipFactory(
@@ -127,7 +125,9 @@ class PartnershipsListViewTest(TestCase):
         # country
         cls.country = CountryFactory()
         partner_country = PartnerFactory(contact_address__country=cls.country)
-        cls.partnership_country = PartnershipFactory(partner=partner_country)
+        cls.partnership_country = PartnershipFactory(
+            partner_entity=partner_country.organization.entity_set.first()
+        )
 
         # continent
         cls.continent = Continent.objects.create(code='fo', name='foo')
@@ -136,12 +136,16 @@ class PartnershipsListViewTest(TestCase):
             continent=cls.continent,
         )
         partner_continent = PartnerFactory(contact_address__country=country_continent)
-        cls.partnership_continent = PartnershipFactory(partner=partner_continent)
+        cls.partnership_continent = PartnershipFactory(
+            partner_entity=partner_continent.organization.entity_set.first(),
+        )
 
         # partner_tags
         cls.partner_tag = PartnerTagFactory()
         partner_tag = PartnerFactory(tags=[cls.partner_tag])
-        cls.partnership_partner_tags = PartnershipFactory(partner=partner_tag)
+        cls.partnership_partner_tags = PartnershipFactory(
+            partner_entity_id=partner_tag.organization.entity_set.first().pk,
+        )
 
         # education_field
         cls.education_field = DomainIscedFactory()
@@ -258,13 +262,13 @@ class PartnershipsListViewTest(TestCase):
             contact_address__country=cls.country_all_filters,
             tags=[cls.all_partner_tag],
         )
+        partner_entity = PartnerEntityFactory(
+            partner=cls.partner_all_filters,
+        )
         cls.partnership_all_filters = PartnershipFactory(
             ucl_entity=labo.entity,
-            partner=cls.partner_all_filters,
             comment='all_filters',
-            partner_entity_id=PartnerEntityFactory(
-                partner=cls.partner_all_filters,
-            ).entity_id,
+            partner_entity_id=partner_entity.entity_id,
             years=[],
             start_date=date(2160, 9, 1),
             end_date=date(2161, 6, 30),
@@ -381,19 +385,10 @@ class PartnershipsListViewTest(TestCase):
         # Include partnerships with offers at None (28 total - 2 with other offers)
         self.assertEqual(json['total'], 26)
 
-    def test_filter_partner(self):
-        self.client.force_login(self.user)
-        response = self.client.get(self.url, {
-            'partner': self.partner.pk,
-        }, HTTP_ACCEPT='application/json')
-        results = response.json()['object_list']
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['uuid'], str(self.partnership_partner.uuid))
-
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
-            'partner_entity': self.partner_entity.entity_id,
+            'partner_entity': self.partner_entity.pk,
         }, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
@@ -645,32 +640,32 @@ class PartnershipsListViewTest(TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
 
-    def test_all_filters(self):
+    def test_with_all_filters(self):
         self.client.force_login(self.user)
-        query = '&'.join(['{0}={1}'.format(key, value) for key, value in {
-            'ucl_entity': str(self.partnership_all_filters.ucl_entity_id),
-            'university_offers': str(self.partnership_all_filters.years.filter(offers__isnull=False).first().offers.first().pk),
-            'partner': str(self.partnership_all_filters.partner_id),
-            'use_egracons': 'False',
-            'partner_entity': str(self.partnership_all_filters.partner_entity_id),
+        first_year = self.partnership_all_filters.years.filter(offers__isnull=False).first()
+        data = {
+            'ucl_entity': self.partnership_all_filters.ucl_entity_id,
+            'university_offers': first_year.offers.first().pk,
+            'use_egracons': False,
+            'partner_entity': self.partnership_all_filters.partner_entity_id,
             'city': 'all_filters',
-            'country': str(self.country_all_filters.pk),
-            'continent': str(self.country_all_filters.continent_id),
-            'partner_tags': str(self.all_partner_tag.pk),
-            'education_field': str(self.all_education_field.pk),
-            'education_level': str(self.all_education_level.pk),
-            'is_sms': 'False',
-            'is_smp': 'False',
-            'is_sta': 'False',
-            'is_stt': 'False',
-            'tags': str(self.all_partnership_tag.pk),
+            'country': self.country_all_filters.pk,
+            'continent': self.country_all_filters.continent_id,
+            'partner_tags': self.all_partner_tag.pk,
+            'education_field': self.all_education_field.pk,
+            'education_level': self.all_education_level.pk,
+            'is_sms': False,
+            'is_smp': False,
+            'is_sta': False,
+            'is_stt': False,
+            'tags': self.all_partnership_tag.pk,
             'comment': 'all_filters',
-            'partnership_in': str(AcademicYear.objects.get(year=2125).pk),
-            'partnership_ending_in': str(AcademicYear.objects.get(year=2129).pk),
-            'partnership_valid_in': str(AcademicYear.objects.get(year=2127).pk),
-            'partnership_not_valid_in': str(AcademicYear.objects.get(year=2126).pk),
-        }.items()])
-        response = self.client.get(self.url + '?' + query, HTTP_ACCEPT='application/json')
+            'partnership_in': AcademicYear.objects.get(year=2125).pk,
+            'partnership_ending_in': AcademicYear.objects.get(year=2129).pk,
+            'partnership_valid_in': AcademicYear.objects.get(year=2127).pk,
+            'partnership_not_valid_in': AcademicYear.objects.get(year=2126).pk,
+        }
+        response = self.client.get(self.url, data, HTTP_ACCEPT='application/json')
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
@@ -717,7 +712,7 @@ class PartnershipsListViewTest(TestCase):
         )
 
         url = resolve_url('partnerships:export', academic_year_pk=year.pk)
-        with self.assertNumQueriesLessThan(25):
+        with self.assertNumQueriesLessThan(26):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')

@@ -19,7 +19,7 @@ class PartnershipAgreementQuerySet(models.QuerySet):
             available as country_name
         """
         contact_address_qs = EntityVersion.objects.filter(
-            entity__organization=OuterRef('partnership__partner__organization'),
+            entity__organization=OuterRef('partnership__partner_entity__organization'),
             parent__isnull=True,
         ).order_by('-start_date')
         qs = self

@@ -12,9 +12,6 @@ class UclEntityAutocompleteView(FacultyEntityAutocompleteView):
     """
     Autocomplete for entities on Partnership form
     """
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
     def get_queryset(self):
         qs = super().get_queryset()
         if self.forwarded['partnership_type'] == PartnershipType.MOBILITY.name:

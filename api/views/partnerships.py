@@ -1,6 +1,5 @@
 from django.contrib.postgres.aggregates import StringAgg
 from django.db import models
-from django.db.models.aggregates import Count
 from django.db.models.expressions import (
     F, OuterRef, Subquery, Value,
 )
@@ -35,7 +34,7 @@ from ...views import ExportView
 __all__ = [
     'PartnershipsRetrieveView',
     'PartnershipsListView',
-    'PartnershipsExportView',
+    'PartnershipsApiExportView',
     'partnership_get_export_url',
 ]
 
@@ -81,7 +80,8 @@ class PartnershipsMixinView:
             .select_related(
                 'subtype',
                 'supervisor',
-                'partner_entity',
+                'partner_entity__organization',
+                'partner_entity__partnerentity',
             ).prefetch_related(
                 'contacts',
                 'missions',
@@ -92,21 +92,27 @@ class PartnershipsMixinView:
                     ),
                 ),
                 Prefetch(
-                    'partner',
-                    queryset=Partner.objects.annotate_address(
+                    'partner_entity__organization__partner',
+                    queryset=(
+                        Partner.objects
+                        .annotate_address(
                             'country__iso_code',
                             'country__name',
                             'city',
-                        ).annotate_website().prefetch_related(
+                        )
+                        .annotate_website()
+                        .select_related('organization')
+                        .prefetch_related(
                             Prefetch(
                                 'medias',
                                 queryset=Media.objects.filter(
                                     is_visible_in_portal=True
                                 ).select_related('type')
                             ),
-                        ).annotate(
-                            partnerships_count=Count('partnerships'),
                         )
+                        .annotate_partnerships_count()
+                    ),
+                    to_attr='partner_prefetched',
                 ),
                 Prefetch(
                     'ucl_entity',
@@ -282,7 +288,7 @@ def partnership_get_export_url(request):  # pragma: no cover
     })
 
 
-class PartnershipsExportView(FilterMixin, PartnershipsMixinView, ExportView):
+class PartnershipsApiExportView(FilterMixin, PartnershipsMixinView, ExportView):
     filterset_class = PartnershipFilter
 
     def get_xls_headers(self):
@@ -319,9 +325,7 @@ class PartnershipsExportView(FilterMixin, PartnershipsMixinView, ExportView):
         queryset = (
             queryset
             .annotate_financing(self.academic_year)
-            .annotate(
-                tags_list=StringAgg('tags__value', ', '),
-            )
+            .annotate(tags_list=StringAgg('tags__value', ', '))
             .prefetch_related(
                 Prefetch(
                     'years',
@@ -353,6 +357,7 @@ class PartnershipsExportView(FilterMixin, PartnershipsMixinView, ExportView):
 
             parts = partnership.acronym_path[1:] if partnership.acronym_path else []
 
+            organization = partnership.partner_entity.organization
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
@@ -362,11 +367,13 @@ class PartnershipsExportView(FilterMixin, PartnershipsMixinView, ExportView):
                 str(funding_type or ''),
                 str(partnership.country_continent_name),
                 str(partnership.country_name),
-                str(partnership.partner),
-                str(partnership.partner.organization.code or ''),
-                str(partnership.partner.erasmus_code or ''),
-                str(partnership.partner.pic_code or ''),
-                str(partnership.partner_entity or ''),
+                str(organization.name),
+                str(organization.code or ''),
+                str(organization.partner_prefetched.erasmus_code or ''),
+                str(organization.partner_prefetched.pic_code or ''),
+
+                hasattr(partnership.partner_entity, 'partnerentity')
+                and partnership.partner_entity.partnerentity.name or '',
 
                 str(parts[0] if len(parts) > 0 else ''),
                 str(parts[1] if len(parts) > 1 else ''),

@@ -188,7 +188,7 @@ class PartnershipApiViewTest(TestCase):
 
     @tag('perf')
     def test_get(self):
-        with self.assertNumQueriesLessThan(19):
+        with self.assertNumQueriesLessThan(18):
             response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -342,6 +342,6 @@ class PartnershipApiViewTest(TestCase):
     @tag('perf')
     def test_export(self):
         url = reverse('partnership_api_v1:partnerships:export')
-        with self.assertNumQueriesLessThan(19):
+        with self.assertNumQueriesLessThan(20):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)

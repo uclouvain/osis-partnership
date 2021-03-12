@@ -724,9 +724,6 @@ msgstr "Informations"
 msgid "invalid_partner"
 msgstr "Invalid partner"
 
-msgid "invalid_partner_entity"
-msgstr "Invalid partner entity"
-
 msgid "invisible_on_api"
 msgstr "Not visible on the public interface"
 

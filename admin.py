@@ -102,7 +102,6 @@ class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'ucl_entity',
         'supervisor',
-        'partner',
         'partner_entity',
         'contacts',
         'medias',

@@ -41,17 +41,13 @@ class PartnerFilterForm(forms.Form):
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-        queryset=Country.objects.filter(
-            entityversionaddress__entity_version__entity__organization__partner__isnull=False,
-        ).order_by('name').distinct(),
+        queryset=Country.objects.order_by('name').distinct('name'),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
-        queryset=Continent.objects.filter(
-            country__entityversionaddress__entity_version__entity__organization__partner__isnull=False,
-        ).order_by('name').distinct(),
+        queryset=Continent.objects.order_by('name').distinct('name'),
         required=False,
     )
     is_ies = forms.NullBooleanField(

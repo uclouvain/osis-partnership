@@ -78,7 +78,6 @@ urlpatterns = [
 
     path('autocomplete/', include(([
         path('person/', PersonAutocompleteView.as_view(), name='person'),
-        path('partner/', PartnerAutocompleteView.as_view(), name='partner'),
         path('partnership/', PartnershipAutocompleteView.as_view(), name='partnership'),
         path('partner-entity/', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         path('faculty_entity/', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),
@@ -99,11 +98,6 @@ urlpatterns = [
         ),
 
         # Partnerships filter
-        path(
-            'partner-partnerships-filter/',
-            PartnerAutocompletePartnershipsFilterView.as_view(),
-            name='partner_partnerships_filter',
-        ),
         path(
             'partner-entity-partnerships-filter/',
             PartnerEntityAutocompletePartnershipsFilterView.as_view(),

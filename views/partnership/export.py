@@ -122,6 +122,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             .select_related(
                 'subtype',
                 'author__user',
+                'partner_entity__partnerentity',
             )
         )
         for partnership in queryset.distinct():
@@ -140,6 +141,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
 
             parts = partnership.acronym_path[1:] if partnership.acronym_path else []
 
+            partner = partnership.partner_entity.organization.partner
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
@@ -149,11 +151,13 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(funding_type or ''),
                 str(partnership.country_continent_name),
                 str(partnership.country_name),
-                str(partnership.partner),
-                str(partnership.partner.organization.code or ''),
-                str(partnership.partner.erasmus_code or ''),
-                str(partnership.partner.pic_code or ''),
-                str(partnership.partner_entity or ''),
+                str(partnership.partner_entity.organization.name),
+                str(partnership.partner_entity.organization.code or ''),
+                str(partner.erasmus_code or ''),
+                str(partner.pic_code or ''),
+
+                hasattr(partnership.partner_entity, 'partnerentity')
+                and partnership.partner_entity.partnerentity.name or '',
 
                 str(parts[0] if len(parts) > 0 else ''),
                 str(parts[1] if len(parts) > 1 else ''),

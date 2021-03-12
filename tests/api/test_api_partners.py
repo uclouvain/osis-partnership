@@ -43,7 +43,7 @@ class PartnersApiViewTest(TestCase):
         cls.partnership = PartnershipFactory(
             supervisor=cls.supervisor_partnership,
             years=[],
-            partner__organization__name="University of Albania",
+            partner_entity__organization__name="University of Albania",
             partner__contact_address__country=cls.country,
             partner__contact_address__city="Tirana",
             partner__contact_address__location=Point(
@@ -67,7 +67,7 @@ class PartnersApiViewTest(TestCase):
         cls.partnership_2 = PartnershipFactory(
             supervisor=None,
             years__academic_year=cls.current_academic_year,
-            partner__organization__name="Art school",
+            partner_entity__organization__name="Art school",
             partner__contact_address__country__iso_code="ZM",
             partner__contact_address__country__name="Zambia",
             partner__contact_address__city="Lusaka",

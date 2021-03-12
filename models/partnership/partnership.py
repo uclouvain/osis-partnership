@@ -11,6 +11,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus, PartnershipType, Financing
@@ -86,7 +87,7 @@ class PartnershipQuerySet(models.QuerySet):
             available as country_name
         """
         contact_address_qs = EntityVersion.objects.filter(
-            entity__organization=OuterRef('partner__organization'),
+            entity__organization=OuterRef('partner_entity__organization'),
             parent__isnull=True,
         ).order_by('-start_date')
         qs = self
@@ -183,22 +184,14 @@ class Partnership(models.Model):
         editable=False,
     )
 
-    partner = models.ForeignKey(
-        'partnership.Partner',
-        verbose_name=_('partner'),
-        on_delete=models.PROTECT,
-        related_name='partnerships',
-    )
     partner_entity = models.ForeignKey(
-        'base.Entity',
+        Entity,
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
-        related_name='partnerships_from_partnerentity',
-        blank=True,
-        null=True,
+        related_name='partner_of',
     )
     ucl_entity = models.ForeignKey(
-        'base.Entity',
+        Entity,
         verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
@@ -306,7 +299,9 @@ class Partnership(models.Model):
         )
 
     def __str__(self):
-        return _('partnership_with_{partner}').format(partner=self.partner)
+        return _('partnership_with_{partner}').format(
+            partner=self.partner_entity.organization.name,
+        )
 
     def get_absolute_url(self):
         return reverse('partnerships:detail', kwargs={'pk': self.pk})
@@ -433,6 +428,10 @@ class Partnership(models.Model):
                 self.acronym_path[i],
             ))
         return mark_safe(' / '.join(entities))
+
+    @cached_property
+    def partner(self):
+        return self.partner_entity.organization.partner
 
     def get_supervisor(self):
         if self.supervisor is not None:

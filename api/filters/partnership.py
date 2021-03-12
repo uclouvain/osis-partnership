@@ -1,12 +1,16 @@
 from django.contrib.gis.geos import Polygon
-from django.db.models import Exists, OuterRef, Q, Case, When, Subquery, F
+from django.db.models import OuterRef, Q, Case, When, Subquery, F
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 
 from base.models.entity_version import EntityVersion
 from partnership.models import (
-    Financing, Partnership, UCLManagementEntity,
-    PartnershipType, PartnershipYear, FundingSource, FundingProgram,
+    Financing,
+    Partnership,
+    PartnershipType,
+    PartnershipYear,
+    FundingSource,
+    FundingProgram,
     FundingType,
 )
 
@@ -57,7 +61,9 @@ class PartnershipFilter(filters.FilterSet):
         lookup_expr='iexact',
     )
     city = filters.CharFilter(field_name='city', lookup_expr='iexact')
-    partner = filters.UUIDFilter(field_name='partner__uuid')
+    partner = filters.UUIDFilter(
+        field_name='partner_entity__organization__partner__uuid',
+    )
 
     ucl_entity = filters.UUIDFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
@@ -69,7 +75,9 @@ class PartnershipFilter(filters.FilterSet):
     )
 
     tag = filters.CharFilter(field_name='tags__value')
-    partner_tag = filters.CharFilter(field_name='partner__tags__value')
+    partner_tag = filters.CharFilter(
+        field_name='partner_entity__organization__partner__tags__value',
+    )
 
     # Depends on the current year
     education_field = filters.UUIDFilter(
