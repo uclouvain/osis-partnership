@@ -5,13 +5,12 @@ from django.db.models import Func, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from base.utils.cte import CTESubquery
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
-from partnership.models import Partnership
+from partnership.models import Partnership, EntityProxy
 from partnership.utils import format_partner_entity
 from ..fields import EntityChoiceField, PersonChoiceField
 
@@ -27,7 +26,7 @@ __all__ = [
 class PartnershipBaseForm(forms.ModelForm):
     partner_entity = forms.ModelChoiceField(
         label=_('partner'),
-        queryset=Entity.objects.filter(organization__partner__isnull=False),
+        queryset=EntityProxy.objects.partner_entities(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:partner_entity'
         ),
@@ -36,7 +35,7 @@ class PartnershipBaseForm(forms.ModelForm):
     ucl_entity = EntityChoiceField(
         label=_('ucl_entity'),
         # This is actually refined in form and autocomplete
-        queryset=Entity.objects.all(),
+        queryset=EntityProxy.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_entity',
             attrs={

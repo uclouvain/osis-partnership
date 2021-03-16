@@ -11,7 +11,6 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import AgreementStatus, PartnershipType, Financing
@@ -185,13 +184,13 @@ class Partnership(models.Model):
     )
 
     partner_entity = models.ForeignKey(
-        Entity,
+        'base.Entity',
         verbose_name=_('partner_entity'),
         on_delete=models.PROTECT,
         related_name='partner_of',
     )
     ucl_entity = models.ForeignKey(
-        Entity,
+        'base.Entity',
         verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
