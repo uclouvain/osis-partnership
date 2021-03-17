@@ -5,7 +5,9 @@ from django.test import tag
 from django.urls import reverse
 
 from base.models.enums.entity_type import SECTOR, FACULTY
+from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import (
@@ -18,7 +20,7 @@ from partnership.tests import TestCase
 from partnership.tests.factories import (
     PartnershipAgreementFactory,
     PartnershipEntityManagerFactory,
-    PartnershipFactory,
+    PartnershipFactory, PartnerFactory,
 )
 
 
@@ -57,7 +59,7 @@ class PartnershipAgreementsListViewTest(TestCase):
         PartnershipAgreementFactory(
             partnership__ucl_entity=cls.ucl_university_labo,
         )
-        PartnershipAgreementFactory(
+        agreement = PartnershipAgreementFactory(
             partnership__ucl_entity=cls.ucl_university_labo,
             partnership__partnership_type=PartnershipType.COURSE.name,
             partnership__start_date=date(2017, 9, 1),
@@ -65,6 +67,10 @@ class PartnershipAgreementsListViewTest(TestCase):
             start_date=date(2017, 9, 1),
             end_date=date(2025, 9, 1),
         )
+        # With multilateral
+        entity = EntityWithVersionFactory(organization__type=ACADEMIC_PARTNER)
+        agreement.partnership.partner_entities.add(entity)
+        PartnerFactory(organization=entity.organization)
 
         cls.url = reverse('partnerships:agreements-list')
         cls.export_url = reverse('partnerships:export_agreements')

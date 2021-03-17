@@ -14,9 +14,7 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
     country = serializers.ReadOnlyField(source='country_name')
     city = serializers.ReadOnlyField()
     supervisor = serializers.CharField(source='partnership.get_supervisor')
-    partner = serializers.CharField(
-        source='partnership.partner_entity.organization.name'
-    )
+    partner = serializers.SerializerMethodField()
     entities_acronyms = serializers.SerializerMethodField()
     coverage = serializers.SerializerMethodField()
     status = serializers.CharField(source='get_status_display')
@@ -52,3 +50,13 @@ class PartnershipAgreementAdminSerializer(serializers.ModelSerializer):
             agreement.start_date,
             agreement.end_date,
         )
+
+    @staticmethod
+    def get_partner(agreement):
+        # Both annotations from partnership and agreements are needed
+        if agreement.partnership.num_partners > 1:
+            return "{} ({})".format(
+                agreement.partner_name,
+                agreement.partnership.project_acronym,
+            )
+        return agreement.partner_name

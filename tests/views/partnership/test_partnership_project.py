@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -66,7 +67,7 @@ class PartnershipCreateProjectViewTest(TestCase):
             'partnership_type': PartnershipType.PROJECT.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.entity_id,
+            'partner_entities': [cls.partner_entity.entity_id],
             'supervisor': PersonFactory().pk,
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
@@ -114,6 +115,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         # Dates :
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
+        cls.partner_entity_2 = PartnerEntityFactory(partner=cls.partner)
 
         # Years
         cls.start_academic_year = AcademicYearFactory(year=2150)
@@ -139,7 +141,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.partnership = PartnershipFactory(
             partnership_type=PartnershipType.PROJECT.name,
             partner=cls.partner,
-            partner_entity_id=cls.partner_entity.entity_id,
+            partner_entity=cls.partner_entity.entity,
             author=cls.user.person,
             years=[],
             ucl_entity=cls.ucl_university,
@@ -162,7 +164,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.data = {
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.entity_id,
+            'partner_entities': [cls.partner_entity.entity_id],
             'supervisor': cls.user.person.pk,
             'ucl_entity': cls.ucl_university_labo.pk,
             'start_date': cls.from_academic_year.start_date,
@@ -201,6 +203,28 @@ class PartnershipUpdateProjectViewTest(TestCase):
         data['year-funding'] = 'foobar'
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_project_acronym_required(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['partner_entities'] = [
+            self.partner_entity.entity_id,
+            self.partner_entity_2.entity_id,
+        ]
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertFormError(response, 'form', 'project_acronym', _('required'))
+        self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
+
+    def test_multilateral(self):
+        self.client.force_login(self.user)
+        data = self.data.copy()
+        data['partner_entities'] = [
+            self.partner_entity.entity_id,
+            self.partner_entity_2.entity_id,
+        ]
+        data['project_acronym'] = 'TEST'
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_funding_became_inactive(self):
         self.client.force_login(self.user)

@@ -30,8 +30,12 @@ class PartnershipDetailViewTest(TestCase):
 
     def test_get_financing(self):
         self.client.force_login(self.user)
-
         academic_year = AcademicYearFactory()
+
+        financing = FinancingFactory(academic_year=academic_year)
+        country = CountryFactory(iso_code="BA")
+        financing.countries.add(country)
+
         year = PartnershipYearFactory(
             partnership__partner__contact_address=None,
             academic_year=academic_year,

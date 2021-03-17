@@ -32,7 +32,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
             yield [
                 agreement.pk,
                 agreement.partnership.get_partnership_type_display(),
-                str(agreement.partnership.partner_entity.organization.name),
+                str(agreement.partnership.first_partner_name),
                 str(agreement.country_name),
                 str(agreement.city),
                 str(agreement.partnership.supervisor),
