@@ -218,6 +218,19 @@ class PartnerUpdateVersionsViewTest(TestCase):
         response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_detail.html')
 
+    def test_change_info(self):
+        """The old version version should be updated if changed"""
+        data = self.data.copy()
+        data['organization-name'] = "Tic"
+        with patch('partnership.views.partner.mixins.date') as mock_date:
+            mock_date.today.return_value = date(2015, 2, 2)
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        qs = self.entity.entityversion_set.order_by('start_date')
+        self.assertEqual(qs.first().end_date, date(2015, 2, 1))
+        self.assertEqual(qs.last().start_date, date(2015, 2, 2))
+
     def test_change_info_twice_in_the_same_day(self):
         """The same version should be used if change twice within the day"""
         data = self.data.copy()
