@@ -143,6 +143,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         if not qs:
             # This is a partner's creation
             last_version = EntityVersion.objects.create(
+                title=entity.organization.name,
                 entity_id=entity.pk,
                 acronym=entity.organization.prefix,
                 parent=None,
@@ -166,6 +167,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
                 last_version.end_date = date.today() - timedelta(days=1)
                 last_version.save()
                 last_version = EntityVersion.objects.create(
+                    title=entity.organization.name,
                     entity_id=entity.pk,
                     acronym=entity.organization.prefix,
                     parent=None,
