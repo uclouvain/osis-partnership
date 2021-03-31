@@ -10,7 +10,7 @@ __all__ = ['PartnershipPartnerRelation']
 
 
 class PartnershipPartnerRelationQuerySet(models.QuerySet):
-    def add_acronyms(self):
+    def add_acronym_path(self):
         ref = models.OuterRef('partnership__ucl_entity_id')
 
         return self.annotate(

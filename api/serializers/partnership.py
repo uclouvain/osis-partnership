@@ -43,6 +43,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         source='entity.partnerentity.name',
         allow_null=True,
     )
+    partner_entities = serializers.SerializerMethodField()
     supervisor = serializers.CharField(
         source='get_supervisor',
         allow_null=True,
@@ -104,6 +105,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             'funding_program',
 
             'education_fields', 'status', 'partner_entity', 'medias',
+            'partner_entities',
             'bilateral_agreements',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
@@ -367,6 +369,19 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             'acronym': rel.partnership.acronym_path[2],
             'title': rel.partnership.title_path[2],
         }
+
+    @staticmethod
+    def get_partner_entities(rel):
+        if rel.partnership.num_partners == 1:
+            return []
+        return [
+            '{} - {}, {}'.format(
+                entity.organization.name,
+                entity.organization.partner.city,
+                entity.organization.partner.country_name,
+            )
+            for entity in rel.partnership.partner_entities.all()
+        ]
 
 
 class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):

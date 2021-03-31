@@ -15,6 +15,7 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from base.models.academic_year import AcademicYear
+from base.models.organization import Organization
 from partnership.models import (
     EntityProxy,
     AgreementStatus,
@@ -88,6 +89,15 @@ class PartnershipsApiViewMixin:
                     ).prefetch_related(
                         'contacts',
                         'missions',
+                        Prefetch(
+                            'partner_entities__organization',
+                            queryset=Organization.objects.order_by('name').prefetch_related(
+                                Prefetch(
+                                    'partner',
+                                    queryset=Partner.objects.annotate_address('city', 'country__name'),
+                                )
+                            )
+                        )
                     )
                 ),
                 Prefetch(
