@@ -36,7 +36,7 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
                 'country_id',
                 'city',
             )
-            .add_acronyms()  # for ordering
+            .add_acronym_path()  # for ordering
             .select_related(
                 'entity__organization__partner',
             )
