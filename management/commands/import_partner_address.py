@@ -12,6 +12,7 @@ from django.core.management.base import OutputWrapper
 from django.db import transaction
 from django.db.models import F, Subquery, OuterRef, Q
 
+from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.entity_version_address import EntityVersionAddress
 from partnership.management.commands.progress_bar import ProgressBarMixin
@@ -212,9 +213,12 @@ class Command(ProgressBarMixin, BaseCommand):
             last_version = self._override_current_version(existing_address)
 
         if not last_version:
+            entity_id = self.entity_ids[int(row[ID])]
+            entity = Entity.objects.select_related('organization').get(pk=entity_id)
             # Create a new entity version
             last_version = EntityVersion.objects.create(
-                entity_id=self.entity_ids[int(row[ID])],
+                title=entity.organization.name,
+                entity_id=entity_id,
                 parent=None,
                 start_date=date.today(),
                 end_date=None,
