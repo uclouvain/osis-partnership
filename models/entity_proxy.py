@@ -4,6 +4,7 @@ from django.db import models
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
+from base.models.organization import Organization
 from base.utils.cte import CTESubquery
 
 __all__ = ['EntityProxy']
@@ -66,6 +67,20 @@ class EntityQuerySet(models.QuerySet):
     def ucl_entities(self):
         """UCL entities which have a partnership"""
         return self.filter(partnerships__isnull=False).distinct()
+
+    def with_partner_info(self):
+        from .partner.partner import Partner
+        return self.annotate(
+            partner_name=models.Subquery(Organization.objects.filter(
+                pk=models.OuterRef('organization_id'),
+            ).values('name')[:1]),
+            partner_city=models.Subquery(Partner.objects.filter(
+                pk=models.OuterRef('organization__partner__id'),
+            ).annotate_address('city').values('city')[:1]),
+            partner_country=models.Subquery(Partner.objects.filter(
+                pk=models.OuterRef('organization__partner__id'),
+            ).annotate_address('country__name').values('country_name')[:1]),
+        )
 
 
 class EntityManager(models.Manager.from_queryset(EntityQuerySet)):

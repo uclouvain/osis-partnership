@@ -376,9 +376,9 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             return []
         return [
             '{} - {}, {}'.format(
-                entity.organization.name,
-                entity.organization.partner.city,
-                entity.organization.partner.country_name,
+                entity.partner_name,
+                entity.partner_city,
+                entity.partner_country,
             )
             for entity in rel.partnership.partner_entities.all()
         ]

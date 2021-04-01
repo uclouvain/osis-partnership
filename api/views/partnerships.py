@@ -90,13 +90,8 @@ class PartnershipsApiViewMixin:
                         'contacts',
                         'missions',
                         Prefetch(
-                            'partner_entities__organization',
-                            queryset=Organization.objects.order_by('name').prefetch_related(
-                                Prefetch(
-                                    'partner',
-                                    queryset=Partner.objects.annotate_address('city', 'country__name'),
-                                )
-                            )
+                            'partner_entities',
+                            queryset=EntityProxy.objects.with_partner_info(),
                         )
                     )
                 ),
