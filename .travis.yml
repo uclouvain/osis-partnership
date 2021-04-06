@@ -13,11 +13,13 @@ addons:
 
 install:
   - export PROJECT_DIR=`pwd`
+  - test $TRAVIS_PULL_REQUEST = "false" && export OSIS_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH || export OSIS_BRANCH=$TRAVIS_BRANCH
+  - echo $OSIS_BRANCH
   - cd /tmp
   - git clone https://github.com/uclouvain/osis.git
   - cd osis
-  - git checkout $TRAVIS_BRANCH
-  - git pull origin $TRAVIS_BRANCH
+  - git checkout $OSIS_BRANCH
+  - git pull origin $OSIS_BRANCH
   - git submodule init
   - git submodule update
   - pip install -r requirements.txt

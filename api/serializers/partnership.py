@@ -7,8 +7,9 @@ from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
 from partnership.models import (
-    Partnership, MediaType,
+    MediaType,
     AgreementStatus,
+    PartnershipPartnerRelation,
 )
 from .contact import ContactSerializer
 from .media import MediaSerializer, AgreementMediaSerializer
@@ -16,53 +17,68 @@ from .partner import PartnerDetailSerializer
 from .entity import EntitySerializer
 
 __all__ = [
-    'PartnershipSerializer',
-    'PartnershipAdminSerializer',
+    'PartnershipPartnerRelationSerializer',
+    'PartnershipPartnerRelationAdminSerializer',
 ]
 
 
-class PartnershipSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
+class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
+    uuid = serializers.ReadOnlyField(source='partnership.uuid')
+    url = serializers.HyperlinkedRelatedField(
         view_name='partnership_api_v1:partnerships:retrieve',
         lookup_field='uuid',
+        source='partnership',
+        read_only=True,
     )
     partner = PartnerDetailSerializer(
-        source='partner_entity.organization.partner_prefetched'
+        source='entity.organization.partner_prefetched',
     )
-    type = serializers.ReadOnlyField(source='get_partnership_type_display')
-    subtype = serializers.StringRelatedField()
+    type = serializers.ReadOnlyField(
+        source='partnership.get_partnership_type_display',
+    )
+    partnership_type = serializers.ReadOnlyField(
+        source='partnership.partnership_type',
+    )
     partner_entity = serializers.CharField(
-        source='partner_entity.partnerentity.name',
+        source='entity.partnerentity.name',
         allow_null=True,
     )
+    partner_entities = serializers.SerializerMethodField()
     supervisor = serializers.CharField(
         source='get_supervisor',
         allow_null=True,
     )
     ucl_sector = serializers.SerializerMethodField()
     ucl_faculty = serializers.SerializerMethodField()
-    ucl_entity = EntitySerializer()
+    ucl_entity = EntitySerializer(source='partnership.ucl_entity')
     is_sms = serializers.SerializerMethodField()
     is_smp = serializers.SerializerMethodField()
     is_smst = serializers.SerializerMethodField()
     is_sta = serializers.SerializerMethodField()
     is_stt = serializers.SerializerMethodField()
 
+    subtype = serializers.StringRelatedField(source='partnership.subtype')
+    description = serializers.ReadOnlyField(source='partnership.description')
+    id_number = serializers.ReadOnlyField(source='partnership.id_number')
+    project_title = serializers.ReadOnlyField(source='partnership.project_title')
+
     missions = serializers.SerializerMethodField()
 
     education_fields = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     bilateral_agreements = serializers.SerializerMethodField()
-    medias = MediaSerializer(many=True)
+    medias = MediaSerializer(many=True, source='partnership.medias')
 
     out_contact = serializers.SerializerMethodField()
     out_portal = serializers.URLField(
-        source='ucl_entity.uclmanagement_entity.contact_out_url', allow_null=True)
+        source='partnership.ucl_entity.uclmanagement_entity.contact_out_url',
+        allow_null=True,
+    )
     out_education_levels = serializers.SerializerMethodField()
     out_entities = serializers.SerializerMethodField()
     out_university_offers = serializers.SerializerMethodField()
     out_funding = serializers.SerializerMethodField(method_name='get_funding')
-    out_partner_contacts = ContactSerializer(source='contacts', many=True)
+    out_partner_contacts = ContactSerializer(source='partnership.contacts', many=True)
     out_course_catalogue = serializers.SerializerMethodField()
     out_summary_tables = serializers.SerializerMethodField()
     out_useful_links = serializers.SerializerMethodField()
@@ -70,16 +86,16 @@ class PartnershipSerializer(serializers.ModelSerializer):
 
     in_contact = serializers.SerializerMethodField()
     in_portal = serializers.URLField(
-        source='ucl_entity.uclmanagement_entity.contact_in_url',
+        source='partnership.ucl_entity.uclmanagement_entity.contact_in_url',
         allow_null=True,
     )
 
     staff_contact = serializers.SerializerMethodField()
     staff_funding = serializers.SerializerMethodField()
-    staff_partner_contacts = ContactSerializer(source='contacts', many=True)
+    staff_partner_contacts = ContactSerializer(source='partnership.contacts', many=True)
 
     class Meta:
-        model = Partnership
+        model = PartnershipPartnerRelation
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'type', 'partnership_type',
             'ucl_sector', 'ucl_faculty', 'ucl_entity',
@@ -89,6 +105,7 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'funding_program',
 
             'education_fields', 'status', 'partner_entity', 'medias',
+            'partner_entities',
             'bilateral_agreements',
             # OUT
             'out_education_levels', 'out_entities', 'out_university_offers',
@@ -109,27 +126,27 @@ class PartnershipSerializer(serializers.ModelSerializer):
         except IndexError:  # pragma: no cover
             return None
 
-    def get_is_sms(self, partnership):
-        return self._get_current_year_attr(partnership, 'is_sms')
+    def get_is_sms(self, rel):
+        return self._get_current_year_attr(rel.partnership, 'is_sms')
 
-    def get_is_smp(self, partnership):
-        return self._get_current_year_attr(partnership, 'is_smp')
+    def get_is_smp(self, rel):
+        return self._get_current_year_attr(rel.partnership, 'is_smp')
 
-    def get_is_smst(self, partnership):
-        return self._get_current_year_attr(partnership, 'is_smst')
+    def get_is_smst(self, rel):
+        return self._get_current_year_attr(rel.partnership, 'is_smst')
 
-    def get_is_sta(self, partnership):
-        return self._get_current_year_attr(partnership, 'is_sta')
+    def get_is_sta(self, rel):
+        return self._get_current_year_attr(rel.partnership, 'is_sta')
 
-    def get_is_stt(self, partnership):
-        return self._get_current_year_attr(partnership, 'is_stt')
+    def get_is_stt(self, rel):
+        return self._get_current_year_attr(rel.partnership, 'is_stt')
 
     @staticmethod
-    def get_missions(partnership):
-        return ', '.join([mission.label for mission in partnership.missions.all()])
+    def get_missions(rel):
+        return ', '.join([mission.label for mission in rel.partnership.missions.all()])
 
-    def get_education_fields(self, partnership):
-        education_fields = self._get_current_year_attr(partnership, 'education_fields')
+    def get_education_fields(self, rel):
+        education_fields = self._get_current_year_attr(rel.partnership, 'education_fields')
         if education_fields is None:  # pragma: no cover
             return None
 
@@ -137,18 +154,19 @@ class PartnershipSerializer(serializers.ModelSerializer):
         return [('{0.%s} ({0.code})' % label).format(field)
                 for field in education_fields.all()]
 
-    def get_status(self, partnership):
+    def get_status(self, rel):
+        partnership = rel.partnership
         if partnership.is_mobility:
             return {
                 'status': AgreementStatus.VALIDATED.value,
                 # annotation on the queryset
-                'valid_years': partnership.validity_years,
+                'valid_years': rel.validity_years,
             }
         value = _('status_ongoing')
-        if partnership.agreement_end:  # pragma: no cover
-            threshold = partnership.agreement_end + timedelta(days=365 * 5)
+        if rel.agreement_end:  # pragma: no cover
+            threshold = rel.agreement_end + timedelta(days=365 * 5)
             today = timezone.now().date()
-            if today < partnership.agreement_end:
+            if today < rel.agreement_end:
                 value = _('status_ongoing')
             elif today < threshold:
                 value = _('status_finished')
@@ -158,47 +176,48 @@ class PartnershipSerializer(serializers.ModelSerializer):
             return {
                 'status': value,
                 # annotations on the queryset
-                'start_date': partnership.start_year,
-                'end_date': partnership.end_year,
+                'start_date': rel.start_year,
+                'end_date': rel.end_year,
             }
         else:
             return {
                 'status': value,
-                # annotations on the queryset
                 'start_date': partnership.start_date.strftime('%d/%m/%Y')
                 if partnership.start_date else '',
                 'end_date': partnership.end_date.strftime('%d/%m/%Y')
                 if partnership.end_date else '',
             }
 
-    def get_bilateral_agreements(self, partnership):
+    def get_bilateral_agreements(self, rel):
         return [
             AgreementMediaSerializer(agreement, context=self.context).data
-            for agreement in partnership.valid_current_agreements
+            for agreement in rel.partnership.valid_current_agreements
             if agreement.media.is_visible_in_portal
         ]
 
-    def get_out_education_levels(self, partnership):
-        education_levels = self._get_current_year_attr(partnership,
-                                                       'education_levels')
+    def get_out_education_levels(self, rel):
+        education_levels = self._get_current_year_attr(
+            rel.partnership, 'education_levels'
+        )
         if education_levels is None:  # pragma: no cover
             return None
         return [level.code for level in education_levels.all()]
 
-    def get_out_entities(self, partnership):
-        entities = self._get_current_year_attr(partnership, 'entities')
+    def get_out_entities(self, rel):
+        entities = self._get_current_year_attr(rel.partnership, 'entities')
         if entities is None:  # pragma: no cover
             return None
         return [EntitySerializer(entity).data for entity in entities.all()]
 
-    def get_out_university_offers(self, partnership):
-        offers = self._get_current_year_attr(partnership, 'offers')
+    def get_out_university_offers(self, rel):
+        offers = self._get_current_year_attr(rel.partnership, 'offers')
         if offers is None:  # pragma: no cover
             return None
-        return ['{} - {}'.format(offer.acronym, offer.title) for offer in
-                offers.all()]
+        return ['{} - {}'.format(offer.acronym, offer.title)
+                for offer in offers.all()]
 
-    def get_out_contact(self, partnership):
+    def get_out_contact(self, rel):
+        partnership = rel.partnership
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
             return {}
         ume = partnership.ucl_entity.uclmanagement_entity
@@ -225,10 +244,10 @@ class PartnershipSerializer(serializers.ModelSerializer):
             contact['phone'] = person.phone
         return contact
 
-    def get_out_course_catalogue(self, partnership):
-        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+    def get_out_course_catalogue(self, rel):
+        if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return {}
-        ume = partnership.ucl_entity.uclmanagement_entity
+        ume = rel.partnership.ucl_entity.uclmanagement_entity
 
         return {
             'fr': {
@@ -242,31 +261,31 @@ class PartnershipSerializer(serializers.ModelSerializer):
         }
 
     @staticmethod
-    def get_public_media(partnership, media_type):
+    def get_public_media(rel, media_type):
         medias = [
-            MediaSerializer(media).data for media in partnership.medias.all()
+            MediaSerializer(media).data for media in rel.partnership.medias.all()
             if (media.is_visible_in_portal and media.type is not None
                 and media.type.code == media_type)
         ]
         medias += [
             MediaSerializer(media).data
-            for media in partnership.partner_entity.organization.partner_prefetched.medias.all()
+            for media in rel.entity.organization.partner_prefetched.medias.all()
             if (media.is_visible_in_portal and media.type is not None
                 and media.type.code == media_type)
         ]
         return medias
 
-    def get_out_summary_tables(self, partnership):
-        return self.get_public_media(partnership, MediaType.SUMMARY_TABLE)
+    def get_out_summary_tables(self, rel):
+        return self.get_public_media(rel, MediaType.SUMMARY_TABLE)
 
-    def get_out_useful_links(self, partnership):
-        return self.get_public_media(partnership, MediaType.USEFUL_LINK)
+    def get_out_useful_links(self, rel):
+        return self.get_public_media(rel, MediaType.USEFUL_LINK)
 
-    def get_in_contact(self, partnership):
-        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+    def get_in_contact(self, rel):
+        if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return None
 
-        ume = partnership.ucl_entity.uclmanagement_entity
+        ume = rel.partnership.ucl_entity.uclmanagement_entity
         administrative_person = ume.administrative_responsible
 
         email = ume.contact_in_email
@@ -290,19 +309,21 @@ class PartnershipSerializer(serializers.ModelSerializer):
             contact['phone'] = person.phone
         return contact
 
-    def get_funding(self, partnership):
+    def get_funding(self, rel):
+        partnership = rel.partnership
         funding_source = self._get_current_year_attr(partnership, 'funding_source')
         if funding_source:
             return {'name': str(funding_source), 'url': ''}
         eligible = self._get_current_year_attr(partnership, 'eligible')
-        if partnership.is_mobility and eligible and partnership.funding_name:
+        if partnership.is_mobility and eligible and rel.funding_name:
             return {
-                'name': partnership.funding_name,
-                'url': partnership.funding_url,
+                'name': rel.funding_name,
+                'url': rel.funding_url,
             }
 
-    def get_funding_program(self, partnership):
+    def get_funding_program(self, rel):
         label = ''
+        partnership = rel.partnership
         funding_program = self._get_current_year_attr(partnership, 'funding_program')
         if funding_program:
             label += str(funding_program)
@@ -314,10 +335,10 @@ class PartnershipSerializer(serializers.ModelSerializer):
             'url': funding_type and funding_type.url,
         }
 
-    def get_staff_contact(self, partnership):
-        if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
+    def get_staff_contact(self, rel):
+        if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return None
-        ume = partnership.ucl_entity.uclmanagement_entity
+        ume = rel.partnership.ucl_entity.uclmanagement_entity
         contact = {
             'email': ume.administrative_responsible.email,
             'title': None,
@@ -327,41 +348,72 @@ class PartnershipSerializer(serializers.ModelSerializer):
         }
         return contact
 
-    def get_staff_funding(self, partnership):
-        funding = self.get_funding(partnership)
+    def get_staff_funding(self, rel):
+        funding = self.get_funding(rel)
         if funding is None:
             return None
         funding['url'] = settings.STAFF_FUNDING_URL
         return funding
 
     @staticmethod
-    def get_ucl_sector(partnership):
-        if not partnership.acronym_path or len(partnership.acronym_path) < 2:
+    def get_ucl_sector(rel):
+        if not rel.partnership.acronym_path or len(rel.partnership.acronym_path) < 2:
             return ''
-        return partnership.acronym_path[1]
+        return rel.partnership.acronym_path[1]
 
     @staticmethod
-    def get_ucl_faculty(partnership):
-        if not partnership.acronym_path or len(partnership.acronym_path) < 3:
+    def get_ucl_faculty(rel):
+        if not rel.partnership.acronym_path or len(rel.partnership.acronym_path) < 3:
             return {}
         return {
-            'acronym': partnership.acronym_path[2],
-            'title': partnership.title_path[2],
+            'acronym': rel.partnership.acronym_path[2],
+            'title': rel.partnership.title_path[2],
         }
 
+    @staticmethod
+    def get_partner_entities(rel):
+        if rel.partnership.num_partners == 1:
+            return []
+        return [
+            '{} - {}, {}'.format(
+                entity.partner_name,
+                entity.partner_city,
+                entity.partner_country,
+            )
+            for entity in rel.partnership.partner_entities.all()
+        ]
 
-class PartnershipAdminSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
+
+class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
+    uuid = serializers.ReadOnlyField(source='partnership.uuid')
+    url = serializers.HyperlinkedRelatedField(
         view_name='partnerships:detail',
+        source='partnership',
+        read_only=True,
     )
     country = serializers.ReadOnlyField(source='country_name')
     city = serializers.ReadOnlyField()
-    supervisor = serializers.CharField(source='get_supervisor')
-    partner = serializers.CharField(source='partner_entity.organization.name')
-    type = serializers.CharField(source='get_partnership_type_display')
+    supervisor = serializers.CharField(source='partnership.get_supervisor')
+    partner = serializers.SerializerMethodField()
+    type = serializers.CharField(source='partnership.get_partnership_type_display')
+    entities_acronyms = serializers.ReadOnlyField(
+        source='partnership.entities_acronyms',
+    )
+    validity_end = serializers.ReadOnlyField(
+        source='partnership.validity_end',
+    )
+
+    @staticmethod
+    def get_partner(rel):
+        if rel.partnership.num_partners > 1:
+            return "{} ({})".format(
+                rel.entity.organization.name,
+                rel.partnership.project_acronym,
+            )
+        return rel.entity.organization.name
 
     class Meta:
-        model = Partnership
+        model = PartnershipPartnerRelation
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'country', 'city',
             'entities_acronyms', 'validity_end', 'type'

@@ -4,7 +4,6 @@ from uuid import uuid4
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Exists, OuterRef
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -21,7 +20,7 @@ from partnership.forms.partner.entity import (
     PartnerEntityAddressForm,
 )
 from partnership.forms.partner.partner import OrganizationForm
-from partnership.models import Partner, PartnerEntity
+from partnership.models import Partner, PartnerEntity, EntityProxy
 from partnership.utils import generate_unique_acronym
 from partnership.views.mixins import NotifyAdminMailMixin
 
@@ -77,11 +76,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         organization = organization_form.save()
 
         # Save related entity
-        entity, created = Entity.objects.annotate(
-            is_root=Exists(EntityVersion.objects.filter(
-                entity_id=OuterRef('pk'),
-            ).current(date.today()).only_roots()),
-        ).filter(is_root=True).update_or_create(
+        entity, created = EntityProxy.objects.only_roots().update_or_create(
             defaults=dict(
                 website=organization_form.cleaned_data['website'],
             ),
@@ -143,6 +138,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         if not qs:
             # This is a partner's creation
             last_version = EntityVersion.objects.create(
+                title=entity.organization.name,
                 entity_id=entity.pk,
                 acronym=entity.organization.prefix,
                 parent=None,
@@ -166,6 +162,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
                 last_version.end_date = date.today() - timedelta(days=1)
                 last_version.save()
                 last_version = EntityVersion.objects.create(
+                    title=entity.organization.name,
                     entity_id=entity.pk,
                     acronym=entity.organization.prefix,
                     parent=None,
@@ -253,9 +250,7 @@ class PartnerEntityMixin(PermissionRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return PartnerEntity.objects.filter(
-            entity__entityversion__parent__organization__partner=self.partner,
-        ).distinct()
+        return PartnerEntity.objects.child_of(self.partner)
 
     def get_success_url(self):
         return self.partner.get_absolute_url()

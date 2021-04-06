@@ -5,7 +5,9 @@ from django.test import tag
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from base.models.enums.organization_type import ACADEMIC_PARTNER
 from base.tests.factories.academic_year import AcademicYearFactory
+from base.tests.factories.entity import EntityWithVersionFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
@@ -28,7 +30,7 @@ from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
-PARTNERSHIP_COUNT = 5
+PARTNERSHIP_COUNT = 6
 
 
 class PartnershipApiViewTest(TestCase):
@@ -70,6 +72,7 @@ class PartnershipApiViewTest(TestCase):
             partner__contact_address__city="Tirana",
             subtype=cls.subtype,
         )
+        cls.partner = cls.partnership.partner_entities.first().organization.partner
         year = PartnershipYearFactory(
             partnership=cls.partnership,
             academic_year=current_academic_year,
@@ -120,6 +123,7 @@ class PartnershipApiViewTest(TestCase):
             partner__contact_address__city="Lusaka",
             partner__contact_address__location=Point(-15.4166, 28.2822),
         )
+        cls.partner_2 = cls.partnership_2.partner_entities.first().organization.partner
         PartnershipAgreementFactory(
             partnership=cls.partnership_2,
             start_academic_year=current_academic_year,
@@ -133,7 +137,7 @@ class PartnershipApiViewTest(TestCase):
             contact_in_person=None,
         )
         cls.financing = FinancingFactory(academic_year=current_academic_year)
-        cls.financing.countries.add(cls.partnership_2.partner.contact_address.country)
+        cls.financing.countries.add(cls.partner_2.contact_address.country)
 
         # Other types
         cls.partnership_project = PartnershipFactory(
@@ -148,11 +152,16 @@ class PartnershipApiViewTest(TestCase):
             academic_year=current_academic_year,
             funding_source=FundingSourceFactory(),
         )
+
+        # Multilateral
         cls.partnership_course = PartnershipFactory(
             partnership_type=PartnershipType.COURSE.name,
             start_date=date(current_academic_year.year, 1, 1),
             end_date=date(current_academic_year.year + 1, 10, 1),
         )
+        entity = EntityWithVersionFactory(organization__type=ACADEMIC_PARTNER)
+        cls.partnership_course.partner_entities.add(entity)
+        PartnerFactory(organization=entity.organization)
 
         cls.partnership_general = PartnershipFactory(
             partnership_type=PartnershipType.GENERAL.name,
@@ -188,7 +197,7 @@ class PartnershipApiViewTest(TestCase):
 
     @tag('perf')
     def test_get(self):
-        with self.assertNumQueriesLessThan(18):
+        with self.assertNumQueriesLessThan(20):
             response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -210,7 +219,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_filter_city(self):
         response = self.client.get(self.url, {
-            'city': self.partnership.partner.contact_address.city,
+            'city': self.partner.contact_address.city,
         })
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
@@ -219,7 +228,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_filter_partner(self):
         response = self.client.get(self.url, {
-            'partner': self.partnership.partner.uuid,
+            'partner': self.partner.uuid,
         })
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
@@ -299,7 +308,7 @@ class PartnershipApiViewTest(TestCase):
             'type': PartnershipType.COURSE.name,
         })
         results = response.json()['results']
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_course.uuid))
         self.assertEqual(results[0]['status'], {
             'end_date': str(self.current_academic_year),
@@ -342,6 +351,6 @@ class PartnershipApiViewTest(TestCase):
     @tag('perf')
     def test_export(self):
         url = reverse('partnership_api_v1:partnerships:export')
-        with self.assertNumQueriesLessThan(20):
+        with self.assertNumQueriesLessThan(22):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)

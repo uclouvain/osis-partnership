@@ -56,10 +56,32 @@
             <dd>{{ partnership.get_partnership_type_display }}</dd>
             <dt>{% trans "partner" %}</dt>
             <dd>
-              <a href="{{ partnership.partner.get_absolute_url }}"><strong>{{ partnership.partner }}</strong></a>
-              {% if partnership.partner_entity %} &gt; <strong>{{ partnership.partner_entity.partnerentity }}</strong>{% endif %}
-              {% if not partnership.partner.is_valid %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "invalid_partner" %}</span>{% endif %}
-              {% if not partnership.partner.is_actif %}<span class="text-danger"><i class="glyphicon glyphicon-warning-sign"></i> {% trans "inactive_partner" %}</span>{% endif %}
+              <ul class="list-unstyled nomargin">
+                {% for entity in partnership.partner_entities.all %}
+                  {% with partner=entity.organization.partner %}
+                    <li>
+                      <a href="{{ partner.get_absolute_url }}">
+                        <strong>{{ partner }}</strong>
+                      </a>
+                      {% if entity.partnerentity %} &gt;
+                        <strong>{{ entity.partnerentity }}</strong>
+                      {% endif %}
+                      {% if not partner.is_valid %}
+                        <span class="text-danger">
+                          <i class="glyphicon glyphicon-warning-sign"></i>
+                          {% trans "invalid_partner" %}
+                        </span>
+                      {% endif %}
+                      {% if not partner.is_actif %}
+                        <span class="text-danger">
+                          <i class="glyphicon glyphicon-warning-sign"></i>
+                          {% trans "inactive_partner" %}
+                        </span>
+                      {% endif %}
+                    </li>
+                  {% endwith %}
+                {% endfor %}
+              </ul>
             </dd>
 
             <dt>{% trans "ucl_entity" %}</dt>

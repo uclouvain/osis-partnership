@@ -1,16 +1,16 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Subquery, F
+from django.db.models import Subquery, F, Prefetch
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 
 from base.models.academic_year import AcademicYear
 from base.utils.search import SearchMixin
-from partnership.api.serializers import PartnershipAdminSerializer
+from partnership.api.serializers import PartnershipPartnerRelationAdminSerializer
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.filter import PartnershipAdminFilter
 from partnership.models import (
-    Partnership, PartnershipType,
+    Partnership, PartnershipType, PartnershipPartnerRelation,
 )
 
 __all__ = [
@@ -23,32 +23,36 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
     context_object_name = 'partnerships'
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
-    serializer_class = PartnershipAdminSerializer
+    serializer_class = PartnershipPartnerRelationAdminSerializer
     filterset_class = PartnershipAdminFilter
     cache_search = False
 
     def get_queryset(self):
         return (
-            Partnership.objects
+            PartnershipPartnerRelation.objects
             .annotate_partner_address(
                 'country__continent_id',
                 'country__name',
                 'country_id',
                 'city',
             )
-            # TODO remove when Entity city field is dropped (conflict)
-            .defer("ucl_entity__city")
-            .add_acronyms()
-            .for_validity_end()
+            .add_acronym_path()  # for ordering
             .select_related(
-                'ucl_entity__uclmanagement_entity__academic_responsible',
-                'partner_entity__organization',
-                'supervisor',
+                'entity__organization__partner',
             )
             .prefetch_related(
-                'partner_entity__organization__partner',
+                Prefetch(
+                    'partnership',
+                    queryset=Partnership.objects.add_acronyms().for_validity_end().select_related(
+                        'supervisor',
+                        'subtype',  # keep for xls export
+                        'ucl_entity__uclmanagement_entity__academic_responsible',
+                    ),
+                ),
             )
-        ).distinct()
+            # TODO remove when Entity city field is dropped (conflict)
+            .defer("partnership__ucl_entity__city")
+        ).distinct().order_by('pk')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
