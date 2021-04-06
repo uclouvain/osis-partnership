@@ -83,9 +83,10 @@ class PartnershipYearInline(admin.TabularInline):
         'entities',
         'offers',
     )
+    extra = 0
 
     def get_queryset(self, request):
-        return PartnershipYear.objects.select_related('academic_year', 'partnership__partner')
+        return PartnershipYear.objects.select_related('academic_year')
 
 
 class PartnershipAgreementInline(admin.TabularInline):
@@ -93,23 +94,27 @@ class PartnershipAgreementInline(admin.TabularInline):
     raw_id_fields = (
         'media',
     )
+    extra = 0
 
-    def get_queryset(self, request):
-        return PartnershipAgreement.objects.select_related('partnership__partner')
+
+class PartnershipPartnerRelationInline(admin.TabularInline):
+    model = PartnershipPartnerRelation
+    raw_id_fields = ('entity', )
+    extra = 0
 
 
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'ucl_entity',
         'supervisor',
-        'partner_entity',
         'contacts',
         'medias',
     )
-    inlines = (PartnershipYearInline, PartnershipAgreementInline)
-
-    def get_queryset(self, request):
-        return Partnership.objects.select_related('partner')
+    inlines = (
+        PartnershipPartnerRelationInline,
+        PartnershipYearInline,
+        PartnershipAgreementInline,
+    )
 
     def save_form(self, request, form, change):
         """

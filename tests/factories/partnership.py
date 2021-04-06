@@ -1,6 +1,7 @@
 import factory
 
 from base.models.enums.organization_type import ACADEMIC_PARTNER
+from base.tests.factories.entity import EntityWithVersionFactory
 from partnership.models import Partnership, PartnershipTag, PartnershipType
 from .partner import PartnerFactory
 from .partnership_year import PartnershipYearFactory
@@ -22,10 +23,6 @@ class PartnershipFactory(factory.DjangoModelFactory):
     class Meta:
         model = Partnership
 
-    partner_entity = factory.SubFactory(
-        'base.tests.factories.entity.EntityWithVersionFactory',
-        organization__type=ACADEMIC_PARTNER,
-    )
     partnership_type = PartnershipType.MOBILITY.name
 
     ucl_entity = factory.SubFactory(
@@ -33,6 +30,15 @@ class PartnershipFactory(factory.DjangoModelFactory):
         organization=None,
         version__acronym="SO"
     )
+
+    @factory.post_generation
+    def partner_entity(obj, create, extracted, **kwargs):
+        if create:
+            if extracted is None:
+                kwargs.setdefault('organization__type', ACADEMIC_PARTNER)
+                extracted = EntityWithVersionFactory(**kwargs)
+            obj.partner_entities.add(extracted)
+            obj.partner_entity = extracted
 
     @factory.post_generation
     def tags(obj, create, extracted, **kwargs):

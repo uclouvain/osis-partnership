@@ -1,3 +1,5 @@
+from collections import Iterable
+
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
@@ -5,13 +7,12 @@ from django.db.models import Func, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
 from base.utils.cte import CTESubquery
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
-from partnership.models import Partnership
+from partnership.models import Partnership, EntityProxy
 from partnership.utils import format_partner_entity
 from ..fields import EntityChoiceField, PersonChoiceField
 
@@ -25,10 +26,10 @@ __all__ = [
 
 
 class PartnershipBaseForm(forms.ModelForm):
-    partner_entity = forms.ModelChoiceField(
+    partner_entities = forms.ModelMultipleChoiceField(
         label=_('partner'),
-        queryset=Entity.objects.filter(organization__partner__isnull=False),
-        widget=autocomplete.ModelSelect2(
+        queryset=EntityProxy.objects.partner_entities(),
+        widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partner_entity'
         ),
     )
@@ -36,7 +37,7 @@ class PartnershipBaseForm(forms.ModelForm):
     ucl_entity = EntityChoiceField(
         label=_('ucl_entity'),
         # This is actually refined in form and autocomplete
-        queryset=Entity.objects.all(),
+        queryset=EntityProxy.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:ucl_entity',
             attrs={
@@ -59,7 +60,7 @@ class PartnershipBaseForm(forms.ModelForm):
         model = Partnership
         fields = (
             'partnership_type',
-            'partner_entity',
+            'partner_entities',
             'ucl_entity',
             'supervisor',
             'comment',
@@ -88,7 +89,7 @@ class PartnershipBaseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['comment'].widget.attrs['rows'] = 3
-        self.fields['partner_entity'].label_from_instance = format_partner_entity
+        self.fields['partner_entities'].label_from_instance = format_partner_entity
 
         # Prevent type modification for updating
         if self.instance.pk:
@@ -126,13 +127,27 @@ class PartnershipBaseForm(forms.ModelForm):
             field_missions.widget = forms.MultipleHiddenInput()
             field_missions.disabled = True
 
-    def clean_partner_entity(self):
-        partner_entity = self.cleaned_data['partner_entity']
-        if self.instance.pk and partner_entity == self.instance.partner_entity:
-            return partner_entity
-        if not partner_entity.organization.partner.is_actif:
-            raise ValidationError(_('partnership_inactif_partner_error'))
-        return partner_entity
+    def clean(self):
+        data = super().clean()
+
+        # Make project acronym required if multiple partner entities
+        if 'project_acronym' in data and len(data['partner_entities']) > 1 and not data['project_acronym']:
+            self.add_error('project_acronym', ValidationError(_('required')))
+
+        return data
+
+    def clean_partner_entities(self):
+        partner_entities = self.cleaned_data['partner_entities']
+
+        # When updating, check if we changed the partner_entities
+        if self.instance.pk and set(partner_entities) == set(self.instance.partner_entities.all()):
+            return partner_entities
+
+        # If changed, check that we did not set an inactive entity
+        for entity in partner_entities:
+            if not entity.organization.partner.is_actif:
+                raise ValidationError(_('partnership_inactif_partner_error'))
+        return partner_entities
 
 
 class PartnershipWithDatesMixin(PartnershipBaseForm):
@@ -167,6 +182,7 @@ class PartnershipGeneralForm(PartnershipWithDatesMixin):
         fields = PartnershipWithDatesMixin.Meta.fields + (
             'subtype',
             'description',
+            'project_acronym',
         )
         widgets = {
             **PartnershipWithDatesMixin.Meta.widgets,
@@ -196,7 +212,7 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
             if self.instance.pk is not None:
                 # TODO This is a guess, need to check with Bart
-                self.fields['partner_entity'].disabled = True
+                self.fields['partner_entities'].disabled = True
                 field.disabled = True
 
             del self.fields['is_public']
@@ -234,12 +250,19 @@ class PartnershipMobilityForm(PartnershipBaseForm):
             )
         return conditions
 
+    def clean_partner_entities(self):
+        # For mobility type, there's no multilateral partnerships
+        if len(self.cleaned_data['partner_entities']) > 1:
+            raise ValidationError(_('no_multilateral_for_mobility'))
+        return super().clean_partner_entities()
+
 
 class PartnershipCourseForm(PartnershipBaseForm):
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
+            'project_acronym',
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
@@ -257,6 +280,7 @@ class PartnershipDoctorateForm(PartnershipBaseForm):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
+            'project_acronym',
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
@@ -274,6 +298,7 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
         fields = PartnershipWithDatesMixin.Meta.fields + (
             'description',
             'id_number',
+            'project_acronym',
             'project_title',
             'ucl_status',
         )

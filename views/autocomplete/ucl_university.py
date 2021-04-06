@@ -26,4 +26,4 @@ class UclUniversityAutocompleteFilterView(FacultyEntityAutocompleteView):
     Autocomplete for entities on partnership list filter form
     """
     def get_queryset(self):
-        return super().get_queryset().filter(partnerships__isnull=False)
+        return super().get_queryset().ucl_entities()

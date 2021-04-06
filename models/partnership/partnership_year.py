@@ -7,7 +7,6 @@ from ordered_model.models import OrderedModel
 
 from base.models.entity_version import EntityVersion
 from ..enums.partnership import PartnershipType
-from ...utils import get_attribute
 
 __all__ = [
     'PartnershipMission',
@@ -156,20 +155,16 @@ class PartnershipYear(models.Model):
     def get_financing(self):
         if not self.eligible:
             return None
-        country = get_attribute(
-            self,
-            'partnership.partner.contact_address.country',
-            default=None,
-            cast_str=False,
-        )
-        if country is None:
-            return None
+        from partnership.models import PartnershipPartnerRelation
+        country_ids = PartnershipPartnerRelation.objects.annotate_partner_address(
+            'country_id'
+        ).filter(partnership_id=self.partnership_id).values_list('country_id')
         from ..financing import Financing
         return (
             Financing.objects
             .select_related('academic_year', 'type')
             .filter(
-                countries=country.pk,
+                countries__in=country_ids,
                 academic_year=self.academic_year,
             ).first()
         )

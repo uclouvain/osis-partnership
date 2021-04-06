@@ -189,6 +189,9 @@ components:
           start_date: 06/01/2021
           end_date: 31/01/2023
         partner_entity: Entity ABC
+        partner_entities:
+          - Partner B, City, Countryname
+          - Partner C, Nantes, France
         medias:
           - url: http://example.com/file1
             name: file 1
@@ -297,6 +300,12 @@ components:
         funding_program:
           $ref: '#/components/schemas/Funding'
         education_fields:
+          type: array
+          items:
+            type: string
+        partner_entity:
+          type: string
+        partner_entities:
           type: array
           items:
             type: string

@@ -2,6 +2,7 @@ from django.core import mail
 from django.forms import ModelChoiceField
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
@@ -45,6 +46,7 @@ class PartnershipCreateViewTest(TestCase):
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
+        cls.partner_entity_2 = PartnerEntityFactory(partner=cls.partner)
 
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.end_academic_year = AcademicYearFactory(year=2151)
@@ -91,7 +93,7 @@ class PartnershipCreateViewTest(TestCase):
             'partnership_type': PartnershipType.MOBILITY.name,
             'comment': '',
             'partner': cls.partner.pk,
-            'partner_entity': cls.partner_entity.entity_id,
+            'partner_entities': [cls.partner_entity.entity_id],
             'supervisor': '',
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
@@ -173,21 +175,32 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_post_post_start_date_as_adri(self):
         self.client.force_login(self.user_adri)
-        data = self.data
+        data = self.data.copy()
+        data['year-end_academic_year'] = str(AcademicYearFactory(year=2200).pk)
         response = self.client.post(self.mobility_url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_post_ucl_university_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
-        data = self.data
+        data = self.data.copy()
         data['ucl_entity'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.mobility_url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
         self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
 
+    def test_post_multiple_partners_as_adri(self):
+        self.client.force_login(self.user_adri)
+        data = self.data.copy()
+        data['partner_entities'] = [
+            self.partner_entity.entity_id,
+            self.partner_entity_2.entity_id,
+        ]
+        response = self.client.post(self.mobility_url, data=data)
+        self.assertFormError(response, 'form', 'partner_entities', _('no_multilateral_for_mobility'))
+
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
-        data = self.data
+        data = self.data.copy()
         data['ucl_entity'] = self.ucl_university_labo_not_choice.pk
         response = self.client.post(self.mobility_url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
@@ -195,7 +208,7 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)
-        data = self.data
+        data = self.data.copy()
         response = self.client.post(self.mobility_url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertEqual(len(mail.outbox), 1)
@@ -204,7 +217,7 @@ class PartnershipCreateViewTest(TestCase):
 
     def test_post_post_start_date_as_gs(self):
         self.client.force_login(self.user_gs)
-        data = self.data
+        data = self.data.copy()
         response = self.client.post(self.mobility_url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         self.assertEqual(len(mail.outbox), 1)

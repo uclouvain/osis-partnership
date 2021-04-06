@@ -2,8 +2,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Min, Prefetch, OuterRef, Subquery, Q
-from django.db.models.functions import Now
+from django.db.models import Max, Min, Prefetch
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -11,10 +10,12 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
-from partnership.models import AgreementStatus, PartnershipType, Financing
+from partnership.models import (
+    AgreementStatus,
+    PartnershipType,
+)
 from partnership.utils import merge_agreement_ranges
 
 __all__ = [
@@ -78,81 +79,17 @@ class PartnershipQuerySet(models.QuerySet):
             ),
         )
 
-    def annotate_partner_address(self, *fields):
-        """
-        Add annotations on partner contact address
 
-        :param fields: list of fields relative to EntityVersionAddress
-            If a field contains a traversal, e.g. country__name, it will be
-            available as country_name
-        """
-        contact_address_qs = EntityVersion.objects.filter(
-            entity__organization=OuterRef('partner_entity__organization'),
-            parent__isnull=True,
-        ).order_by('-start_date')
-        qs = self
-        for field in fields:
-            lookup = Subquery(contact_address_qs.values(
-                'entityversionaddress__{}'.format(field)
-            )[:1])
-            qs = qs.annotate(**{field.replace('__', '_'): lookup})
-        return qs
-
-    def annotate_financing(self, academic_year):
-        """
-        Add annotations to get funding for an academic year based on country
-        """
-        return self.annotate(
-            financing_source=Subquery(Financing.objects.filter(
-                countries=OuterRef('country_id'),
-                academic_year=academic_year,
-            ).values('type__program__source__name')[:1]),
-            financing_program=Subquery(Financing.objects.filter(
-                countries=OuterRef('country_id'),
-                academic_year=academic_year,
-            ).values('type__program__name')[:1]),
-            financing_type=Subquery(Financing.objects.filter(
-                countries=OuterRef('country_id'),
-                academic_year=academic_year,
-            ).values('type__name')[:1]),
-        )
-
-    def filter_for_api(self, academic_year):
-        from partnership.models import PartnershipYear, PartnershipAgreement
-        return self.annotate(
-            current_academic_year=models.Value(
-                academic_year.id, output_field=models.AutoField()
+class PartnershipManager(models.Manager.from_queryset(PartnershipQuerySet)):
+    def get_queryset(self):
+        from partnership.models import PartnershipPartnerRelation
+        return super().get_queryset().annotate(
+            num_partners=models.Count('partner_entities'),
+            first_partner_name=models.Subquery(
+                PartnershipPartnerRelation.objects.filter(
+                    partnership_id=models.OuterRef('pk')
+                ).values('entity__organization__name')[:1]
             ),
-        ).annotate(
-            has_years_in=models.Exists(
-                PartnershipYear.objects.filter(
-                    partnership=OuterRef('pk'),
-                    academic_year=academic_year,
-                )
-            ),
-            has_valid_agreement_in_current_year=models.Exists(
-                PartnershipAgreement.objects.filter(
-                    partnership=OuterRef('pk'),
-                    status=AgreementStatus.VALIDATED.name,
-                    start_academic_year__year__lte=academic_year.year,
-                    end_academic_year__year__gte=academic_year.year,
-                )
-            ),
-        ).filter(
-            # If mobility, should have agreement for current year
-            # and have a partnership year for current year
-            Q(
-                partnership_type=PartnershipType.MOBILITY.name,
-                has_valid_agreement_in_current_year=True,
-                has_years_in=True,
-            )
-            # Else all other types do not need agreement
-            | (
-                    ~Q(partnership_type=PartnershipType.MOBILITY.name)
-                    & Q(end_date__gte=Now())
-            ),
-            # And must be public
-            is_public=True,
         )
 
 
@@ -184,14 +121,13 @@ class Partnership(models.Model):
         editable=False,
     )
 
-    partner_entity = models.ForeignKey(
-        Entity,
-        verbose_name=_('partner_entity'),
-        on_delete=models.PROTECT,
-        related_name='partner_of',
+    partner_entities = models.ManyToManyField(
+        'base.Entity',
+        verbose_name=_('partner_entities'),
+        through='partnership.PartnershipPartnerRelation',
     )
     ucl_entity = models.ForeignKey(
-        Entity,
+        'base.Entity',
         verbose_name=_('ucl_entity'),
         on_delete=models.PROTECT,
         related_name='partnerships',
@@ -233,6 +169,12 @@ class Partnership(models.Model):
     description = models.TextField(
         _('partnership_year_description'),
         help_text=_('visible_on_api'),
+        default='',
+        blank=True,
+    )
+    project_acronym = models.CharField(
+        verbose_name=_('partnership_project_acronym'),
+        max_length=20,
         default='',
         blank=True,
     )
@@ -290,17 +232,27 @@ class Partnership(models.Model):
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
 
-    objects = PartnershipQuerySet.as_manager()
+    objects = PartnershipManager()
 
     class Meta:
         ordering = ('-created',)
         permissions = (
             ('can_access_partnerships', _('can_access_partnerships')),
         )
+        base_manager_name = 'objects'
 
     def __str__(self):
+        if not hasattr(self, 'num_partners'):
+            # This is the case when using factory-boy, just return a string
+            return 'Missing annotation'
+        # When having multiple partner entities (from annotation), take project_acronym
+        if self.num_partners > 1:
+            return _('partnership_multilateral_{acronym}').format(
+                acronym=self.project_acronym,
+            )
+        # Else take the name of the first partner (from annotation)
         return _('partnership_with_{partner}').format(
-            partner=self.partner_entity.organization.name,
+            partner=self.first_partner_name,
         )
 
     def get_absolute_url(self):
@@ -428,10 +380,6 @@ class Partnership(models.Model):
                 self.acronym_path[i],
             ))
         return mark_safe(' / '.join(entities))
-
-    @cached_property
-    def partner(self):
-        return self.partner_entity.organization.partner
 
     def get_supervisor(self):
         if self.supervisor is not None:

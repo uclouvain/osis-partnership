@@ -6,6 +6,16 @@ from django.utils.translation import gettext_lazy as _
 __all__ = ['PartnerEntity']
 
 
+class PartnerEntityManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()
+
+    def child_of(self, partner):
+        return self.get_queryset().filter(
+            entity__entityversion__parent__organization__partner=partner,
+        ).distinct()
+
+
 class PartnerEntity(models.Model):
     """
     Une entité d'un partenaire.
@@ -44,6 +54,8 @@ class PartnerEntity(models.Model):
         editable=False,
         null=True,
     )
+
+    objects = PartnerEntityManager()
 
     class Meta:
         ordering = ('name',)
