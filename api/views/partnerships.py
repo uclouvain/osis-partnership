@@ -259,7 +259,7 @@ class PartnershipsApiRetrieveView(PartnershipsApiViewMixin, generics.RetrieveAPI
 
 def partnership_get_export_url(request):  # pragma: no cover
     # TODO: Fix when authentication is done in ESB (use already X-Forwarded-Host) / Shibb
-    url = reverse('partnership_api_v1:partnerships:export')
+    url = reverse('partnership_api_v1:export')
     return JsonResponse({
         'url': '{scheme}://{host}{path}'.format(
             scheme=request.scheme,

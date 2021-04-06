@@ -36,7 +36,7 @@ PARTNERSHIP_COUNT = 6
 class PartnershipApiViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse('partnership_api_v1:partnerships:list')
+        cls.url = reverse('partnership_api_v1:partnerships')
 
         AcademicYearFactory.produce_in_future(quantity=3)
         config = PartnershipConfiguration.get_configuration()
@@ -318,7 +318,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_retrieve_case_partnership_with_agreement_validated(self):
         url = reverse(
-            'partnership_api_v1:partnerships:retrieve',
+            'partnership_api_v1:retrieve',
             kwargs={'uuid': self.partnership.uuid},
         )
         response = self.client.get(url)
@@ -326,7 +326,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_retrieve_case_partnership_without_agreement(self):
         url = reverse(
-            'partnership_api_v1:partnerships:retrieve',
+            'partnership_api_v1:retrieve',
             kwargs={'uuid': self.partnership_without_agreement.uuid},
         )
         response = self.client.get(url)
@@ -334,7 +334,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_retrieve_case_partnership_with_agreement_not_validated(self):
         url = reverse(
-            'partnership_api_v1:partnerships:retrieve',
+            'partnership_api_v1:retrieve',
             kwargs={'uuid': self.partnership_with_agreement_not_validated.uuid},
         )
         response = self.client.get(url)
@@ -342,7 +342,7 @@ class PartnershipApiViewTest(TestCase):
 
     def test_retrieve_should_not_display_denied_media(self):
         url = reverse(
-            'partnership_api_v1:partnerships:retrieve',
+            'partnership_api_v1:retrieve',
             kwargs={'uuid': self.partnership.uuid},
         )
         response = self.client.get(url)
@@ -350,7 +350,7 @@ class PartnershipApiViewTest(TestCase):
 
     @tag('perf')
     def test_export(self):
-        url = reverse('partnership_api_v1:partnerships:export')
+        url = reverse('partnership_api_v1:export')
         with self.assertNumQueriesLessThan(22):
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
