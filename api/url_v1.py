@@ -14,10 +14,8 @@ app_name = "partnership_api_v1"
 urlpatterns = [
     path('configuration', ConfigurationView.as_view(), name='configuration'),
     path('partners', PartnersApiListView.as_view(), name='partners'),
-    path('partnerships/', include(([
-        path('', PartnershipsApiListView.as_view(), name='list'),
-        path('get-export-url', partnership_get_export_url, name='get-export-url'),
-        path('export', PartnershipsApiExportView.as_view(), name='export'),
-        re_path(r'^(?P<uuid>[0-9a-f-]+)$', PartnershipsApiRetrieveView.as_view(), name='retrieve'),
-    ], "partnership_api_v1"), namespace='partnerships')),
+    path('partnerships', PartnershipsApiListView.as_view(), name='partnerships'),
+    path('partnerships/get-export-url', partnership_get_export_url, name='get-export-url'),
+    path('partnerships/export', PartnershipsApiExportView.as_view(), name='export'),
+    re_path(r'^partnerships/(?P<uuid>[0-9a-f-]+)$', PartnershipsApiRetrieveView.as_view(), name='retrieve'),
 ]

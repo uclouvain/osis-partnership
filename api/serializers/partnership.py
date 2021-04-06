@@ -25,7 +25,7 @@ __all__ = [
 class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
     uuid = serializers.ReadOnlyField(source='partnership.uuid')
     url = serializers.HyperlinkedRelatedField(
-        view_name='partnership_api_v1:partnerships:retrieve',
+        view_name='partnership_api_v1:retrieve',
         lookup_field='uuid',
         source='partnership',
         read_only=True,
