@@ -57,7 +57,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
     is_sta = serializers.SerializerMethodField()
     is_stt = serializers.SerializerMethodField()
 
-    subtype = serializers.StringRelatedField(source='partnership.subtype')
+    subtype = serializers.ReadOnlyField(source='partnership.subtype.label')
     description = serializers.ReadOnlyField(source='partnership.description')
     id_number = serializers.ReadOnlyField(source='partnership.id_number')
     project_title = serializers.ReadOnlyField(source='partnership.project_title')
