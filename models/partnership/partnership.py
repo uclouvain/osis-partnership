@@ -174,7 +174,7 @@ class Partnership(models.Model):
     )
     project_acronym = models.CharField(
         verbose_name=_('partnership_project_acronym'),
-        max_length=20,
+        max_length=255,
         default='',
         blank=True,
     )
