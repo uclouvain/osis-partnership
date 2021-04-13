@@ -45,7 +45,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
     )
     partner_entities = serializers.SerializerMethodField()
     supervisor = serializers.CharField(
-        source='get_supervisor',
+        source='partnership.get_supervisor',
         allow_null=True,
     )
     ucl_sector = serializers.SerializerMethodField()

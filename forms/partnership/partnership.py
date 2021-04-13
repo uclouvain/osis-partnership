@@ -198,6 +198,9 @@ class PartnershipGeneralForm(PartnershipWithDatesMixin):
 class PartnershipMobilityForm(PartnershipBaseForm):
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
+        self.fields['partner_entities'].widget.attrs = {
+            'data-maximum-selection-length': 1,
+        }
 
         field = self.fields['ucl_entity']
         field.queryset = field.queryset.filter(

@@ -12,14 +12,12 @@
         check_show_sm_details();
     });
 
-    $('#id_partner').on('select2:select', function (e) {
-        var data = e.params.data;
-        $('#partner-pic-code').text(data.pic_code || '');
-        $('#partner-erasmus-code').text(data.erasmus_code || '');
-        var $partnerEntityLink = $('#partner-entity-create-link');
-
-        $partnerEntityLink.attr('href', $partnerEntityLink.attr('data-href').replace('0', data.id)).removeClass('hidden');
-    });
+    var $projectAcronym = $('#project-acronym');
+    var $partnerEntities = $('#id_partner_entities');
+    $partnerEntities.on('change', function () {
+        var multiplePartners = $partnerEntities.val() && $partnerEntities.val().length > 1;
+        $projectAcronym.toggle(!!(multiplePartners || $projectAcronym.val()))
+    }).trigger('change');
 
     $('input[name="year-entity"]').val($('select[name="ucl_entity"]').val());
     document.querySelector('select[name="ucl_entity"]').onchange = function() {

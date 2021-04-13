@@ -1116,7 +1116,7 @@ msgid "partnership_not_valid_in"
 msgstr "Partenariats dont les accords ne sont pas validés en"
 
 msgid "partnership_project_acronym"
-msgstr "Acronyme de partenariat"
+msgstr "Acronyme ou nom abrégé du partenariat multilatéral"
 
 msgid "partnership_start_date"
 msgstr "Date de début"

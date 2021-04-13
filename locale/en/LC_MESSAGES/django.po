@@ -1044,7 +1044,7 @@ msgid "partnership_not_valid_in"
 msgstr "Partnership not valid in"
 
 msgid "partnership_project_acronym"
-msgstr "Partnership acronym"
+msgstr "Multilateral partnership acronym or abbreviation"
 
 msgid "partnership_start_date"
 msgstr "Start date"
