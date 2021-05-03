@@ -46,7 +46,6 @@ class PartnerUpdateViewTest(TestCase):
             'organization-code': 'test',
             'partner-pic_code': 'test',
             'partner-erasmus_code': 'test',
-            'partner-is_ies': 'True',
             'partner-is_nonprofit': 'True',
             'partner-is_public': 'True',
             'partner-use_egracons': 'on',
@@ -131,7 +130,6 @@ class PartnerUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['partner-pic_code'] = ''
-        data['partner-is_ies'] = 'False'
         data['partner-contact_type'] = Partner.CONTACT_TYPE_CHOICES[-1][0]
 
         # City and country are mandatory if not ies or pic_code empty, but provided
@@ -156,7 +154,6 @@ class PartnerUpdateVersionsViewTest(TestCase):
         self.partner = PartnerFactory(
             is_valid=False,
             erasmus_code=None,
-            is_ies=True,
             is_nonprofit=None,
             is_public=None,
             email=None,
@@ -177,7 +174,6 @@ class PartnerUpdateVersionsViewTest(TestCase):
             'organization-start_date': self.start_date,
             'organization-type':  self.partner.organization.type,
             'organization-end_date': '',
-            'partner-is_ies': 'True',
             'partner-pic_code': self.partner.pic_code,
             'organization-website': self.partner.organization.website,
         }

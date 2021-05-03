@@ -66,7 +66,6 @@ class PartnerAdminFilter(filters.FilterSet):
             'partner_type',
             'pic_code',
             'erasmus_code',
-            'is_ies',
             'is_valid',
             'is_actif',
             'tags',

@@ -33,7 +33,6 @@ class PartnerFactory(factory.DjangoModelFactory):
         model = Partner
 
     is_valid = True
-    is_ies = factory.Faker('boolean')
     organization = factory.SubFactory(
         OrganizationFactory,
         name=factory.Sequence(lambda n: 'Partner-é-{0}'.format(n)),

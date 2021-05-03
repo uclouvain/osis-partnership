@@ -16,42 +16,31 @@ class PartnersListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.partner_erasmus_last = PartnerFactory(
-            erasmus_code='ZZZ', is_ies=False
+            erasmus_code='ZZZ',
         )
         cls.partner_name = PartnerFactory(
             organization__name='foobar',
-            is_ies=False,
         )
         cls.partner_partner_type = PartnerFactory(
             organization__type=RESEARCH_CENTER,
-            is_ies=False,
         )
         cls.partner_pic_code = PartnerFactory(
             pic_code='foobar',
-            is_ies=False,
         )
         cls.partner_erasmus_code = PartnerFactory(
             erasmus_code='foobar',
-            is_ies=False,
-        )
-        cls.partner_is_ies = PartnerFactory(
-            is_ies=True,
         )
         cls.partner_is_valid = PartnerFactory(
             is_valid=False,
-            is_ies=False,
         )
         cls.partner_not_active = PartnerFactory(
             dates__end=timezone.now() - timedelta(days=1),
-            is_ies=False
         )
         cls.partner_not_active2 = PartnerFactory(
             dates__start=timezone.now() + timedelta(days=1),
-            is_ies=False
         )
         cls.partner_tag = PartnerTagFactory()
         cls.partner_tags = PartnerFactory(
-            is_ies=False,
             tags=[cls.partner_tag],
         )
         cls.user = PartnershipEntityManagerFactory().person.user
@@ -115,14 +104,6 @@ class PartnersListViewTest(TestCase):
         self.assertEqual(len(context['partners']), 1)
         self.assertEqual(context['partners'][0], self.partner_erasmus_code)
 
-    def test_filter_is_ies(self):
-        self.client.force_login(self.user)
-        response = self.client.get(self.url + '?is_ies=True')
-        self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
-        context = response.context_data
-        self.assertEqual(len(context['partners']), 1)
-        self.assertEqual(context['partners'][0], self.partner_is_ies)
-
     def test_filter_is_valid(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url + '?is_valid=False')
@@ -145,7 +126,7 @@ class PartnersListViewTest(TestCase):
         response = self.client.get(self.url + '?is_actif=2')
         self.assertTemplateUsed(response, 'partnerships/partners/partners_list.html')
         context = response.context_data
-        self.assertEqual(len(context['partners']), 8)
+        self.assertEqual(len(context['partners']), 7)
 
     def test_filter_tags(self):
         self.client.force_login(self.user)
@@ -160,19 +141,16 @@ class PartnersListViewTest(TestCase):
 class PartnersExportViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        PartnerFactory(is_ies=False)
-        cls.partner_erasmus_last = PartnerFactory(erasmus_code='ZZZ', is_ies=False)
-        cls.partner_name = PartnerFactory(organization__name='foobar', is_ies=False)
-        cls.partner_partner_type = PartnerFactory(is_ies=False)
-        cls.partner_pic_code = PartnerFactory(pic_code='foobar', is_ies=False)
-        cls.partner_erasmus_code = PartnerFactory(erasmus_code='foobar', is_ies=False)
-        cls.partner_is_ies = PartnerFactory(is_ies=True)
-        cls.partner_is_valid = PartnerFactory(is_valid=False, is_ies=False)
+        cls.partner_erasmus_last = PartnerFactory(erasmus_code='ZZZ')
+        cls.partner_name = PartnerFactory(organization__name='foobar')
+        cls.partner_partner_type = PartnerFactory()
+        cls.partner_pic_code = PartnerFactory(pic_code='foobar')
+        cls.partner_erasmus_code = PartnerFactory(erasmus_code='foobar')
+        cls.partner_is_valid = PartnerFactory(is_valid=False)
         cls.partner_is_actif = PartnerFactory(
             dates__end=timezone.now() - timedelta(days=1),
-            is_ies=False
         )
-        cls.partner_tags = PartnerFactory(is_ies=False)
+        cls.partner_tags = PartnerFactory()
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.url = reverse('partnerships:partners:export')
 
