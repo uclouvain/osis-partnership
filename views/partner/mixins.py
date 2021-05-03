@@ -213,31 +213,11 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             organization_form=organization_form,
         ))
 
-    def check_form_address(self, form, form_address):
-        # Address form is not valid internally
-        if not form_address.is_valid():
-            return False
-        # Either address form is not changed nor form and we are updating
-        something_changed = form.has_changed() and form_address.has_changed()
-        if form.instance.pk and not something_changed:
-            return True
-        # Address is mandatory if no pic_code
-        if form.cleaned_data['pic_code']:
-            return True
-        cleaned_data = form_address.cleaned_data
-        if not cleaned_data.get('city'):
-            form_address.add_error('city', ValidationError(_('required')))
-        if not cleaned_data.get('country'):
-            form_address.add_error('country', ValidationError(_('required')))
-        return form_address.is_valid()
-
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         form_address = self.get_address_form()
         organization_form = self.get_organization_form()
-        form_valid = form.is_valid()
-        form_address_valid = self.check_form_address(form, form_address)
-        if organization_form.is_valid() and form_valid and form_address_valid:
+        if organization_form.is_valid() and form.is_valid() and form_address.is_valid():
             return self.form_valid(form, form_address, organization_form)
         return self.form_invalid(form, form_address, organization_form)
 
