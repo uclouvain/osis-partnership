@@ -1,6 +1,7 @@
 from datetime import date
 from unittest.mock import patch
 
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 from django.urls import reverse
 
@@ -150,6 +151,8 @@ class PartnerUpdateVersionsViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
 
     def setUp(self):
+        self.country = CountryFactory()
+
         # Partner creation
         self.partner = PartnerFactory(
             is_valid=False,
@@ -158,8 +161,10 @@ class PartnerUpdateVersionsViewTest(TestCase):
             is_public=None,
             email=None,
             phone=None,
+            contact_address__city='test',
+            contact_address__country_id=self.country.pk,
+            contact_address__location=Point(-12, 10),
         )
-        self.country = CountryFactory()
 
         # For the start_date for the test
         self.start_date = self.partner.organization.start_date
@@ -167,6 +172,7 @@ class PartnerUpdateVersionsViewTest(TestCase):
         version = self.entity.get_latest_entity_version()
         version.start_date = date(2007, 7, 7)
         version.save()
+        address = self.partner.contact_address
         self.assertEqual(self.entity.entityversion_set.count(), 1)
         self.start_date = self.partner.organization.start_date
         self.data = {
@@ -176,6 +182,14 @@ class PartnerUpdateVersionsViewTest(TestCase):
             'organization-end_date': '',
             'partner-pic_code': self.partner.pic_code,
             'organization-website': self.partner.organization.website,
+            'contact_address-city': 'test',
+            'contact_address-country': self.country.pk,
+            'contact_address-street_number': address.street_number,
+            'contact_address-street': address.street,
+            'contact_address-state': address.state,
+            'contact_address-postal_code': address.postal_code,
+            'contact_address-location_0': 10.0,
+            'contact_address-location_1': -12.0,
         }
 
         self.url = reverse('partnerships:partners:update', kwargs={'pk': self.partner.pk})
