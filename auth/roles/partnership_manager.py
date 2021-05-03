@@ -75,6 +75,7 @@ class PartnershipEntityManager(EntityRoleModel):
             'partnership.export_financing': is_linked_to_adri_entity & has_mobility_scope,
 
             # Partner
+            'partnership.can_access_partners': rules.always_allow,
             'partnership.add_partner':
                 is_linked_to_adri_entity | is_faculty_manager,
             'partnership.change_partner': is_linked_to_adri_entity,

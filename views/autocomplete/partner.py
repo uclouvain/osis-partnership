@@ -13,7 +13,7 @@ __all__ = [
 class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     """ Autocomplete used on partnership form"""
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
 
     def get_queryset(self):
         qs = EntityProxy.objects.partner_entities().order_by(

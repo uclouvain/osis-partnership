@@ -14,7 +14,7 @@ __all__ = [
 class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
     context_object_name = 'partners'
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
     template_name = 'partnerships/partners/partners_list.html'
     filterset_class = PartnerAdminFilter
     serializer_class = PartnerAdminSerializer

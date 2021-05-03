@@ -39,10 +39,10 @@ class PartnershipViewer(RoleModel):
     @classmethod
     def rule_set(cls):
         return RuleSet({
+            # Partners
+            'partnership.can_access_partners': rules.always_allow,
             # Partnership
             'partnership.can_access_partnerships': rules.always_allow,
             # PartnershipAgreement
             'partnership.can_access_partnerships_agreements': rules.always_allow,
         })
-
-
