@@ -221,8 +221,8 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         something_changed = form.has_changed() and form_address.has_changed()
         if form.instance.pk and not something_changed:
             return True
-        # Address is mandatory if no pic_code or not is_ies
-        if form.cleaned_data['pic_code'] or form.cleaned_data.get('is_ies', None):
+        # Address is mandatory if no pic_code
+        if form.cleaned_data['pic_code']:
             return True
         cleaned_data = form_address.cleaned_data
         if not cleaned_data.get('city'):

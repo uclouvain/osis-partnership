@@ -797,9 +797,6 @@ msgstr "Actif"
 msgid "is_active"
 msgstr "Actif"
 
-msgid "is_ies"
-msgstr "Institution d’enseignement supérieur ?"
-
 msgid "is_nonprofit"
 msgstr "Organisation à but non lucratif ?"
 

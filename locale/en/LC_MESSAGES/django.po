@@ -733,9 +733,6 @@ msgstr "Is active"
 msgid "is_active"
 msgstr "Active"
 
-msgid "is_ies"
-msgstr "Is IES"
-
 msgid "is_nonprofit"
 msgstr "Is non-profit"
 

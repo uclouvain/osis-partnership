@@ -50,11 +50,6 @@ class PartnerFilterForm(forms.Form):
         queryset=Continent.objects.order_by('name').distinct('name'),
         required=False,
     )
-    is_ies = forms.NullBooleanField(
-        label=_('is_ies'),
-        required=False,
-        widget=CustomNullBooleanSelect(),
-    )
     is_valid = forms.NullBooleanField(
         label=_('is_valid'),
         required=False,

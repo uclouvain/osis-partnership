@@ -60,9 +60,6 @@
           <dt>{% trans "erasmus_code" %}</dt>
           <dd>{{ partner.erasmus_code|default_if_none:"" }}</dd>
 
-          <dt>{% trans "is_ies" %}</dt>
-          <dd><i class="fas {{ partner.is_ies|yesno:"fa-check text-success,fa-times text-danger" }}"></i></dd>
-
           <dt>{% trans "is_nonprofit" %}</dt>
           <dd>
             {% if partner.is_nonprofit is None %}
