@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-25 16:32+0100\n"
+"POT-Creation-Date: 2021-05-03 15:17+0200\n"
 "PO-Revision-Date: 2018-10-22 15:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -336,6 +336,12 @@ msgstr "Gestionnaire de partenariat"
 
 msgid "Partnership managers"
 msgstr "Gestionnaires de partenariat"
+
+msgid "Partnership viewer"
+msgstr "Observateur de partenariat"
+
+msgid "Partnership viewers"
+msgstr "Observateurs de partenariat"
 
 msgid "Partnerships"
 msgstr "Partenariats"
