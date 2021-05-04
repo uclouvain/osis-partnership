@@ -13,7 +13,7 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
     template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
 
     def get_queryset(self):
         return (

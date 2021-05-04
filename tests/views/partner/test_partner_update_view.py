@@ -1,6 +1,7 @@
 from datetime import date
 from unittest.mock import patch
 
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 from django.urls import reverse
 
@@ -46,7 +47,6 @@ class PartnerUpdateViewTest(TestCase):
             'organization-code': 'test',
             'partner-pic_code': 'test',
             'partner-erasmus_code': 'test',
-            'partner-is_ies': 'True',
             'partner-is_nonprofit': 'True',
             'partner-is_public': 'True',
             'partner-use_egracons': 'on',
@@ -131,7 +131,6 @@ class PartnerUpdateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['partner-pic_code'] = ''
-        data['partner-is_ies'] = 'False'
         data['partner-contact_type'] = Partner.CONTACT_TYPE_CHOICES[-1][0]
 
         # City and country are mandatory if not ies or pic_code empty, but provided
@@ -152,17 +151,20 @@ class PartnerUpdateVersionsViewTest(TestCase):
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
 
     def setUp(self):
+        self.country = CountryFactory()
+
         # Partner creation
         self.partner = PartnerFactory(
             is_valid=False,
             erasmus_code=None,
-            is_ies=True,
             is_nonprofit=None,
             is_public=None,
             email=None,
             phone=None,
+            contact_address__city='test',
+            contact_address__country_id=self.country.pk,
+            contact_address__location=Point(-12, 10),
         )
-        self.country = CountryFactory()
 
         # For the start_date for the test
         self.start_date = self.partner.organization.start_date
@@ -170,6 +172,7 @@ class PartnerUpdateVersionsViewTest(TestCase):
         version = self.entity.get_latest_entity_version()
         version.start_date = date(2007, 7, 7)
         version.save()
+        address = self.partner.contact_address
         self.assertEqual(self.entity.entityversion_set.count(), 1)
         self.start_date = self.partner.organization.start_date
         self.data = {
@@ -177,9 +180,16 @@ class PartnerUpdateVersionsViewTest(TestCase):
             'organization-start_date': self.start_date,
             'organization-type':  self.partner.organization.type,
             'organization-end_date': '',
-            'partner-is_ies': 'True',
             'partner-pic_code': self.partner.pic_code,
             'organization-website': self.partner.organization.website,
+            'contact_address-city': 'test',
+            'contact_address-country': self.country.pk,
+            'contact_address-street_number': address.street_number,
+            'contact_address-street': address.street,
+            'contact_address-state': address.state,
+            'contact_address-postal_code': address.postal_code,
+            'contact_address-location_0': 10.0,
+            'contact_address-location_1': -12.0,
         }
 
         self.url = reverse('partnerships:partners:update', kwargs={'pk': self.partner.pk})

@@ -33,7 +33,6 @@ class PartnerCreateViewTest(TestCase):
             'partner-is_valid': 'on',
             'partner-pic_code': 'test',
             'partner-erasmus_code': 'test',
-            'partner-is_ies': 'True',
             'partner-is_nonprofit': 'True',
             'partner-is_public': 'True',
             'partner-use_egracons': 'on',
@@ -86,7 +85,6 @@ class PartnerCreateViewTest(TestCase):
     def test_ies_pic_requirements(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
-        data['partner-is_ies'] = 'False'
         data['partner-pic_code'] = ''
         data['partner-is_nonprofit'] = ''
         data['partner-is_public'] = ''
@@ -104,7 +102,6 @@ class PartnerCreateViewTest(TestCase):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
         data['partner-pic_code'] = ''
-        data['partner-is_ies'] = 'False'
         data['contact_address-street'] = ''
         data['contact_address-city'] = ''
         data['contact_address-country'] = ''
@@ -121,7 +118,6 @@ class PartnerCreateViewTest(TestCase):
     def test_ies_pic_address_requirements(self):
         self.client.force_login(self.user_adri)
         data = self.data.copy()
-        data['partner-is_ies'] = 'False'
         data['partner-pic_code'] = ''
         data['contact_address-city'] = ''
         data['contact_address-country'] = ''
