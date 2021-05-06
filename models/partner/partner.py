@@ -193,7 +193,6 @@ class Partner(models.Model):
     changed = models.DateField(_('changed'), auto_now=True, editable=False)
 
     is_valid = models.BooleanField(_('is_valid'), default=False)
-    is_ies = models.BooleanField(_('is_ies'), default=False)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
 
@@ -287,7 +286,7 @@ class Partner(models.Model):
         from ..partnership.partnership import Partnership
         return (
             PartnershipAgreement.objects
-            .filter(partnership__partner_entity__organization__partner=self)
+            .filter(partnership__partner_entities__organization__partner=self)
             .select_related('start_academic_year', 'end_academic_year')
             .prefetch_related(
                 'media',

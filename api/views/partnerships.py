@@ -15,9 +15,9 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from base.models.academic_year import AcademicYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
+from base.models.organization import Organization
 from partnership.models import (
+    EntityProxy,
     AgreementStatus,
     Financing,
     Media,
@@ -26,21 +26,22 @@ from partnership.models import (
     PartnershipAgreement,
     PartnershipConfiguration,
     PartnershipYear,
+    PartnershipPartnerRelation,
 )
-from ..filters import PartnershipFilter
-from ..serializers import PartnershipSerializer
+from ..filters import PartnershipPartnerRelationFilter
+from ..serializers import PartnershipPartnerRelationSerializer
 from ...views import ExportView
 
 __all__ = [
-    'PartnershipsRetrieveView',
-    'PartnershipsListView',
+    'PartnershipsApiRetrieveView',
+    'PartnershipsApiListView',
     'PartnershipsApiExportView',
     'partnership_get_export_url',
 ]
 
 
-class PartnershipsMixinView:
-    serializer_class = PartnershipSerializer
+class PartnershipsApiViewMixin:
+    serializer_class = PartnershipPartnerRelationSerializer
     permission_classes = (AllowAny,)
 
     def get_serializer_context(self):
@@ -66,9 +67,8 @@ class PartnershipsMixinView:
         )
 
         return (
-            Partnership.objects
+            PartnershipPartnerRelation.objects
             .filter_for_api(academic_year)
-            .add_acronyms()
             .annotate_partner_address(
                 'country__continent__name',
                 'country__iso_code',
@@ -78,21 +78,31 @@ class PartnershipsMixinView:
                 'location',
             )
             .select_related(
-                'subtype',
-                'supervisor',
-                'partner_entity__organization',
-                'partner_entity__partnerentity',
+                'entity__partnerentity',
+                'entity__organization',
             ).prefetch_related(
-                'contacts',
-                'missions',
                 Prefetch(
-                    'medias',
+                    'partnership',
+                    queryset=Partnership.objects.add_acronyms().select_related(
+                        'subtype',
+                        'supervisor',
+                    ).prefetch_related(
+                        'contacts',
+                        'missions',
+                        Prefetch(
+                            'partner_entities',
+                            queryset=EntityProxy.objects.with_partner_info(),
+                        )
+                    )
+                ),
+                Prefetch(
+                    'partnership__medias',
                     queryset=Media.objects.select_related('type').filter(
                         is_visible_in_portal=True
                     ),
                 ),
                 Prefetch(
-                    'partner_entity__organization__partner',
+                    'entity__organization__partner',
                     queryset=(
                         Partner.objects
                         .annotate_address(
@@ -115,29 +125,19 @@ class PartnershipsMixinView:
                     to_attr='partner_prefetched',
                 ),
                 Prefetch(
-                    'ucl_entity',
-                    queryset=Entity.objects
+                    'partnership__ucl_entity',
+                    queryset=EntityProxy.objects
                     .select_related(
                         'uclmanagement_entity__academic_responsible',
                         'uclmanagement_entity__administrative_responsible',
                         'uclmanagement_entity__contact_out_person',
                         'uclmanagement_entity__contact_in_person',
                     )
-                    .annotate(
-                        most_recent_acronym=Subquery(
-                            EntityVersion.objects.filter(
-                                entity=OuterRef('pk')
-                            ).order_by('-start_date').values('acronym')[:1]
-                        ),
-                        most_recent_title=Subquery(
-                            EntityVersion.objects.filter(
-                                entity=OuterRef('pk')
-                            ).order_by('-start_date').values('title')[:1]
-                        ),
-                    )
+                    .with_title()
+                    .with_acronym()
                 ),
                 Prefetch(
-                    'years',
+                    'partnership__years',
                     queryset=(
                         PartnershipYear.objects
                         .select_related(
@@ -149,20 +149,9 @@ class PartnershipsMixinView:
                         .prefetch_related(
                             Prefetch(
                                 'entities',
-                                queryset=Entity.objects.annotate(
-                                    most_recent_acronym=Subquery(
-                                        EntityVersion.objects
-                                        .filter(entity=OuterRef('pk'))
-                                        .order_by('-start_date')
-                                        .values('acronym')[:1]
-                                    ),
-                                    most_recent_title=Subquery(
-                                        EntityVersion.objects
-                                        .filter(entity=OuterRef('pk'))
-                                        .order_by('-start_date')
-                                        .values('title')[:1]
-                                    ),
-                                )
+                                queryset=EntityProxy.objects
+                                .with_title()
+                                .with_acronym()
                             ),
                             'education_fields',
                             'education_levels',
@@ -172,7 +161,7 @@ class PartnershipsMixinView:
                     to_attr='current_year_for_api',
                 ),
                 Prefetch(
-                    'agreements',
+                    'partnership__agreements',
                     queryset=(
                         PartnershipAgreement.objects
                         .select_related('media', 'end_academic_year')
@@ -189,7 +178,7 @@ class PartnershipsMixinView:
                 validity_end_year=Subquery(
                     AcademicYear.objects
                     .filter(
-                        partnership_agreements_end__partnership=OuterRef('pk'),
+                        partnership_agreements_end__partnership=OuterRef('partnership_id'),
                         partnership_agreements_end__status=AgreementStatus.VALIDATED.name
                     )
                     .order_by('-end_date')
@@ -197,28 +186,28 @@ class PartnershipsMixinView:
                 ),
                 agreement_start=Subquery(
                     PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk'),
+                        partnership=OuterRef('partnership_id'),
                         start_date__lte=Now(),
                         end_date__gte=Now(),
                     ).order_by('-end_date').values('start_date')[:1]
                 ),
                 start_year=Subquery(
                     PartnershipYear.objects.filter(
-                        partnership=OuterRef('pk'),
+                        partnership=OuterRef('partnership_id'),
                     ).annotate(
                         name=academic_year_repr
                     ).order_by('academic_year').values('name')[:1]
                 ),
                 end_year=Subquery(
                     PartnershipYear.objects.filter(
-                        partnership=OuterRef('pk'),
+                        partnership=OuterRef('partnership_id'),
                     ).annotate(
                         name=academic_year_repr
                     ).order_by('-academic_year').values('name')[:1]
                 ),
                 agreement_end=Subquery(
                     PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('pk'),
+                        partnership=OuterRef('partnership_id'),
                         start_date__lte=Now(),
                         end_date__gte=Now(),
                     ).order_by('-end_date').values('end_date')[:1]
@@ -230,20 +219,10 @@ class PartnershipsMixinView:
                     F('validity_end_year') + 1,
                     output_field=models.CharField()
                 ),
-                agreement_year_status=Subquery(
-                    PartnershipAgreement.objects
-                    .filter(
-                        partnership=OuterRef('pk'),
-                        start_academic_year__year__lte=academic_year.year,
-                        end_academic_year__year__gte=academic_year.year,
-                    )
-                    .order_by('-end_academic_year__year')
-                    .values('status')[:1]
-                ),
                 agreement_status=Subquery(
                     PartnershipAgreement.objects
                     .filter(
-                        partnership=OuterRef('pk'),
+                        partnership=OuterRef('partnership_id'),
                         start_academic_year__year__lte=academic_year.year,
                         end_academic_year__year__gte=academic_year.year,
                     )
@@ -263,22 +242,24 @@ class PartnershipsMixinView:
                     ).values('type__url')[:1]
                 ),
             )
-            .distinct()
+            .distinct('pk')
+            .order_by('pk')
         )
 
 
-class PartnershipsListView(PartnershipsMixinView, generics.ListAPIView):
+class PartnershipsApiListView(PartnershipsApiViewMixin, generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
-    filterset_class = PartnershipFilter
+    filterset_class = PartnershipPartnerRelationFilter
 
 
-class PartnershipsRetrieveView(PartnershipsMixinView, generics.RetrieveAPIView):
-    lookup_field = 'uuid'
+class PartnershipsApiRetrieveView(PartnershipsApiViewMixin, generics.RetrieveAPIView):
+    lookup_field = 'partnership__uuid'
+    lookup_url_kwarg = 'uuid'
 
 
 def partnership_get_export_url(request):  # pragma: no cover
     # TODO: Fix when authentication is done in ESB (use already X-Forwarded-Host) / Shibb
-    url = reverse('partnership_api_v1:partnerships:export')
+    url = reverse('partnership_api_v1:export')
     return JsonResponse({
         'url': '{scheme}://{host}{path}'.format(
             scheme=request.scheme,
@@ -288,8 +269,8 @@ def partnership_get_export_url(request):  # pragma: no cover
     })
 
 
-class PartnershipsApiExportView(FilterMixin, PartnershipsMixinView, ExportView):
-    filterset_class = PartnershipFilter
+class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportView):
+    filterset_class = PartnershipPartnerRelationFilter
 
     def get_xls_headers(self):
         return [
@@ -325,31 +306,32 @@ class PartnershipsApiExportView(FilterMixin, PartnershipsMixinView, ExportView):
         queryset = (
             queryset
             .annotate_financing(self.academic_year)
-            .annotate(tags_list=StringAgg('tags__value', ', '))
+            .annotate(tags_list=StringAgg('partnership__tags__value', ', '))
             .prefetch_related(
                 Prefetch(
-                    'years',
+                    'partnership__years',
                     queryset=PartnershipYear.objects.select_related('academic_year'),
                 ),
                 Prefetch(
-                    'years',
+                    'partnership__years',
                     queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
                     to_attr='reverse_years',
                 ),
-                'partner_entity__entityversion_set',
+                'entity__entityversion_set',
             )
         )
-        for partnership in queryset.distinct():
+        for rel in queryset.distinct():
+            partnership = rel.partnership
             year = (partnership.current_year_for_api[0]
                     if partnership.current_year_for_api else '')
             last_agreement = (partnership.valid_current_agreements[0]
                               if partnership.valid_current_agreements else None)
 
             # Replace funding values if financing is eligible for mobility and not overridden in year
-            if partnership.is_mobility and year and year.eligible and partnership.financing_source and not year.funding_source:
-                funding_source = partnership.financing_source
-                funding_program = partnership.financing_program
-                funding_type = partnership.financing_type
+            if partnership.is_mobility and year and year.eligible and rel.financing_source and not year.funding_source:
+                funding_source = rel.financing_source
+                funding_program = rel.financing_program
+                funding_type = rel.financing_type
             else:
                 funding_source = year and year.funding_source
                 funding_program = year and year.funding_program
@@ -357,7 +339,7 @@ class PartnershipsApiExportView(FilterMixin, PartnershipsMixinView, ExportView):
 
             parts = partnership.acronym_path[1:] if partnership.acronym_path else []
 
-            organization = partnership.partner_entity.organization
+            organization = rel.entity.organization
             yield [
                 partnership.pk,
                 partnership.get_partnership_type_display(),
@@ -365,22 +347,22 @@ class PartnershipsApiExportView(FilterMixin, PartnershipsMixinView, ExportView):
                 str(funding_source or ''),
                 str(funding_program or ''),
                 str(funding_type or ''),
-                str(partnership.country_continent_name),
-                str(partnership.country_name),
+                str(rel.country_continent_name),
+                str(rel.country_name),
                 str(organization.name),
                 str(organization.code or ''),
                 str(organization.partner_prefetched.erasmus_code or ''),
                 str(organization.partner_prefetched.pic_code or ''),
 
-                hasattr(partnership.partner_entity, 'partnerentity')
-                and partnership.partner_entity.partnerentity.name or '',
+                hasattr(rel.entity, 'partnerentity')
+                and rel.entity.partnerentity.name or '',
 
                 str(parts[0] if len(parts) > 0 else ''),
                 str(parts[1] if len(parts) > 1 else ''),
                 str(parts[2] if len(parts) > 2 else ''),
 
                 str(partnership.supervisor or ''),
-                partnership.tags_list,
+                rel.tags_list,
                 partnership.created.strftime('%Y-%m-%d'),
                 partnership.modified.strftime('%Y-%m-%d'),
 

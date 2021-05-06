@@ -14,12 +14,6 @@ __all__ = ['PartnerForm', 'OrganizationForm']
 
 
 class PartnerForm(forms.ModelForm):
-    is_ies = forms.NullBooleanField(
-        label=_('is_ies'),
-        initial=None,
-        required=True,
-    )
-
     is_nonprofit = forms.NullBooleanField(
         label=_('is_nonprofit'),
         help_text=_('mandatory_if_not_pic_ies'),
@@ -60,7 +54,7 @@ class PartnerForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
-        if not data['pic_code'] or not data.get('is_ies', None):
+        if not data['pic_code']:
             if data['is_nonprofit'] is None:
                 self.add_error('is_nonprofit', ValidationError(_('required')))
             if data['is_public'] is None:

@@ -2,7 +2,7 @@ from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q, F
 
-from base.models.entity import Entity
+from partnership.models import EntityProxy
 from partnership.utils import format_partner_entity
 
 __all__ = [
@@ -13,12 +13,10 @@ __all__ = [
 class PartnerEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     """ Autocomplete used on partnership form"""
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
 
     def get_queryset(self):
-        qs = Entity.objects.filter(
-            organization__partner__isnull=False,
-        ).order_by(
+        qs = EntityProxy.objects.partner_entities().order_by(
             'organization__name',
             F('partnerentity__name').asc(nulls_first=True),
         )

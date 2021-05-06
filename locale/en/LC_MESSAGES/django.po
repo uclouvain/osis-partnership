@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-25 16:32+0100\n"
+"POT-Creation-Date: 2021-05-03 15:17+0200\n"
 "PO-Revision-Date: 2018-10-05 22:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -276,6 +276,12 @@ msgid "Partnership manager"
 msgstr ""
 
 msgid "Partnership managers"
+msgstr ""
+
+msgid "Partnership viewer"
+msgstr ""
+
+msgid "Partnership viewers"
 msgstr ""
 
 msgid "Partnerships"
@@ -733,9 +739,6 @@ msgstr "Is active"
 msgid "is_active"
 msgstr "Active"
 
-msgid "is_ies"
-msgstr "Is IES"
-
 msgid "is_nonprofit"
 msgstr "Is non-profit"
 
@@ -832,6 +835,9 @@ msgstr "No agreement yet"
 msgid "no_media_yet"
 msgstr "No media yet"
 
+msgid "no_multilateral_for_mobility"
+msgstr "Mobility partnerships can't be multilateral"
+
 msgid "no_partnership_contact_yet"
 msgstr "No partnership contact yet"
 
@@ -881,6 +887,9 @@ msgstr "Partner created"
 msgid "partner_end_date"
 msgstr "Partner end date"
 
+msgid "partner_entities"
+msgstr "Partner entities"
+
 msgid "partner_entity"
 msgstr "Partner entity"
 
@@ -889,9 +898,6 @@ msgstr "Are you sure you want to delete this partner entity?"
 
 msgid "partner_entity_error"
 msgstr "Error while saving the partner entity"
-
-msgid "partner_entity_inside_partner"
-msgstr "Partner entity inside partner"
 
 msgid "partner_entity_saved"
 msgstr "Partner entity successfully saved"
@@ -1033,8 +1039,15 @@ msgstr "Missions or thematic"
 msgid "partnership_missions"
 msgstr "Missions or thematic"
 
+#, python-brace-format
+msgid "partnership_multilateral_{acronym}"
+msgstr "Multilateral partnership ({acronym})"
+
 msgid "partnership_not_valid_in"
 msgstr "Partnership not valid in"
+
+msgid "partnership_project_acronym"
+msgstr "Multilateral partnership acronym or abbreviation"
 
 msgid "partnership_start_date"
 msgstr "Start date"

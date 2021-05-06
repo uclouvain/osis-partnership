@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Permission
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
@@ -7,36 +6,18 @@ from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from base.tests.factories.user import UserFactory
 from partnership.tests.factories import (
     PartnershipAgreementFactory, PartnershipEntityManagerFactory,
     PartnershipFactory,
     UCLManagementEntityFactory,
 )
+from partnership.tests.factories.viewer import PartnershipViewerFactory
 
 
 class PartnershipDeleteViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.template_name = 'partnerships/partnership/partnership_confirm_delete.html'
-        cls.user = UserFactory()
-        cls.user_adri = UserFactory()
-        entity_version = EntityVersionFactory(acronym='ADRI')
-        PartnershipEntityManagerFactory(
-            entity=entity_version.entity,
-            person__user=cls.user_adri
-        )
-        cls.user_gf = UserFactory()
-
-        access_perm = Permission.objects.get(name='can_access_partnerships')
-        cls.user.user_permissions.add(access_perm)
-        cls.user_adri.user_permissions.add(access_perm)
-        cls.user_gf.user_permissions.add(access_perm)
-
-        # Years
-        cls.start_academic_year = AcademicYearFactory(year=2150)
-        cls.from_academic_year = AcademicYearFactory(year=2151)
-        cls.end_academic_year = AcademicYearFactory(year=2152)
 
         # Ucl
         sector = EntityFactory()
@@ -44,11 +25,22 @@ class PartnershipDeleteViewTest(TestCase):
         cls.ucl_university = EntityFactory()
         EntityVersionFactory(entity=cls.ucl_university, parent=sector, entity_type=FACULTY)
         UCLManagementEntityFactory(entity=cls.ucl_university)
-        PartnershipEntityManagerFactory(
-            person__user=cls.user_gf,
-            entity=cls.ucl_university,
-        )
 
+        # Users
+        cls.user = PartnershipViewerFactory().person.user
+        cls.user_gf = PartnershipEntityManagerFactory(
+            entity=cls.ucl_university,
+        ).person.user
+        cls.user_adri = PartnershipEntityManagerFactory(
+            entity=EntityVersionFactory(acronym='ADRI').entity,
+        ).person.user
+
+        # Years
+        cls.start_academic_year = AcademicYearFactory(year=2150)
+        cls.from_academic_year = AcademicYearFactory(year=2151)
+        cls.end_academic_year = AcademicYearFactory(year=2152)
+
+        # Partnerships
         cls.partnership = PartnershipFactory(
             author=cls.user_gf.person,
             ucl_entity=cls.ucl_university,
