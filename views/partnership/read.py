@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from django.views.generic import DetailView
 
+from base.models.organization import Organization
 from partnership.models import (
     Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear,
 )
@@ -51,8 +52,6 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             Partnership.objects
             .add_acronyms()
             .select_related(
-                'partner__organization',
-                'partner_entity',
                 'ucl_entity',
                 'author__user',
                 'supervisor',
@@ -74,6 +73,10 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                 Prefetch('agreements', queryset=PartnershipAgreement.objects.select_related(
                     'start_academic_year', 'end_academic_year', 'media'
                 ).order_by("-start_academic_year", "-end_academic_year")),
+                Prefetch(
+                    'partner_entities__organization',
+                    queryset=Organization.objects.order_by('name').select_related('partner')
+                )
             ),
             pk=self.kwargs['pk'],
         )

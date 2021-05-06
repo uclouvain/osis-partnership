@@ -4,6 +4,7 @@ from django.db.models import OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
+from base.models.organization import Organization
 from partnership.models import AgreementStatus
 
 __all__ = ['PartnershipAgreement']
@@ -19,7 +20,7 @@ class PartnershipAgreementQuerySet(models.QuerySet):
             available as country_name
         """
         contact_address_qs = EntityVersion.objects.filter(
-            entity__organization=OuterRef('partnership__partner__organization'),
+            entity__organization=OuterRef('partnership__partner_entities__organization'),
             parent__isnull=True,
         ).order_by('-start_date')
         qs = self
@@ -29,6 +30,14 @@ class PartnershipAgreementQuerySet(models.QuerySet):
             )[:1])
             qs = qs.annotate(**{field.replace('__', '_'): lookup})
         return qs
+
+    def annotate_partner_name(self):
+        """Add annotation on partner name"""
+        return self.annotate(
+            partner_name=Subquery(Organization.objects.filter(
+                pk=OuterRef('partnership__partner_entities__organization'),
+            ).values('name')[:1])
+        )
 
 
 class PartnershipAgreement(models.Model):

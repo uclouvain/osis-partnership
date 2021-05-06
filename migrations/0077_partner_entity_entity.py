@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
-                related_name='partnerships_from_partnerentity',
+                related_name='partner_of',
                 to='base.Entity',
                 verbose_name='partner_entity',
             ),

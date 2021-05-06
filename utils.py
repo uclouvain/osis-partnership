@@ -8,6 +8,7 @@ from base.models.entity_version import EntityVersion
 
 RE_FIRST_LETTERS = re.compile(r'\b[a-z]', re.IGNORECASE)
 
+
 def academic_years(start_year, end_year):
     if start_year or end_year:
         start_year = start_year if start_year else "N/A"
@@ -87,3 +88,16 @@ def generate_partner_prefix(name, existing=None):
 
     # Else generate the remaining letters
     return generate_unique_acronym(base_acronym, existing)
+
+
+def format_partner_entity(entity):
+    if hasattr(entity, 'partnerentity'):
+        return "{} ({}) > {}".format(
+            entity.organization.name,
+            entity.organization.code,
+            entity.partnerentity.name,
+        )
+    return "{} ({})".format(
+        entity.organization.name,
+        entity.organization.code,
+    )

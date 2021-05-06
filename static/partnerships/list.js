@@ -129,7 +129,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     // Use click handler and not reset event to be able to prevent default
     $form.on('reset', function (e) {
         // Manually reset autocomplete
-        yl.jQuery('[data-autocomplete-light-function=select2]').val('').trigger('change');
+        $('[data-autocomplete-light-function=select2]').val('').trigger('change');
 
         // Manually reset fields, because we don't want to reset hidden fields
         $form.find(':input').not(':button, :submit, :reset, [type=hidden], [type=checkbox]')

@@ -76,7 +76,7 @@ def is_in_same_faculty_as_author(self, user, entity):
 
 @rules.predicate
 def entity_has_partnerships(user, partner_entity):
-    return partner_entity.entity.partnerships_from_partnerentity.exists()
+    return partner_entity.entity.partner_of.exists()
 
 
 @rules.predicate

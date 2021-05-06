@@ -1,15 +1,12 @@
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
+from django.db.models import Prefetch
 from django.utils.translation import get_language
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
-from base.models.entity_version import EntityVersion
-from base.utils.cte import CTESubquery
 from partnership.api.serializers import (
     ContinentConfigurationSerializer,
     OfferSerializer,
@@ -21,6 +18,7 @@ from partnership.api.serializers.configuration import (
     PartnershipTypeSerializer,
 )
 from partnership.models import (
+    EntityProxy,
     Partner,
     PartnerTag,
     PartnershipConfiguration,
@@ -51,29 +49,18 @@ class ConfigurationView(APIView):
         )
         partners = (
             Partner.objects
-            .filter(partnerships__isnull=False)
-            .distinct()
+            .having_partnerships()
+            .distinct('pk')
+            .order_by('pk')
             .values('uuid', 'organization__name')
         )
 
-        last_version = EntityVersion.objects.filter(
-            entity=OuterRef('pk')
-        ).order_by('-start_date')
-
         # Get UCL entity parents which children have a partnership
-        cte = EntityVersion.objects.with_children(entity__partnerships__isnull=False)
-        qs = cte.queryset().with_cte(cte).values('entity_id')
         ucl_universities = (
-            Entity.objects
-            .filter(pk__in=qs)
-            .annotate(
-                most_recent_title=Subquery(last_version.values('title')[:1]),
-                acronym_path=CTESubquery(
-                    EntityVersion.objects.with_acronym_path(
-                        entity_id=OuterRef('pk'),
-                    ).values('acronym_path')[:1]
-                ),
-            )
+            EntityProxy.objects
+            .ucl_entities_parents()
+            .with_title()
+            .with_acronym_path()
             .distinct()
             .order_by('acronym_path')
         )
@@ -89,7 +76,8 @@ class ConfigurationView(APIView):
             PartnershipYearEducationLevel.objects
                 .filter(partnerships_years__academic_year=current_year,
                         partnerships_years__partnership__isnull=False)
-                .distinct()
+                .distinct('pk')
+                .order_by('pk')
                 .values('code', 'label')
         )
 
@@ -111,7 +99,7 @@ class ConfigurationView(APIView):
         )
         partner_tags = (
              PartnerTag.objects
-             .filter(partners__partnerships__isnull=False)
+             .of_partners_having_partnerships()
              .values_list('value', flat=True)
              .distinct('value')
              .order_by('value')

@@ -3,9 +3,8 @@ from django.db.models import Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.widgets import LatLonField
-from base.models.entity import Entity
 from base.models.entity_version_address import EntityVersionAddress
-from partnership.models import Contact, PartnerEntity
+from partnership.models import Contact, PartnerEntity, EntityProxy
 
 __all__ = [
     'PartnerEntityForm',
@@ -19,10 +18,9 @@ class EntityVersionAddressForm(forms.ModelForm):
     location = LatLonField()
 
     def __init__(self, *args, **kwargs):
-        # Allow the address to be left out, but still require fields if filled
-        kwargs['empty_permitted'] = True
-        kwargs['use_required_attribute'] = False
         super().__init__(*args, **kwargs)
+        self.fields['country'].required = True
+        self.fields['city'].required = True
 
     class Meta:
         model = EntityVersionAddress
@@ -75,7 +73,7 @@ class PartnerEntityContactForm(forms.ModelForm):
 class PartnerEntityForm(forms.ModelForm):
     parent = forms.ModelChoiceField(
         label="",
-        queryset=Entity.objects.none(),
+        queryset=EntityProxy.objects.none(),
         required=False,
     )
 
@@ -91,9 +89,7 @@ class PartnerEntityForm(forms.ModelForm):
         partner = kwargs.pop('partner')
         super().__init__(*args, **kwargs)
 
-        qs = Entity.objects.filter(
-            entityversion__parent__organization__partner=partner,
-        ).annotate(
+        qs = EntityProxy.objects.children_of_partner(partner).annotate(
             name=Subquery(PartnerEntity.objects.filter(
                 entity=OuterRef('pk'),
             ).values('name')[:1])

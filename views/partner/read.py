@@ -13,7 +13,7 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
     template_name = 'partnerships/partners/partner_detail.html'
     context_object_name = 'partner'
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
 
     def get_queryset(self):
         return (
@@ -32,12 +32,14 @@ class PartnerDetailView(PermissionRequiredMixin, DetailView):
         )
 
     def get_context_data(self, **kwargs):
-        kwargs['entities'] = PartnerEntity.objects.filter(
-            entity__entityversion__parent__organization__partner=self.object,
-        ).select_related(
-            'contact_in', 'contact_out', 'author__user',
-        ).prefetch_related(
-            'entity__entityversion_set__parent__partnerentity',
-            'entity__entityversion_set__entityversionaddress_set__country',
-        ).distinct()
+        kwargs['entities'] = (
+            PartnerEntity.objects
+            .child_of(self.object)
+            .select_related(
+                'contact_in', 'contact_out', 'author__user',
+            ).prefetch_related(
+                'entity__entityversion_set__parent__partnerentity',
+                'entity__entityversion_set__entityversionaddress_set__country',
+            )
+        )
         return super().get_context_data(**kwargs)

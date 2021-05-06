@@ -1,23 +1,22 @@
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, F
 
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY, SECTOR
 from partnership.models import (
-    Partner,
+    EntityProxy,
     Partnership,
     PartnershipConfiguration,
     PartnershipSubtype,
     PartnershipType,
 )
+from partnership.utils import format_partner_entity
 from .faculty import FacultyEntityAutocompleteView
 
 __all__ = [
     'PartnershipAutocompleteView',
-    'PartnerAutocompletePartnershipsFilterView',
     'PartnerEntityAutocompletePartnershipsFilterView',
     'PartnershipYearEntitiesAutocompleteView',
     'PartnershipYearOffersAutocompleteView',
@@ -46,7 +45,7 @@ class PartnershipAutocompleteView(PermissionRequiredMixin, autocomplete.Select2Q
         qs = Partnership.objects.all()
         if self.q:
             qs = qs.filter(
-                Q(partner__organization__name__icontains=self.q)
+                Q(partner_entity__organization__name__icontains=self.q)
                 | Q(partner_entity__name__icontains=self.q)
             )
         return qs.distinct()
@@ -64,7 +63,7 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
         # entity is the hidden field of PartnershipYearForm
         entity_id = self.forwarded.get('entity', None)
         if not entity_id:
-            return Entity.objects.none()
+            return EntityProxy.objects.none()
 
         partnership_type = self.forwarded.get('partnership_type', None)
         if partnership_type == PartnershipType.DOCTORATE.name:
@@ -137,38 +136,25 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
         return '{0.acronym} - {0.title}'.format(result)
 
 
-class PartnerAutocompletePartnershipsFilterView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_queryset(self):
-        qs = Partner.objects.filter(partnerships__isnull=False)
-        if self.q:
-            qs = qs.filter(organization__name__icontains=self.q)
-        return qs.distinct()
-
-
 class PartnerEntityAutocompletePartnershipsFilterView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
     login_url = 'access_denied'
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = Entity.objects.filter(
-            partnerships_from_partnerentity__isnull=False,
-        ).order_by('partnerentity__name')
-        partner = self.forwarded.get('partner', None)
-        if partner:
-            qs = qs.filter(
-                entityversion__parent__organization__partner=partner,
-            )
-        else:
-            return Entity.objects.none()
+        qs = EntityProxy.objects.partners_having_partnership().order_by(
+            'organization__name',
+            F('partnerentity__name').asc(nulls_first=True),
+        )
         if self.q:
-            qs = qs.filter(partnerentity__name__icontains=self.q)
+            qs = qs.filter(
+                Q(organization__name__icontains=self.q)
+                | Q(partnerentity__name__icontains=self.q)
+                | Q(organization__code__icontains=self.q)
+            )
         return qs.distinct()
 
     def get_result_label(self, result):
-        return str(result.partnerentity)
+        return format_partner_entity(result)
 
 
 class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
@@ -178,7 +164,7 @@ class YearsEntityAutocompleteFilterView(FacultyEntityAutocompleteView):
     def get_queryset(self):
         entity = self.forwarded.get('ucl_entity', None)
         if entity is None:
-            return Entity.objects.none()
+            return EntityProxy.objects.none()
 
         # Get all children of faculty
         faculty = get_parent_id(entity, FACULTY)

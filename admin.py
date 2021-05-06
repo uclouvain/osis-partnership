@@ -4,8 +4,9 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext_lazy as _
 from ordered_model.admin import OrderedModelAdmin
 
-from osis_role.contrib.admin import EntityRoleModelAdmin
+from osis_role.contrib.admin import EntityRoleModelAdmin, RoleModelAdmin
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
+from partnership.auth.roles.partnership_viewer import PartnershipViewer
 from partnership.models import *
 
 
@@ -23,6 +24,10 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     formfield_overrides = {
         ArrayField: {'widget': TypeField(choices=PartnershipType.choices())}
     }
+
+
+class PartnershipViewerAdmin(RoleModelAdmin):
+    raw_id_fields = ('person',)
 
 
 class PartnerEntityAdmin(admin.ModelAdmin):
@@ -83,9 +88,10 @@ class PartnershipYearInline(admin.TabularInline):
         'entities',
         'offers',
     )
+    extra = 0
 
     def get_queryset(self, request):
-        return PartnershipYear.objects.select_related('academic_year', 'partnership__partner')
+        return PartnershipYear.objects.select_related('academic_year')
 
 
 class PartnershipAgreementInline(admin.TabularInline):
@@ -93,24 +99,27 @@ class PartnershipAgreementInline(admin.TabularInline):
     raw_id_fields = (
         'media',
     )
+    extra = 0
 
-    def get_queryset(self, request):
-        return PartnershipAgreement.objects.select_related('partnership__partner')
+
+class PartnershipPartnerRelationInline(admin.TabularInline):
+    model = PartnershipPartnerRelation
+    raw_id_fields = ('entity', )
+    extra = 0
 
 
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'ucl_entity',
         'supervisor',
-        'partner',
-        'partner_entity',
         'contacts',
         'medias',
     )
-    inlines = (PartnershipYearInline, PartnershipAgreementInline)
-
-    def get_queryset(self, request):
-        return Partnership.objects.select_related('partner')
+    inlines = (
+        PartnershipPartnerRelationInline,
+        PartnershipYearInline,
+        PartnershipAgreementInline,
+    )
 
     def save_form(self, request, form, change):
         """
@@ -222,6 +231,7 @@ class UCLManagementEntityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
+admin.site.register(PartnershipViewer, PartnershipViewerAdmin)
 admin.site.register(PartnerTag)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(PartnerEntity, PartnerEntityAdmin)

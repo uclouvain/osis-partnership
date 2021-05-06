@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Count
 from django_filters.views import FilterView
 
 from base.utils.search import SearchMixin
@@ -15,7 +14,7 @@ __all__ = [
 class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
     context_object_name = 'partners'
     login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
+    permission_required = 'partnership.can_access_partners'
     template_name = 'partnerships/partners/partners_list.html'
     filterset_class = PartnerAdminFilter
     serializer_class = PartnerAdminSerializer
@@ -32,9 +31,8 @@ class PartnersListView(PermissionRequiredMixin, SearchMixin, FilterView):
                 'country_id',
                 'city',
             )
-            .annotate(
-                partnerships_count=Count('partnerships'),
-            ).distinct()
+            .annotate_partnerships_count()
+            .distinct()
         )
 
     def get_paginate_by(self, queryset):

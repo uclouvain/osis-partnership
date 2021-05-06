@@ -1,12 +1,16 @@
 from django.contrib.gis.geos import Polygon
-from django.db.models import Exists, OuterRef, Q, Case, When, Subquery, F
+from django.db.models import OuterRef, Q, Case, When, Subquery, F
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 
 from base.models.entity_version import EntityVersion
 from partnership.models import (
-    Financing, Partnership, UCLManagementEntity,
-    PartnershipType, PartnershipYear, FundingSource, FundingProgram,
+    Financing,
+    PartnershipPartnerRelation,
+    PartnershipType,
+    PartnershipYear,
+    FundingSource,
+    FundingProgram,
     FundingType,
 )
 
@@ -16,7 +20,7 @@ def filter_funding(year_field='', lookup=''):
         # We need at least source to check if funding is set for mobility
         qs = qs.annotate(
             funding_source=Subquery(PartnershipYear.objects.filter(
-                partnership=OuterRef('pk'),
+                partnership=OuterRef('partnership_id'),
                 academic_year=OuterRef('current_academic_year'),
             ).values('funding_source_id')[:1]),
         )
@@ -26,7 +30,7 @@ def filter_funding(year_field='', lookup=''):
             # And if we don't search on source, we need the other value
             qs = qs.annotate(
                 funding_value=Subquery(PartnershipYear.objects.filter(
-                    partnership=OuterRef('pk'),
+                    partnership=OuterRef('partnership_id'),
                     academic_year=OuterRef('current_academic_year'),
                 ).values(year_field)[:1])
             )
@@ -35,7 +39,7 @@ def filter_funding(year_field='', lookup=''):
         return qs.annotate_partner_address('country_id').annotate(
             search_id=Case(
                 # If mobility, take financing if funding not set
-                When(partnership_type=PartnershipType.MOBILITY.name,
+                When(partnership__partnership_type=PartnershipType.MOBILITY.name,
                      funding_source__isnull=True,
                      then=Subquery(Financing.objects.filter(
                          **{lookup: value.pk},
@@ -47,7 +51,7 @@ def filter_funding(year_field='', lookup=''):
     return inner
 
 
-class PartnershipFilter(filters.FilterSet):
+class PartnershipPartnerRelationFilter(filters.FilterSet):
     continent = filters.CharFilter(
         field_name='country_continent_name',
         lookup_expr='iexact'
@@ -57,26 +61,30 @@ class PartnershipFilter(filters.FilterSet):
         lookup_expr='iexact',
     )
     city = filters.CharFilter(field_name='city', lookup_expr='iexact')
-    partner = filters.UUIDFilter(field_name='partner__uuid')
+    partner = filters.UUIDFilter(
+        field_name='entity__organization__partner__uuid',
+    )
 
     ucl_entity = filters.UUIDFilter(method='filter_ucl_entity')
     # This is a noop filter, as its logic is in filter_ucl_entity()
     with_children = filters.BooleanFilter(method=lambda qs, *_: qs)
 
-    type = filters.CharFilter(field_name='partnership_type')
+    type = filters.CharFilter(field_name='partnership__partnership_type')
     education_level = filters.CharFilter(
-        field_name='years__education_levels__code',
+        field_name='partnership__years__education_levels__code',
     )
 
-    tag = filters.CharFilter(field_name='tags__value')
-    partner_tag = filters.CharFilter(field_name='partner__tags__value')
+    tag = filters.CharFilter(field_name='partnership__tags__value')
+    partner_tag = filters.CharFilter(
+        field_name='entity__organization__partner__tags__value',
+    )
 
     # Depends on the current year
     education_field = filters.UUIDFilter(
         label=_('education_field'),
-        field_name='years__education_fields__uuid',
+        field_name='partnership__years__education_fields__uuid',
     )
-    offer = filters.UUIDFilter(field_name='years__offers__uuid')
+    offer = filters.UUIDFilter(field_name='partnership__years__offers__uuid')
     mobility_type = filters.ChoiceFilter(
         label=_('mobility_type'),
         choices=(('student', "Student"), ('staff', "Staff")),
@@ -98,12 +106,18 @@ class PartnershipFilter(filters.FilterSet):
     bbox = filters.CharFilter(method='filter_bbox')
 
     class Meta:
-        model = Partnership
+        model = PartnershipPartnerRelation
         fields = [
-            'continent', 'country', 'city', 'partner',
+            'continent',
+            'country',
+            'city',
+            'partner',
             'ucl_entity',
-            'supervisor', 'education_field', 'mobility_type',
-            'type', 'education_level',
+            'partnership__supervisor',
+            'education_field',
+            'mobility_type',
+            'type',
+            'education_level',
         ]
 
     def filter_ucl_entity(self, queryset, name, value):
@@ -111,21 +125,21 @@ class PartnershipFilter(filters.FilterSet):
             # Allow all children of entity too
             cte = EntityVersion.objects.with_parents(entity__uuid=value)
             qs = cte.queryset().with_cte(cte).values('entity_id')
-            return queryset.filter(ucl_entity__in=qs)
+            return queryset.filter(partnership__ucl_entity__in=qs)
         else:
-            return queryset.filter(ucl_entity__uuid=value)
+            return queryset.filter(partnership__ucl_entity__uuid=value)
 
     @staticmethod
     def filter_mobility_type(queryset, name, value):
         if value == 'student':
             return queryset.filter(
-                Q(years__is_sms=True)
-                | Q(years__is_smst=True)
-                | Q(years__is_smp=True)
+                Q(partnership__years__is_sms=True)
+                | Q(partnership__years__is_smst=True)
+                | Q(partnership__years__is_smp=True)
             )
         else:
             return queryset.filter(
-                Q(years__is_stt=True) | Q(years__is_sta=True)
+                Q(partnership__years__is_stt=True) | Q(partnership__years__is_sta=True)
             )
 
     @staticmethod

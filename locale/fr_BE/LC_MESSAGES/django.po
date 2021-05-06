@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-25 16:32+0100\n"
+"POT-Creation-Date: 2021-05-03 15:17+0200\n"
 "PO-Revision-Date: 2018-10-22 15:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -336,6 +336,12 @@ msgstr "Gestionnaire de partenariat"
 
 msgid "Partnership managers"
 msgstr "Gestionnaires de partenariat"
+
+msgid "Partnership viewer"
+msgstr "Observateur de partenariat"
+
+msgid "Partnership viewers"
+msgstr "Observateurs de partenariat"
 
 msgid "Partnerships"
 msgstr "Partenariats"
@@ -788,9 +794,6 @@ msgstr "Informations"
 msgid "invalid_partner"
 msgstr "Le partenaire est en cours de validation"
 
-msgid "invalid_partner_entity"
-msgstr "Entité partenaire invalide."
-
 msgid "invisible_on_api"
 msgstr "Non visible sur l'interface publique"
 
@@ -799,9 +802,6 @@ msgstr "Actif"
 
 msgid "is_active"
 msgstr "Actif"
-
-msgid "is_ies"
-msgstr "Institution d’enseignement supérieur ?"
 
 msgid "is_nonprofit"
 msgstr "Organisation à but non lucratif ?"
@@ -902,6 +902,9 @@ msgstr "Il n'y a pas encore d'accord."
 msgid "no_media_yet"
 msgstr "Il n'y a pas encore de média."
 
+msgid "no_multilateral_for_mobility"
+msgstr "Les partenariats de mobilité ne peuvent être multilatéraux"
+
 msgid "no_partnership_contact_yet"
 msgstr "Il n'y a pas encore de contact."
 
@@ -951,6 +954,9 @@ msgstr "Partenaire créé"
 msgid "partner_end_date"
 msgstr "Date de fin d’existence"
 
+msgid "partner_entities"
+msgstr "Entités partenaires"
+
 msgid "partner_entity"
 msgstr "Entité partenaire"
 
@@ -961,9 +967,6 @@ msgstr ""
 
 msgid "partner_entity_error"
 msgstr "Erreur lors de la sauvegarde de l'entité partenaire."
-
-msgid "partner_entity_inside_partner"
-msgstr "Entité au sein de l'université/l'organisme partenaire"
 
 msgid "partner_entity_saved"
 msgstr "Entité partenaire sauvegardé avec succès."
@@ -1108,8 +1111,15 @@ msgstr "Missions et thématique"
 msgid "partnership_missions"
 msgstr "Missions et thématique"
 
+#, python-brace-format
+msgid "partnership_multilateral_{acronym}"
+msgstr "Partenariat multilatéral ({acronym})"
+
 msgid "partnership_not_valid_in"
 msgstr "Partenariats dont les accords ne sont pas validés en"
+
+msgid "partnership_project_acronym"
+msgstr "Acronyme ou nom abrégé du partenariat multilatéral"
 
 msgid "partnership_start_date"
 msgstr "Date de début"

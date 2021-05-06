@@ -7,12 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from base.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
-from base.models.entity import Entity
 from base.models.entity_version_address import EntityVersionAddress
 from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.person import Person
 from partnership.models import (
-    FundingProgram, FundingSource, FundingType, Partner,
+    FundingProgram, FundingSource, FundingType,
+    EntityProxy,
     PartnerTag,
     PartnershipSubtype, PartnershipTag,
     PartnershipType,
@@ -38,7 +38,7 @@ class PartnershipFilterForm(forms.Form):
 
     ucl_entity = EntityChoiceField(
         label=_('faculty_entity_filter'),
-        queryset=Entity.objects.filter(partnerships__isnull=False).distinct(),
+        queryset=EntityProxy.objects.ucl_entities(),
         empty_label=_('ucl_entity'),
         required=False,
         widget=autocomplete.ModelSelect2(
@@ -69,7 +69,7 @@ class PartnershipFilterForm(forms.Form):
 
     years_entity = forms.ModelChoiceField(
         label=_('entity_filter'),
-        queryset=Entity.objects.filter(partnerships_years__isnull=False).distinct(),
+        queryset=EntityProxy.objects.year_entities(),
         required=False,
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:years_entity_filter',
@@ -99,31 +99,13 @@ class PartnershipFilterForm(forms.Form):
     )
 
     # Partner
-
-    partner = forms.ModelChoiceField(
-        label=_('partner'),
-        queryset=Partner.objects.filter(partnerships__isnull=False).distinct(),
-        empty_label=_('partner'),
-        widget=autocomplete.ModelSelect2(
-            attrs={
-                'data-width': '100%',
-                'class': 'resetting',
-                'data-reset': '#id_partner_entity',
-            },
-            url='partnerships:autocomplete:partner_partnerships_filter',
-        ),
-        required=False,
-    )
     partner_entity = forms.ModelChoiceField(
         label=_('partner_entity'),
-        queryset=Entity.objects.filter(
-            partnerships_from_partnerentity__isnull=False
-        ).distinct(),
+        queryset=EntityProxy.objects.partners_having_partnership(),
         empty_label=_('partner_entity'),
         widget=autocomplete.ModelSelect2(
             attrs={'data-width': '100%'},
             url='partnerships:autocomplete:partner_entity_partnerships_filter',
-            forward=['partner'],
         ),
         required=False,
     )
@@ -150,30 +132,20 @@ class PartnershipFilterForm(forms.Form):
     )
     country = forms.ModelChoiceField(
         label=_('country'),
-        queryset=(
-            Country.objects
-            .filter(entityversionaddress__entity_version__entity__organization__partner__partnerships__isnull=False)
-            .order_by('name')
-            .distinct()
-        ),
+        queryset=Country.objects.order_by('name').distinct(),
         empty_label=_('country'),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
         required=False,
     )
     continent = forms.ModelChoiceField(
         label=_('continent'),
-        queryset=(
-            Continent.objects
-            .filter(country__entityversionaddress__entity_version__entity__organization__partner__partnerships__isnull=False)
-            .order_by('name')
-            .distinct()
-        ),
+        queryset=Continent.objects.order_by('name').distinct(),
         empty_label=_('continent'),
         required=False,
     )
     partner_tags = forms.ModelMultipleChoiceField(
         label=_('partner_tags'),
-        queryset=PartnerTag.objects.filter(partners__partnerships__isnull=False).distinct(),
+        queryset=PartnerTag.objects.of_partners_having_partnerships(),
         widget=autocomplete.ModelSelect2Multiple(attrs={'data-width': '100%'}),
         required=False,
     )
@@ -340,8 +312,10 @@ class PartnershipFilterForm(forms.Form):
         cities = (
             EntityVersionAddress.objects
             .filter(
-                entity_version__entity__organization__partner__partnerships__isnull=False,
-                city__isnull=False)
+                # We need to go around the relation for sub-entities
+                entity_version__entity__organization__entity__partner_of__isnull=False,
+                city__isnull=False,
+            )
             .values_list('city', flat=True)
             .order_by('city')
             .distinct('city')

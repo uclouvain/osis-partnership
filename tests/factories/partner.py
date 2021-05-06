@@ -33,7 +33,6 @@ class PartnerFactory(factory.DjangoModelFactory):
         model = Partner
 
     is_valid = True
-    is_ies = factory.Faker('boolean')
     organization = factory.SubFactory(
         OrganizationFactory,
         name=factory.Sequence(lambda n: 'Partner-é-{0}'.format(n)),
@@ -55,25 +54,27 @@ class PartnerFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def dates(obj, create, extracted, start=None, end=None, **kwargs):
         if create:
-            entity_version = EntityVersionFactory(
-                entity__organization=obj.organization,
+            extra_kwargs = {}
+            obj._entity = obj.organization.entity_set.first()
+            if not obj._entity:
+                extra_kwargs['entity__organization'] = obj.organization
+            else:
+                extra_kwargs['entity'] = obj._entity
+            obj._entity_version = EntityVersionFactory(
                 start_date=start or (timezone.now() - timedelta(days=365)),
                 end_date=end,
                 parent=None,
+                **extra_kwargs
             )
-            obj.organization.entity_set.add(entity_version.entity)
-
-    @factory.post_generation
-    def entities(obj, create, extracted, **kwargs):
-        if create and extracted is not None:
-            obj.entities.set(extracted)
+            if not obj._entity:
+                obj._entity = obj._entity_version.entity
+                obj.organization.entity_set.add(obj._entity_version.entity)
 
     @factory.post_generation
     def contact_address(obj, create, extracted, **kwargs):
         if create and (extracted or kwargs):
-            entity = obj.organization.entity_set.first()
             EntityVersionAddressFactory(
-                entity_version_id=entity.entityversion_set.first().pk,
+                entity_version_id=obj._entity_version.pk,
                 **kwargs,
             )
 
