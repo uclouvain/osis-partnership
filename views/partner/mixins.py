@@ -97,8 +97,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         form.save_m2m()
 
         # Save address
-        if form_address.has_changed():
-            self.save_address(last_version, form_address)
+        self.save_address(last_version, form_address)
 
         messages.success(self.request, _('partner_saved'))
         if is_creation and not is_linked_to_adri_entity(self.request.user):
