@@ -275,7 +275,7 @@ class PartnerUpdateVersionsViewTest(TestCase):
         self.assertEqual(self.partner.organization.end_date, None)
 
     def test_newer_end_date_truncates(self):
-        """New start date is after the original start, truncate first version"""
+        """New end date is after the original start, truncate end version"""
         data = self.data.copy()
         data['organization-end_date'] = "01/01/2025"
         with patch('partnership.views.partner.mixins.date') as mock_date:
@@ -290,6 +290,23 @@ class PartnerUpdateVersionsViewTest(TestCase):
             self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
             self.assertEqual(self.entity.entityversion_set.count(), 2)
             self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
+
+    def test_end_date_before_today_truncates(self):
+        """New end date is before today (and the original end_date), truncates first version"""
+        data = self.data.copy()
+        data['organization-end_date'] = "01/01/2030"
+        with patch('partnership.views.partner.mixins.date') as mock_date:
+            mock_date.today.return_value = date(2031, 1, 1)
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 1)
+            self.assertEqual(self.partner.organization.end_date, date(2030, 1, 1))
+
+            data['organization-end_date'] = "01/01/2029"
+            response = self.client.post(self.url, data=data, follow=True)
+            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+            self.assertEqual(self.entity.entityversion_set.count(), 1)
+            self.assertEqual(self.partner.organization.end_date, date(2029, 1, 1))
 
     def test_older_end_date_extends(self):
         """New end date is after the original end, extends first version"""
