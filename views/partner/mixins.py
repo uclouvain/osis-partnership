@@ -97,8 +97,7 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
         form.save_m2m()
 
         # Save address
-        if form_address.has_changed():
-            self.save_address(last_version, form_address)
+        self.save_address(last_version, form_address)
 
         messages.success(self.request, _('partner_saved'))
         if is_creation and not is_linked_to_adri_entity(self.request.user):
@@ -155,9 +154,10 @@ class PartnerFormMixin(NotifyAdminMailMixin, PermissionRequiredMixin):
             if end_date != last_version.end_date:
                 self._update_latest_version(end_date, qs, last_version)
 
-            # Refresh version
+            # Refresh version if end date is not before today
             last_version = qs.all().last()
-            if last_version.start_date < date.today():
+            end_date_before_today = last_version.end_date and last_version.end_date < date.today()
+            if last_version.start_date < date.today() and not end_date_before_today:
                 # End the previous version if start_date is changed
                 last_version.end_date = date.today() - timedelta(days=1)
                 last_version.save()
