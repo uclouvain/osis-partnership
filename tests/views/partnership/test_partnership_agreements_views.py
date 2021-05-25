@@ -267,7 +267,7 @@ class PartnershipAgreementGeneralCreateViewTest(TestCase):
             'comment': 'test',
             'media-name': 'test',
             'media-description': 'test',
-            'media-url': 'http://example.com',
+            'media-file': ContentFile(b'hello world', 'something.pdf'),
             'media-visibility': MediaVisibility.PUBLIC.name,
         }
 
@@ -283,6 +283,21 @@ class PartnershipAgreementGeneralCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         agreement = self.partnership.agreements.first()
         self.assertEqual(agreement.start_academic_year, self.years[0])
+        self.assertEqual(
+            agreement.media.file.name,
+            'partnerships/partnership_agreement_{}.pdf'.format(self.partnership.pk),
+        )
+
+        # Upload another file
+        self.data['media-file'] = ContentFile(b'hello world 2', 'something.pdf')
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        agreement = self.partnership.agreements.last()
+        # Should have generated a filename other than the first
+        self.assertNotEqual(
+            agreement.media.file.name,
+            'partnerships/partnership_agreement_{}.pdf'.format(self.partnership.pk),
+        )
 
     def test_post_invalid_dates(self):
         self.client.force_login(self.user_adri)
