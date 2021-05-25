@@ -10,13 +10,14 @@ _('partnerships_financing_configuration')
 # TODO remove this monkeypatch once either django-cte has fixed this or Django is upgraded > 3.1.14
 # see https://github.com/dimagi/django-cte/issues/26
 # fixed in https://code.djangoproject.com/ticket/31002
-orginal_generate_sql = CTECompiler.generate_sql
+original_generate_sql = CTECompiler.generate_sql
 
 
 def generate_sql(cls, connection, query, as_sql):
-    ret = orginal_generate_sql(connection, query, as_sql)
+    ret = original_generate_sql(connection, query, as_sql)
+
     # We need to cast the second part of the return value if it's a tuple
-    if len(ret) == 2 and isinstance(ret[1], tuple):
+    if len(ret) == 2 and isinstance(ret[1], tuple) and not query.subquery:
         return ret[0], list(ret[1])
     return ret
 

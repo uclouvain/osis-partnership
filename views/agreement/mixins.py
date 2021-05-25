@@ -56,9 +56,8 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
 
     def get_filename(self, filename):
         extension = filename.split('.')[-1]
-        return 'partnership_agreement_{}_{}.{}'.format(
+        return 'partnership_agreement_{}.{}'.format(
             self.partnership.pk,
-            self.partnership.partner.pk,
             extension,
         )
 
