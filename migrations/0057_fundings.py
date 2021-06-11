@@ -185,7 +185,7 @@ class Migration(migrations.Migration):
             name='url',
             field=models.URLField(verbose_name='url', null=True)
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.RemoveField(
             model_name='financing',
             name='name',

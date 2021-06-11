@@ -32,5 +32,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(remove_partnership_year_education_level, create_partnership_year_education_level)
+        migrations.RunPython(remove_partnership_year_education_level, create_partnership_year_education_level, elidable=True)
     ]

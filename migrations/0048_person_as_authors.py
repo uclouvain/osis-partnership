@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='base.Person', verbose_name='author'),
         ),
         migrations.RunPython(
-            link_author_person, link_person_author,
+            link_author_person, link_person_author, elidable=True
         ),
         migrations.RemoveField(
             model_name='media',

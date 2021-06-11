@@ -86,5 +86,5 @@ class Migration(migrations.Migration):
             name='partnership_type',
             field=models.CharField(choices=[('INTENTION', 'Déclaration d’intention'), ('CADRE', 'Accord-cadre'), ('SPECIFIQUE', 'Accord spécifique'), ('CODIPLOMATION', 'Accord de co-diplômation'), ('COTUTELLE', 'Accord de co-tutelle'), ('MOBILITY', 'Partenariat de mobilité'), ('FOND_APPUIE', 'Projet Fonds d’appuie à l’internationnalisation'), ('AUTRE', 'Autre')], max_length=255, verbose_name='partnership_type'),
         ),
-        migrations.RunPython(forward, reverse),
+        migrations.RunPython(forward, reverse, elidable=True),
     ]
