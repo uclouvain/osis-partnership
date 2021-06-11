@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 null=True,
             ),
         ),
-        migrations.RunPython(forward, backwards),
+        migrations.RunPython(forward, backwards, elidable=True),
         migrations.AlterField(
             model_name='partnership',
             name='partner_entity',

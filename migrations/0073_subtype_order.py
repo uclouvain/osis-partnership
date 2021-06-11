@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             ),
             preserve_default=False,
         ),
-        migrations.RunPython(forward, migrations.RunPython.noop),
+        migrations.RunPython(forward, migrations.RunPython.noop, elidable=True),
         migrations.AlterField(
             model_name='partnershipsubtype',
             name='order',

@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
             name='partner_entities',
             field=models.ManyToManyField(through='partnership.PartnershipPartnerRelation', to='base.Entity', verbose_name='partner_entities'),
         ),
-        migrations.RunPython(forward, backwards),
+        migrations.RunPython(forward, backwards, elidable=True),
         migrations.RemoveField(
             model_name='partnership',
             name='partner_entity',

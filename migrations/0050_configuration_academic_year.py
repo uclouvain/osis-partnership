@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             name='partnership_creation_update_min_year',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='base.AcademicYear', verbose_name='partnership_creation_update_min_year'),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.RemoveField(
             model_name='partnershipconfiguration',
             name='partnership_api_max_date_day',
