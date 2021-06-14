@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(null=True, editable=False, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='author'),
             preserve_default=False,
         ),
-        migrations.RunPython(set_medias_author, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(set_medias_author, reverse_code=migrations.RunPython.noop, elidable=True),
         migrations.AlterField(
             model_name='media',
             name='author',

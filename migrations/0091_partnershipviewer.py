@@ -39,5 +39,5 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Partnership viewers',
             },
         ),
-        migrations.RunPython(forward, migrations.RunPython.noop)
+        migrations.RunPython(forward, migrations.RunPython.noop, elidable=True)
     ]

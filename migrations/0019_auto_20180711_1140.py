@@ -25,5 +25,5 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name='PartnershipType',
         ),
-        migrations.RunPython(migrate_entities),
+        migrations.RunPython(migrate_entities, elidable=True),
     ]
