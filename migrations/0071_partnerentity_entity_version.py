@@ -152,7 +152,7 @@ class Migration(migrations.Migration):
                 verbose_name='partner',
             ),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.AlterField(
             model_name='partnerentity',
             name='entity_version',

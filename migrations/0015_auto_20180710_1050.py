@@ -33,5 +33,5 @@ class Migration(migrations.Migration):
             name='ucl_university_labo',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships_labo', to='base.Entity', verbose_name='ucl_university_labo'),
         ),
-        migrations.RunPython(migrate_entities),
+        migrations.RunPython(migrate_entities, elidable=True),
     ]

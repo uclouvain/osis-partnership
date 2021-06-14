@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 verbose_name='partner_entity',
             ),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.RemoveField(
             model_name='partnership',
             name='partner_entity_old',

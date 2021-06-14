@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
             name='faculty',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='faculty_managements', to='base.Entity', verbose_name='faculty'),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.AlterField(
             model_name='uclmanagemententity',
             name='entity',

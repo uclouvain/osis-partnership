@@ -51,5 +51,5 @@ class Migration(migrations.Migration):
             name='academic_responsible',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='management_entities', to='base.Person', verbose_name='academic_responsible'),
         ),
-        migrations.RunPython(remove_unused_permissions, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(remove_unused_permissions, reverse_code=migrations.RunPython.noop, elidable=True),
     ]

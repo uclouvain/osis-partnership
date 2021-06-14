@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
             name='ucl_university',
             field=models.ForeignKey(limit_choices_to=models.Q(models.Q(entityversion__entity_type='FACULTY'), models.Q(('uclmanagement_entity__isnull', False), ('parent_of__entity__uclmanagement_entity__isnull', False), _connector='OR')), null=True, on_delete=django.db.models.deletion.PROTECT, related_name='partnerships', to='base.Entity', verbose_name='ucl_university'),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.AlterField(
             model_name='partnership',
             name='ucl_entity',

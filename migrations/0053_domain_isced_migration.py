@@ -102,7 +102,7 @@ class Migration(migrations.Migration):
                 verbose_name='partnership_year_education_fields',
             ),
         ),
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.RemoveField(
             model_name='partnershipyear',
             name='education_fields',
