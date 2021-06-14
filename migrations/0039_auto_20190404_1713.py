@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
             name='uuid',
             field=models.UUIDField(db_index=True, editable=False, null=True),
         ),
-        migrations.RunPython(init_partner_uuid, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(init_partnershipyeareducationfield_uuid, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(init_partner_uuid, reverse_code=migrations.RunPython.noop, elidable=True),
+        migrations.RunPython(init_partnershipyeareducationfield_uuid, reverse_code=migrations.RunPython.noop, elidable=True),
         migrations.AlterField(
             model_name='partner',
             name='uuid',

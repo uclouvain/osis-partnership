@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
             ], max_length=255, null=True, verbose_name='partnership_type'),
         ),
         # Migrate data
-        migrations.RunPython(forward, backward),
+        migrations.RunPython(forward, backward, elidable=True),
         migrations.RemoveField(
             model_name='partnershipyear',
             name='partnership_type',
