@@ -66,7 +66,7 @@ class PartnershipPartnerRelationQuerySet(models.QuerySet):
             current_academic_year=models.Value(
                 academic_year.id, output_field=models.AutoField()
             ),
-        ).annotate(
+        ).alias(
             has_years_in=models.Exists(
                 PartnershipYear.objects.filter(
                     partnership=OuterRef('partnership_id'),
