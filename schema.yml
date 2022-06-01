@@ -11,7 +11,7 @@ servers:
  - url: https://osis.uclouvain.be/partnerships/v1
    description: Production server
 info:
-  version: 1.0.0
+  version: '1.01'
   title: OSIS Partnerships
 components:
   schemas:
@@ -422,6 +422,11 @@ components:
             $ref: '#/components/schemas/Contact'
         staff_funding:
           $ref: '#/components/schemas/Funding'
+    AcceptedLanguageEnum:
+      type: string
+      enum:
+        - 'en'
+        - 'fr-be'
     Error:
       required:
         - code
@@ -577,6 +582,38 @@ components:
       schema:
         type: string
         example: Circle U.
+    X-User-FirstName:
+      in: header
+      name: X-User-FirstName
+      schema:
+        type: string
+      required: false
+    X-User-LastName:
+      in: header
+      name: X-User-LastName
+      schema:
+        type: string
+      required: false
+    X-User-Email:
+      in: header
+      name: X-User-Email
+      schema:
+        type: string
+      required: false
+    X-User-GlobalID:
+      in: header
+      name: X-User-GlobalID
+      schema:
+        type: string
+      required: false
+    Accept-Language:
+      in: header
+      name: Accept-Language
+      description: >
+        The header advertises which languages the client is able to understand, and which locale variant is preferred. (By languages, we mean natural languages, such as English, and not programming languages.)
+      schema:
+        $ref: '#/components/schemas/AcceptedLanguageEnum'
+      required: false
   responses:
     BadRequest:
       description: Bad request
@@ -597,6 +634,12 @@ paths:
       tags:
         - partners
       operationId: getPartnershipsConfiguration
+      parameters:
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
       responses:
         '200':
           description: The list of possible values for parameters on other endpoints
@@ -696,6 +739,11 @@ paths:
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
         - $ref: '#/components/parameters/funding_source'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
       responses:
         '200':
           description: An array of partners
@@ -732,6 +780,11 @@ paths:
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
         - $ref: '#/components/parameters/funding_source'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
       responses:
         '200':
           description: A paged array of partnerships
@@ -768,6 +821,11 @@ paths:
             type: string
             format: uuid
             example: 'abcd-efgh-ijkl-mnop-1234-5678'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
       responses:
         '200':
           description: A partnership
@@ -802,16 +860,19 @@ paths:
         - $ref: '#/components/parameters/funding_type'
         - $ref: '#/components/parameters/funding_program'
         - $ref: '#/components/parameters/funding_source'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
       responses:
         '200':
           description: A xls file with partnerships
           content:
             application/xls.ms-excel:
               schema:
-                type: object
-                properties:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Partnership'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Partnership'
         '400':
           $ref: '#/components/responses/BadRequest'

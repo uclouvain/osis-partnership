@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Exists, Max, OuterRef, Q, Prefetch
+from django.db.models import Exists, Max, OuterRef, Q, Prefetch, Subquery
 from django.utils.translation import gettext_lazy as _
 
 from base.models.entity_version import EntityVersion
@@ -347,7 +347,11 @@ class PartnershipAdminFilter(filters.FilterSet):
         if value:
             queryset = (
                 queryset.annotate(
-                    ending_date=Max('partnership__agreements__end_academic_year__end_date')
+                    ending_date=Subquery(
+                        Partnership.objects.filter(pk=OuterRef('partnership__pk')).annotate(
+                            ending_date=Max('agreements__end_academic_year__end_date'),
+                        ).values('ending_date')[:1]
+                    ),
                 ).filter(ending_date=value.end_date)
             )
         return queryset
@@ -502,6 +506,7 @@ class PartnershipAgreementAdminFilter(PartnershipAdminFilter):
                     ),
                 ),
             )
+            .distinct()
         )
 
         # Apply special filtering if needed

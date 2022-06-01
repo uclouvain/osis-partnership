@@ -218,8 +218,8 @@ class Partner(models.Model):
         null=True,
         blank=True,
     )
-    is_nonprofit = models.NullBooleanField(_('is_nonprofit'), blank=True)
-    is_public = models.NullBooleanField(_('is_public'), blank=True)
+    is_nonprofit = models.BooleanField(_('is_nonprofit'), blank=True, null=True)
+    is_public = models.BooleanField(_('is_public'), blank=True, null=True)
     contact_type = models.CharField(
         _('partner_contact_type'),
         max_length=255,

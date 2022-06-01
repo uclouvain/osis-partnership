@@ -1,5 +1,6 @@
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Case, Exists, OuterRef, Prefetch, When
+from django.db.models.expressions import Subquery
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
@@ -7,6 +8,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from base.models.academic_year import AcademicYear
 from partnership.models import (
     EntityProxy,
+    Partnership,
     PartnershipAgreement,
     PartnershipType,
     PartnershipYear,
@@ -81,7 +83,11 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             .annotate_financing(self.academic_year)
             .annotate_partner_address('country__continent__name')
             .annotate(
-                tags_list=StringAgg('partnership__tags__value', ', '),
+                tags_list=Subquery(
+                    Partnership.objects.filter(pk=OuterRef('partnership__pk')).annotate(
+                        tags_list=StringAgg('tags__value', ', '),
+                    ).values('tags_list')[:1]
+                ),
                 is_valid_for_year=Case(
                     When(
                         partnership__partnership_type=PartnershipType.PROJECT.name,
