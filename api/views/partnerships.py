@@ -184,13 +184,6 @@ class PartnershipsApiViewMixin:
                     .order_by('-end_date')
                     .values('year')[:1]
                 ),
-                agreement_start=Subquery(
-                    PartnershipAgreement.objects.filter(
-                        partnership=OuterRef('partnership_id'),
-                        start_date__lte=Now(),
-                        end_date__gte=Now(),
-                    ).order_by('-end_date').values('start_date')[:1]
-                ),
                 start_year=Subquery(
                     PartnershipYear.objects.filter(
                         partnership=OuterRef('partnership_id'),
@@ -218,16 +211,6 @@ class PartnershipsApiViewMixin:
                     Value('-'),
                     F('validity_end_year') + 1,
                     output_field=models.CharField()
-                ),
-                agreement_status=Subquery(
-                    PartnershipAgreement.objects
-                    .filter(
-                        partnership=OuterRef('partnership_id'),
-                        start_academic_year__year__lte=academic_year.year,
-                        end_academic_year__year__gte=academic_year.year,
-                    )
-                    .order_by('-end_academic_year__year')
-                    .values('status')[:1]
                 ),
                 funding_name=Subquery(
                     Financing.objects.filter(

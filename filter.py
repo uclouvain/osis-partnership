@@ -331,22 +331,22 @@ class PartnershipAdminFilter(filters.FilterSet):
     @staticmethod
     def filter_partnership_in(queryset, name, value):
         if value:
-            queryset = queryset.annotate(
-                has_in=Exists(
+            queryset = queryset.filter(
+                Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('partnership_id'),
                         start_academic_year__start_date__lte=value.start_date,
                         end_academic_year__end_date__gte=value.end_date,
                     )
                 )
-            ).filter(has_in=True)
+            )
         return queryset
 
     @staticmethod
     def filter_partnership_ending_in(queryset, name, value):
         if value:
             queryset = (
-                queryset.annotate(
+                queryset.alias(
                     ending_date=Subquery(
                         Partnership.objects.filter(pk=OuterRef('partnership__pk')).annotate(
                             ending_date=Max('agreements__end_academic_year__end_date'),
@@ -359,21 +359,22 @@ class PartnershipAdminFilter(filters.FilterSet):
     @staticmethod
     def filter_partnership_valid_in(queryset, name, value):
         if value:
-            queryset = queryset.annotate(
-                has_valid=Exists(PartnershipAgreement.objects.filter(
+            queryset = queryset.filter(
+                Exists(PartnershipAgreement.objects.filter(
                     partnership=OuterRef('partnership_id'),
                     status=AgreementStatus.VALIDATED.name,
                     start_academic_year__start_date__lte=value.start_date,
                     end_academic_year__end_date__gte=value.end_date,
                 ))
-            ).filter(has_valid=True)
+            )
         return queryset
 
     @staticmethod
     def filter_partnership_not_valid_in(queryset, name, value):
         if value:
-            queryset = queryset.annotate(
-                not_valid_in_has_agreements=Exists(
+            queryset = queryset.filter(
+                # not_valid_in_has_agreements
+                Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('partnership_id'),
                     ).filter(
@@ -381,7 +382,9 @@ class PartnershipAdminFilter(filters.FilterSet):
                         end_academic_year__end_date__gte=value.end_date,
                     ),
                 ),
-                not_valid_in_has_valid_agreements=Exists(
+            ).exclude(
+                # not_valid_in_has_valid_agreements
+                Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('partnership_id'),
                     ).filter(
@@ -390,32 +393,29 @@ class PartnershipAdminFilter(filters.FilterSet):
                         end_academic_year__end_date__gte=value.end_date,
                     ),
                 )
-            ).filter(
-                not_valid_in_has_agreements=True,
-                not_valid_in_has_valid_agreements=False,
             )
         return queryset
 
     @staticmethod
     def filter_partnership_with_no_agreements_in(queryset, name, value):
         if value:
-            queryset = queryset.annotate(
-                no_agreements_in_has_years=Exists(
+            queryset = queryset.filter(
+                # no_agreements_in_has_years
+                Exists(
                     PartnershipYear.objects.filter(
                         partnership=OuterRef('partnership_id'),
                         academic_year=value,
                     )
                 ),
-                no_agreements_in_has_agreements=Exists(
+            ).exclude(
+                # no_agreements_in_has_agreements
+                Exists(
                     PartnershipAgreement.objects.filter(
                         partnership=OuterRef('partnership_id'),
                         start_academic_year__start_date__lte=value.start_date,
                         end_academic_year__end_date__gte=value.end_date,
                     )
                 ),
-            ).filter(
-                no_agreements_in_has_years=True,
-                no_agreements_in_has_agreements=False,
             )
         return queryset
 
