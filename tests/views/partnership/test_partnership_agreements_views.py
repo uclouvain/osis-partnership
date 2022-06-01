@@ -283,20 +283,20 @@ class PartnershipAgreementGeneralCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
         agreement = self.partnership.agreements.first()
         self.assertEqual(agreement.start_academic_year, self.years[0])
-        self.assertEqual(
+        self.assertIn(
+            'partnerships/partnership_agreement_{}'.format(self.partnership.pk),
             agreement.media.file.name,
-            'partnerships/partnership_agreement_{}.pdf'.format(self.partnership.pk),
         )
 
         # Upload another file
         self.data['media-file'] = ContentFile(b'hello world 2', 'something.pdf')
         response = self.client.post(self.url, self.data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
-        agreement = self.partnership.agreements.last()
         # Should have generated a filename other than the first
+        self.assertEqual(self.partnership.agreements.count(), 2)
         self.assertNotEqual(
-            agreement.media.file.name,
-            'partnerships/partnership_agreement_{}.pdf'.format(self.partnership.pk),
+            self.partnership.agreements.all()[0].media.file.name,
+            self.partnership.agreements.all()[1].media.file.name,
         )
 
     def test_post_invalid_dates(self):

@@ -96,9 +96,16 @@ class PartnershipUpdateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
 
-        mission = PartnershipMission.objects.filter(
-            types__contains=[PartnershipType.MOBILITY.name],
-        ).first()
+        mission = PartnershipMission.objects.create(
+            label="Enseignement",
+            code='ENS',
+            types=[
+                PartnershipType.GENERAL.name,
+                PartnershipType.MOBILITY.name,
+                PartnershipType.COURSE.name,
+                PartnershipType.PROJECT.name,
+            ],
+        )
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
             partner=cls.partner,

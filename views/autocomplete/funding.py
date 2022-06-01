@@ -1,6 +1,6 @@
 from dal.views import ViewMixin
 from dal_select2.views import Select2QuerySetView
-from django.db.models import F, Value
+from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
 from django.http import JsonResponse
 from django.views import View
@@ -23,7 +23,7 @@ class FundingAutocompleteView(PermissionRequiredMixin, ViewMixin, View):
     def get_list(self):
         # Get sources
         sources = FundingSource.objects.annotate(
-            value=Concat(Value('fundingsource'), Value('-'), 'pk'),
+            value=Concat(Value('fundingsource'), Value('-'), 'pk', output_field=CharField()),
             text=F('name'),
         ).filter(
             text__icontains=self.q,
@@ -31,7 +31,7 @@ class FundingAutocompleteView(PermissionRequiredMixin, ViewMixin, View):
 
         # Get active programs
         programs = FundingProgram.objects.annotate(
-            value=Concat(Value('fundingprogram'), Value('-'), 'pk'),
+            value=Concat(Value('fundingprogram'), Value('-'), 'pk', output_field=CharField()),
             text=Concat('source__name', Value(' > '), 'name'),
         ).filter(
             text__icontains=self.q,
@@ -40,7 +40,7 @@ class FundingAutocompleteView(PermissionRequiredMixin, ViewMixin, View):
 
         # Get active types
         types = FundingType.objects.annotate(
-            value=Concat(Value('fundingtype'), Value('-'), 'pk'),
+            value=Concat(Value('fundingtype'), Value('-'), 'pk', output_field=CharField()),
             text=Concat(
                 'program__source__name',
                 Value(' > '),
