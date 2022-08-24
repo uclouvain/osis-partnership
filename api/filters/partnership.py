@@ -18,7 +18,7 @@ from partnership.models import (
 def filter_funding(year_field='', lookup=''):
     def inner(qs, name, value):
         # We need at least source to check if funding is set for mobility
-        qs = qs.annotate(
+        qs = qs.alias(
             funding_source=Subquery(PartnershipYear.objects.filter(
                 partnership=OuterRef('partnership_id'),
                 academic_year=OuterRef('current_academic_year'),
@@ -28,7 +28,7 @@ def filter_funding(year_field='', lookup=''):
 
         if year_field != 'funding_source_id':
             # And if we don't search on source, we need the other value
-            qs = qs.annotate(
+            qs = qs.alias(
                 funding_value=Subquery(PartnershipYear.objects.filter(
                     partnership=OuterRef('partnership_id'),
                     academic_year=OuterRef('current_academic_year'),
@@ -36,7 +36,7 @@ def filter_funding(year_field='', lookup=''):
             )
             annotation_to_search_on = 'funding_value'
 
-        return qs.annotate_partner_address('country_id').annotate(
+        return qs.annotate_partner_address('country_id').alias(
             search_id=Case(
                 # If mobility, take financing if funding not set
                 When(partnership__partnership_type=PartnershipType.MOBILITY.name,
