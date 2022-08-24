@@ -96,7 +96,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
                 partnership.ucl_entity.most_recent_acronym
             )
             self.notify_admin_mail(title, 'partnership_creation.html', {
-                'partnership': partnership,
+                'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
         return redirect(partnership)
 
