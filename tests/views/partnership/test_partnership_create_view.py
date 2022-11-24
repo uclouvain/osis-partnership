@@ -32,7 +32,7 @@ class PartnershipCreateViewTest(TestCase):
         cls.user_other_gf = UserFactory()
         cls.user_2_types = UserFactory()
 
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,

@@ -29,7 +29,7 @@ class UclEntityAutocompleteTestCase(TestCase):
         cls.url = reverse('partnerships:autocomplete:ucl_entity')
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         cls.sector = EntityVersionFactory(
             entity_type=SECTOR,
             acronym='A',

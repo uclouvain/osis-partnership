@@ -54,7 +54,7 @@ class PartnershipApiViewTest(TestCase):
         CountryFactory()
 
         # Partnerships
-        root = EntityVersionFactory(parent=None, acronym="UCL").entity
+        root = EntityVersionFactory(parent=None, entity_type='', acronym="UCL").entity
         sector = EntityVersionFactory(parent=root, acronym="SSH").entity
         entity = EntityVersionFactory(parent=sector, acronym="FIAL").entity
         cls.supervisor_partnership = PersonFactory()
