@@ -3,12 +3,7 @@ import json
 from django.test import TestCase
 from django.urls import reverse
 
-from base.models.enums.entity_type import (
-    DOCTORAL_COMMISSION,
-    FACULTY,
-    SCHOOL,
-    SECTOR,
-)
+from base.models.enums.entity_type import DOCTORAL_COMMISSION, SCHOOL
 from base.models.enums.organization_type import MAIN
 from base.tests.factories.entity_version import EntityVersionFactory as BaseEntityVersionFactory
 from partnership.models import PartnershipType
@@ -27,18 +22,14 @@ class YearEntitiesAutocompleteTestCase(TestCase):
 
         cls.user = PartnershipEntityManagerFactory().person.user
 
-        cls.url = reverse(
-            'partnerships:autocomplete:partnership_year_entities'
-        )
-        cls.filter_url = reverse(
-            'partnerships:autocomplete:years_entity_filter'
-        )
+        cls.url = reverse('partnerships:autocomplete:partnership_year_entities')
+        cls.filter_url = reverse('partnerships:autocomplete:years_entity_filter')
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         cls.sector = EntityVersionFactory(
             parent=root,
-            entity_type=SECTOR,
+            sector=True,
             acronym='A',
         ).entity
         cls.commission = EntityVersionFactory(
@@ -48,7 +39,7 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         ).entity
         cls.ucl_university = EntityVersionFactory(
             parent=cls.sector,
-            entity_type=FACULTY,
+            faculty=True,
             acronym='AA',
         ).entity
         cls.labo = EntityVersionFactory(
@@ -65,7 +56,7 @@ class YearEntitiesAutocompleteTestCase(TestCase):
 
         cls.ucl_university_2 = EntityVersionFactory(
             parent=cls.sector,
-            entity_type=FACULTY,
+            faculty=True,
             acronym='AB',
         ).entity
         cls.labo_2 = EntityVersionFactory(
@@ -86,11 +77,11 @@ class YearEntitiesAutocompleteTestCase(TestCase):
 
         # 2 children on faculty AA
         response = self.client.get(self.url, forward(self.ucl_university))
-        self.assertEqual(len(response.json()['results']), 2)
+        self.assertEqual(len(response.json()['results']), 2, response.json())
 
         # 2 sibling on labo AA1
         response = self.client.get(self.url, forward(self.labo))
-        self.assertEqual(len(response.json()['results']), 2)
+        self.assertEqual(len(response.json()['results']), 2, response.json())
 
         # 1 child on faculty AB
         response = self.client.get(self.url, forward(self.ucl_university_2))
@@ -108,10 +99,11 @@ class YearEntitiesAutocompleteTestCase(TestCase):
         self.client.force_login(self.user)
 
         # with doctorate type specified, should return doctorate commissions
-        response = self.client.get(self.url, {'forward': json.dumps({
+        forward = {
             'entity': self.sector.pk,
             'partnership_type': PartnershipType.DOCTORATE.name,
-        })})
+        }
+        response = self.client.get(self.url, {'forward': json.dumps(forward)})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_filter(self):
