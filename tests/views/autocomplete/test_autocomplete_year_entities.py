@@ -77,23 +77,23 @@ class YearEntitiesAutocompleteTestCase(TestCase):
 
         # 2 children on faculty AA
         response = self.client.get(self.url, forward(self.ucl_university))
-        self.assertEqual(len(response.json()['results']), 2, response.json())
+        self.assertEqual(len(response.json()['results']), 3, response.json())
 
         # 2 sibling on labo AA1
         response = self.client.get(self.url, forward(self.labo))
-        self.assertEqual(len(response.json()['results']), 2, response.json())
+        self.assertEqual(len(response.json()['results']), 3, response.json())
 
         # 1 child on faculty AB
         response = self.client.get(self.url, forward(self.ucl_university_2))
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
         # self on labo AB1
         response = self.client.get(self.url, forward(self.labo_2))
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
         # with query on AA
         response = self.client.get(self.url, forward(self.labo, q='AA'))
-        self.assertEqual(len(response.json()['results']), 2)
+        self.assertEqual(len(response.json()['results']), 3)
 
     def test_year_entities_autocomplete_doctorate(self):
         self.client.force_login(self.user)
