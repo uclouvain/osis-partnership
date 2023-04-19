@@ -50,7 +50,7 @@ class PartnershipCreateProjectViewTest(TestCase):
         )
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
         cls.ucl_university = EntityVersionFactory(
             parent=sector,
@@ -126,7 +126,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
         cls.education_level = PartnershipYearEducationLevelFactory()
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
         cls.ucl_university = EntityVersionFactory(
             parent=sector,
