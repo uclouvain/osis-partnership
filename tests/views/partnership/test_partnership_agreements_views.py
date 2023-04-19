@@ -31,7 +31,7 @@ class PartnershipAgreementsListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # ucl_university
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         parent = EntityVersionFactory(
             acronym='AAA',
             entity_type=SECTOR,
@@ -50,7 +50,7 @@ class PartnershipAgreementsListViewTest(TestCase):
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
 
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         PartnershipEntityManagerFactory(
             entity=EntityVersionFactory(acronym='ADRI', parent=root).entity,
             person__user=cls.user_adri,
@@ -146,7 +146,7 @@ class PartnershipAgreementCreateViewTest(TestCase):
         # User creation
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()
@@ -315,7 +315,7 @@ class PartnershipAgreementsUpdateViewTest(TestCase):
         # User creation
         cls.user = PartnershipEntityManagerFactory().person.user
         cls.user_adri = UserFactory()
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gf = UserFactory()

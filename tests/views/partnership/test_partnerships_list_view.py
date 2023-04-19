@@ -45,7 +45,7 @@ class PartnershipsListViewTest(TestCase):
         class EntityVersionFactory(BaseEntityVersionFactory):
             entity__organization = None
 
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
 
         class EducationGroupYearFactory(BaseEducationGroupYearFactory):
             management_entity = None

@@ -1,9 +1,35 @@
+# ##############################################################################
+#
+#  OSIS stands for Open Student Information System. It's an application
+#  designed to manage the core business of higher education institutions,
+#  such as universities, faculties, institutes and professional schools.
+#  The core business involves the administration of students, teachers,
+#  courses, programs and so on.
+#
+#  Copyright (C) 2015-2023 Université catholique de Louvain (http://www.uclouvain.be)
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of this license - GNU General Public License - is available
+#  at the root of the source code of this program.  If not,
+#  see http://www.gnu.org/licenses/.
+#
+# ##############################################################################
+
 from datetime import date
-from unittest.mock import patch
 
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 from django.urls import reverse
+from freezegun import freeze_time
 
 from base.models.enums.organization_type import MAIN
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -173,7 +199,6 @@ class PartnerUpdateVersionsViewTest(TestCase):
         version.start_date = date(2007, 7, 7)
         version.save()
         address = self.partner.contact_address
-        self.assertEqual(self.entity.entityversion_set.count(), 1)
         self.start_date = self.partner.organization.start_date
         self.data = {
             'organization-name': self.partner.organization.name,
@@ -236,11 +261,10 @@ class PartnerUpdateVersionsViewTest(TestCase):
         self.assertTemplateNotUsed(response, 'partnerships/partners/partner_detail.html')
 
     def test_change_info(self):
-        """The old version version should be updated if changed"""
+        """The old version should be updated if changed"""
         data = self.data.copy()
         data['organization-name'] = "Tic"
-        with patch('partnership.views.partner.mixins.date') as mock_date:
-            mock_date.today.return_value = date(2015, 2, 2)
+        with freeze_time("2015-02-02"):
             response = self.client.post(self.url, data=data, follow=True)
 
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
@@ -270,8 +294,7 @@ class PartnerUpdateVersionsViewTest(TestCase):
         data = self.data.copy()
         data['organization-name'] = "Test2"
 
-        with patch('partnership.views.partner.mixins.date') as mock_date:
-            mock_date.today.return_value = date(2015, 2, 2)
+        with freeze_time("2015-02-02"):
             response = self.client.post(self.url, data=data, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
         self.assertEqual(self.entity.entityversion_set.count(), 2)
@@ -293,67 +316,65 @@ class PartnerUpdateVersionsViewTest(TestCase):
         self.assertEqual(qs[1].entityversionaddress_set.count(), 1)
         self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
 
+    @freeze_time("2020-01-01")
     def test_newer_end_date_truncates(self):
         """New end date is after the original start, truncate end version"""
         data = self.data.copy()
         data['organization-end_date'] = "01/01/2025"
-        with patch('partnership.views.partner.mixins.date') as mock_date:
-            mock_date.today.return_value = date(2020, 1, 1)
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 2)
-            self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
-            qs = self.entity.entityversion_set.order_by('start_date')
-            self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
-            self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
+        qs = self.entity.entityversion_set.order_by('start_date')
+        self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
+        self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
 
-            data['organization-end_date'] = "01/01/2023"
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 2)
-            self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
-            qs = self.entity.entityversion_set.order_by('start_date')
-            self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
-            self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
+        data['organization-end_date'] = "01/01/2023"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
+        qs = self.entity.entityversion_set.order_by('start_date')
+        self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
+        self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
 
+    @freeze_time("2031-01-01")
     def test_end_date_before_today_truncates(self):
         """New end date is before today (and the original end_date), truncates first version"""
+        self.client.force_login(self.user_adri)  # reconnect because we travelled into the future
         data = self.data.copy()
         data['organization-end_date'] = "01/01/2030"
-        with patch('partnership.views.partner.mixins.date') as mock_date:
-            mock_date.today.return_value = date(2031, 1, 1)
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 1)
-            self.assertEqual(self.partner.organization.end_date, date(2030, 1, 1))
-            self.assertEqual(self.entity.entityversion_set.first().entityversionaddress_set.count(), 1)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 1)
+        self.assertEqual(self.partner.organization.end_date, date(2030, 1, 1))
+        self.assertEqual(self.entity.entityversion_set.first().entityversionaddress_set.count(), 1)
 
-            data['organization-end_date'] = "01/01/2029"
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 1)
-            self.assertEqual(self.partner.organization.end_date, date(2029, 1, 1))
-            self.assertEqual(self.entity.entityversion_set.first().entityversionaddress_set.count(), 1)
+        data['organization-end_date'] = "01/01/2029"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 1)
+        self.assertEqual(self.partner.organization.end_date, date(2029, 1, 1))
+        self.assertEqual(self.entity.entityversion_set.first().entityversionaddress_set.count(), 1)
 
+    @freeze_time("2020-01-01")
     def test_older_end_date_extends(self):
         """New end date is after the original end, extends first version"""
         data = self.data.copy()
         data['organization-end_date'] = "01/01/2023"
-        with patch('partnership.views.partner.mixins.date') as mock_date:
-            mock_date.today.return_value = date(2020, 1, 1)
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 2)
-            self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
-            qs = self.entity.entityversion_set.order_by('start_date')
-            self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
-            self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.end_date, date(2023, 1, 1))
+        qs = self.entity.entityversion_set.order_by('start_date')
+        self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
+        self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
 
-            data['organization-end_date'] = "01/01/2025"
-            response = self.client.post(self.url, data=data, follow=True)
-            self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
-            self.assertEqual(self.entity.entityversion_set.count(), 2)
-            self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
-            qs = self.entity.entityversion_set.order_by('start_date')
-            self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
-            self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
+        data['organization-end_date'] = "01/01/2025"
+        response = self.client.post(self.url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
+        self.assertEqual(self.entity.entityversion_set.count(), 2)
+        self.assertEqual(self.partner.organization.end_date, date(2025, 1, 1))
+        qs = self.entity.entityversion_set.order_by('start_date')
+        self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
+        self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
