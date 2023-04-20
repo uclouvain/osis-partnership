@@ -55,7 +55,7 @@ class PartnershipCreateDoctorateViewTest(TestCase):
         )
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
         cls.ucl_university = EntityVersionFactory(
             parent=sector,
@@ -125,7 +125,7 @@ class PartnershipUpdateDoctorateViewTest(TestCase):
         )
 
         # Ucl
-        root = EntityVersionFactory(parent=None).entity
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         sector = EntityVersionFactory(entity_type=SECTOR, parent=root).entity
         cls.ucl_university = EntityVersionFactory(
             parent=sector,

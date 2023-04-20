@@ -76,7 +76,7 @@ class PartnershipYearEntitiesAutocompleteView(FacultyEntityAutocompleteView):
         cte = EntityVersion.objects.with_parents(entity_id=parent_id)
         cte_qs = cte.queryset().with_cte(cte).values('entity_id')
 
-        qs = super().get_queryset().filter(pk__in=cte_qs).exclude(pk=parent_id)
+        qs = super().get_queryset().filter(pk__in=cte_qs)
 
         if partnership_type == PartnershipType.DOCTORATE.name:
             # Only return doctoral commissions for this type

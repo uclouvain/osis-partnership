@@ -3,12 +3,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
 
 from base.models.enums.organization_type import MAIN
+from partnership.models import EntityProxy
 
 __all__ = [
     'FacultyEntityAutocompleteView',
 ]
-
-from partnership.models import EntityProxy
 
 
 class FacultyEntityAutocompleteView(PermissionRequiredMixin, autocomplete.Select2QuerySetView):
