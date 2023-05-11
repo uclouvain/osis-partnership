@@ -20,13 +20,18 @@ class PartnersApiListView(generics.ListAPIView):
     filterset_class = PartnerFilter
     pagination_class = None
     counts = None
+    address_fields_to_annotate = (
+        'country__continent__name',
+        'country__iso_code',
+        'country__name',
+        'city',
+        'location',
+    )
 
     def get_partnerships_query(self, academic_year):
         # Partnership relations queryset for count
         qs = PartnershipPartnerRelation.objects.annotate_partner_address(
-            'country__continent__name',
-            'country__iso_code',
-            'city',
+            *self.address_fields_to_annotate
         ).filter_for_api(academic_year)
         partnerships_filter = PartnershipPartnerRelationFilter(
             data=self.request.query_params,
@@ -48,16 +53,11 @@ class PartnersApiListView(generics.ListAPIView):
             self.counts[result['entity__organization__partner']] += 1
 
         return (
-            Partner.objects
-            .annotate_address(
-                'country__continent__name',
-                'country__iso_code',
-                'country__name',
-                'city',
-                'location',
-            )
+            Partner.objects.annotate_address(*self.address_fields_to_annotate)
             .filter(pk__in=self.counts.keys())
-            .distinct().order_by('pk').only(
+            .distinct()
+            .order_by('pk')
+            .only(
                 'uuid',
                 'organization__name',
             )
