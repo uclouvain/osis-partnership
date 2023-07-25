@@ -12,14 +12,14 @@ __all__ = [
 ]
 
 
-class PartnershipTagFactory(factory.DjangoModelFactory):
+class PartnershipTagFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipTag
 
     value = factory.Sequence(lambda n: 'PartnershipTag-é-{0}'.format(n))
 
 
-class PartnershipFactory(factory.DjangoModelFactory):
+class PartnershipFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Partnership
 

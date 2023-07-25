@@ -9,7 +9,7 @@ __all__ = [
 ]
 
 
-class PartnershipYearEducationLevelFactory(factory.DjangoModelFactory):
+class PartnershipYearEducationLevelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipYearEducationLevel
 
