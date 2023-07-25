@@ -5,7 +5,7 @@ from partnership.models import Media, MediaVisibility
 __all__ = ['MediaFactory']
 
 
-class MediaFactory(factory.DjangoModelFactory):
+class MediaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Media
 

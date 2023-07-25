@@ -5,7 +5,7 @@ from partnership.models import UCLManagementEntity
 __all__ = ['UCLManagementEntityFactory']
 
 
-class UCLManagementEntityFactory(factory.DjangoModelFactory):
+class UCLManagementEntityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UCLManagementEntity
 

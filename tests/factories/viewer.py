@@ -30,7 +30,7 @@ from partnership.auth.roles.partnership_viewer import PartnershipViewer
 __all__ = ['PartnershipViewerFactory']
 
 
-class PartnershipViewerFactory(factory.DjangoModelFactory):
+class PartnershipViewerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipViewer
 
