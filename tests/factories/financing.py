@@ -12,14 +12,14 @@ __all__ = [
 ]
 
 
-class FundingSourceFactory(factory.DjangoModelFactory):
+class FundingSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FundingSource
 
     name = factory.Faker('word')
 
 
-class FundingProgramFactory(factory.DjangoModelFactory):
+class FundingProgramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FundingProgram
 
@@ -27,7 +27,7 @@ class FundingProgramFactory(factory.DjangoModelFactory):
     source = factory.SubFactory(FundingSourceFactory)
 
 
-class FundingTypeFactory(factory.DjangoModelFactory):
+class FundingTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FundingType
 
@@ -36,7 +36,7 @@ class FundingTypeFactory(factory.DjangoModelFactory):
     program = factory.SubFactory(FundingProgramFactory)
 
 
-class FinancingFactory(factory.DjangoModelFactory):
+class FinancingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Financing
 

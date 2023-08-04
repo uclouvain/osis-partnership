@@ -4,7 +4,7 @@ from partnership.models import PartnershipPartnerRelation
 from . import PartnershipFactory
 
 
-class PartnershipPartnerRelationFactory(factory.DjangoModelFactory):
+class PartnershipPartnerRelationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipPartnerRelation
 
