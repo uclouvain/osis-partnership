@@ -8,14 +8,14 @@ __all__ = [
 ]
 
 
-class ContactTypeFactory(factory.DjangoModelFactory):
+class ContactTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ContactType
 
     value = factory.Sequence(lambda n: 'ContactType-{0}'.format(n))
 
 
-class ContactFactory(factory.DjangoModelFactory):
+class ContactFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contact
 

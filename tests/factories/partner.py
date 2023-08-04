@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-class PartnerTagFactory(factory.DjangoModelFactory):
+class PartnerTagFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnerTag
         django_get_or_create = ('value',)
@@ -28,7 +28,7 @@ class PartnerTagFactory(factory.DjangoModelFactory):
     value = factory.Sequence(lambda n: 'PartnerTag-é-{0}-{1}'.format(n, uuid.uuid4()))
 
 
-class PartnerFactory(factory.DjangoModelFactory):
+class PartnerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Partner
 
@@ -79,7 +79,7 @@ class PartnerFactory(factory.DjangoModelFactory):
             )
 
 
-class PartnerEntityFactory(factory.DjangoModelFactory):
+class PartnerEntityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnerEntity
 
