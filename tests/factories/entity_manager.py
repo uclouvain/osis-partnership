@@ -6,7 +6,7 @@ from partnership.models import PartnershipType
 __all__ = ['PartnershipEntityManagerFactory']
 
 
-class PartnershipEntityManagerFactory(factory.DjangoModelFactory):
+class PartnershipEntityManagerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipEntityManager
 

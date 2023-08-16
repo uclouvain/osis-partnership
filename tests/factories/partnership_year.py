@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-class PartnershipYearFactory(factory.DjangoModelFactory):
+class PartnershipYearFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipYear
         django_get_or_create = ('academic_year', 'partnership',)
@@ -28,7 +28,7 @@ class PartnershipYearFactory(factory.DjangoModelFactory):
     )
 
 
-class PartnershipMissionFactory(factory.DjangoModelFactory):
+class PartnershipMissionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipMission
 
@@ -36,7 +36,7 @@ class PartnershipMissionFactory(factory.DjangoModelFactory):
     code = factory.Faker('word')
 
 
-class PartnershipSubtypeFactory(factory.DjangoModelFactory):
+class PartnershipSubtypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipSubtype
 

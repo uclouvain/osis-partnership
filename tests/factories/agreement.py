@@ -6,7 +6,7 @@ from partnership.tests.factories.partnership import PartnershipFactory
 __all__ = ['PartnershipAgreementFactory']
 
 
-class PartnershipAgreementFactory(factory.DjangoModelFactory):
+class PartnershipAgreementFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipAgreement
 
