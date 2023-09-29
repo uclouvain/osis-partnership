@@ -1,8 +1,8 @@
 from django.test import TestCase
 
-from base.models.academic_year import current_academic_year
 from base.tests.factories.academic_year import (
     AcademicYearFactory,
+    get_current_year,
 )
 from partnership.forms import PartnershipConfigurationForm
 
@@ -16,7 +16,7 @@ class ConfigurationFormTestCase(TestCase):
         )
 
     def test_configuration_form(self):
-        year = current_academic_year()
+        year = get_current_year()
         form = PartnershipConfigurationForm()
         for field in ['partnership_creation_update_min_year', 'partnership_api_year']:
             choices = list(form.fields[field].choices)
