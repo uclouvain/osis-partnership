@@ -422,6 +422,76 @@ components:
             $ref: '#/components/schemas/Contact'
         staff_funding:
           $ref: '#/components/schemas/Funding'
+    InternshipPartner:
+      type:
+        object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        is_valid:
+          type: boolean
+        start_date:
+          type: string
+        end_date:
+          type: string
+        name:
+          type: string
+        organisation_identifier:
+          type: string
+        size:
+          type: string
+          enum:
+            - '>250'
+            - '<250'
+        is_public:
+          type: boolean
+        is_nonprofit:
+          type: boolean
+        erasmus_code:
+          type: string
+        pic_code:
+          type: string
+        type:
+          type: string
+          enum:
+            - MAIN
+            - ACADEMIC_PARTNER
+            - EMBASSY
+            - RESEARCH_CENTER
+            - ENTERPRISE
+            - HOSPITAL
+            - NGO
+            - OTHER
+        website:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        contact_type:
+          type: string
+        street_number:
+          type: string
+        street:
+          type: string
+        postal_code:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          description: Two letters country ISO code
+        latitude:
+          type: number
+          description: latitude in SRID 4326
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          description: longitude in SRID 4326
+          minimum: -180
+          maximum: 180
     AcceptedLanguageEnum:
       type: string
       enum:
@@ -582,6 +652,13 @@ components:
       schema:
         type: string
         example: Circle U.
+    from_date:
+      name: from_date
+      in: query
+      description: A date in the ISO format
+      schema:
+        type: string
+        example: '2023-10-12'
     X-User-FirstName:
       in: header
       name: X-User-FirstName
@@ -876,3 +953,150 @@ paths:
                   $ref: '#/components/schemas/Partnership'
         '400':
           $ref: '#/components/responses/BadRequest'
+  /internship_partners:
+    post:
+      summary: Create a new partner in the context of an internship
+      tags:
+        - partners
+      operationId: postInternshipPartnersList
+      parameters:
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - organisation_identifier
+                - size
+                - is_public
+                - is_nonprofit
+                - type
+                - website
+                - street
+                - city
+                - country
+              properties:
+                name:
+                  type: string
+                organisation_identifier:
+                  type: string
+                size:
+                  type: string
+                  enum:
+                    - '>250'
+                    - '<250'
+                is_public:
+                  type: boolean
+                is_nonprofit:
+                  type: boolean
+                type:
+                  type: string
+                  enum:
+                    - MAIN
+                    - ACADEMIC_PARTNER
+                    - EMBASSY
+                    - RESEARCH_CENTER
+                    - ENTERPRISE
+                    - HOSPITAL
+                    - NGO
+                    - OTHER
+                website:
+                  type: string
+                street_number:
+                  type: string
+                street:
+                  type: string
+                postal_code:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+                  description: Two letters country ISO code
+                latitude:
+                  type: number
+                  description: latitude in SRID 4326
+                  minimum: -90
+                  maximum: 90
+                longitude:
+                  type: number
+                  description: longitude in SRID 4326
+                  minimum: -180
+                  maximum: 180
+      responses:
+        '200':
+          description: A partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternshipPartner'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    get:
+      summary: List partners in the context of an internship from a certain date
+      tags:
+        - partners
+      operationId: getInternshipPartnersList
+      parameters:
+        - $ref: '#/components/parameters/from_date'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
+      responses:
+        '200':
+          description: A paged array of partners
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  next:
+                    type: string
+                    format: uri
+                  previous:
+                    type: string
+                    format: uri
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InternshipPartner'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /internship_partners/{uuid}:
+    get:
+      summary: Get the detail of a partner in the context of an internship
+      tags:
+        - partners
+      operationId: getInternshipPartnersDetail
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 'abcd-efgh-ijkl-mnop-1234-5678'
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
+      responses:
+        '200':
+          description: A partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternshipPartner'
+        '404':
+          $ref: '#/components/responses/NotFound'
