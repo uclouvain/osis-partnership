@@ -152,12 +152,12 @@ class Partner(models.Model):
     """
     CONTACT_TYPE_CHOICES = (
         ('EPLUS-EDU-HEI', _('Higher education institution (tertiary level)')),
-        ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre – General education (pre-primary level)')),
-        ('EPLUS-EDU-GEN-PRI', _('School/Institute/Educational centre – General education (primary level)')),
-        ('EPLUS-EDU-GEN-SEC', _('School/Institute/Educational centre – General education (secondary level)')),
-        ('EPLUS-EDU-VOC-SEC', _('School/Institute/Educational centre – Vocational Training (secondary level)')),
-        ('EPLUS-EDU-VOC-TER', _('School/Institute/Educational centre – Vocational Training (tertiary level)')),
-        ('EPLUS-EDU-ADULT', _('School/Institute/Educational centre – Adult education')),
+        ('EPLUS-EDU-GEN-PRE', _('School/Institute/Educational centre - General education (pre-primary level)')),
+        ('EPLUS-EDU-GEN-PRI', _('School/Institute/Educational centre - General education (primary level)')),
+        ('EPLUS-EDU-GEN-SEC', _('School/Institute/Educational centre - General education (secondary level)')),
+        ('EPLUS-EDU-VOC-SEC', _('School/Institute/Educational centre - Vocational Training (secondary level)')),
+        ('EPLUS-EDU-VOC-TER', _('School/Institute/Educational centre - Vocational Training (tertiary level)')),
+        ('EPLUS-EDU-ADULT', _('School/Institute/Educational centre - Adult education')),
         ('EPLUS-BODY-PUB-NAT', _('National Public body')),
         ('EPLUS-BODY-PUB-REG', _('Regional Public body')),
         ('EPLUS-BODY-PUB-LOC', _('Local Public body')),
@@ -183,6 +183,11 @@ class Partner(models.Model):
         ('OTH', _('Other')),
     )
 
+    SIZE_CHOICES = (
+        ('>250', _('partner_size_gt_250')),
+        ('<250', _('partner_size_lt_250')),
+    )
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
 
     organization = models.OneToOneField(
@@ -195,6 +200,20 @@ class Partner(models.Model):
     is_valid = models.BooleanField(_('is_valid'), default=False)
     pic_code = models.CharField(_('pic_code'), max_length=255, unique=True, null=True, blank=True)
     erasmus_code = models.CharField(_('erasmus_code'), max_length=255, unique=True, null=True, blank=True)
+    organisation_identifier = models.CharField(
+        _('organisation_identifier'),
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+    size = models.CharField(
+        _('partner_size'),
+        max_length=255,
+        choices=SIZE_CHOICES,
+        null=True,
+        blank=True,
+    )
 
     now_known_as = models.ForeignKey(
         'self',
@@ -308,3 +327,22 @@ class Partner(models.Model):
         address = self.organization.entities[0].versions[0].address
         if address:
             return address[0]
+
+    @cached_property
+    def entity(self):
+        if not hasattr(self, '_prefetched_objects_cache'):
+            return Entity.objects.filter(
+                organization_id=self.organization_id,
+            ).first()
+        # We surely have a entity and a version, but we may not have an address
+        entities = self.organization.entities
+        if entities:
+            return entities[0]
+
+    @cached_property
+    def latitude(self):
+        return self.contact_address.location.y
+
+    @cached_property
+    def longitude(self):
+        return self.contact_address.location.x

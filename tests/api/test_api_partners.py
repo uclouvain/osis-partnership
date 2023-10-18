@@ -1,10 +1,12 @@
 from django.contrib.gis.geos import Point
 from django.test import tag
 from django.urls import reverse
+from rest_framework.test import APIClient
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.person import PersonFactory
+from base.tests.factories.user import UserFactory
 from partnership.models import AgreementStatus, PartnershipConfiguration
 from partnership.tests import TestCase
 from partnership.tests.factories import (
@@ -213,3 +215,106 @@ class PartnersApiViewTest(TestCase):
         data = response.json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['partnerships_count'], 1)
+
+
+class InternshipPartnerListApiViewTest(TestCase):
+    client_class = APIClient
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('partnership_api_v1:internship_partners')
+        cls.partner = PartnerFactory(contact_address__location='SRID=4326;POINT(12 13)')
+        cls.country = CountryFactory()
+        person = PersonFactory()
+        cls.user = person.user
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.user)
+
+    def test_post(self):
+        data = {
+            'name': 'foobar',
+            'organisation_identifier': 'weewf',
+            'size': '<250',
+            'is_public': 'false',
+            'is_nonprofit': 'true',
+            'type': "ACADEMIC_PARTNER",
+            'website': 'http://example.org/',
+            'street_number': '2',
+            'street': 'rue machin',
+            'postal_code': '12345',
+            'city': 'truc',
+            'country': self.country.iso_code,
+            'latitude': 42.123,
+            'longitude': -12.5,
+        }
+        response = self.client.post(self.url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, 201, data)
+        self.assertEqual(data['name'], 'foobar')
+        self.assertFalse(data['is_public'])
+        self.assertTrue(data['is_nonprofit'])
+
+    def test_post_minimal(self):
+        data = {
+            'name': 'foobar',
+            'organisation_identifier': 'weewf',
+            'size': '<250',
+            'is_public': 'false',
+            'is_nonprofit': 'true',
+            'type': "ACADEMIC_PARTNER",
+            'website': 'http://example.org/',
+            'street': 'rue machin',
+            'city': 'truc',
+            'country': self.country.iso_code,
+        }
+        response = self.client.post(self.url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, 201, data)
+        self.assertEqual(data['name'], 'foobar')
+        self.assertFalse(data['is_public'])
+        self.assertTrue(data['is_nonprofit'])
+
+    def test_get_no_filter(self):
+        response = self.client.get(self.url)
+        data = response.json()
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_incorrect_filter(self):
+        response = self.client.get(self.url + '?from_date=foo')
+        data = response.json()
+        self.assertEqual(response.status_code, 400)
+
+    def test_get(self):
+        response = self.client.get(self.url + '?from_date=1831-07-21')
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['results']), 1)
+        self.assertEqual(data['results'][0]['name'], self.partner.organization.name)
+
+    def test_get_future(self):
+        response = self.client.get(self.url + '?from_date=2192-07-21')
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['results']), 0)
+
+
+class InternshipPartnerDetailApiViewTest(TestCase):
+    client_class = APIClient
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.partner = PartnerFactory(contact_address__location='SRID=4326;POINT(12 13)')
+        cls.url = reverse('partnership_api_v1:internship_partner', kwargs={'uuid': str(cls.partner.uuid)})
+        cls.country = CountryFactory()
+        person = PersonFactory()
+        cls.user = person.user
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(self.user)
+
+    def test_get(self):
+        response = self.client.get(self.url)
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['name'], self.partner.organization.name)
