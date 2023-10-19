@@ -4,11 +4,11 @@ from base.models.utils.utils import ChoiceEnum
 
 
 class PartnershipType(ChoiceEnum):
-    GENERAL = _('Accord général de collaboration')
-    MOBILITY = _('Partenariat de mobilité')
+    GENERAL = _('Accord general de collaboration')
+    MOBILITY = _('Partenariat de mobilite')
     COURSE = _('Partenariat de co-organisation de formation')
     DOCTORATE = _('Partenariat de co-organisation de doctorat')
-    PROJECT = _('Projet financé')
+    PROJECT = _('Projet finance')
 
     @classmethod
     def with_synced_dates(cls):
