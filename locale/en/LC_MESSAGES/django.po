@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "Accord général de collaboration"
+msgid "Accord general de collaboration"
 msgstr ""
 
 msgid "Accreditation, _(certification or qualification body"
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Partenariat de co-organisation de formation"
 msgstr ""
 
-msgid "Partenariat de mobilité"
+msgid "Partenariat de mobilite"
 msgstr ""
 
 msgid "Partner"
@@ -291,8 +291,8 @@ msgstr "Partnerships"
 msgid "Per country in %(academic_year)s"
 msgstr ""
 
-msgid "Projet financé"
-msgstr "Project"
+msgid "Projet finance"
+msgstr ""
 
 msgid "Regional Public body"
 msgstr ""
@@ -303,26 +303,26 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "School/Institute/Educational centre – Adult education"
+msgid "School/Institute/Educational centre - Adult education"
 msgstr ""
 
 msgid ""
-"School/Institute/Educational centre – General education (pre-primary level)"
+"School/Institute/Educational centre - General education (pre-primary level)"
 msgstr ""
 
-msgid "School/Institute/Educational centre – General education (primary level)"
-msgstr ""
-
-msgid ""
-"School/Institute/Educational centre – General education (secondary level)"
+msgid "School/Institute/Educational centre - General education (primary level)"
 msgstr ""
 
 msgid ""
-"School/Institute/Educational centre – Vocational Training (secondary level)"
+"School/Institute/Educational centre - General education (secondary level)"
 msgstr ""
 
 msgid ""
-"School/Institute/Educational centre – Vocational Training (tertiary level)"
+"School/Institute/Educational centre - Vocational Training (secondary level)"
+msgstr ""
+
+msgid ""
+"School/Institute/Educational centre - Vocational Training (tertiary level)"
 msgstr ""
 
 msgid "Small and medium sized enterprise"
@@ -859,6 +859,9 @@ msgstr "October"
 msgid "ongoing"
 msgstr ""
 
+msgid "organisation_identifier"
+msgstr "Organisation ID"
+
 msgid "parent_entity"
 msgstr "Parent entity"
 
@@ -916,6 +919,15 @@ msgstr "Partner name"
 
 msgid "partner_saved"
 msgstr "Partner successfully saved"
+
+msgid "partner_size"
+msgstr "Partner size"
+
+msgid "partner_size_gt_250"
+msgstr "> 250"
+
+msgid "partner_size_lt_250"
+msgstr "< 250>"
 
 msgid "partner_start_date"
 msgstr "Partner start date"
