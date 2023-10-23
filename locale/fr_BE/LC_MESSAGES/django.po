@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "Accord général de collaboration"
+msgid "Accord general de collaboration"
 msgstr "Accord général de collaboration"
 
 msgid "Accreditation, _(certification or qualification body"
@@ -192,8 +192,9 @@ msgid ""
 msgstr ""
 "Bonjour,\n"
 "\n"
-"L’année académique de fin du partenariat <a href=\"%(url)s\">"
-"%(partnership)s</a> vient d'être modifiée par %(person)s (%(username)s).\n"
+"L’année académique de fin du partenariat <a "
+"href=\"%(url)s\">%(partnership)s</a> vient d'être modifiée par %(person)s "
+"(%(username)s).\n"
 "\n"
 "Cordialement,\n"
 "\n"
@@ -326,7 +327,7 @@ msgstr "Partenariat de co-organisation de doctorat"
 msgid "Partenariat de co-organisation de formation"
 msgstr "Partenariat de co-organisation de formation"
 
-msgid "Partenariat de mobilité"
+msgid "Partenariat de mobilite"
 msgstr "Partenariat de mobilité"
 
 msgid "Partner"
@@ -351,8 +352,8 @@ msgstr "Partenariats"
 msgid "Per country in %(academic_year)s"
 msgstr "Par pays en %(academic_year)s"
 
-msgid "Projet financé"
-msgstr "Projet"
+msgid "Projet finance"
+msgstr "Projet financé"
 
 msgid "Regional Public body"
 msgstr "Organisme publique régional"
@@ -363,31 +364,31 @@ msgstr "Institut/Centre de recherche"
 msgid "Save"
 msgstr "Enregistrer"
 
-msgid "School/Institute/Educational centre – Adult education"
+msgid "School/Institute/Educational centre - Adult education"
 msgstr "École/Institut/Centre éducatif - Éducation des adultes"
 
 msgid ""
-"School/Institute/Educational centre – General education (pre-primary level)"
+"School/Institute/Educational centre - General education (pre-primary level)"
 msgstr ""
 "École/Institut/Centre éducatif - Enseignement général (niveau préprimaire)"
 
-msgid "School/Institute/Educational centre – General education (primary level)"
+msgid "School/Institute/Educational centre - General education (primary level)"
 msgstr ""
 "École/Institut/Centre éducatif - Enseignement général (niveau primaire)"
 
 msgid ""
-"School/Institute/Educational centre – General education (secondary level)"
+"School/Institute/Educational centre - General education (secondary level)"
 msgstr ""
 "École/Institut/Centre éducatif - Enseignement général (niveau secondaire)"
 
 msgid ""
-"School/Institute/Educational centre – Vocational Training (secondary level)"
+"School/Institute/Educational centre - Vocational Training (secondary level)"
 msgstr ""
 "École/Institut/Centre éducatif - Formation professionnelle (niveau "
 "secondaire)"
 
 msgid ""
-"School/Institute/Educational centre – Vocational Training (tertiary level)"
+"School/Institute/Educational centre - Vocational Training (tertiary level)"
 msgstr ""
 "École/Institut/Centre éducatif - Formation professionnelle (niveau tertiaire)"
 
@@ -935,6 +936,9 @@ msgstr "Octobre"
 msgid "ongoing"
 msgstr "En cours"
 
+msgid "organisation_identifier"
+msgstr "Organisation ID"
+
 msgid "parent_entity"
 msgstr "Entité parente"
 
@@ -994,6 +998,15 @@ msgstr "Nom du partenaire"
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
+
+msgid "partner_size"
+msgstr "Taille du partenaire"
+
+msgid "partner_size_gt_250"
+msgstr "> 250"
+
+msgid "partner_size_lt_250"
+msgstr "< 250"
 
 msgid "partner_start_date"
 msgstr "Date de début d’existence"

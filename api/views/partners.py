@@ -1,7 +1,8 @@
 from collections import defaultdict
 
+from django.utils.dateparse import parse_date
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 
 from partnership.models import (
@@ -9,8 +10,11 @@ from partnership.models import (
     PartnershipPartnerRelation,
     PartnershipConfiguration,
 )
+from rest_framework.response import Response
+
 from ..filters import PartnerFilter, PartnershipPartnerRelationFilter
 from ..serializers import PartnerListSerializer
+from ..serializers.partner import InternshipPartnerSerializer
 
 
 class PartnersApiListView(generics.ListAPIView):
@@ -67,3 +71,34 @@ class PartnersApiListView(generics.ListAPIView):
         context = super().get_serializer_context()
         context['counts'] = self.counts
         return context
+
+
+class InternshipPartnerListApiView(generics.CreateAPIView, generics.ListAPIView):
+    """
+    Internship are partner with different constraints than usual.
+    """
+
+    serializer_class = InternshipPartnerSerializer
+
+    def get_queryset(self):
+        return Partner.objects.prefetch_address().filter(changed__gte=self.from_date)
+
+    def list(self, request, *args, **kwargs):
+        if 'from_date' not in request.query_params:
+            return Response(data={'error': 'Missing from_date param.'}, status=status.HTTP_400_BAD_REQUEST)
+        self.from_date = parse_date(request.query_params['from_date'])
+        if self.from_date is None:
+            return Response(data={'error': 'Incorrect from_date format.'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().list(request, *args, **kwargs)
+
+
+class InternshipPartnerDetailApiView(generics.RetrieveAPIView):
+    """
+    Internship are partner with different constraints than usual.
+    """
+
+    serializer_class = InternshipPartnerSerializer
+    lookup_field = 'uuid'
+
+    def get_queryset(self):
+        return Partner.objects.prefetch_address()
