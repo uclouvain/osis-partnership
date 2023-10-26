@@ -78,7 +78,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
     street = serializers.CharField(max_length=255, source="contact_address.street")
     postal_code = serializers.CharField(max_length=32, required=False, source="contact_address.postal_code")
     city = serializers.CharField(max_length=255, source="contact_address.city")
-    country = serializers.CharField(max_length=2, source="contact_address.country")
+    country = serializers.CharField(max_length=2, source="contact_address.country.iso_code")
     latitude = serializers.FloatField(min_value=-90, max_value=90, required=False)
     longitude = serializers.FloatField(min_value=-180, max_value=180, required=False)
 
@@ -158,7 +158,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
             postal_code=validated_data['contact_address'].get('postal_code', ''),
             state=validated_data['contact_address'].get('state', ''),
             city=validated_data['contact_address'].get('city', ''),
-            country=validated_data['contact_address'].get('country'),
+            country=validated_data['contact_address'].get('country', {}).get('iso_code'),
             location=location,
         )
 
