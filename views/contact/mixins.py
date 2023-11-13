@@ -16,7 +16,7 @@ class PartnershipContactFormMixin(PartnershipContactMixin, FormMixin):
     form_class = ContactForm
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/contacts/includes/partnership_contact_form.html'
         return self.template_name
 

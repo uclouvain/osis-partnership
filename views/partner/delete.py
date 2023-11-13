@@ -13,6 +13,6 @@ class PartnerEntityDeleteView(PartnerEntityMixin, DeleteView):
     permission_required = 'partnership.delete_partnerentity'
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/partners/entities/includes/partner_entity_delete.html'
         return self.template_name
