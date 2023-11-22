@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
+from base.tests.factories.organization import OrganizationFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
 from partnership.models import AgreementStatus, PartnershipConfiguration
@@ -318,3 +319,59 @@ class InternshipPartnerDetailApiViewTest(TestCase):
         data = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['name'], self.partner.organization.name)
+
+
+class DeclareOrganizationAsInternshipPartnerApiViewTest(TestCase):
+    client_class = APIClient
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse('partnership_api_v1:declare_organization_as_internship_partner')
+        cls.existing_organization = OrganizationFactory(name="Organization existante")
+
+        cls.existing_partner = PartnerFactory()
+        person = PersonFactory()
+        cls.user = person.user
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.user)
+
+    def test_post_with_existing_organization(self):
+        data = {
+            'organization_uuid': self.existing_organization.uuid,
+            'organisation_identifier': 'weewf',
+            'size': '<250',
+            'is_public': 'false',
+            'is_nonprofit': 'true',
+        }
+        response = self.client.post(self.url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, 201, data)
+
+        self.assertEqual(data['name'], self.existing_organization.name)
+        self.assertFalse(data['is_public'])
+        self.assertTrue(data['is_nonprofit'])
+
+    def test_post_no_existing_organization(self):
+        data = {
+            'organization_uuid': 'cec580dd-595a-436b-94fe-5ae0d9885fc9',
+            'organisation_identifier': 'weewf',
+            'size': '<250',
+            'is_public': 'false',
+            'is_nonprofit': 'true',
+        }
+        response = self.client.post(self.url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, 400, data)
+
+    def test_post_existing_organization_already_partner(self):
+        data = {
+            'organization_uuid': self.existing_partner.organization.uuid,
+            'organisation_identifier': 'weewf',
+            'size': '<250',
+            'is_public': 'false',
+            'is_nonprofit': 'true',
+        }
+        response = self.client.post(self.url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, 400, data)
