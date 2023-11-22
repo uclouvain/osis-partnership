@@ -3,8 +3,11 @@ from django.test import tag
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from base.models.enums import organization_type
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
+from base.tests.factories.entity_version import EntityVersionFactory
+from base.tests.factories.entity_version_address import MainRootEntityVersionAddressFactory
 from base.tests.factories.organization import OrganizationFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
@@ -327,7 +330,16 @@ class DeclareOrganizationAsInternshipPartnerApiViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse('partnership_api_v1:declare_organization_as_internship_partner')
-        cls.existing_organization = OrganizationFactory(name="Organization existante")
+        cls.existing_organization = OrganizationFactory(
+            name="Organization existante",
+            type=organization_type.EMBASSY,
+        )
+        cls.root_entity_version = EntityVersionFactory(
+            parent=None,
+            title=cls.existing_organization.name,
+            entity__organization=cls.existing_organization,
+        )
+        MainRootEntityVersionAddressFactory(entity_version=cls.root_entity_version)
 
         cls.existing_partner = PartnerFactory()
         person = PersonFactory()
@@ -375,3 +387,5 @@ class DeclareOrganizationAsInternshipPartnerApiViewTest(TestCase):
         response = self.client.post(self.url, data)
         data = response.json()
         self.assertEqual(response.status_code, 400, data)
+        self.assertEqual(data['detail'], "This organization is already declared as partner")
+        self.assertEqual(data['partner_uuid'], str(self.existing_partner.uuid))

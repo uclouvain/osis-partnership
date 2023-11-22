@@ -238,6 +238,11 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
             'longitude',
         ]
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret.pop('organization_uuid', None)
+        return ret
+
     def validate_organization_uuid(self, value):
         try:
             return Organization.objects.get(uuid=value)
@@ -249,12 +254,12 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
         with contextlib.suppress(Partner.DoesNotExist):
             existing_partner = Partner.objects.get(organization=validated_data['organization']['uuid'])
             raise serializers.ValidationError({
-                'detail': "Partner already exist",
+                'detail': "This organization is already declared as partner",
                 'partner_uuid': str(existing_partner.uuid)
             })
 
         # Create Partner with link with organization
-        return Partner.objects.create(
+        partner = Partner.objects.create(
             organisation_identifier=validated_data.get('organisation_identifier', ''),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
@@ -262,3 +267,4 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
             organization=validated_data['organization']['uuid'],
             author=self.context['request'].user.person,
         )
+        return partner
