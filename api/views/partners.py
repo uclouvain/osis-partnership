@@ -14,7 +14,7 @@ from rest_framework.response import Response
 
 from ..filters import PartnerFilter, PartnershipPartnerRelationFilter
 from ..serializers import PartnerListSerializer
-from ..serializers.partner import InternshipPartnerSerializer
+from ..serializers.partner import InternshipPartnerSerializer, DeclareOrganizationAsInternshipPartnerSerializer
 
 
 class PartnersApiListView(generics.ListAPIView):
@@ -90,6 +90,14 @@ class InternshipPartnerListApiView(generics.CreateAPIView, generics.ListAPIView)
         if self.from_date is None:
             return Response(data={'error': 'Incorrect from_date format.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().list(request, *args, **kwargs)
+
+
+class DeclareOrganizationAsInternshipPartnerApiView(generics.CreateAPIView):
+    """
+    Declare an existing organization as an internship partner
+    """
+
+    serializer_class = DeclareOrganizationAsInternshipPartnerSerializer
 
 
 class InternshipPartnerDetailApiView(generics.RetrieveAPIView):
