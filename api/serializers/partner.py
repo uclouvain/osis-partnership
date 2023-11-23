@@ -237,6 +237,9 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
             'latitude',
             'longitude',
         ]
+        read_only_fields = [
+            'is_valid', 'start_date', 'end_date', 'erasmus_code', 'pic_code', 'phone', 'email', 'contact_type',
+        ]
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

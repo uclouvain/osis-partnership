@@ -995,18 +995,6 @@ paths:
                   type: boolean
                 is_nonprofit:
                   type: boolean
-                erasmus_code:
-                  type: string
-                pic_code:
-                  type: string
-                contact_type:
-                  type: string
-                phone:
-                  type: string
-                email:
-                  type: string
-                is_valid:
-                  type: boolean
                 type:
                   type: string
                   enum:
@@ -1149,18 +1137,6 @@ paths:
                 is_public:
                   type: boolean
                 is_nonprofit:
-                  type: boolean
-                erasmus_code:
-                  type: string
-                pic_code:
-                  type: string
-                contact_type:
-                  type: string
-                phone:
-                  type: string
-                email:
-                  type: string
-                is_valid:
                   type: boolean
       responses:
         '200':
