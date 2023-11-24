@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 
+from osis_role.contrib.views import APIPermissionRequiredMixin
 from partnership.models import (
     Partner,
     PartnershipPartnerRelation,
@@ -100,13 +101,18 @@ class DeclareOrganizationAsInternshipPartnerApiView(generics.CreateAPIView):
     serializer_class = DeclareOrganizationAsInternshipPartnerSerializer
 
 
-class InternshipPartnerDetailApiView(generics.RetrieveAPIView):
+class InternshipPartnerDetailApiView(APIPermissionRequiredMixin, generics.RetrieveAPIView):
     """
     Internship are partner with different constraints than usual.
     """
 
     serializer_class = InternshipPartnerSerializer
     lookup_field = 'uuid'
+
+    # APIPermissionRequiredMixin
+    permission_mapping = {
+        'GET': 'partnership.can_access_partners',
+    }
 
     def get_queryset(self):
         return Partner.objects.prefetch_address()
