@@ -12,7 +12,7 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
     login_url = 'access_denied'
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/contacts/includes/contact_delete_form.html'
         return self.template_name
 

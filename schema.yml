@@ -1100,3 +1100,50 @@ paths:
                 $ref: '#/components/schemas/InternshipPartner'
         '404':
           $ref: '#/components/responses/NotFound'
+  /declare_organization_as_internship_partner:
+    post:
+      summary: Declare an existing organization as an internship partner
+      tags:
+        - partners
+      operationId: declareOrganizationAsInternshipPartner
+      parameters:
+        - $ref: '#/components/parameters/Accept-Language'
+        - $ref: '#/components/parameters/X-User-FirstName'
+        - $ref: '#/components/parameters/X-User-LastName'
+        - $ref: '#/components/parameters/X-User-Email'
+        - $ref: '#/components/parameters/X-User-GlobalID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - organisation_uuid
+                - size
+                - is_public
+                - is_nonprofit
+              properties:
+                organisation_uuid:
+                  type: string
+                  format: uuid
+                  example: 'abcd-efgh-ijkl-mnop-1234-5678'
+                organisation_identifier:
+                  type: string
+                size:
+                  type: string
+                  enum:
+                    - '>250'
+                    - '<250'
+                is_public:
+                  type: boolean
+                is_nonprofit:
+                  type: boolean
+      responses:
+        '200':
+          description: An internship partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternshipPartner'
+        '400':
+          $ref: '#/components/responses/BadRequest'

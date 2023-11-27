@@ -18,6 +18,6 @@ class UCLManagementEntityDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = 'partnership.delete_uclmanagemententity'
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/ucl_management_entities/includes/uclmanagemententity_delete_form.html'
         return self.template_name
