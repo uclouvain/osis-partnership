@@ -13,6 +13,6 @@ class PartnershipAgreementDeleteView(PartnershipAgreementsMixin, DeleteView):
         return self.get_object()
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/agreements/includes/delete.html'
         return self.template_name

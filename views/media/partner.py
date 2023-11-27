@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
+
 from .mixins import (
     PartnerMediaFormMixin,
     PartnerMediaMixin,
@@ -30,7 +31,7 @@ class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
     login_url = 'access_denied'
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/includes/media_delete.html'
         return self.template_name
 

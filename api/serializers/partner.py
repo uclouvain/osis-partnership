@@ -1,7 +1,9 @@
+import contextlib
 import datetime
 import json
 
-from django.db import transaction
+from django.db import transaction, IntegrityError
+from django.http import JsonResponse
 from rest_framework import serializers
 
 from base.models.entity_version import EntityVersion
@@ -162,4 +164,110 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
             location=location,
         )
 
+        return partner
+
+
+class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializer):
+    organization_uuid = serializers.UUIDField(source="organization.uuid")
+
+    # Read only
+    type = serializers.ChoiceField(
+        choices=ORGANIZATION_TYPE,
+        source="organization.type",
+        read_only=True,
+    )
+    name = serializers.CharField(
+        max_length=255,
+        source="organization.name",
+        read_only=True,
+    )
+    website = serializers.CharField(
+        max_length=255,
+        source="entity.website",
+        read_only=True,
+    )
+    street_number = serializers.CharField(
+        max_length=12,
+        required=False,
+        source="contact_address.street_number",
+        read_only=True,
+    )
+    street = serializers.CharField(max_length=255, source="contact_address.street", read_only=True)
+    postal_code = serializers.CharField(
+        max_length=32,
+        required=False,
+        source="contact_address.postal_code",
+        read_only=True,
+    )
+    city = serializers.CharField(max_length=255, source="contact_address.city", read_only=True)
+    country = serializers.CharField(max_length=2, source="contact_address.country.iso_code", read_only=True)
+    latitude = serializers.FloatField(min_value=-90, max_value=90, read_only=True)
+    longitude = serializers.FloatField(min_value=-180, max_value=180, read_only=True)
+    start_date = serializers.CharField(source="organization.start_date", read_only=True)
+    end_date = serializers.CharField(source="organization.end_date", read_only=True)
+
+    class Meta:
+        model = Partner
+        fields = [
+            'uuid',
+            'organization_uuid',
+            'is_valid',
+            'organisation_identifier',
+            'size',
+            'is_public',
+            'is_nonprofit',
+            'erasmus_code',
+            'pic_code',
+            'contact_type',
+            'phone',
+            'email',
+            # Organization
+            'name',
+            'type',
+            # Entity
+            'website',
+            'start_date',
+            'end_date',
+            # EntityAddress
+            'street_number',
+            'street',
+            'postal_code',
+            'city',
+            'country',
+            'latitude',
+            'longitude',
+        ]
+        read_only_fields = [
+            'is_valid', 'start_date', 'end_date', 'erasmus_code', 'pic_code', 'phone', 'email', 'contact_type',
+        ]
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret.pop('organization_uuid', None)
+        return ret
+
+    def validate_organization_uuid(self, value):
+        try:
+            return Organization.objects.get(uuid=value)
+        except Organization.DoesNotExist:
+            raise serializers.ValidationError("Organization not found")
+
+    @transaction.atomic()
+    def create(self, validated_data):
+        with contextlib.suppress(Partner.DoesNotExist):
+            existing_partner = Partner.objects.get(organization=validated_data['organization']['uuid'])
+            raise serializers.ValidationError({
+                'detail': "This organization is already declared as partner",
+                'partner_uuid': str(existing_partner.uuid)
+            })
+
+        # Create Partner with link with organization
+        partner = Partner.objects.create(
+            organisation_identifier=validated_data.get('organisation_identifier', ''),
+            size=validated_data['size'],
+            is_public=validated_data['is_public'],
+            is_nonprofit=validated_data['is_nonprofit'],
+            organization=validated_data['organization']['uuid'],
+            author=self.context['request'].user.person,
+        )
         return partner
