@@ -19,6 +19,7 @@ from partnership.tests.factories import (
     PartnershipYearFactory,
     UCLManagementEntityFactory,
 )
+from partnership.tests.factories.viewer import PartnershipViewerFactory
 from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
@@ -311,11 +312,10 @@ class InternshipPartnerDetailApiViewTest(TestCase):
         cls.partner = PartnerFactory(contact_address__location='SRID=4326;POINT(12 13)')
         cls.url = reverse('partnership_api_v1:internship_partner', kwargs={'uuid': str(cls.partner.uuid)})
         cls.country = CountryFactory()
-        person = PersonFactory()
-        cls.user = person.user
+        cls.partnership_viewer = PartnershipViewerFactory()
 
     def setUp(self) -> None:
-        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(self.partnership_viewer.person.user)
 
     def test_get(self):
         response = self.client.get(self.url)
