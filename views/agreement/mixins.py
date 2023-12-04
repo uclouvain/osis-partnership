@@ -24,7 +24,7 @@ class PartnershipAgreementsFormMixin(PartnershipAgreementsMixin):
         return PartnershipAgreementWithDatesForm
 
     def get_template_names(self):
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return 'partnerships/includes/partnership_agreement_form.html'
         return self.template_name
 
