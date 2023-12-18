@@ -239,7 +239,7 @@ class InternshipPartnerListApiViewTest(TestCase):
     def test_post(self):
         data = {
             'name': 'foobar',
-            'organisation_identifier': 'weewf',
+            'organization_identifier': 'weewf',
             'size': '<250',
             'is_public': 'false',
             'is_nonprofit': 'true',
@@ -263,7 +263,7 @@ class InternshipPartnerListApiViewTest(TestCase):
     def test_post_minimal(self):
         data = {
             'name': 'foobar',
-            'organisation_identifier': 'weewf',
+            'organization_identifier': 'weewf',
             'size': '<250',
             'is_public': 'false',
             'is_nonprofit': 'true',
@@ -386,6 +386,6 @@ class DeclareOrganizationAsInternshipPartnerApiViewTest(TestCase):
         }
         response = self.client.post(self.url, data)
         data = response.json()
-        self.assertEqual(response.status_code, 400, data)
+        self.assertEqual(response.status_code, 409, data)
         self.assertEqual(data['detail'], "This organization is already declared as partner")
         self.assertEqual(data['partner_uuid'], str(self.existing_partner.uuid))
