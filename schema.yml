@@ -437,7 +437,10 @@ components:
           type: string
         name:
           type: string
-        organisation_identifier:
+        organization_uuid:
+          type: string
+          format: uuid
+        organization_identifier:
           type: string
         size:
           type: string
@@ -972,7 +975,7 @@ paths:
               type: object
               required:
                 - name
-                - organisation_identifier
+                - organization_identifier
                 - size
                 - is_public
                 - is_nonprofit
@@ -984,7 +987,7 @@ paths:
               properties:
                 name:
                   type: string
-                organisation_identifier:
+                organization_identifier:
                   type: string
                 size:
                   type: string
@@ -1118,16 +1121,16 @@ paths:
             schema:
               type: object
               required:
-                - organisation_uuid
+                - organization_uuid
                 - size
                 - is_public
                 - is_nonprofit
               properties:
-                organisation_uuid:
+                organization_uuid:
                   type: string
                   format: uuid
                   example: 'abcd-efgh-ijkl-mnop-1234-5678'
-                organisation_identifier:
+                organization_identifier:
                   type: string
                 size:
                   type: string
