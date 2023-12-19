@@ -244,8 +244,8 @@ class InternshipPartnerListApiViewTest(TestCase):
             'size': '<250',
             'is_public': 'false',
             'is_nonprofit': 'true',
-            'type': "ACADEMIC_PARTNER",
-            'subtype': 'NON_UNIVERSITY_HIGHER',
+            'type': organization_type.ACADEMIC_PARTNER,
+            'subtype': EstablishmentTypeEnum.NON_UNIVERSITY_HIGHER.name,
             'website': 'http://example.org/',
             'street_number': '2',
             'street': 'rue machin',
@@ -261,8 +261,8 @@ class InternshipPartnerListApiViewTest(TestCase):
         self.assertEqual(data['name'], 'foobar')
         self.assertFalse(data['is_public'])
         self.assertTrue(data['is_nonprofit'])
-        self.assertEqual(data['type'], 'ACADEMIC_PARTNER')
-        self.assertEqual(data['subtype'], 'NON_UNIVERSITY_HIGHER')
+        self.assertEqual(data['type'], organization_type.ACADEMIC_PARTNER)
+        self.assertEqual(data['subtype'], EstablishmentTypeEnum.NON_UNIVERSITY_HIGHER.name)
 
     def test_post_minimal(self):
         data = {
@@ -283,7 +283,7 @@ class InternshipPartnerListApiViewTest(TestCase):
         self.assertEqual(data['name'], 'foobar')
         self.assertFalse(data['is_public'])
         self.assertTrue(data['is_nonprofit'])
-        self.assertEqual(data['type'], 'ACADEMIC_PARTNER')
+        self.assertEqual(data['type'], organization_type.ACADEMIC_PARTNER)
         self.assertEqual(data['subtype'], EstablishmentTypeEnum.OTHER.name)
 
     def test_get_no_filter(self):
