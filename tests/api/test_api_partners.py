@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from base.models.enums import organization_type
+from base.models.enums.establishment_type import EstablishmentTypeEnum
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityFactory
 from base.tests.factories.entity_version import EntityVersionFactory
@@ -244,6 +245,7 @@ class InternshipPartnerListApiViewTest(TestCase):
             'is_public': 'false',
             'is_nonprofit': 'true',
             'type': "ACADEMIC_PARTNER",
+            'subtype': 'NON_UNIVERSITY_HIGHER',
             'website': 'http://example.org/',
             'street_number': '2',
             'street': 'rue machin',
@@ -259,6 +261,8 @@ class InternshipPartnerListApiViewTest(TestCase):
         self.assertEqual(data['name'], 'foobar')
         self.assertFalse(data['is_public'])
         self.assertTrue(data['is_nonprofit'])
+        self.assertEqual(data['type'], 'ACADEMIC_PARTNER')
+        self.assertEqual(data['subtype'], 'NON_UNIVERSITY_HIGHER')
 
     def test_post_minimal(self):
         data = {
@@ -279,6 +283,8 @@ class InternshipPartnerListApiViewTest(TestCase):
         self.assertEqual(data['name'], 'foobar')
         self.assertFalse(data['is_public'])
         self.assertTrue(data['is_nonprofit'])
+        self.assertEqual(data['type'], 'ACADEMIC_PARTNER')
+        self.assertEqual(data['subtype'], EstablishmentTypeEnum.OTHER.name)
 
     def test_get_no_filter(self):
         response = self.client.get(self.url)
