@@ -2,14 +2,16 @@ import contextlib
 import datetime
 import json
 
-from django.db import transaction, IntegrityError
-from django.http import JsonResponse
-from rest_framework import serializers
+from django.db import transaction
+from rest_framework import serializers, status
 
 from base.models.entity_version import EntityVersion
 from base.models.entity_version_address import EntityVersionAddress
+from base.models.enums import organization_type
+from base.models.enums.establishment_type import EstablishmentTypeEnum
 from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.organization import Organization
+from partnership.api.exceptions import OrganizationAlreadyDeclareAsPartner
 from partnership.models import Partner, EntityProxy
 
 __all__ = [
@@ -74,6 +76,12 @@ class PartnerAdminSerializer(PartnerListSerializer):
 
 class InternshipPartnerSerializer(serializers.ModelSerializer):
     type = serializers.ChoiceField(choices=ORGANIZATION_TYPE, source="organization.type")
+    subtype = serializers.ChoiceField(
+        choices=EstablishmentTypeEnum.choices(),
+        source="organization.establishment_type",
+        default=EstablishmentTypeEnum.OTHER.name
+    )
+    organization_uuid = serializers.UUIDField(source="organization.uuid", required=False, read_only=True)
     name = serializers.CharField(max_length=255, source="organization.name")
     website = serializers.CharField(max_length=255, source="entity.website")
     street_number = serializers.CharField(max_length=12, required=False, source="contact_address.street_number")
@@ -83,6 +91,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
     country = serializers.CharField(max_length=2, source="contact_address.country.iso_code")
     latitude = serializers.FloatField(min_value=-90, max_value=90, required=False)
     longitude = serializers.FloatField(min_value=-180, max_value=180, required=False)
+    organization_identifier = serializers.CharField(max_length=255, source="organisation_identifier")
 
     # Read only
     start_date = serializers.CharField(source="organization.start_date", read_only=True)
@@ -91,10 +100,10 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         fields = [
-            'uuid', 'is_valid', 'organisation_identifier', 'size', 'is_public', 'is_nonprofit',
+            'uuid', 'is_valid', 'organization_identifier', 'size', 'is_public', 'is_nonprofit',
             'erasmus_code', 'pic_code', 'contact_type', 'phone', 'email',
             # Organization
-            'name', 'type',
+            'name', 'type', 'organization_uuid', 'subtype',
             # Entity
             'website', 'start_date', 'end_date',
             # EntityAddress
@@ -117,6 +126,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
         organization = Organization.objects.create(
             name=validated_data['organization']['name'],
             type=validated_data['organization']['type'],
+            establishment_type=validated_data['organization']['establishment_type'],
             prefix=generate_partner_prefix(validated_data['organization']['name'])
         )
 
@@ -137,7 +147,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
 
         # Partner
         partner = Partner.objects.create(
-            organisation_identifier=validated_data.get('organisation_identifier', ''),
+            organisation_identifier=validated_data.get('organization_identifier', ''),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
             is_nonprofit=validated_data['is_nonprofit'],
@@ -169,6 +179,11 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
 
 class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializer):
     organization_uuid = serializers.UUIDField(source="organization.uuid")
+    organization_identifier = serializers.CharField(
+        max_length=255,
+        source="organisation_identifier",
+        required=False,
+    )
 
     # Read only
     type = serializers.ChoiceField(
@@ -212,7 +227,7 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
             'uuid',
             'organization_uuid',
             'is_valid',
-            'organisation_identifier',
+            'organization_identifier',
             'size',
             'is_public',
             'is_nonprofit',
@@ -256,14 +271,14 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
     def create(self, validated_data):
         with contextlib.suppress(Partner.DoesNotExist):
             existing_partner = Partner.objects.get(organization=validated_data['organization']['uuid'])
-            raise serializers.ValidationError({
+            raise OrganizationAlreadyDeclareAsPartner({
                 'detail': "This organization is already declared as partner",
                 'partner_uuid': str(existing_partner.uuid)
             })
 
         # Create Partner with link with organization
         partner = Partner.objects.create(
-            organisation_identifier=validated_data.get('organisation_identifier', ''),
+            organisation_identifier=validated_data.get('organization_identifier', ''),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
             is_nonprofit=validated_data['is_nonprofit'],
