@@ -7,6 +7,8 @@ from rest_framework import serializers, status
 
 from base.models.entity_version import EntityVersion
 from base.models.entity_version_address import EntityVersionAddress
+from base.models.enums import organization_type
+from base.models.enums.establishment_type import EstablishmentTypeEnum
 from base.models.enums.organization_type import ORGANIZATION_TYPE
 from base.models.organization import Organization
 from partnership.api.exceptions import OrganizationAlreadyDeclareAsPartner
@@ -74,6 +76,11 @@ class PartnerAdminSerializer(PartnerListSerializer):
 
 class InternshipPartnerSerializer(serializers.ModelSerializer):
     type = serializers.ChoiceField(choices=ORGANIZATION_TYPE, source="organization.type")
+    subtype = serializers.ChoiceField(
+        choices=EstablishmentTypeEnum.choices(),
+        source="organization.establishment_type",
+        default=EstablishmentTypeEnum.OTHER.name
+    )
     organization_uuid = serializers.UUIDField(source="organization.uuid", required=False, read_only=True)
     name = serializers.CharField(max_length=255, source="organization.name")
     website = serializers.CharField(max_length=255, source="entity.website")
@@ -96,7 +103,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
             'uuid', 'is_valid', 'organization_identifier', 'size', 'is_public', 'is_nonprofit',
             'erasmus_code', 'pic_code', 'contact_type', 'phone', 'email',
             # Organization
-            'name', 'type', 'organization_uuid',
+            'name', 'type', 'organization_uuid', 'subtype',
             # Entity
             'website', 'start_date', 'end_date',
             # EntityAddress
@@ -119,6 +126,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
         organization = Organization.objects.create(
             name=validated_data['organization']['name'],
             type=validated_data['organization']['type'],
+            establishment_type=validated_data['organization']['establishment_type'],
             prefix=generate_partner_prefix(validated_data['organization']['name'])
         )
 

@@ -466,6 +466,13 @@ components:
             - HOSPITAL
             - NGO
             - OTHER
+        subtype:
+          type: string
+          enum:
+            - UNIVERSITY
+            - NON_UNIVERSITY_HIGHER
+            - OTHER
+            - HIGH_SCHOOL
         website:
           type: string
         phone:
@@ -1009,6 +1016,13 @@ paths:
                     - HOSPITAL
                     - NGO
                     - OTHER
+                subtype:
+                  type: string
+                  enum:
+                    - UNIVERSITY
+                    - NON_UNIVERSITY_HIGHER
+                    - OTHER
+                    - HIGH_SCHOOL
                 website:
                   type: string
                 street_number:
