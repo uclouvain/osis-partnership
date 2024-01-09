@@ -982,7 +982,6 @@ paths:
               type: object
               required:
                 - name
-                - organization_identifier
                 - size
                 - is_public
                 - is_nonprofit
