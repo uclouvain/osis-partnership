@@ -147,7 +147,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
 
         # Partner
         partner = Partner.objects.create(
-            organisation_identifier=validated_data.get('organization_identifier', ''),
+            organisation_identifier=validated_data.get('organization_identifier'),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
             is_nonprofit=validated_data['is_nonprofit'],
