@@ -267,7 +267,6 @@ class InternshipPartnerListApiViewTest(TestCase):
     def test_post_minimal(self):
         data = {
             'name': 'foobar',
-            'organization_identifier': 'weewf',
             'size': '<250',
             'is_public': 'false',
             'is_nonprofit': 'true',

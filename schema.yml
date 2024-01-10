@@ -982,7 +982,6 @@ paths:
               type: object
               required:
                 - name
-                - organization_identifier
                 - size
                 - is_public
                 - is_nonprofit
@@ -1162,5 +1161,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternshipPartner'
+        '409':
+          description: Organization alreadry declared as InternshipPartner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: 'This organization is already declared as partner'
+                  partner_uuid:
+                    type: string
+                    format: uuid
+                    example: 'abcd-efgh-ijkl-mnop-1234-5678'
         '400':
           $ref: '#/components/responses/BadRequest'

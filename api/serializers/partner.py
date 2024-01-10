@@ -91,7 +91,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
     country = serializers.CharField(max_length=2, source="contact_address.country.iso_code")
     latitude = serializers.FloatField(min_value=-90, max_value=90, required=False)
     longitude = serializers.FloatField(min_value=-180, max_value=180, required=False)
-    organization_identifier = serializers.CharField(max_length=255, source="organisation_identifier")
+    organization_identifier = serializers.CharField(max_length=255, source="organisation_identifier", required=False)
 
     # Read only
     start_date = serializers.CharField(source="organization.start_date", read_only=True)
@@ -147,7 +147,7 @@ class InternshipPartnerSerializer(serializers.ModelSerializer):
 
         # Partner
         partner = Partner.objects.create(
-            organisation_identifier=validated_data.get('organization_identifier', ''),
+            organisation_identifier=validated_data.get('organization_identifier'),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
             is_nonprofit=validated_data['is_nonprofit'],
@@ -278,7 +278,7 @@ class DeclareOrganizationAsInternshipPartnerSerializer(serializers.ModelSerializ
 
         # Create Partner with link with organization
         partner = Partner.objects.create(
-            organisation_identifier=validated_data.get('organization_identifier', ''),
+            organisation_identifier=validated_data.get('organization_identifier'),
             size=validated_data['size'],
             is_public=validated_data['is_public'],
             is_nonprofit=validated_data['is_nonprofit'],

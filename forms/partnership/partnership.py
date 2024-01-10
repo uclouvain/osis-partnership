@@ -214,7 +214,6 @@ class PartnershipMobilityForm(PartnershipBaseForm):
             if self.instance.pk is not None:
                 # TODO This is a guess, need to check with Bart
                 self.fields['partner_entities'].disabled = True
-                field.disabled = True
 
             del self.fields['is_public']
 
