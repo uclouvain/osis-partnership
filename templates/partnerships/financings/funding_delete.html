@@ -1,9 +1,9 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n static osis_role %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static osis_role %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{% trans "financings" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{% trans "financings" %}</li>
 {% endblock %}
 
 {% block content %}
@@ -13,16 +13,22 @@
     </h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       <form action="" method="post">
         {% csrf_token %}
         <p>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
         <p class="text-danger">{% trans "Warning! This will also delete all linked objects." %}</p>
-        <input type="submit" value="{% trans "Confirm" %}" class="btn btn-danger">
-        <a href="{% url 'partnerships:financings:list' %}">
-          {% trans "Cancel" %}
-        </a>
+        <div class="row w-100">
+          <div class="col-12 col-md-6">
+            <a href="{% url 'partnerships:financings:list' %}" class="btn btn-default border border-dark-subtle w-100">
+              {% trans "Cancel" %}
+            </a>
+          </div>
+          <div class="col-12 col-md-6">
+            <input type="submit" value="{% trans 'Confirm' %}" class="btn btn-danger w-100">
+          </div>
+        </div>
       </form>
     </div>
   </div>

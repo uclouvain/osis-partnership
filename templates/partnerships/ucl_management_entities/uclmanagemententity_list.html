@@ -1,6 +1,5 @@
 {% extends "bootstrap5/layout.html" %}
-
-{% load bootstrap3 i18n partnerships static osis_role %}
+{% load django_bootstrap5 i18n partnerships static osis_role %}
 
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
@@ -8,7 +7,7 @@
 {% endblock %}
 
 {% block script %}
-  <script src="{% static "partnerships/modal_form.js" %}"></script>
+  <script src="{% static 'partnerships/modal_form.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,12 +23,12 @@
     <div class="card-body">
       {% if can_create_ucl_management_entity %}
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
           <div class="float-end">
-            <a class="btn btn-light border border-dark-subtle" type="button"
-               href="{% url "partnerships:ucl_management_entities:create" %}">
+            <a class="btn btn-default border border-dark-subtle" type="button"
+               href="{% url 'partnerships:ucl_management_entities:create' %}">
               <i class="fas fa-fw fa-plus"></i>
-              <span class="hidden-xs">{% trans "create_ucl_management_entity" %}</span>
+              <span class="d-none d-md-inline">{% trans "create_ucl_management_entity" %}</span>
             </a>
           </div>
         </div>
@@ -129,13 +128,13 @@
                 </td>
                 <td>
                   {% if can_change_entity %}
-                    <div class="btn-group pull-right">
-                      <a href="{% url "partnerships:ucl_management_entities:update" ume.pk %}" class="btn btn-default">
+                    <div class="btn-group float-end">
+                      <a href="{% url 'partnerships:ucl_management_entities:update' ume.pk %}" class="btn btn-default border border-dark-subtle">
                         <i class="fas fa-pencil-alt"></i>
                       </a>
                       {% if can_delete_entity %}
                         <button
-                            class="btn btn-default dropdown-toggle"
+                            class="btn btn-default border border-dark-subtle dropdown-toggle"
                             type="button"
                             data-bs-toggle="dropdown"
                             aria-haspopup="true"
@@ -150,7 +149,7 @@
                               class="modal-link btn "
                               href="{% url 'partnerships:ucl_management_entities:delete' pk=ume.pk %}"
                               data-modal-danger
-                              data-modal-submit="{% trans "delete_ucl_management_entity" %}"
+                              data-modal-submit="{% trans 'delete_ucl_management_entity' %}"
                               data-modal-title="{{ contact }}"
                               data-modal="modal-form">
                               <i class="fas fa-times fa-fw"></i>
@@ -169,7 +168,7 @@
         </div>
         {% else %}
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             <p>{% trans "ucl_management_entities_empty" %}</p>
           </div>
         </div>
@@ -188,13 +187,13 @@
           <div class="modal-body">
             <i class="fas fa-circle-notch fa-spin fa-fw fa-5x"></i>
           </div>
-          <div class="modal-footer">
-            <div class="row w-100">
-              <div class="col-sm-6">
-                <button type="button" class="btn btn-default btn-block border border-dark-subtle w-100" data-bs-dismiss="modal">{% trans "cancel" %}</button>
+          <div class="modal-footer m-0">
+            <div class="row button-row w-100">
+              <div class="col-12 col-md-6 ps-md-0">
+                <button type="button" class="btn btn-default border border-dark-subtle w-100 mb-2 mb-md-0" data-bs-dismiss="modal">{% trans "cancel" %}</button>
               </div>
-              <div class="col-sm-6">
-                <button type="submit" class="btn btn-primary btn-block w-100">{% trans "submit" %}</button>
+              <div class="col-12 col-md-6 pe-md-0">
+                <button type="submit" class="btn btn-primary w-100">{% trans "submit" %}</button>
               </div>
             </div>
           </div>
