@@ -1,16 +1,16 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{% trans "update_configuration" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{% trans "update_configuration" %}</li>
 {% endblock %}
 
 {% block style %}
   <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block script %}
@@ -25,45 +25,40 @@
   <div class="page-header">
     <h1>{% trans "update_configuration" %}</h1>
   </div>
-
   {% bootstrap_form_errors form %}
-
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <form action="{% url "partnerships:configuration_update" %}" method="post">
+  <div class="card">
+    <div class="card-body">
+      <form action="{% url 'partnerships:configuration_update' %}" method="post">
         {% csrf_token %}
-
         {% now "Y" as current_year %}
-
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             {% bootstrap_field form.partnership_creation_update_min_year %}
           </div>
         </div>
 
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             {% bootstrap_field form.partnership_api_year %}
           </div>
         </div>
 
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             {% bootstrap_field form.email_notification_to %}
           </div>
         </div>
 
         <div class="row">
-          <div class="col-sm-6">
-            <a href="{% url "partnerships:list" %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          <div class="col-12 col-md-6">
+            <a href="{% url 'partnerships:list' %}" class="btn btn-default border border-dark-subtle btn-block mb-3 mb-md-0 w-100">{% trans "cancel" %}</a>
           </div>
-          <div class="col-sm-6">
-            <button type="submit" class="btn btn-primary btn-block">{% trans "update_configuration" %}</button>
+          <div class="col-12 col-md-6">
+            <button type="submit" class="btn btn-primary btn-block w-100">{% trans "update_configuration" %}</button>
           </div>
         </div>
       </form>
     </div>
   </div>
-
   {{ form.media }}
 {% endblock %}

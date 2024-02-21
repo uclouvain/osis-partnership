@@ -3,7 +3,7 @@
 
 
 {% block breadcrumb %}
-  <li class="active">{% trans 'Agreements' %}</li>
+  <li class="breadcrumb-item active">{% trans 'Agreements' %}</li>
 {% endblock %}
 
 {% block header_title %}
@@ -11,10 +11,10 @@
 {% endblock %}
 
 {% block export_button %}
-  <div class="pull-right">
+  <div class="float-end">
     {% url 'partnerships:export_agreements' as export_url %}
     <a href="{{ export_url }}" data-base-href="{{ export_url }}"
-       class="btn btn-default btn-export pull-right download">
+       class="btn btn-default border border-dark-subtle btn-export float-end download">
       {% trans "agreements_export" %}
     </a>
   </div>
