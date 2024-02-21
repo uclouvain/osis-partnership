@@ -88,8 +88,6 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);
 
-    $('[data-bs-toggle="tooltip"]').tooltip();
-
     var $form = $('#filter-form');
     function updateExportButtons () {
         $('#results .btn-export').each(function() {
