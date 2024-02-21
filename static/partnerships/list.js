@@ -20,9 +20,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         pagingType: 'full_numbers',
         lengthMenu: [20],
         info: true,
-        dom: '<"row"<"pull-right"i>>' +
-          '<"row"<"col-sm-12"tr>>' +
-          '<"pull-left"p>',
+        dom: '<"row"<"float-end text-end"i>>' +
+          '<"row"<"col-12"tr>>' +
+          '<"float-start"p>',
         ajax: {
             data: function (d) {
                 var querystring = getDataAjaxTable('filter-form', $('#result-list'), d);
@@ -60,27 +60,27 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     var type = $('#id_partnership_type')
     function collapseMobilityFields () {
         var value = type.val();
-        $('.only-mobility').collapse(value === 'MOBILITY' ? 'show' : 'hide');
+        $('.only-mobility').toggle(value === 'MOBILITY' ? 'show' : 'hide');
         if (value !== 'MOBILITY') {
             $('.only-mobility select').val('')
         }
-        $('#project-fields').collapse(value === 'PROJECT' ? 'show' : 'hide');
+        $('#project-fields').toggle(value === 'PROJECT' ? 'show' : 'hide');
         if (value !== 'PROJECT') {
             $('#project-fields select').val('')
         }
-        $('#subtype-field').collapse(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        $('#subtype-field').toggle(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
         if (['', 'MOBILITY', 'PROJECT'].includes(value)) {
             $('#subtype-field select').val('')
         }
-        $('.except-general-project').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        $('.except-general-project').toggle(['', 'GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
         if (['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.except-general-project select').val('')
         }
-        $('.special-dates-filter').collapse(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
+        $('.special-dates-filter').toggle(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
         if (!['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.special-dates-filter select').val('')
         }
-        $('.agreements-dates-filter').collapse(value !== 'MOBILITY' ? 'show' : 'hide');
+        $('.agreements-dates-filter').toggle(value !== 'MOBILITY' ? 'show' : 'hide');
         if (value === 'MOBILITY') {
             $('.agreements-dates-filter select').val('')
         }
@@ -88,10 +88,9 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     collapseMobilityFields();
     type.on('change', collapseMobilityFields);
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     var $form = $('#filter-form');
-
     function updateExportButtons () {
         $('#results .btn-export').each(function() {
             $(this).attr('href', $(this).data('base-href') + '?' + $form.serialize());
@@ -103,7 +102,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         history.replaceState(state, "", newUrl);
     }
 
-    $form.on('submit', function () {
+    $form.on('submit', function (e) {
         // Validate some fields
         if ($('#id_partnership_date_type').val()) {
             // Dates must be set
