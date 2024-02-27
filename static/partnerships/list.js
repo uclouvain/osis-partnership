@@ -100,7 +100,7 @@ function initDataTable (storageKey, url, columnDefs, extra) {
         history.replaceState(state, "", newUrl);
     }
 
-    $form.on('submit', function (e) {
+    $form.on('submit', function () {
         // Validate some fields
         if ($('#id_partnership_date_type').val()) {
             // Dates must be set
