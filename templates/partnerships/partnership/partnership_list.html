@@ -1,26 +1,27 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 
-{% load bootstrap3 i18n static osis_role %}
+{% load django_bootstrap5 i18n static osis_role %}
 
 {% block breadcrumb %}
-  <li class="active">{% trans 'Partnerships' %}</li>
+  <li class="breadcrumb-item active">{% trans 'Partnerships' %}</li>
 {% endblock %}
 
 {% block style %}
   <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
   <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block script %}
+  <script src="{% static 'js/osis.js' %}"></script>
   <script src="{% static 'js/moment.min.js' %}"></script>
   <script src="{% static 'js/locales/moment-fr.js' %}"></script>
   <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
   <script src="{% static 'js/daterangepicker.js' %}"></script>
   <script src="{% static 'js/dates-input.js' %}"></script>
-  <script src="{% static "js/osis_datatable.js" %}"></script>
-  <script src="{% static "partnerships/list.js" %}"></script>
+  <script src="{% static 'js/osis_datatable.js' %}"></script>
+  <script src="{% static 'partnerships/list.js' %}"></script>
   {% block datatable %}
   <script>
       initDataTable('partnershipIds', '{{ url }}', [
@@ -35,7 +36,7 @@
           data: 'url',
           targets: 7,
           orderable: false,
-          render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default'),
+          render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default border border-dark-subtle'),
         },
       ]);
   </script>
@@ -53,35 +54,35 @@
 
   {% has_perm 'partnership.view_uclmanagemententity' user as can_view_ume %}
 
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <div class="well">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-header border p-3">
         <div class="row">
-          <div class="col-sm-12">
-            <div class="pull-right">
+          <div class="col-12">
+            <div class="float-end">
               {% if can_change_configuration %}
-              <a class="btn btn-default" type="button"
-                 href="{% url "partnerships:configuration_update" %}">
-                <i class="fas fa-fw fa-cog"></i> <span class="hidden-xs">{% trans "change_configuration" %}</span>
+              <a class="btn btn-default bg-white border border-dark-subtle" type="button"
+                 href="{% url 'partnerships:configuration_update' %}">
+                <i class="fas fa-fw fa-cog"></i> <span class="d-none d-md-inline">{% trans "change_configuration" %}</span>
               </a>
               {% endif %}
               {% if can_view_ume %}
-              <a class="btn btn-default" type="button"
-                 href="{% url "partnerships:ucl_management_entities:list" %}">
-                <i class="fas fa-fw fa-cog"></i> <span class="hidden-xs">{% trans "ucl_management_entities" %}</span>
+              <a class="btn btn-default bg-white border border-dark-subtle" type="button"
+                 href="{% url 'partnerships:ucl_management_entities:list' %}">
+                <i class="fas fa-fw fa-cog"></i> <span class="d-none d-md-inline">{% trans "ucl_management_entities" %}</span>
               </a>
               {% endif %}
               {% if can_add_partnership %}
-              <a class="btn btn-default" type="button"
-                 href="{% url "partnerships:create" %}">
-                <i class="fas fa-fw fa-plus"></i> <span class="hidden-xs">{% trans "add_partnership" %}</span>
+              <a class="btn btn-default bg-white border border-dark-subtle" type="button"
+                 href="{% url 'partnerships:create' %}">
+                <i class="fas fa-fw fa-plus"></i> <span class="d-none d-md-inline">{% trans "add_partnership" %}</span>
               </a>
             {% endif %}
-              <button class="btn btn-default" type="button"
-                      data-toggle="collapse" data-target="#partnership-filters"
+              <button class="btn btn-default bg-white border border-dark-subtle" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#partnership-filters"
                       aria-expanded="false" aria-controls="partnership-filters">
                 <i class="fas fa-filter"></i>
-                <span class="hidden-xs">
+                <span class="d-none d-md-inline">
                   {{ search_button_label }}
                 </span>
               </button>
@@ -92,167 +93,167 @@
         <div class="collapse" id="partnership-filters">
           <div class="row">
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active"><a href="#filter-ucl" aria-controls="filter-ucl" role="tab" data-toggle="tab">{% trans 'ucl' %}</a></li>
-              <li role="presentation"><a href="#filter-partner" aria-controls="filter-profile" role="tab" data-toggle="tab">{% trans 'partner' %}</a></li>
-              <li role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-toggle="tab">{% trans 'partnership' %}</a></li>
+              <li class="nav-item" role="presentation"><a href="#filter-ucl" aria-controls="filter-ucl" role="tab" data-bs-toggle="tab" class="nav-link active">{% trans 'ucl' %}</a></li>
+              <li  class="nav-item"role="presentation"><a href="#filter-partner" aria-controls="filter-profile" role="tab" data-bs-toggle="tab" class="nav-link">{% trans 'partner' %}</a></li>
+              <li class="nav-item" role="presentation"><a href="#filter-partnership" aria-controls="filter-messages" role="tab" data-bs-toggle="tab" class="nav-link">{% trans 'partnership' %}</a></li>
             </ul>
 
             {% with form=filter.form %}
             <form action="" id="filter-form" method="get" autocomplete="off">
               <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="filter-ucl">
+                <div role="tabpanel" class="tab-pane fade show active" id="filter-ucl">
                   <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-12 col-md-6">
                       {% bootstrap_field form.ucl_entity %}
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-12 col-md-6">
                       {% bootstrap_field form.ucl_entity_with_child %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.education_level %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.years_entity %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.university_offer %}
                     </div>
                   </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partner">
                   <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-12">
                       {% bootstrap_field form.partner_entity %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.partner_type %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.erasmus_code %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.use_egracons %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.city %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.country %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.continent %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-12">
                       {% bootstrap_field form.partner_tags %}
                     </div>
                   </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partnership">
-                  <div class="row collapse in" id="all-types">
-                    <div class="col-sm-12 col-md-6">
+                  <div class="row collapse show" id="all-types">
+                    <div class="col-12 col-lg-6">
                       {% bootstrap_field form.partnership_type %}
                     </div>
-                    <div class="col-sm-12 col-md-6 collapse fade in" id="subtype-field">
+                    <div class="col-12 col-lg-6 collapse fade show" id="subtype-field">
                       {% bootstrap_field form.subtype %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-12 col-lg-6">
                       {% bootstrap_field form.education_field %}
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-12 col-lg-6">
                       {% bootstrap_field form.supervisor %}
                     </div>
                   </div>
-                  <div class="row collapse fade in only-mobility">
-                    <div class="col-sm-12 col-md-4">
+                  <div class="row collapse fade show only-mobility">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_sms %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_smp %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_sta %}
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-12 col-lg-6">
                       {% bootstrap_field form.is_stt %}
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-12 col-lg-6">
                       {% bootstrap_field form.is_smst %}
                     </div>
                   </div>
-                  <div class="row collapse fade in" id="project-fields">
-                    <div class="col-sm-12 col-md-4">
+                  <div class="row collapse fade show" id="project-fields">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.funding_source %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.funding_program %}
                     </div>
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.funding_type %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
+                    <div class="col-12 col-lg-3 collapse fade show except-general-project">
                       <label class="control-label" for="{{ form.partnership_in.id_for_label  }}">
                         {{ form.partnership_in.label }}
-                        <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_in.help_text }}"></i>
+                        <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ form.partnership_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3 collapse fade in except-general-project">
+                    <div class="col-12 col-lg-3 collapse fade show except-general-project">
                       <label class="control-label" for="{{ form.partnership_ending_in.id_for_label  }}">
                         {{ form.partnership_ending_in.label }}
-                        <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_ending_in.help_text }}"></i>
+                        <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ form.partnership_ending_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_ending_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
+                    <div class="col-12 col-lg-3 collapse fade show only-mobility">
                       {% bootstrap_field form.partnership_valid_in %}
                     </div>
-                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
+                    <div class="col-12 col-lg-3 collapse fade show only-mobility">
                       {% bootstrap_field form.partnership_not_valid_in %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-12 collapse fade in form-inline {% if is_agreements %}agreements-dates-filter{% else %}special-dates-filter{% endif %}">
+                    <div class="col-12 collapse fade show form-inline {% if is_agreements %}agreements-dates-filter{% else %}special-dates-filter{% endif %}">
                       {% bootstrap_field form.partnership_date_type %}
                       {% bootstrap_field form.partnership_date_from %}
                       {% bootstrap_field form.partnership_date_to %}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12 col-md-3 collapse fade in only-mobility">
+                    <div class="col-12 col-lg-3 collapse fade show only-mobility">
                       <label class="control-label" for="{{ form.partnership_with_no_agreements_in.id_for_label  }}">
                         {{ form.partnership_with_no_agreements_in.label }}
-                        <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ form.partnership_with_no_agreements_in.help_text }}"></i>
+                        <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ form.partnership_with_no_agreements_in.help_text }}"></i>
                       </label>
                       {% bootstrap_field form.partnership_with_no_agreements_in show_label=False show_help=False %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-12 col-lg-3">
                       {% bootstrap_field form.tags %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-12 col-lg-3">
                       {% bootstrap_field form.comment %}
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-12 col-lg-3">
                       {% bootstrap_field form.is_public %}
                     </div>
                   </div>
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-12">
-                  <div class="pull-right">
-                    <button type="reset" class="btn btn-default">{% trans "reset_search_fields" %}</button>
+                <div class="col-12">
+                  <div class="float-end">
+                    <button type="reset" class="btn btn-default bg-white border border-dark-subtle mb-2 mb-md-0">{% trans "reset_search_fields" %}</button>
                     <button type="submit" class="submit-button btn btn-primary" name="search_partnership" value="search_partnership">
                       {{ search_button_label }}
                     </button>
@@ -288,9 +289,9 @@
         </div>
 
         {% block export_button %}
-          <div class="pull-right btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle"
-                    data-toggle="dropdown" aria-haspopup="true"
+          <div class="float-end btn-group">
+            <button type="button" class="btn btn-default border border-dark-subtle dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
               {% trans "partnerships_export" %}
               <span class="caret"></span>

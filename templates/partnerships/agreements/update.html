@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n static %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
-  <li><a href="{% url 'partnerships:detail' partnership.pk %}" id="lnk_partners">{{ partnership }}</a></li>
-  <li class="active">{{ agreement }}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:detail' partnership.pk %}" id="lnk_partners">{{ partnership }}</a></li>
+  <li class="breadcrumb-item active">{{ agreement }}</li>
 {% endblock %}
 
 {% block script %}
@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block style %}
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -24,17 +24,17 @@
   <h1>{{ agreement }}</h1>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-body">
-    <form action="{% url "partnerships:agreements:update" partnership.id agreement.id %}" method="post" enctype="multipart/form-data">
+<div class="card">
+  <div class="card-body">
+    <form action="{% url 'partnerships:agreements:update' partnership.id agreement.id %}" method="post" enctype="multipart/form-data">
       {% include "partnerships/agreements/includes/form.html" %}
 
       <div class="row button-row">
-        <div class="col-sm-6">
-          <a href="{{ partnership.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+        <div class="col-12 col-md-6">
+          <a href="{{ partnership.get_absolute_url }}" class="btn btn-default border border-dark-subtle btn-block mb-3 mb-md-0 w-100">{% trans "cancel" %}</a>
         </div>
-        <div class="col-sm-6">
-          <button type="submit" class="btn btn-primary btn-block">{% trans "update_partnership_agreement" %}</button>
+        <div class="col-12 col-md-6">
+          <button type="submit" class="btn btn-primary btn-block w-100">{% trans "update_partnership_agreement" %}</button>
         </div>
       </div>
     </form>

@@ -1,17 +1,17 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n partnerships static years osis_role getattr %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{{ partnership }}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{{ partnership }}</li>
 {% endblock %}
 
 {% block style %}
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block script %}
-  <script src="{% static "partnerships/modal_form.js" %}"></script>
+  <script src="{% static 'partnerships/modal_form.js' %}"></script>
   <script>
     $('#show-all-years').click(function() {
       $(this).remove();
@@ -26,18 +26,18 @@
     <h1>{{ partnership }}</h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       <!-- Partenariat -->
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
           {% if can_delete %}
-          <a href="{% url 'partnerships:delete' pk=partnership.pk %}" class="btn btn-default pull-right">
+          <a href="{% url 'partnerships:delete' pk=partnership.pk %}" class="btn btn-default border border-dark-subtle float-end ms-2">
             <i class="fas fa-fw fa-trash-alt"></i> {% trans 'delete_partnership' %}
           </a>
           {% endif %}
           {% if can_change %}
-          <a href="{% url 'partnerships:update' pk=partnership.pk %}" class="btn btn-default pull-right">
+          <a href="{% url 'partnerships:update' pk=partnership.pk %}" class="btn btn-default border border-dark-subtle float-end">
             <i class="fas fa-fw fa-pencil-alt"></i> {% trans 'edit_partnership' %}
           </a>
           {% endif %}
@@ -50,12 +50,12 @@
       </div>
 
       <div class="row">
-        <div class="col-sm-12 col-md-12">
-          <dl class="dl-horizontal">
-            <dt>{% trans "partnership_type" %}</dt>
-            <dd>{{ partnership.get_partnership_type_display }}</dd>
-            <dt>{% trans "partner" %}</dt>
-            <dd>
+        <div class="col-12 partner-info-left">
+          <dl class="row d-md-table">
+            <dt class="col-12 float-start width-md-160 text-md-end text-nowrap text-truncate">{% trans "partnership_type" %}</dt>
+            <dd class="col-12 col-md-auto mb-2 mb-md-0">{{ partnership.get_partnership_type_display }}</dd>
+            <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "partner" %}</dt>
+            <dd class="col-12 col-md-10 mb-0">
               <ul class="list-unstyled nomargin">
                 {% for entity in partnership.partner_entities.all %}
                   {% with partner=entity.organization.partner %}
@@ -68,13 +68,13 @@
                       {% endif %}
                       {% if not partner.is_valid %}
                         <span class="text-danger">
-                          <i class="glyphicon glyphicon-warning-sign"></i>
+                          <i class="fa-solid fa-triangle-exclamation"></i>
                           {% trans "invalid_partner" %}
                         </span>
                       {% endif %}
                       {% if not partner.is_actif %}
                         <span class="text-danger">
-                          <i class="glyphicon glyphicon-warning-sign"></i>
+                          <i class="fa-solid fa-triangle-exclamation"></i>
                           {% trans "inactive_partner" %}
                         </span>
                       {% endif %}
@@ -84,14 +84,14 @@
               </ul>
             </dd>
 
-            <dt>{% trans "ucl_entity" %}</dt>
-            <dd>
+            <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "ucl_entity" %}</dt>
+            <dd class="col-12 col-md-auto mb-2 mb-md-0">
               {{ partnership.entities_acronyms }}
             </dd>
 
             {% with partnership.get_supervisor as supervisor %}
-              <dt>{% trans "partnership_supervisor" %}</dt>
-              <dd>
+              <dt class="col-12 float-start width-md-160 text-md-end text-nowrap text-truncate">{% trans "partnership_supervisor" %}</dt>
+              <dd class="col-12 col-md-10  mb-0">
                 {% if supervisor %}
                   {{ supervisor }}
                   {% if supervisor.email %} - {{ supervisor.email }}{% endif %}
@@ -105,8 +105,8 @@
 
             {% block administrative_responsible %}{% endblock %}
 
-            <dt>{% trans "partnership_duration" %}</dt>
-            <dd>
+            <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "partnership_duration" %}</dt>
+            <dd class="col-12 col-md-auto mb-2 mb-md-0">
               {% if partnership.is_mobility or partnership.is_course or partnership.is_doctorate %}
                 {{ partnership.start_academic_year }} > {{ partnership.end_academic_year }}
               {% else %}
@@ -117,8 +117,8 @@
             </dd>
 
             {% if not partnership.is_project %}
-              <dt>{% trans "agreements_or_conventions" %}</dt>
-              <dd>
+              <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "agreements_or_conventions" %}</dt>
+              <dd class="col-12 col-md-auto mb-2 mb-md-0">
                 {% if partnership.is_mobility %}
                   {% academic_years start_year=partnership.validated_agreements.first.start_academic_year end_year=partnership.validated_agreements.last.end_academic_year %}
                   {% if partnership.has_missing_valid_years %}
@@ -130,8 +130,8 @@
               </dd>
             {% endif %}
 
-            <dt>{% trans "partnership_is_public" %}</dt>
-            <dd>
+            <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "partnership_is_public" %}</dt>
+            <dd class="col-12 col-md-auto mb-2 mb-md-0">
               <i class="fas {{ partnership.is_public|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
             </dd>
           </dl>
@@ -143,12 +143,12 @@
       {% block partnership_years %}{% endblock %}
 
 
-      {% if show_more_year_link %}<a id="show-all-years" role="button" data-toggle="collapse" href=".years-collapse">{% trans "partnership_years_show_all_years" %}</a>{% endif %}
+      {% if show_more_year_link %}<a id="show-all-years" role="button" data-bs-toggle="collapse" href=".years-collapse">{% trans "partnership_years_show_all_years" %}</a>{% endif %}
       {% endif %}
 
       {% if partnership.comment is not None %}
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             {{ partnership.comment|linebreaksbr }}
           </div>
         </div>
@@ -158,7 +158,7 @@
       <h2>{% trans "tags" %}</h2>
       {% if partnership.tags.all %}
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             <ul class="tags-list">
               {% for tag in partnership.tags.all %}
                 <li>{{ tag }}</li>
@@ -173,19 +173,19 @@
       <!-- Contacts -->
       <h2>{% trans "contacts" %}
       {% if can_change %}
-        <a href="{% url "partnerships:contacts:create" partnership.id %}" class="btn btn-default pull-right"><i class="fas fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
+        <a href="{% url 'partnerships:contacts:create' partnership.id %}" class="btn btn-default border border-dark-subtle float-end"><i class="fas fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
       {% endif %}
       </h2>
       <div class="row">
       {% for contact in partnership.contacts.all %}
-        <div class="col-sm-12">
+        <div class="col-12">
           {% if can_change %}
-          <div class="btn-group pull-right">
+          <div class="btn-group float-end">
             <a href="{% url 'partnerships:contacts:update' pk=contact.pk partnership_pk=partnership.pk %}"
-               class="btn btn-default">
+               class="btn btn-default border border-dark-subtle">
               <i class="fas fa-pencil-alt fa-fw"></i>
             </a>
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default dropdown-toggle border border-dark-subtle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
             </button>
@@ -207,20 +207,20 @@
           {% if not forloop.last %}<hr/>{% endif %}
         </div>
       {% empty %}
-        <div class="col-sm-12">
+        <div class="col-12">
           <p>{% trans "no_partnership_contact_yet" %}</p>
         </div>
       {% endfor %}
       </div>
 
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
           <h2>{% trans "medias" %}
           {% if can_change %}
-          <a href="{% url "partnerships:medias:create" partnership.id %}"
-             class="btn btn-default modal-link pull-right"
-             data-modal-submit="{% trans "new_media" %}"
-             data-modal-title="{% trans "new_media" %}"
+          <a href="{% url 'partnerships:medias:create' partnership.id %}"
+             class="btn btn-default modal-link border border-dark-subtle float-end"
+             data-modal-submit="{% trans 'new_media' %}"
+             data-modal-title="{% trans 'new_media' %}"
              data-modal="modal-form"><i class="fas fa-fw fa-plus"></i> {% trans "add_media" %}</a>
           {% endif %}
           </h2>
@@ -228,11 +228,11 @@
       </div>
       <div class="row">
         {% for media in partnership.medias.all %}
-        <div class="col-sm-12 col-md-6 partnership-media">
+        <div class="col-12 col-lg-6 partnership-media">
           {% include "partnerships/includes/media_detail.html" with media=media file_url=partnership|partnership_media_download_url:media %}
         </div>
         {% empty %}
-        <div class="col-sm-12">{% trans "no_media_yet" %}</div>
+        <div class="col-12">{% trans "no_media_yet" %}</div>
         {% endfor %}
       </div>
 
@@ -241,7 +241,7 @@
       <!-- Accords -->
       <h2>{% trans "Agreements" %}
       {% if can_change %}
-      <a href="{% url "partnerships:agreements:create" partnership.id %}" class="btn btn-default pull-right">
+      <a href="{% url 'partnerships:agreements:create' partnership.id %}" class="btn btn-default border border-dark-subtle float-end">
         <i class="fas fa-fw fa-plus"></i> {% trans "add_partnership_agreements" %}
       </a>
       {% endif %}
@@ -252,7 +252,7 @@
         {% if not forloop.last %}<hr>{% endif %}
       {% empty %}
         <div class="row">
-          <div class="col-sm-12">{% trans "no_agreement_yet" %}</div>
+          <div class="col-12">{% trans "no_agreement_yet" %}</div>
         </div>
       {% endfor %}
     </div>
@@ -264,19 +264,19 @@
     <div class="modal-content">
       <form action="" method="post" class="partner-form" enctype="multipart/form-data">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
           <h4 class="modal-title" id="myModalLabel">Title</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'close' %}"></button>
         </div>
         <div class="modal-body">
           <i class="fas fa-circle-notch fa-spin fa-fw fa-5x"></i>
         </div>
-        <div class="modal-footer">
-          <div class="row">
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
+        <div class="modal-footer m-0">
+          <div class="row button-row w-100">
+            <div class="col-12 col-md-6 ps-md-0">
+              <button type="button" class="btn btn-default border border-dark-subtle w-100 mb-2 mb-md-0" data-bs-dismiss="modal">{% trans "cancel" %}</button>
             </div>
-            <div class="col-sm-6">
-              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+            <div class="col-12 col-md-6 pe-md-0">
+              <button type="submit" class="btn btn-primary w-100">{% trans "submit" %}</button>
             </div>
           </div>
         </div>

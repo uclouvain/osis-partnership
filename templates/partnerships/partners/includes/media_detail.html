@@ -1,10 +1,10 @@
-{% load bootstrap3 i18n %}
+{% load django_bootstrap5 i18n %}
 <div class="row">
-  <div class="col-sm-9">
+  <div class="col-12 col-md-9">
     <strong>{{ media.name }}</strong> <em>{{ media.get_visibility_display }}</em>
     {% if media.type is not None %} ({{ media.type.label }}){% endif %}
   </div>
-  <div class="col-sm-3">
+  <div class="col-12 col-md-3">
     {% if media.url %}
       {% trans "external_link" %}
     {% else %}
@@ -13,31 +13,31 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-9">
+  <div class="col-12 col-md-9">
     <p class="media-description">{{ media.description|linebreaksbr }}</p>
   </div>
-  <div class="col-sm-3">
+  <div class="col-12 col-md-3">
     <div class="btn-group">
       {% if media.url %}
-      <a href="{{ media.url }}" class="btn btn-default" target="_blank"><i class="fas fa-eye fa-fw"></i></a>
+      <a href="{{ media.url }}" class="btn btn-default border border-dark-subtle" target="_blank"><i class="fas fa-eye fa-fw"></i></a>
       {% else %}
-      <a href="{% if file_url %}{{ file_url }}{% else %}{{ media.file.url }}{% endif %}" class="btn btn-default" target="_blank"><i class="fas fa-eye fa-fw"></i></a>
+      <a href="{% if file_url %}{{ file_url }}{% else %}{{ media.file.url }}{% endif %}" class="btn btn-default border border-dark-subtle" target="_blank"><i class="fas fa-eye fa-fw"></i></a>
       {% endif %}
       {% if can_update_partner and not hide_actions %}
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button type="button" class="btn btn-default border border-dark-subtle dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="{% url "partnerships:partners:medias:update" partner.id media.id %}"
+        <li><a href="{% url 'partnerships:partners:medias:update' partner.id media.id %}"
            class="modal-link"
            data-modal-submit="{% trans "update_media" %}"
            data-modal-title="{{ media }}"
            data-modal="modal-form"><i class="fas fa-pencil-alt fa-fw"></i> {% trans "update_media" %}</a></li>
-        <li><a href="{% url "partnerships:partners:medias:delete" partner.id media.id %}"
+        <li><a href="{% url 'partnerships:partners:medias:delete' partner.id media.id %}"
            class="modal-link"
            data-modal-danger
-           data-modal-submit="{% trans "delete_media" %}"
+           data-modal-submit="{% trans 'delete_media' %}"
            data-modal-title="{{ media }}"
            data-modal="modal-form"><i class="fas fa-times fa-fw"></i> {% trans "delete_media" %}</a></li>
       </ul>

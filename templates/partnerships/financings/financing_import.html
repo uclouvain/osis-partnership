@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n static %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
-  <li class="active">{% trans "import_financings" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
+  <li  class="breadcrumb-item active">{% trans "import_financings" %}</li>
 {% endblock %}
 
 {% block content %}
@@ -14,15 +14,25 @@
     </h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
 
       <div id="import_form">
         <form action="#" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
-          {% bootstrap_form form %}
-          <a href="{% url 'partnerships:financings:list' %}" class="btn btn-default">{% trans "cancel" %}</a>
-          <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
+          <div class="row w-100">
+            <div class="col-12">
+            {% bootstrap_form form %}
+          </div>
+        </div>
+          <div class="row">
+            <div class="col-6">
+              <a href="{% url 'partnerships:financings:list' %}" class="btn btn-default border border-dark-subtle mb-3 mb-md-0 w-100">{% trans "cancel" %}</a>
+            </div>
+            <div class="col-6">
+              <input type="submit" value="{% trans 'import_financings' %}" name="import" class="btn btn-primary w-100">
+            </div>
+          </div>
         </form>
       </div>
 

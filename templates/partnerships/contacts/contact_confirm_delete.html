@@ -1,22 +1,22 @@
-{% extends "layout.html" %}
-{% load i18n bootstrap3 %}
+{% extends "bootstrap5/layout.html" %}
+{% load i18n django_bootstrap5 %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{{ partnership }}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{{ partnership }}</li>
 {% endblock %}
 
 {% block content %}
   <div class="page-header">
     <h1>{% trans 'confirm_contact_delete' %}</h1>
   </li>
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
           <form method="POST" action="#">
             {% include 'partnerships/contacts/includes/contact_delete_form.html' %}
-            <input class="btn btn-default" type="submit" value="Confirm" name="submit"/>
+            <input class="btn btn-default border border-dark-subtle w-100" type="submit" value="Confirm" name="submit"/>
           </form>
         </div>
       </div>

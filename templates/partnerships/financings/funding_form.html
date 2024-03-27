@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n static osis_role %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static osis_role %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
-  <li class="active">
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:financings:list' %}">{% trans 'financings' %}</a></li>
+  <li class="breadcrumb-item active">
     {% if form.instance.pk %}
       {% blocktrans with model=verbose_name|lower %}Edit a {{ model }}{% endblocktrans %}
     {% else %}
@@ -25,15 +25,22 @@
     </h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       <form action="" method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
-        <a href="{% url 'partnerships:financings:list' %}" class="text-danger">
-          Annuler
-        </a>
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <a href="{% url 'partnerships:financings:list' %}" class="text-danger btn
+            btn-default border border-dark-subtle w-100">
+              Annuler
+            </a>
+          </div>
+          <div class="col-12 col-md-6">
+            <input type="submit" value="{% trans 'Save' %}" class="btn btn-primary w-100">
+        </div>
+        </div>
       </form>
     </div>
   </div>
