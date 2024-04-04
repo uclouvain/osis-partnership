@@ -18,7 +18,7 @@
 
 <div class="card">
   <div class="card-body">
-    <form action="{% url 'partnerships:medias:update" partnership.id media.id %}' method="post" class="partnership-form" enctype="multipart/form-data">
+    <form action="{% url 'partnerships:medias:update' partnership.id media.id %}" method="post" class="partnership-form" enctype="multipart/form-data">
       {% include "partnerships/includes/media_form.html" %}
 
       <div class="row button-row">
