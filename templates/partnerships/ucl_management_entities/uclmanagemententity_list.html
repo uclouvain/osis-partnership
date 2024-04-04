@@ -1,13 +1,13 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n partnerships static osis_role %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n partnerships static osis_role %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{% trans "ucl_management_entities" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{% trans "ucl_management_entities" %}</li>
 {% endblock %}
 
 {% block script %}
-  <script src="{% static "partnerships/modal_form.js" %}"></script>
+  <script src="{% static 'partnerships/modal_form.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,16 +19,16 @@
 
   {% has_perm 'partnership.add_uclmanagemententity' user as can_create_ucl_management_entity %}
 
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       {% if can_create_ucl_management_entity %}
       <div class="row">
-        <div class="col-sm-12">
-          <div class="pull-right">
-            <a class="btn btn-default" type="button"
-               href="{% url "partnerships:ucl_management_entities:create" %}">
+        <div class="col-12">
+          <div class="float-end">
+            <a class="btn btn-default border border-dark-subtle" type="button"
+               href="{% url 'partnerships:ucl_management_entities:create' %}">
               <i class="fas fa-fw fa-plus"></i>
-              <span class="hidden-xs">{% trans "create_ucl_management_entity" %}</span>
+              <span class="d-none d-md-inline">{% trans "create_ucl_management_entity" %}</span>
             </a>
           </div>
         </div>
@@ -128,15 +128,15 @@
                 </td>
                 <td>
                   {% if can_change_entity %}
-                    <div class="btn-group pull-right">
-                      <a href="{% url "partnerships:ucl_management_entities:update" ume.pk %}" class="btn btn-default">
+                    <div class="btn-group float-end">
+                      <a href="{% url 'partnerships:ucl_management_entities:update' ume.pk %}" class="btn btn-default border border-dark-subtle">
                         <i class="fas fa-pencil-alt"></i>
                       </a>
                       {% if can_delete_entity %}
                         <button
-                            class="btn btn-default dropdown-toggle"
+                            class="btn btn-default border border-dark-subtle dropdown-toggle"
                             type="button"
-                            data-toggle="dropdown"
+                            data-bs-toggle="dropdown"
                             aria-haspopup="true"
                             aria-expanded="false"
                         >
@@ -145,16 +145,16 @@
                         </button>
                         <ul class="dropdown-menu">
                           <li>
-                            <a
-                                href="{% url 'partnerships:ucl_management_entities:delete' pk=ume.pk %}"
-                                class="modal-link"
-                                data-modal-danger
-                                data-modal-submit="{% trans "delete_ucl_management_entity" %}"
-                                data-modal-title="{{ contact }}"
-                                data-modal="modal-form"
-                            >
-                              <i class="fas fa-times fa-fw"></i> {% trans 'delete_ucl_management_entity' %}
-                            </a>
+                             <button type="button"
+                              class="modal-link btn "
+                              href="{% url 'partnerships:ucl_management_entities:delete' pk=ume.pk %}"
+                              data-modal-danger
+                              data-modal-submit="{% trans 'delete_ucl_management_entity' %}"
+                              data-modal-title="{{ contact }}"
+                              data-modal="modal-form">
+                              <i class="fas fa-times fa-fw"></i>
+                              {% trans 'delete_ucl_management_entity' %}
+                            </button>
                           </li>
                         </ul>
                       {% endif %}
@@ -168,7 +168,7 @@
         </div>
         {% else %}
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             <p>{% trans "ucl_management_entities_empty" %}</p>
           </div>
         </div>
@@ -176,31 +176,29 @@
       </div>
     </div>
   </div>
-
-
-<div class="modal fade" id="modal-form" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form action="" method="post" class="partner-form" enctype="multipart/form-data">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "close" %}"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
-          <h4 class="modal-title" id="myModalLabel">Title</h4>
-        </div>
-        <div class="modal-body">
-          <i class="fas fa-circle-notch fa-spin fa-fw fa-5x"></i>
-        </div>
-        <div class="modal-footer">
-          <div class="row">
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-default btn-block" data-dismiss="modal">{% trans "cancel" %}</button>
-            </div>
-            <div class="col-sm-6">
-              <button type="submit" class="btn btn-primary btn-block">{% trans "submit" %}</button>
+  <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <form action="" method="post" class="partner-form" enctype="multipart/form-data">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h4 class="modal-title" id="myModalLabel">Title</h4>
+          </div>
+          <div class="modal-body">
+            <i class="fas fa-circle-notch fa-spin fa-fw fa-5x"></i>
+          </div>
+          <div class="modal-footer m-0">
+            <div class="row button-row w-100">
+              <div class="col-12 col-md-6 ps-md-0">
+                <button type="button" class="btn btn-default border border-dark-subtle w-100 mb-2 mb-md-0" data-bs-dismiss="modal">{% trans "cancel" %}</button>
+              </div>
+              <div class="col-12 col-md-6 pe-md-0">
+                <button type="submit" class="btn btn-primary w-100">{% trans "submit" %}</button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 {% endblock %}

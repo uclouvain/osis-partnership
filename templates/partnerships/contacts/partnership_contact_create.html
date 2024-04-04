@@ -1,20 +1,20 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
   <li><a href="{% url 'partnerships:detail' pk=partnership.pk %}">{{ partnership }}</a></li>
-  <li class="active">{% trans 'partnership_contact_create' %}</li>
+  <li class="breadcrumb-item active">{% trans 'partnership_contact_create' %}</li>
 {% endblock %}
 
 {% block content %}
   <div class="page-header">
     <h1>{% trans 'partnership_contact_create' %}</h1>
   </div>
-  <div class="panel panel-default">
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-body">
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
           {% trans 'create_contact' as create_contact %}
           {% include 'partnerships/contacts/includes/partnership_contact_form.html' with button_text=create_contact %}
         </div>
