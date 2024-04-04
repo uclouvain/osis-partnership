@@ -18,7 +18,7 @@
 
 <div class="card">
   <div class="card-body">
-    <form action="{% url 'partnerships:medias:delete" partnership.id media.id %}' method="post">
+    <form action="{% url 'partnerships:medias:delete' partnership.id media.id %}" method="post">
       {% include "partnerships/includes/media_delete.html" %}
       <button type="submit" id="add-media" class="btn btn-danger">{% trans "delete_media" %}</button>
     </form>
