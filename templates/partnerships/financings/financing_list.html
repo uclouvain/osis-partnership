@@ -1,18 +1,19 @@
-{% extends "layout.html" %}
-{% load bootstrap3 i18n static osis_role %}
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static osis_role %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li class="active">{% trans "financings" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item active">{% trans "financings" %}</li>
 {% endblock %}
 
 {% block style %}
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block script %}
-  <script src="{% static "js/osis_datatable.js" %}"></script>
-  <script src="{% static "partnerships/list.js" %}"></script>
+  <script src="{% static 'js/osis.js' %}"></script>
+  <script src="{% static 'js/osis_datatable.js' %}"></script>
+  <script src="{% static 'partnerships/list.js' %}"></script>
   <script>
     initDataTable('partnersIds', "{% url 'partnerships:financings:list' year=academic_year.year %}", [
       {
@@ -39,9 +40,9 @@
       lengthMenu: [25],
     });
     $('.list-group-item a').on('click', function () {
-        $('.glyphicon', this)
-            .toggleClass('glyphicon-chevron-right')
-            .toggleClass('glyphicon-chevron-down');
+        $('.fa-solid', this)
+            .toggleClass('fa-angle-right')
+            .toggleClass('fa-angle-down');
     });
   </script>
 {% endblock %}
@@ -53,16 +54,15 @@
   </h1>
 </div>
 
-<div class="panel">
-
+<div class="card border-0">
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-      <a href="#financing-tab" aria-controls="financing-tab" role="tab" data-toggle="tab">
+    <li role="presentation" class="nav-item">
+      <a href="#financing-tab" aria-controls="financing-tab" role="tab" data-bs-toggle="tab" class="nav-link active">
         {% blocktrans %}Per country in {{ academic_year }}{% endblocktrans %}
       </a>
     </li>
-    <li role="presentation">
-      <a href="#funding-tab" aria-controls="funding-tab" role="tab" data-toggle="tab">
+    <li role="presentation" class="nav-item">
+      <a href="#funding-tab" aria-controls="funding-tab" role="tab" data-bs-toggle="tab" class="nav-link">
         {% trans "Funding sources, programs and types" %}
       </a>
     </li>
@@ -75,21 +75,21 @@
           <div class="list-group-item clearfix">
 
             {% if source.fundingprogram_set.count %}
-              <a href="#source-{{ source.pk }}" data-toggle="collapse">
-                <i class="glyphicon glyphicon-chevron-right"></i>
+              <a href="#source-{{ source.pk }}" data-bs-toggle="collapse">
+                <i class="fa-solid fa-angle-right fs-5 me-2"></i>
               </a>
             {% endif %}
             {{ source }}
 
-            <div class="pull-right">
+            <div class="float-end">
               <a href="{% url 'partnerships:financings:add' 'program' %}?source={{ source.pk }}"
-                  class="btn btn-primary btn-sm glyphicon glyphicon-plus"
-                 data-toggle="tooltip" data-container="body"
-                 title="{% trans "Add a program to this source" %}"></a>
+                 class="btn btn-primary btn-sm fa-solid fa-plus fs-5 p-2 me-2"
+                 data-bs-toggle="tooltip" data-container="body"
+                 title="{% trans 'Add a program to this source' %}"></a>
               <a href="{% url 'partnerships:financings:edit' source source.pk %}"
-                 class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+                 class="btn btn-default border border-dark-subtle btn-sm fa-regular fa-pen-to-square fs-5 p-2 me-2"></a>
               <a href="{% url 'partnerships:financings:delete' source source.pk %}"
-                 class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+                 class="btn btn-danger btn-sm fa-regular fa-trash-can fs-5 p-2"></a>
             </div>
           </div>
           <div class="list-group collapse" id="source-{{ source.pk }}">
@@ -99,15 +99,15 @@
                 {% if not program.is_active %}<em>{% endif %}
                 {{ program }}
                 {% if not program.is_active %} (inactif)</em>{% endif %}
-                <div class="pull-right">
+                <div class="float-end">
                   <a href="{% url 'partnerships:financings:add' 'type' %}?program={{ program.pk }}"
-                     class="btn btn-primary btn-sm glyphicon glyphicon-plus"
-                     data-toggle="tooltip" data-container="body"
-                     title="{% trans "Add a funding type to this program" %}"></a>
+                     class="btn btn-primary fa-solid fa-plus fs-5 p-2 me-2"
+                     data-bs-toggle="tooltip" data-container="body"
+                     title="{% trans 'Add a funding type to this program' %}"></a>
                   <a href="{% url 'partnerships:financings:edit' program program.pk %}"
-                     class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+                     class="btn btn-default border border-dark-subtle btn-sm fa-regular fa-pen-to-square fs-5 p-2 me-2"></a>
                   <a href="{% url 'partnerships:financings:delete' program program.pk %}"
-                      class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+                      class="btn btn-danger btn-sm fa-regular fa-trash-can fs-5 p-2"></a>
                 </div>
               </div>
               <div class="list-group">
@@ -118,15 +118,15 @@
                     {{ type }}
                     {% if type.url %}
                       <a href="{{ type.url }}" target="_blank">
-                        <i class="glyphicon glyphicon-new-window"></i>
+                        <i class="fa-solid fa-arrow-up-right-from-square fs-5 p-2"></i>
                       </a>
                     {% endif %}
                   {% if not type.is_active %} (inactif)</em>{% endif %}
-                    <div class="pull-right">
+                    <div class="float-end">
                       <a href="{% url 'partnerships:financings:edit' type type.pk %}"
-                         class="btn btn-default btn-sm glyphicon glyphicon-edit"></a>
+                         class="btn btn-default btn-sm border border-dark-subtle fa-regular fa-pen-to-square fs-5 p-2 me-2"></a>
                       <a href="{% url 'partnerships:financings:delete' type type.pk %}"
-                          class="btn btn-danger btn-sm glyphicon glyphicon-trash"></a>
+                          class="btn btn-danger fa-regular fa-trash-can fs-5 p-2"></a>
                     </div>
                   </div>
                 {% endfor %}
@@ -145,35 +145,35 @@
     {% has_perm 'partnership.export_financing' user as can_export_financing %}
 
     <div role="tabpanel" class="tab-pane active" id="financing-tab">
-      <div class="well">
+      <div class="card-header border p-3">
         <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a href="#filter-financings" aria-controls="filter-financings" role="tab" data-toggle="tab">{% trans "change_year" %}</a></li>
+          <li role="presentation" class="nav-item"><a href="#filter-financings" aria-controls="filter-financings" role="tab" data-bs-toggle="tab" class="nav-link active">{% trans "change_year" %}</a></li>
           {% if can_import_financing %}
-            <li role="presentation"><a href="#import-financings" aria-controls="import-financings" role="tab" data-toggle="tab">{% trans "import_financings" %}</a></li>
+            <li role="presentation" class="nav-item"><a href="#import-financings" aria-controls="import-financings" role="tab" data-bs-toggle="tab" class="nav-link">{% trans "import_financings" %}</a></li>
           {% endif %}
         </ul>
 
         <div class="tab-content" id="financing-forms">
-          <div role="tabpanel" class="tab-pane fade in active" id="filter-financings">
+          <div role="tabpanel" class="tab-pane fade show active" id="filter-financings">
             <form action="#" method="POST">
               {% csrf_token %}
               {% bootstrap_form form %}
-              <input type="submit" value="{% trans "change_year" %}" name="filter" class="btn btn-primary">
+              <input type="submit" value="{% trans 'change_year' %}" name="filter" class="btn btn-primary">
             </form>
           </div>
           {% if can_import_financing %}
-            <div role="tabpanel" class="tab-pane fade in" id="import-financings">
+            <div role="tabpanel" class="tab-pane fade show" id="import-financings">
               <form action="{% url 'partnerships:financings:import' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
-                  <div class="col-sm-6">
+                  <div class="col-12 col-md-6">
                     {% bootstrap_field import_form.import_academic_year %}
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col-12 col-md-6">
                     {% bootstrap_field import_form.csv_file %}
                   </div>
                 </div>
-                <input type="submit" value="{% trans "import_financings" %}" name="import" class="btn btn-primary">
+                <input type="submit" value="{% trans 'import_financings' %}" name="import" class="btn btn-primary">
               </form>
             </div>
           {% endif %}
@@ -196,7 +196,7 @@
             </tbody>
           </table>
           {% if can_export_financing %}
-            <a class="btn btn-default download pull-right"
+            <a class="btn btn-default border border-dark-subtle download float-end"
                href="{% url 'partnerships:financings:export' year=academic_year.year %}">
               {% blocktrans %}export_financings_for_year_{{ academic_year }}{% endblocktrans %}
             </a>

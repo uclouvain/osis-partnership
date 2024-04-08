@@ -1,13 +1,13 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n static %}
 
 {% block breadcrumb %}
-  <li>
+  <li class="breadcrumb-item">
     <a href="{% url 'partnerships:list' %}" id="lnk_partnerships">
       {% trans 'Partnerships' %}
     </a>
   </li>
-  <li class="active">{% trans "partnership_create" %}</li>
+  <li class="breadcrumb-item active">{% trans "partnership_create" %}</li>
 {% endblock %}
 
 {% block content %}
@@ -16,9 +16,9 @@
   </div>
 
   {% for type in types %}
-    <a href="{% url "partnerships:create" type=type %}">
-      <div class="panel panel-default">
-        <div class="panel-body">
+    <a href="{% url 'partnerships:create' type=type %}">
+      <div class="card mb-4">
+        <div class="card-body">
           {{ type.value }}
         </div>
       </div>

@@ -1,55 +1,55 @@
-{% load bootstrap3 i18n %}
+{% load django_bootstrap5 i18n %}
 {% csrf_token %}
 
 {% bootstrap_form_errors form %}
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.name %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.description %}
   </div>
 </div>
 
 {% if form.type %}
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.type %}
   </div>
 </div>
 {% endif %}
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.file %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.url %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.is_visible_in_portal %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.visibility %}
   </div>
 </div>
 
 {% if not hide_mandatory_help_text %}
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
   </div>
 </div>
