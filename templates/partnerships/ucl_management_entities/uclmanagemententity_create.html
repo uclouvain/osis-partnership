@@ -1,14 +1,14 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n static %}
 
 {% block style %}
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
-  <li><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>
-  <li class="active">{% trans "create_ucl_management_entity" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:ucl_management_entities:list' %}">{% trans 'ucl_management_entities' %}</a></li>
+  <li class="breadcrumb-item active">{% trans "create_ucl_management_entity" %}</li>
 {% endblock %}
 
 {% block content %}
@@ -16,24 +16,24 @@
     <h1>{% trans 'create_ucl_management_entity' %}</h1>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body uclmanagemententity_form">
-      <form action="{% url "partnerships:ucl_management_entities:create" %}" method="post">
+  <div class="card">
+    <div class="card-body uclmanagemententity_form">
+      <form action="{% url 'partnerships:ucl_management_entities:create' %}" method="post">
 
         {% include "partnerships/ucl_management_entities/includes/uclmanagemententity_form.html" %}
 
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-12">
             <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
           </div>
         </div>
 
         <div class="row button-row">
-          <div class="col-sm-6">
-            <a href="{% url 'partnerships:ucl_management_entities:list' %}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+          <div class="col-12 col-md-6">
+            <a href="{% url 'partnerships:ucl_management_entities:list' %}" class="btn border border-dark-subtle btn-block w-100 mb-3 mb-md-0">{% trans "cancel" %}</a>
           </div>
-          <div class="col-sm-6">
-            <button type="submit" class="btn btn-primary btn-block">{% trans "create_ucl_management_entity" %}</button>
+          <div class="col-12 col-md-6">
+            <button type="submit" class="btn btn-primary btn-block w-100">{% trans "create_ucl_management_entity" %}</button>
           </div>
         </div>
       </form>
