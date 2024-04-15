@@ -1,15 +1,15 @@
-{% extends "layout.html" %}
+{% extends "bootstrap5/layout.html" %}
 {% load i18n static %}
 
 {% block breadcrumb %}
-  <li><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
-  <li><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
-  <li><a href="{% url 'partnerships:partners:detail' partner.pk %}" id="lnk_partners">{{ partner }}</a></li>
-  <li class="active">{% trans "add_partner_entity" %}</li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}" id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:partners:list' %}" id="lnk_partners">{% trans 'partners' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'partnerships:partners:detail' partner.pk %}" id="lnk_partners">{{ partner }}</a></li>
+  <li class="breadcrumb-item active">{% trans "add_partner_entity" %}</li>
 {% endblock %}
 
 {% block style %}
-  <link rel="stylesheet" href="{% static "partnerships/partnerships.css" %}">
+  <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -17,17 +17,16 @@
   <h1>{% trans "add_partner_entity" %}</h1>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-body">
-    <form action="{% url "partnerships:partners:entities:create" partner.id %}" method="post" class="partner-form">
+<div class="card">
+  <div class="card-body">
+    <form action="{% url 'partnerships:partners:entities:create' partner.id %}" method="post" class="partner-form">
       {% include "partnerships/partners/entities/includes/partner_entity_form.html" %}
-
       <div class="row button-row">
-        <div class="col-sm-6">
-          <a href="{{ partner.get_absolute_url }}" class="btn btn-default btn-block">{% trans "cancel" %}</a>
+        <div class="col-12 col-md-6">
+          <a href="{{ partner.get_absolute_url }}" class="btn btn-default btn-block border border-dark-subtle mb-3 mb-md-0 w-100">{% trans "cancel" %}</a>
         </div>
-        <div class="col-sm-6">
-          <button type="submit" class="btn btn-primary btn-block">{% trans "add_partner_entity" %}</button>
+        <div class="col-12 col-md-6">
+          <button type="submit" class="btn btn-primary btn-block w-100">{% trans "add_partner_entity" %}</button>
         </div>
       </div>
     </form>

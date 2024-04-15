@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if similar_partners.exists %}
-<div class="well">
+<div class="card-header border p-3">
   <p>{% trans "similar_partners_possible" %}</p>
   <ul>
   {% for partner in similar_partners.all %}

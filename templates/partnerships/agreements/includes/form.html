@@ -1,28 +1,28 @@
-{% load bootstrap3 i18n %}
+{% load django_bootstrap5 i18n %}
 {% csrf_token %}
 {% bootstrap_form_errors form %}
 
 {% if form.start_academic_year %}
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       {% bootstrap_field form.start_academic_year %}
     </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       {% bootstrap_field form.end_academic_year %}
     </div>
   </div>
 {% else %}
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       {% bootstrap_field form.start_date %}
     </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       {% bootstrap_field form.end_date %}
     </div>
   </div>
@@ -30,20 +30,20 @@
 
 {% if form.status %}
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.status %}
   </div>
 </div>
 {% endif %}
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     {% bootstrap_field form.comment %}
   </div>
 </div>
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     <h4>{% trans "media" %}</h4>
   </div>
 </div>
@@ -51,7 +51,7 @@
 {% include "partnerships/includes/media_form.html" with form=form_media hide_mandatory_help_text=True %}
 
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-12">
     <p class="text-danger">{% trans "mandatory_fields_help_text" %}</p>
   </div>
 </div>

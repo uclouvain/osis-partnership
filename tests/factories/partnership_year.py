@@ -33,7 +33,7 @@ class PartnershipMissionFactory(factory.django.DjangoModelFactory):
         model = PartnershipMission
 
     types = PartnershipType.get_names()
-    code = factory.Faker('word')
+    code = factory.Sequence(lambda n: f"code{n}")
 
 
 class PartnershipSubtypeFactory(factory.django.DjangoModelFactory):
@@ -41,4 +41,4 @@ class PartnershipSubtypeFactory(factory.django.DjangoModelFactory):
         model = PartnershipSubtype
 
     types = PartnershipType.get_names()
-    code = factory.Faker('word')
+    code = factory.Sequence(lambda n: f"code{n}")
