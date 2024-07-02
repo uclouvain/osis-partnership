@@ -1,5 +1,5 @@
 from django.utils.timezone import now
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _, pgettext
 
 from partnership.utils import academic_years
 from .list import PartnershipAgreementListView
@@ -22,7 +22,7 @@ class PartnershipAgreementExportView(ExportView, PartnershipAgreementListView):
             gettext('academic_years'),
             gettext('start_academic_year'),
             gettext('end_academic_year'),
-            gettext('status'),
+            pgettext('partnership', 'status'),
         ]
 
     def get_xls_data(self):

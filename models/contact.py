@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from .enums import ContactTitle
 
@@ -84,7 +84,7 @@ class Contact(models.Model):
         null=True,
     )
     email = models.EmailField(
-        _('email'),
+        pgettext_lazy('partnership', 'email'),
         blank=True,
         null=True,
     )
