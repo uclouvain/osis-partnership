@@ -129,7 +129,7 @@
               {% endif %}
 
               {% if management_entity.contact_in_email is not None %}
-                <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans 'email' %}</dt>
+                <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans 'email' context 'partnership' %}</dt>
                 <dd class="col-12 col-md-auto mb-2 mb-md-0">
                   <a href="mailto:{{ management_entity.contact_in_email }}">
                     {{ management_entity.contact_in_email }}
@@ -167,7 +167,7 @@
               {% endif %}
 
               {% if management_entity.contact_out_email is not None %}
-                <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans 'email' %}</dt>
+                <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans 'email' context 'partnership' %}</dt>
                 <dd class="col-12 col-md-auto mb-2 mb-md-0">
                   <a href="mailto:{{ management_entity.contact_out_email }}">
                     {{ management_entity.contact_out_email }}

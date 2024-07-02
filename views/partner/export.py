@@ -1,6 +1,6 @@
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.timezone import now
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _, pgettext
 
 from .list import PartnersListView
 from ..export import ExportView
@@ -16,7 +16,7 @@ class PartnersExportView(ExportView, PartnersListView):
             gettext('id'),
             gettext('external_id'),
             gettext('author'),
-            gettext('created'),
+            pgettext('partnership', 'created'),
             gettext('changed'),
             gettext('Name'),
             gettext('is_valid'),

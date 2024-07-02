@@ -171,7 +171,7 @@
       {% endif %}
 
       <!-- Contacts -->
-      <h2>{% trans "contacts" %}
+      <h2>{% trans "contacts" context 'partnership' %}
       {% if can_change %}
         <a href="{% url 'partnerships:contacts:create' partnership.id %}" class="btn btn-default border border-dark-subtle float-end"><i class="fas fa-fw fa-plus"></i> {% trans "add_contact" %}</a>
       {% endif %}

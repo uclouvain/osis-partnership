@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from django_cte import CTEManager
 
@@ -36,7 +36,7 @@ class UCLManagementEntity(models.Model):
     contact_in_email = models.EmailField(
         null=True,
         blank=True,
-        verbose_name=_("email"),
+        verbose_name=pgettext_lazy("partnership", "email"),
     )
     contact_in_url = models.URLField(
         null=True,
@@ -54,7 +54,7 @@ class UCLManagementEntity(models.Model):
     contact_out_email = models.EmailField(
         null=True,
         blank=True,
-        verbose_name=_("email"),
+        verbose_name=pgettext_lazy("partnership", "email"),
     )
     contact_out_url = models.URLField(
         null=True,

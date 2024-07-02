@@ -110,7 +110,7 @@
           {% endwith %}
 
           {% if partner.email %}
-          <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "email" %}</dt>
+          <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "email" context 'partnership' %}</dt>
           <dd class="col-12 col-md-auto mb-2 mb-md-0"><a href="mailto:{{ partner.email }}">{{ partner.email }}</a></dd>
           {% endif %}
 

@@ -3,7 +3,7 @@ from django.db.models import Case, Exists, OuterRef, Prefetch, When
 from django.db.models.expressions import Subquery
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _, pgettext
 
 from base.models.academic_year import AcademicYear
 from partnership.models import (
@@ -52,7 +52,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             gettext('partnership_year_entities'),
             gettext('partnership_year_education_levels'),
             gettext('tags'),
-            gettext('created'),
+            pgettext('partnership', 'created'),
             gettext('modified'),
             gettext('is_sms'),
             gettext('is_smp'),
