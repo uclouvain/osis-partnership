@@ -1,7 +1,7 @@
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.enums.organization_type import MAIN
@@ -38,7 +38,7 @@ class PartnerForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'placeholder': _('comment')}),
             'phone': forms.TextInput(attrs={'placeholder': _('phone')}),
             'website': forms.URLInput(attrs={'placeholder': _('website')}),
-            'email': forms.EmailInput(attrs={'placeholder': _('email')}),
+            'email': forms.EmailInput(attrs={'placeholder': pgettext_lazy('partnership', 'email')}),
             'tags': autocomplete.ModelSelect2Multiple(),
             'now_known_as': autocomplete.ModelSelect2(),
         }

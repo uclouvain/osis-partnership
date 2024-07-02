@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from partnership.models import MediaVisibility
 
@@ -17,7 +17,7 @@ class MediaType(models.Model):
     USEFUL_LINK = 'useful-link'
 
     code = models.CharField(
-        _('code'),
+        pgettext_lazy('partnership', 'code'),
         max_length=250,
     )
     label = models.CharField(
@@ -36,7 +36,7 @@ class Media(models.Model):
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('description'), default='', blank=True)
     file = models.FileField(
-        _('file'),
+        _('File'),
         help_text=_('media_file_or_url'),
         upload_to='partnerships/',
         blank=True,
@@ -51,7 +51,7 @@ class Media(models.Model):
     )
     type = models.ForeignKey(
         MediaType,
-        verbose_name=_('type'),
+        verbose_name=pgettext_lazy('partnership', 'type'),
         null=True,
         blank=True,
         on_delete=models.CASCADE

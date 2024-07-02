@@ -6,7 +6,7 @@ from django.db.models import Prefetch, Subquery, OuterRef, Q
 from django.db.models.functions import Now
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from base.models.entity import Entity
 from base.models.entity_version import EntityVersion
@@ -225,7 +225,7 @@ class Partner(models.Model):
     )
 
     email = models.EmailField(
-        _('email'),
+        pgettext_lazy('partnership', 'email'),
         help_text=_('mandatory_if_not_pic_ies'),
         null=True,
         blank=True,
