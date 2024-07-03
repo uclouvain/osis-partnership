@@ -447,8 +447,6 @@ msgstr "City"
 msgid "close"
 msgstr "Close"
 
-#, fuzzy
-#| msgid "code"
 msgctxt "partnership"
 msgid "code"
 msgstr "Code"
@@ -507,8 +505,6 @@ msgstr "contact type"
 msgid "contact_update_success"
 msgstr "Contact successfully edited"
 
-#, fuzzy
-#| msgid "contacts"
 msgctxt "partnership"
 msgid "contacts"
 msgstr "Contacts"
@@ -549,11 +545,6 @@ msgstr "create contact"
 msgid "create_ucl_management_entity"
 msgstr "Create mobility management entities"
 
-msgid "created"
-msgstr "Created"
-
-#, fuzzy
-#| msgid "created"
 msgctxt "partnership"
 msgid "created"
 msgstr "Created"
@@ -622,8 +613,6 @@ msgstr "This field is required"
 msgid "eligible"
 msgstr "Eligible"
 
-#, fuzzy
-#| msgid "email"
 msgctxt "partnership"
 msgid "email"
 msgstr "Email"
@@ -1248,8 +1237,6 @@ msgstr "The start date can't be later than the end date"
 msgid "state"
 msgstr "State"
 
-#, fuzzy
-#| msgid "status"
 msgctxt "partnership"
 msgid "status"
 msgstr "Status"
@@ -1296,8 +1283,6 @@ msgstr ""
 msgid "to_synchronize_with_epc"
 msgstr "To synchronize with EPC"
 
-#, fuzzy
-#| msgid "type"
 msgctxt "partnership"
 msgid "type"
 msgstr "Type"

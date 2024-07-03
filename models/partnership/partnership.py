@@ -213,7 +213,7 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    created = models.DateField(_('created'), auto_now_add=True, editable=False)
+    created = models.DateField(pgettext_lazy('partnership', 'created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
         'base.Person',
