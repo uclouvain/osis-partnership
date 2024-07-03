@@ -616,9 +616,6 @@ msgstr "Créer le contact"
 msgid "create_ucl_management_entity"
 msgstr "Créer une entité de gestion mobilité"
 
-msgid "created"
-msgstr "Créé"
-
 msgctxt "partnership"
 msgid "created"
 msgstr "Créé"
