@@ -378,3 +378,43 @@ class PartnerUpdateVersionsViewTest(TestCase):
         qs = self.entity.entityversion_set.order_by('start_date')
         self.assertEqual(qs.first().entityversionaddress_set.count(), 1)
         self.assertEqual(qs.last().entityversionaddress_set.count(), 1)
+
+    @freeze_time("2020-01-01")
+    def test_update_entity_version_with_empty_acronym(self):
+        EntityVersionFactory(acronym='')
+        # Partner creation
+        partner = PartnerFactory(
+            contact_address__city='test',
+            contact_address__country_id=self.country.pk,
+            contact_address__location=Point(-12, 10),
+        )
+        address = partner.contact_address
+        entity = partner.organization.entity_set.first()
+        entity_version = entity.entityversion_set.all().first()
+        entity_version.acronym = ''
+        entity_version.save()
+
+        EntityVersionFactory(
+            acronym='',
+            entity__organization=partner.organization,
+            entity__website='https://foo.bar.com',
+        )
+        data = {
+            'organization-name': "Tic",
+            'organization-start_date': self.start_date,
+            'organization-type': partner.organization.type,
+            'organization-end_date': '',
+            'partner-pic_code': partner.pic_code,
+            'organization-website': partner.organization.website,
+            'contact_address-city': 'test',
+            'contact_address-country': self.country.pk,
+            'contact_address-street_number': address.street_number,
+            'contact_address-street': address.street,
+            'contact_address-state': address.state,
+            'contact_address-postal_code': address.postal_code,
+            'contact_address-location_0': 10.0,
+            'contact_address-location_1': -12.0,
+        }
+        url = reverse('partnerships:partners:update', kwargs={'pk': partner.pk})
+        response = self.client.post(url, data=data, follow=True)
+        self.assertTemplateUsed(response, 'partnerships/partners/partner_detail.html')
