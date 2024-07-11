@@ -234,7 +234,7 @@ class Partnership(models.Model):
 
     school_reference = models.ForeignKey(
         'base.Entity',
-        related_name='reference_of',
+        related_name='school_reference',
         on_delete=models.PROTECT,
         null=True,
     )
