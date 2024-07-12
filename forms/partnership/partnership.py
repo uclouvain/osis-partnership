@@ -263,7 +263,8 @@ class PartnershipCourseForm(PartnershipBaseForm):
             'subtype',
             'description',
             'project_acronym',
-
+            'school_reference',
+            'all_student'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
