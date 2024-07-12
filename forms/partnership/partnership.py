@@ -263,6 +263,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
             'subtype',
             'description',
             'project_acronym',
+
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
@@ -273,6 +274,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         super().__init__(*args, **kwargs)
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
+        self.fields['supervisor'].required = False
 
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
