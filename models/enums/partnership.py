@@ -24,24 +24,10 @@ class PartnershipDiplomaWithUCL(ChoiceEnum):
     SEPARED = _('Partenaire séparé')
     NO_CODIPLOMA = _('Non co-diplômant')
 
-    @classmethod
-    def get_list_names(cls):
-        return [
-            PartnershipDiplomaWithUCL.UNIQUE.name,
-            PartnershipDiplomaWithUCL.SEPARED.name,
-            PartnershipDiplomaWithUCL.NO_CODIPLOMA.name
-        ]
 
 class PartnershipProductionSupplement(ChoiceEnum):
     YES = _('Oui')
     NO = _('Non')
     SHARED = _('Partagé')
 
-    @classmethod
-    def get_list_names(cls):
-        return [
-            PartnershipProductionSupplement.YES.name,
-            PartnershipProductionSupplement.NO.name,
-            PartnershipProductionSupplement.SHARED.name
-        ]
 
