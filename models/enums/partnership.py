@@ -1,5 +1,4 @@
 from django.utils.translation import gettext_lazy as _
-
 from base.models.utils.utils import ChoiceEnum
 
 
@@ -19,3 +18,16 @@ class PartnershipType(ChoiceEnum):
             PartnershipType.COURSE.name,
             PartnershipType.DOCTORATE.name,
         ]
+
+class PartnershipDiplomaWithUCL(ChoiceEnum):
+    UNIQUE = _('Partenaire unique')
+    SEPARED = _('Partenaire séparé')
+    NO_CODIPLOMA = _('Non co-diplômant')
+
+
+class PartnershipProductionSupplement(ChoiceEnum):
+    YES = _('Oui')
+    NO = _('Non')
+    SHARED = _('Partagé')
+
+
