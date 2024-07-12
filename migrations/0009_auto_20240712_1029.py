@@ -19,11 +19,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partnershippartnerrelation',
             name='diploma_with_ucl',
-            field=models.CharField(choices=[('UNIQUE', 'Partenaire unique'), ('SEPARED', 'Partenaire séparé'), ('NO_CODIPLOMA', 'Non co-diplômant')], default=partnership.models.enums.partnership.PartnershipDiplomaWithUCL['UNIQUE'], max_length=64),
+            field=models.CharField(choices=[('UNIQUE', 'Partenaire unique'), ('SEPARED', 'Partenaire séparé'), ('NO_CODIPLOMA', 'Non co-diplômant')], default='UNIQUE', max_length=64),
         ),
         migrations.AddField(
             model_name='partnershippartnerrelation',
             name='supplement_production',
-            field=models.CharField(choices=[('YES', 'Oui'), ('NO', 'Non'), ('SHARED', 'Partagé')], default=partnership.models.enums.partnership.PartnershipProductionSupplement['NO'], max_length=64),
+            field=models.CharField(choices=[('YES', 'Oui'), ('NO', 'Non'), ('SHARED', 'Partagé')], default='NO', max_length=64),
         ),
     ]
