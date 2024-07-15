@@ -1,7 +1,7 @@
 from django.db import models
 from django.shortcuts import resolve_url
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 __all__ = ['PartnerEntity']
 
@@ -44,7 +44,7 @@ class PartnerEntity(models.Model):
         null=True,
     )
     comment = models.TextField(_('comment'), default='', blank=True)
-    created = models.DateField(_('created'), auto_now_add=True, editable=False)
+    created = models.DateField(pgettext_lazy('partnership', 'created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
         'base.Person',

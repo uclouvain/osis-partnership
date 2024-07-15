@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import OuterRef, Subquery
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from base.models.entity_version import EntityVersion
 from base.models.organization import Organization
@@ -88,7 +88,7 @@ class PartnershipAgreement(models.Model):
     )
 
     status = models.CharField(
-        _('status'),
+        pgettext_lazy('partnership', 'status'),
         max_length=10,
         choices=AgreementStatus.choices(),
         default=AgreementStatus.WAITING.name,

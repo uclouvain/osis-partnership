@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
@@ -143,7 +143,7 @@ class Partnership(models.Model):
 
     contacts = models.ManyToManyField(
         'partnership.Contact',
-        verbose_name=_('contacts'),
+        verbose_name=pgettext_lazy('partnership', 'contacts'),
         related_name='+',
         blank=True,
     )
@@ -213,7 +213,7 @@ class Partnership(models.Model):
         blank=True,
     )
 
-    created = models.DateField(_('created'), auto_now_add=True, editable=False)
+    created = models.DateField(pgettext_lazy('partnership', 'created'), auto_now_add=True, editable=False)
     modified = models.DateField(_('modified'), auto_now=True, editable=False)
     author = models.ForeignKey(
         'base.Person',

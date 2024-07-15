@@ -12,7 +12,7 @@
           {{ agreement.end_date|date:"d/m/Y" }}
         </dd>
 
-        <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "status" %}</dt>
+        <dt class="col-12 float-start width-md-160 text-md-end  text-nowrap text-truncate">{% trans "status" context "partnership" %}</dt>
         <dd class="col-12 col-md-auto mb-2 mb-md-0">{{ agreement.get_status_display }}</dd>
 
         {% if agreement.comment %}
