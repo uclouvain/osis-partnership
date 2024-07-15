@@ -6,22 +6,22 @@
 
 <h2>{% trans 'partner_university' %}</h2>
 <div class="row">
-  <div class="col-12">
-      {% bootstrap_field form.partner_entities %}
-  </div>
-  <div class="col-12" id="project-acronym">
-      {% bootstrap_field form.project_acronym %}
-  </div>
+    <div class="col-12">
+        {% bootstrap_field form.partner_entities %}
+    </div>
+    <div class="col-12" id="project-acronym">
+        {% bootstrap_field form.project_acronym %}
+    </div>
 </div>
 
 <h2>{% trans 'ucl_entity_partner' %}</h2>
 <div class="row">
-  <div class="col-12">
-    {% bootstrap_field form.ucl_entity %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.supervisor %}
-  </div>
+    <div class="col-12">
+        {% bootstrap_field form.ucl_entity %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.supervisor %}
+    </div>
 
 </div>
 
@@ -30,64 +30,76 @@
 {{ form_year.entity }}
 
 <div class="row">
-  <div class="col-12">
-    {% bootstrap_field form_year.education_fields %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.subtype field_class="form-inline" %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form_year.education_levels %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form_year.entities %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form_year.offers %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.description %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.tags %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.comment %}
-  </div>
-  <div class="col-12">
-    {% bootstrap_field form.is_public %}
-  </div>
+    <div class="col-12">
+        {% bootstrap_field form_year.education_fields %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.subtype field_class="form-inline" %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form_year.education_levels %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form_year.entities %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form_year.offers %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.description %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.tags %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.comment %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.is_public %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.all_student %}
+    </div>
+</div>
+<h2>{% trans "partnership_reference" %}</h2>
+<div class="row">
+    <div class="col-12">
+        {% bootstrap_field form.ucl_reference %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.school_reference %}
+    </div>
 </div>
 
 <h3>{% trans "partnership_when" %}</h3>
 
 <div class="row">
-  {% if form_year.start_academic_year %}
+    {% if form_year.start_academic_year %}
+        <div class="col-12">
+            {% bootstrap_field form_year.start_academic_year %}
+        </div>
+    {% else %}
+        <div class="col-12">
+            <dl>
+                <dt>{% trans "start_academic_year" %}</dt>
+                <dd>{{ object.start_academic_year }}</dd>
+            </dl>
+        </div>
+    {% endif %}
+    {% if form_year.from_academic_year %}
+        <div class="col-12">
+            <dl>
+                <dt>{% trans "current_academic_year" %}</dt>
+                <dd>{{ current_academic_year }}</dd>
+            </dl>
+        </div>
+        <div class="col-12">
+            {% bootstrap_field form_year.from_academic_year %}
+        </div>
+    {% endif %}
     <div class="col-12">
-      {% bootstrap_field form_year.start_academic_year %}
+        {% bootstrap_field form_year.end_academic_year %}
     </div>
-  {% else %}
-    <div class="col-12">
-      <dl>
-        <dt>{% trans "start_academic_year" %}</dt>
-        <dd>{{ object.start_academic_year }}</dd>
-      </dl>
-    </div>
-  {% endif %}
-  {% if form_year.from_academic_year %}
-    <div class="col-12">
-      <dl>
-        <dt>{% trans "current_academic_year" %}</dt>
-        <dd>{{ current_academic_year }}</dd>
-      </dl>
-    </div>
-    <div class="col-12">
-      {% bootstrap_field form_year.from_academic_year %}
-    </div>
-  {% endif %}
-  <div class="col-12">
-    {% bootstrap_field form_year.end_academic_year %}
-  </div>
 </div>
 
 {{ form.media }}
