@@ -56,7 +56,7 @@ msgid "Confirm"
 msgstr "Confirmer"
 
 msgid "Coordinator"
-msgstr "Coordinateur"
+msgstr "Coordinateur(trice)"
 
 msgid "Counsellzing body"
 msgstr "Organisme de conseil"
@@ -79,6 +79,9 @@ msgstr "ONG européenne"
 
 msgid "European grouping of territorial cooperation"
 msgstr "Groupement européen de coopération territoriale"
+
+msgid "File"
+msgstr "Fichier"
 
 msgid "Foundation"
 msgstr "Fondation"
@@ -514,11 +517,12 @@ msgstr "Ville"
 msgid "close"
 msgstr "Fermer"
 
+msgctxt "partnership"
 msgid "code"
 msgstr "Code"
 
 msgid "comment"
-msgstr "Commentaire"
+msgstr "commentaire"
 
 msgid "configuration_saved"
 msgstr "La configuration à bien été mise à jour."
@@ -572,6 +576,7 @@ msgstr "Type de contact"
 msgid "contact_update_success"
 msgstr "Contact modifié avec succès."
 
+msgctxt "partnership"
 msgid "contacts"
 msgstr "Contacts"
 
@@ -611,6 +616,7 @@ msgstr "Créer le contact"
 msgid "create_ucl_management_entity"
 msgstr "Créer une entité de gestion mobilité"
 
+msgctxt "partnership"
 msgid "created"
 msgstr "Créé"
 
@@ -679,6 +685,7 @@ msgstr "Ce champ est obligatoire."
 msgid "eligible"
 msgstr "Éligible"
 
+msgctxt "partnership"
 msgid "email"
 msgstr "Email"
 
@@ -724,9 +731,6 @@ msgstr "Fax"
 
 msgid "february"
 msgstr "Février"
-
-msgid "file"
-msgstr "Fichier"
 
 msgid "file_or_url_only"
 msgstr "Veuillez uniquement mettre un fichier ou une URL."
@@ -1315,6 +1319,7 @@ msgstr "La date de début se situe après la date de fin"
 msgid "state"
 msgstr "État"
 
+msgctxt "partnership"
 msgid "status"
 msgstr "État"
 
@@ -1360,6 +1365,7 @@ msgstr "à"
 msgid "to_synchronize_with_epc"
 msgstr "Pour synchroniser avec EPC"
 
+msgctxt "partnership"
 msgid "type"
 msgstr "Type"
 
