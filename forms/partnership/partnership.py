@@ -258,17 +258,37 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 
 class PartnershipCourseForm(PartnershipBaseForm):
+    ucl_reference =  forms.ChoiceField(
+        label='UCL est référente',
+        choices=[('True', 'Oui'), ('False', 'Non')],)
+
+    school_reference = forms.ModelChoiceField(
+        label=_('Institution référence'),
+        queryset=EntityProxy.objects.partner_entities(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:reference_partner_entity',
+            forward=['partner_entities']
+        ),
+    )
+    all_student = forms.ChoiceField(
+        label='Tout student',
+        choices=[('True', 'Oui'), ('False', 'Non')],
+    )
+
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
             'project_acronym',
+            'ucl_reference',
             'school_reference',
             'all_student'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
             'subtype': forms.RadioSelect,
+            'ucl_reference': forms.RadioSelect,
+            'all_student' : forms.RadioSelect,
         }
 
     def __init__(self, *args, **kwargs):

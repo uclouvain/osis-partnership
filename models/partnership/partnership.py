@@ -232,16 +232,26 @@ class Partnership(models.Model):
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
 
+    ucl_reference = models.BooleanField(
+        verbose_name=_('partnership_ucl_reference'),
+        default=True,
+        help_text=_('partnership_ucl_reference_help_text'),
+        null=False,
+        blank=True
+    )
     school_reference = models.ForeignKey(
         'base.Entity',
         related_name='school_reference',
         on_delete=models.PROTECT,
         null=True,
+        blank=True
     )
     all_student = models.BooleanField(
         verbose_name=_('partnership_all_student'),
         default=True,
         help_text=_('partnership_all_student_help_text'),
+        null=False,
+        blank=True
     )
 
     objects = PartnershipManager()
