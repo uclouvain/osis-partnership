@@ -262,12 +262,14 @@ class PartnershipCourseForm(PartnershipBaseForm):
         label='UCL est référente',
         choices=[('True', 'Oui'), ('False', 'Non')],)
 
-    school_reference = forms.ModelChoiceField(
+    partner_referent = forms.ModelChoiceField(
         label=_('Institution référence'),
         queryset=EntityProxy.objects.partner_entities(),
+
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:reference_partner_entity',
-            forward=['partner_entities']
+            forward=['partner_entities', 'ucl_reference'],
+            attrs = {"disabled": "disabled" }
         ),
     )
     all_student = forms.ChoiceField(
@@ -281,7 +283,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
             'description',
             'project_acronym',
             'ucl_reference',
-            'school_reference',
+            'partner_referent',
             'all_student'
         )
         widgets = {
