@@ -39,7 +39,7 @@ class PartnerEntityReferenceAutocompleteView(PartnerEntityAutocompleteView):
     def get_queryset(self):
         qs = super().get_queryset()
         param = self.forwarded.get("partner_entities", None)
-        if param:
+        if param :
             qs = qs.filter(pk__in=param)
         return qs
     def get_result_label(self, result):

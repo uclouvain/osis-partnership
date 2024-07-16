@@ -239,9 +239,9 @@ class Partnership(models.Model):
         null=False,
         blank=True
     )
-    school_reference = models.ForeignKey(
+    partner_referent = models.ForeignKey(
         'base.Entity',
-        related_name='school_reference',
+        related_name='partner_referent',
         on_delete=models.PROTECT,
         null=True,
         blank=True
@@ -409,3 +409,10 @@ class Partnership(models.Model):
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
+
+    def save(self, *args, **kwargs):
+        if self.ucl_reference:
+            self.school_reference = None
+            super(Partnership, self).save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
