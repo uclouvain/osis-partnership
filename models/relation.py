@@ -114,18 +114,20 @@ class PartnershipPartnerRelation(models.Model):
         on_delete=models.PROTECT,
     )
 
-    diploma_with_ucl = models.CharField(
+    diploma_with_ucl_by_partner = models.CharField(
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
-        default=PartnershipDiplomaWithUCL.UNIQUE
+        null=True,
+        blank=True
     )
-    diploma_production = models.BooleanField(
+    diploma_prod_by_partner = models.BooleanField(
         default=False
     )
-    supplement_production = models.CharField(
+    supplement_prod_by_partner = models.CharField(
         max_length=64,
         choices=PartnershipProductionSupplement.choices(),
-        default=PartnershipProductionSupplement.NO
+        null=True,
+        blank=True
     )
 
     objects = PartnershipPartnerRelationQuerySet.as_manager()

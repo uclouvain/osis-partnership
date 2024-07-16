@@ -14,7 +14,7 @@ from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import (
     AgreementStatus,
-    PartnershipType,
+    PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement,
 )
 from partnership.utils import merge_agreement_ranges
 
@@ -253,6 +253,21 @@ class Partnership(models.Model):
         null=False,
         blank=True
     )
+    diploma_by_ucl =models.CharField(
+        max_length=64,
+        choices=PartnershipDiplomaWithUCL.choices(),
+        null=True,
+        blank=True
+    )
+    diploma_prod_by_ucl = models.BooleanField(
+        default=False
+    )
+    supplement_prod_by_ucl = models.CharField(
+        max_length=64,
+        choices=PartnershipProductionSupplement.choices(),
+        null=True,
+        blank=True
+    )
 
     objects = PartnershipManager()
 
@@ -412,7 +427,7 @@ class Partnership(models.Model):
 
     def save(self, *args, **kwargs):
         if self.ucl_reference:
-            self.school_reference = None
+            self.partner_referent = None
             super(Partnership, self).save(*args, **kwargs)
         else:
             super().save(*args, **kwargs)
