@@ -8,7 +8,7 @@ from django.db.models.query import Prefetch
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.timezone import now
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterMixin
 from rest_framework import generics
@@ -275,7 +275,7 @@ class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportVie
             _('ucl_university_labo'),
             _('supervisor'),
             _('tags'),
-            _('created'),
+            pgettext_lazy('partnership', 'created'),
             _('modified'),
             _('partnership_export_start'),
             _('partnership_export_end'),
