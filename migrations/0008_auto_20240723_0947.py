@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0698_auto_20240722_1212'),
         ('partnership', '0007_alter_media_file'),
     ]
 
