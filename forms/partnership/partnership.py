@@ -2,6 +2,7 @@ from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Func, OuterRef, Q
+from django.forms import modelformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
@@ -10,7 +11,8 @@ from base.models.person import Person
 from base.utils.cte import CTESubquery
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
-from partnership.models import Partnership, EntityProxy
+from partnership.models import Partnership, EntityProxy, PartnershipDiplomaWithUCL, PartnershipProductionSupplement, \
+    PartnershipPartnerRelation
 from partnership.utils import format_partner_entity
 from ..fields import EntityChoiceField, PersonChoiceField
 
@@ -21,7 +23,6 @@ __all__ = [
     'PartnershipDoctorateForm',
     'PartnershipProjectForm',
 ]
-
 
 class PartnershipBaseForm(forms.ModelForm):
     partner_entities = forms.ModelMultipleChoiceField(
@@ -264,33 +265,50 @@ class PartnershipCourseForm(PartnershipBaseForm):
 
     partner_referent = forms.ModelChoiceField(
         label=_('Institution référence'),
+        required=False,
         queryset=EntityProxy.objects.partner_entities(),
-
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:reference_partner_entity',
             forward=['partner_entities', 'ucl_reference'],
             attrs = {"disabled": "disabled" }
         ),
     )
+
     all_student = forms.ChoiceField(
         label='Tout student',
         choices=[('True', 'Oui'), ('False', 'Non')],
     )
+
+    diploma_prod_by_ucl = forms.ChoiceField(
+        label='Production du diplome par UClouvain',
+        choices=[('True', 'Oui'), ('False', 'Non')],
+    )
+
+    diploma_by_ucl = forms.ChoiceField(
+        label='Production du diplome',
+        choices=PartnershipDiplomaWithUCL.choices,
+    )
+
+    supplement_prod_by_ucl = forms.ChoiceField(
+        label='Production annexe par UClouvain',
+        choices=PartnershipProductionSupplement.choices(),
+    )
+
+    diploma_with_ucl_by_partner = forms.ChoiceField(
+        label='Production annexe par partner',
+        choices=PartnershipDiplomaWithUCL.choices(),
+    )
+
 
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
             'project_acronym',
-            'ucl_reference',
-            'partner_referent',
-            'all_student'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
             'subtype': forms.RadioSelect,
-            'ucl_reference': forms.RadioSelect,
-            'all_student' : forms.RadioSelect,
         }
 
     def __init__(self, *args, **kwargs):
@@ -327,3 +345,37 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
             'project_title',
             'ucl_status',
         )
+
+
+
+class PartnershipPartnerRelationForm(forms.ModelForm):
+    partners = forms.ModelChoiceField(
+        label=_('Partner entities'),
+        required=False,
+        queryset=EntityProxy.objects.partner_entities(),
+        widget=autocomplete.ModelSelect2(
+            url='partnerships:autocomplete:complement',
+            forward=['partnership'],
+        ),
+    )
+
+
+    class Meta:
+        model = PartnershipPartnerRelation
+        fields = ['partners',
+            'diploma_with_ucl_by_partner',
+            'diploma_prod_by_partner',
+            'supplement_prod_by_partner',
+            'partnership'
+        ]
+
+        widgets = {
+            'partnership': forms.HiddenInput,
+        }
+
+
+PartnershipPartnerRelationFormSet = modelformset_factory(
+    PartnershipPartnerRelation,
+    form=PartnershipPartnerRelationForm,
+    extra=0
+)

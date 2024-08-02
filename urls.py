@@ -2,7 +2,10 @@ from django.urls import include, path, re_path, register_converter
 
 from .converters import PartnershipTypeConverter, FundingModelConverter
 from .views import *
-from .views.autocomplete.partner import PartnerEntityReferenceAutocompleteView
+from .views.autocomplete.partner import PartnerEntityReferenceAutocompleteView, PartnershipPartnerRelationCompleteView
+from .views.partnership.create import PartnershipPartnerRelationUpdateView
+
+# from .views.partnership.create import PartnershipComplementCreateView
 
 register_converter(PartnershipTypeConverter, 'partnership_type')
 register_converter(FundingModelConverter, 'funding')
@@ -14,8 +17,8 @@ urlpatterns = [
     path('export/<int:academic_year_pk>/', PartnershipExportView.as_view(), name="export"),
     path('export_agreements/', PartnershipAgreementExportView.as_view(), name="export_agreements"),
     path('configuration/', PartnershipConfigurationUpdateView.as_view(), name='configuration_update'),
-
     path('<int:pk>/', PartnershipDetailView.as_view(), name="detail"),
+    path('complement/<int:pk>/', PartnershipPartnerRelationUpdateView.as_view(), name="complement"),
     path('create/', PartnershipTypeChooseView.as_view(), name="create"),
     path('create/<partnership_type:type>/', PartnershipCreateView.as_view(), name="create"),
     path('<int:pk>/update/', PartnershipUpdateView.as_view(), name="update"),
@@ -80,6 +83,7 @@ urlpatterns = [
     path('autocomplete/', include(([
         path('person/', PersonAutocompleteView.as_view(), name='person'),
         path('partnership/', PartnershipAutocompleteView.as_view(), name='partnership'),
+        path('partner-complement/', PartnershipPartnerRelationCompleteView.as_view(), name="complement"),
         path('partner-entity/', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         path('reference-partner-entity/', PartnerEntityReferenceAutocompleteView.as_view(), name='reference_partner_entity'),
         path('faculty_entity/', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),

@@ -1,0 +1,44 @@
+{% extends "bootstrap5/layout.html" %}
+{% load django_bootstrap5 i18n static %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'partnerships:list' %}"
+                                   id="lnk_partnerships">{% trans 'Partnerships' %}</a></li>
+    <li class="breadcrumb-item active">{{ partnership }}</li>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type='text/css'>
+    <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/locales/moment-fr.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/daterangepicker.js' %}"></script>
+    <script src="{% static 'js/dates-input.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ partnership }}</h1>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    <div>
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+                <button class="btn btn-primary" type="submit">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
