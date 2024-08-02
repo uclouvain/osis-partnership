@@ -61,7 +61,7 @@
         {% bootstrap_field form.all_student %}
     </div>
 </div>
-<h2>{% trans "partnership_reference" %}</h2>
+<h2>{% trans "partnership_referente" %}</h2>
 <div class="row">
     <div class="col-12">
         {% bootstrap_field form.ucl_reference %}
@@ -70,7 +70,8 @@
         {% bootstrap_field form.partner_referent %}
     </div>
 </div>
-<h2>{% trans "Production_diplome_ucl" %}</h2>
+
+<h2>{% trans "partnership_diploma_ucl" %}</h2>
 <div class="row">
     <div class="col-12">
         {% bootstrap_field form.diploma_prod_by_ucl %}
@@ -78,27 +79,15 @@
     <div class="col-12">
         {% bootstrap_field form.diploma_by_ucl %}
     </div>
-    <div class="col-12">
-        {% bootstrap_field form.diploma_with_ucl_by_partner %}
-    </div>
 </div>
-<h2>{% trans "Production_annexe" %}</h2>
+
+<h2>{% trans "partnership_annexe" %}</h2>
 <div class="row">
     <div class="col-12">
         {% bootstrap_field form.supplement_prod_by_ucl %}
     </div>
 </div>
 
-<!--
-<h2>{% trans "Partner" %}</h2>
-{{ formset_course.management_form }}
-    <div id="partner-relations">
-      {% for form in formset_course %}
-        <div class="partner-relation-form">
-          {{ form.as_p }}
-        </div>
-      {% endfor %}
--->
 
 <h3>{% trans "partnership_when" %}</h3>
 
@@ -130,12 +119,12 @@
         {% bootstrap_field form_year.end_academic_year %}
     </div>
 </div>
-{% if partnership_type == "COURSE" %}
+
 <div class="row">
     <br>
     <p>Une fois le partenariat créé avec le bouton ci-dessous, vous pourrez encoder les informations complémentaires concernant la diplômation.</p>
 </div>
-{% endif %}
+
 {{ form.media }}
 {{ form_year.media }}
 
