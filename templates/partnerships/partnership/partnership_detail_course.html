@@ -1,12 +1,17 @@
 {% extends "partnerships/partnership/partnership_detail.html" %}{% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
+    <div class="row">
+    <p>Destiné à tous les étudiants : {%  if partnership.all_student %} Oui {% else %} Non {% endif %}</p>
+
+    </div>
   {% if partnership.description %}
     <dl class="row d-md-table">
       <dt>{% trans "partnership_year_description" %}</dt>
       <dd>{{ partnership.description|linebreaks }}</dd>
     </dl>
   {% endif %}
+
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -81,4 +86,50 @@
       </tbody>
     </table>
   </div>
+
+
+    <div>
+    <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>{% trans "Partner" %}</th>
+        <th>{% trans "Référent" %}</th>
+        <th>{% trans "Production diplome" %}</th>
+        <th>{% trans "Production annexe" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+          <td>UCLouvain</td>
+        <td>Non</td>
+        <td>Non</td>
+        <td>Non</td>
+      </tr>
+
+      <tr>
+          <td>Partner 1</td>
+        <td>Non</td>
+        <td>Non</td>
+        <td>Non</td>
+      </tr>
+      <tr>
+          <td>Partner 2</td>
+        <td>Non</td>
+        <td>Non</td>
+        <td>Non</td>
+      </tr>
+        <tr>
+            <td>Partner 3</td>
+        <td>Non</td>
+        <td>Non</td>
+        <td>Non</td>
+        </tr>
+
+      </tbody>
+    </table>
+    <br>
+    <hr>
+    <br>
+    </div>
 {% endblock %}

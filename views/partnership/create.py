@@ -111,7 +111,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
 class PartnershipPartnerRelationUpdateView(View):
     template_name = 'partnerships/includes/partnership_relation_form.html'
-    success_url = 'partnerships:list'
+    success_url = 'partnerships:detail'
     def get_queryset(self):
         partnership_pk = self.kwargs.get('pk')
         self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
@@ -122,6 +122,7 @@ class PartnershipPartnerRelationUpdateView(View):
         formset = PartnershipPartnerRelationFormSet(queryset=queryset)
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
@@ -130,7 +131,19 @@ class PartnershipPartnerRelationUpdateView(View):
             for instance in instances:
                 instance.partnership = self.partnership
                 instance.save()
-            return redirect(self.success_url)
+            return redirect(reverse_lazy('partnerships:detail', kwargs={'pk':self.partnership}))
+        else:
+            messages.error(self.request, _('partnership_error'))
+
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
+    # todo: verification distinct selectMultipleChoice ;
+    # todo : instance partner encodé avec ses valeurs lors de l'edit
+    # todo: message error si pas succes ; OK
+    # todo:transaction atomique ; OK
+    # todo: Message formulaire (template) ; OK
+    # todo: Text des titres (traduction fr-en);  OK
+    # todo: empecher le  page back (retour en arrière de page)
+    # todo: ajouter les détail d'information  : /partnerships/id/ (prefect dans view read)
+    # todo: redicrection après formulaire vers : /partnerships/id/ ; OK
 
 

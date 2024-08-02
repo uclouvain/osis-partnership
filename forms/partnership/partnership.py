@@ -260,11 +260,11 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 class PartnershipCourseForm(PartnershipBaseForm):
     ucl_reference =  forms.ChoiceField(
-        label='UCL est référente',
+        label=_('ucl_reference'),
         choices=[('True', 'Oui'), ('False', 'Non')],)
 
     partner_referent = forms.ModelChoiceField(
-        label=_('Institution référence'),
+        label=_('partner_referent'),
         required=False,
         queryset=EntityProxy.objects.partner_entities(),
         widget=autocomplete.ModelSelect2(
@@ -275,36 +275,36 @@ class PartnershipCourseForm(PartnershipBaseForm):
     )
 
     all_student = forms.ChoiceField(
-        label='Tout student',
+        label=_('all_student'),
         choices=[('True', 'Oui'), ('False', 'Non')],
     )
 
     diploma_prod_by_ucl = forms.ChoiceField(
-        label='Production du diplome par UClouvain',
+        label=_('diploma_prod_by_ucl'),
         choices=[('True', 'Oui'), ('False', 'Non')],
     )
 
     diploma_by_ucl = forms.ChoiceField(
-        label='Production du diplome',
+        label=_('diploma_by_ucl'),
         choices=PartnershipDiplomaWithUCL.choices,
     )
 
     supplement_prod_by_ucl = forms.ChoiceField(
-        label='Production annexe par UClouvain',
+        label=_('supplement_prod_by_ucl'),
         choices=PartnershipProductionSupplement.choices(),
     )
-
-    diploma_with_ucl_by_partner = forms.ChoiceField(
-        label='Production annexe par partner',
-        choices=PartnershipDiplomaWithUCL.choices(),
-    )
-
 
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
             'project_acronym',
+            'ucl_reference',
+            'partner_referent',
+            'all_student',
+            'diploma_prod_by_ucl',
+            'diploma_by_ucl',
+            'supplement_prod_by_ucl'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
@@ -335,7 +335,6 @@ class PartnershipDoctorateForm(PartnershipBaseForm):
         self.fields['subtype'].label = _('partnership_subtype_doctorate')
         self.fields['subtype'].label_from_instance = lambda o: o.label
 
-
 class PartnershipProjectForm(PartnershipWithDatesMixin):
     class Meta(PartnershipWithDatesMixin.Meta):
         fields = PartnershipWithDatesMixin.Meta.fields + (
@@ -350,8 +349,8 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
 
 class PartnershipPartnerRelationForm(forms.ModelForm):
     partners = forms.ModelChoiceField(
-        label=_('Partner entities'),
-        required=False,
+        label=_('Partner entités'),
+        required=True,
         queryset=EntityProxy.objects.partner_entities(),
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:complement',
@@ -359,10 +358,11 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
         ),
     )
 
-
     class Meta:
         model = PartnershipPartnerRelation
-        fields = ['partners',
+        fields = [
+            # 'entity',
+            'partners',
             'diploma_with_ucl_by_partner',
             'diploma_prod_by_partner',
             'supplement_prod_by_partner',
@@ -370,6 +370,7 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
         ]
 
         widgets = {
+            # 'entity': forms.Select,
             'partnership': forms.HiddenInput,
         }
 

@@ -106,6 +106,7 @@ class PartnershipPartnerRelation(models.Model):
     """
     partnership = models.ForeignKey(
         'partnership.Partnership',
+        related_name='partnershiprelation',
         on_delete=models.CASCADE,
     )
     entity = models.ForeignKey(
