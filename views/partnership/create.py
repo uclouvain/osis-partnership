@@ -1,13 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView, TemplateView
-
 from base.models.academic_year import find_academic_years
 from partnership.auth.predicates import is_linked_to_adri_entity
-from partnership.models import Partnership, PartnershipType
+from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
+from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
@@ -98,8 +100,37 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             self.notify_admin_mail(title, 'partnership_creation.html', {
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
+        if (self.partnership_type == "COURSE"):
+            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk':partnership.pk}))
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
         self.object = None
         return super().post(request, *args, **kwargs)
+
+
+class PartnershipPartnerRelationUpdateView(View):
+    template_name = 'partnerships/includes/partnership_relation_form.html'
+    success_url = 'partnerships:list'
+    def get_queryset(self):
+        partnership_pk = self.kwargs.get('pk')
+        self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
+        return PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset)
+        return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
+
+    def post(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.partnership = self.partnership
+                instance.save()
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
+
+

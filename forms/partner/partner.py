@@ -2,7 +2,6 @@ from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
-
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.enums.organization_type import MAIN
 from base.models.organization import Organization
@@ -11,7 +10,6 @@ from partnership.models import Partner
 from partnership.utils import generate_partner_prefix
 
 __all__ = ['PartnerForm', 'OrganizationForm']
-
 
 class PartnerForm(forms.ModelForm):
     is_nonprofit = forms.NullBooleanField(

@@ -70,6 +70,35 @@
         {% bootstrap_field form.partner_referent %}
     </div>
 </div>
+<h2>{% trans "Production_diplome_ucl" %}</h2>
+<div class="row">
+    <div class="col-12">
+        {% bootstrap_field form.diploma_prod_by_ucl %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.diploma_by_ucl %}
+    </div>
+    <div class="col-12">
+        {% bootstrap_field form.diploma_with_ucl_by_partner %}
+    </div>
+</div>
+<h2>{% trans "Production_annexe" %}</h2>
+<div class="row">
+    <div class="col-12">
+        {% bootstrap_field form.supplement_prod_by_ucl %}
+    </div>
+</div>
+
+<!--
+<h2>{% trans "Partner" %}</h2>
+{{ formset_course.management_form }}
+    <div id="partner-relations">
+      {% for form in formset_course %}
+        <div class="partner-relation-form">
+          {{ form.as_p }}
+        </div>
+      {% endfor %}
+-->
 
 <h3>{% trans "partnership_when" %}</h3>
 
@@ -101,11 +130,37 @@
         {% bootstrap_field form_year.end_academic_year %}
     </div>
 </div>
-
+{% if partnership_type == "COURSE" %}
+<div class="row">
+    <br>
+    <p>Une fois le partenariat créé avec le bouton ci-dessous, vous pourrez encoder les informations complémentaires concernant la diplômation.</p>
+</div>
+{% endif %}
 {{ form.media }}
 {{ form_year.media }}
 
 <script src="{% static 'partnerships/reset_form.js' %}" type="text/javascript"></script>
 <script src="{% static 'partnerships/partnerships_form.js' %}" type="text/javascript"></script>
 <script src="{% static 'partnerships/partnerships_form_course.js' %}" type="text/javascript"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const partnerEntitiesField = document.getElementById('id_partner_entities');
+      partnerEntitiesField.addEventListener('change', function() {
+        const selectedOptions = Array.from(partnerEntitiesField.selectedOptions);
+        const partnerRelationsDiv = document.getElementById('partner-relations');
+        partnerRelationsDiv.innerHTML = '';
 
+        selectedOptions.forEach(option => {
+          const entityId = option.value;
+          fetch(`/autocomplete/partner_entity/?entity_id=${entityId}`)
+            .then(response => response.json())
+            .then(data => {
+              const div = document.createElement('div');
+              div.classList.add('partner-relation-form');
+              div.innerHTML = data.form;
+              partnerRelationsDiv.appendChild(div);
+            });
+        });
+      });
+    });
+ </script>
