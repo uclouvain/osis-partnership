@@ -1,15 +1,20 @@
 {% extends "partnerships/partnership/partnership_detail.html" %}{% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
+    <dt class="col-10 float-start width-md-160 text-md-end">Destiné à tous les étudiants</dt>
+    <dd class="col-12 col-md-auto mb-2 mb-md-0">
     <div class="row">
-    <p>Destiné à tous les étudiants : {%  if partnership.all_student %} Oui {% else %} Non {% endif %}</p>
-
+    <p>{%  if partnership.all_student %} Oui {% else %} Non {% endif %}</p>
     </div>
+    </dd>
+<br>
   {% if partnership.description %}
-    <dl class="row d-md-table">
-      <dt>{% trans "partnership_year_description" %}</dt>
-      <dd>{{ partnership.description|linebreaks }}</dd>
-    </dl>
+    <dt class="col-10 float-start width-md-160 text-md-end">{% trans "partnership_year_description" %}</dt>
+    <dd class="col-12 col-md-auto mb-2 mb-md-0">
+    <div class="row">
+      <p>{{ partnership.description|linebreaks }}</p>
+    </div>
+    </dd>
   {% endif %}
 
   <div class="table-responsive">
@@ -87,7 +92,7 @@
     </table>
   </div>
 
-
+<br>
     <div>
     <div class="table-responsive">
     <table class="table table-striped">
@@ -101,35 +106,25 @@
       </thead>
       <tbody>
       <tr>
-          <td>UCLouvain</td>
-        <td>Non</td>
-        <td>Non</td>
-        <td>Non</td>
+        <td>UCLouvain</td>
+        <td>{{ partnership.ucl_reference|yesno:"Oui,Non"}}</td>
+        <td>{{ partnership.diploma_prod_by_ucl|yesno:"Oui,Non" }} {{ partnership.diploma_by_ucl }}</td>
+        <td>{{ partnership.supplement_prod_by_ucl }}</td>
       </tr>
+        {% for item_partner in partnership.partnershiprelation.all %}
+      <tr>
+        <td>{{ item_partner.entity.organization.name }}</td>
+        <td>{% if not partnership.ucl_reference and  item_partner.entity == partnership.partner_referent%}oui{% else %}Non{%endif %}</td>
+        <td>{{ item_partner.diploma_prod_by_partner|yesno:"Oui,Non" }} {{ item_partner.diploma_with_ucl_by_partner }}</td>
+        <td>{{ item_partner.supplement_prod_by_partner  }}</td>
+      </tr>
+      {% endfor %}
 
-      <tr>
-          <td>Partner 1</td>
-        <td>Non</td>
-        <td>Non</td>
-        <td>Non</td>
-      </tr>
-      <tr>
-          <td>Partner 2</td>
-        <td>Non</td>
-        <td>Non</td>
-        <td>Non</td>
-      </tr>
-        <tr>
-            <td>Partner 3</td>
-        <td>Non</td>
-        <td>Non</td>
-        <td>Non</td>
-        </tr>
 
       </tbody>
     </table>
+
     <br>
     <hr>
-    <br>
     </div>
 {% endblock %}
