@@ -112,6 +112,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 class PartnershipPartnerRelationUpdateView(View):
     template_name = 'partnerships/includes/partnership_relation_form.html'
     success_url = 'partnerships:detail'
+
     def get_queryset(self):
         partnership_pk = self.kwargs.get('pk')
         self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
@@ -131,7 +132,7 @@ class PartnershipPartnerRelationUpdateView(View):
             for instance in instances:
                 instance.partnership = self.partnership
                 instance.save()
-            return redirect(reverse_lazy('partnerships:detail', kwargs={'pk':self.partnership}))
+            return redirect(reverse_lazy('partnerships:detail', kwargs={'pk':self.partnership.id}))
         else:
             messages.error(self.request, _('partnership_error'))
 

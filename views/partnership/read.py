@@ -78,10 +78,10 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                     'partner_entities__organization',
                     queryset=Organization.objects.order_by('name').select_related('partner')
                 ),
-                # Prefetch(
-                #     'partner_referent__organization',
-                #     queryset=Organization.objects.order_by('name').select_related('partner')
-                # ),
+                Prefetch(
+                    'partner_referent__organization',
+                    queryset=Organization.objects.order_by('name').select_related('partner')
+                ),
                 # Prefetch(
                 #     'partnershiprelation',
                 #     queryset=Organization.objects.order_by('name').select_related('partner')
