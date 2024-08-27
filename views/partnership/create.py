@@ -11,12 +11,14 @@ from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
 from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation
 from partnership.views.mixins import NotifyAdminMailMixin
-from partnership.views.partnership.mixins import PartnershipFormMixin
+from osis_role.contrib.views import PermissionRequiredMixin
 
 __all__ = [
     'PartnershipCreateView',
     'PartnershipTypeChooseView',
 ]
+
+from partnership.views.partnership.mixins import PartnershipFormMixin
 
 
 class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
@@ -109,18 +111,22 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         return super().post(request, *args, **kwargs)
 
 
-class PartnershipPartnerRelationUpdateView(View):
+class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
     template_name = 'partnerships/includes/partnership_relation_form.html'
     success_url = 'partnerships:detail'
+    login_url = 'access_denied'
+    permission_required = 'partnership.change_partnership'
 
     def get_queryset(self):
         partnership_pk = self.kwargs.get('pk')
         self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
-        return PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+        return PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related('entity__organization')
+
+
 
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        formset = PartnershipPartnerRelationFormSet(queryset=queryset)
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset, initial=[{'entity':queryset.values('entity__organization__name')}])
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
     @transaction.atomic
@@ -137,13 +143,13 @@ class PartnershipPartnerRelationUpdateView(View):
             messages.error(self.request, _('partnership_error'))
 
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
-    # todo: verification distinct selectMultipleChoice ;
-    # todo : instance partner encodé avec ses valeurs lors de l'edit
+    # todo: verification distinct selectMultipleChoice ; ok
+    # todo : instance partner encodé avec ses valeurs lors de l'edit ; ok
     # todo: message error si pas succes ; OK
     # todo:transaction atomique ; OK
     # todo: Message formulaire (template) ; OK
     # todo: Text des titres (traduction fr-en);  OK
-    # todo: empecher le  page back (retour en arrière de page)
+    # todo: empecher le  page back (retour en arrière de page) ok
     # todo: ajouter les détail d'information  : /partnerships/id/ (prefect dans view read)
     # todo: redicrection après formulaire vers : /partnerships/id/ ; OK
 
