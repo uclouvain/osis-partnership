@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Func, OuterRef, Q
 from django.forms import modelformset_factory
+from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
@@ -348,21 +349,28 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
 
 
 class PartnershipPartnerRelationForm(forms.ModelForm):
-    partners = forms.ModelChoiceField(
-        label=_('Partner entités'),
-        required=True,
-        queryset=EntityProxy.objects.partner_entities(),
-        widget=autocomplete.ModelSelect2(
-            url='partnerships:autocomplete:complement',
-            forward=['partnership'],
-        ),
-    )
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
+                 label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, renderer=None):
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+                         use_required_attribute, renderer)
+
+        print(self.instance)
+
+    # partners = forms.ModelChoiceField(
+    #     label=_('Partner entités'),
+    #     required=True,
+    #     queryset=EntityProxy.objects.partner_entities(),
+    #     widget=autocomplete.ModelSelect2(
+    #         url='partnerships:autocomplete:complement',
+    #         forward=['partnership'],
+    #     ),
+    # )
+    #
 
     class Meta:
         model = PartnershipPartnerRelation
         fields = [
-            # 'entity',
-            'partners',
+            # 'partners',
             'diploma_with_ucl_by_partner',
             'diploma_prod_by_partner',
             'supplement_prod_by_partner',
