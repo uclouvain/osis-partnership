@@ -367,7 +367,7 @@ class PartnershipUpdateViewTest(TestCase):
         data['ucl_entity'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
-        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
+        self.assertFormError(response.context['form'], 'ucl_entity', invalid_choice)
 
     def test_post_invalid_levels(self):
         self.client.force_login(self.user_adri)
@@ -375,7 +375,7 @@ class PartnershipUpdateViewTest(TestCase):
         data['year-education_levels'] = []
         response = self.client.post(self.url, data=data)
         msg = _('education_levels_empty_errors')
-        self.assertFormError(response, 'form_year', 'education_levels', msg)
+        self.assertFormError(response.context['form_year'], 'education_levels', msg)
 
     def test_post_invalid_years(self):
         self.client.force_login(self.user_adri)
@@ -384,11 +384,11 @@ class PartnershipUpdateViewTest(TestCase):
         data['year-start_academic_year'] = self.end_academic_year.pk
         response = self.client.post(self.url, data=data)
         msg = _('start_date_after_end_date')
-        self.assertFormError(response, 'form_year', 'start_academic_year', msg)
+        self.assertFormError(response.context['form_year'], 'start_academic_year', msg)
         msg = _('start_date_after_from_date')
-        self.assertFormError(response, 'form_year', 'start_academic_year', msg)
+        self.assertFormError(response.context['form_year'], 'start_academic_year', msg)
         msg = _('from_date_after_end_date')
-        self.assertFormError(response, 'form_year', 'from_academic_year', msg)
+        self.assertFormError(response.context['form_year'], 'from_academic_year', msg)
 
     def test_post_invalid_partner(self):
         self.client.force_login(self.user_adri)
@@ -400,7 +400,7 @@ class PartnershipUpdateViewTest(TestCase):
         data['partner_entities'] = [entity.pk]
         response = self.client.post(self.url, data=data)
         msg = _('partnership_inactif_partner_error')
-        self.assertFormError(response, 'form', 'partner_entities', msg)
+        self.assertFormError(response.context['form'], 'partner_entities', msg)
 
     def test_post_invalid_ucl_university_labo(self):
         self.client.force_login(self.user_adri)
@@ -408,7 +408,7 @@ class PartnershipUpdateViewTest(TestCase):
         data['ucl_entity'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
-        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
+        self.assertFormError(response.context['form'], 'ucl_entity', invalid_choice)
 
     def test_post_post_end_date(self):
         self.client.force_login(self.user_adri)
