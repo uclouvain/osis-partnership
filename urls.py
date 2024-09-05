@@ -2,7 +2,7 @@ from django.urls import include, path, re_path, register_converter
 
 from .converters import PartnershipTypeConverter, FundingModelConverter
 from .views import *
-from .views.autocomplete.partner import PartnerEntityReferenceAutocompleteView, PartnershipPartnerRelationCompleteView
+from .views.autocomplete.partner import PartnerEntityReferenceAutocompleteView
 from .views.partnership.create import PartnershipPartnerRelationUpdateView
 
 # from .views.partnership.create import PartnershipComplementCreateView
@@ -83,7 +83,7 @@ urlpatterns = [
     path('autocomplete/', include(([
         path('person/', PersonAutocompleteView.as_view(), name='person'),
         path('partnership/', PartnershipAutocompleteView.as_view(), name='partnership'),
-        path('partner-complement/', PartnershipPartnerRelationCompleteView.as_view(), name="complement"),
+        # path('partner-complement/', PartnershipPartnerRelationCompleteView.as_view(), name="complement"),
         path('partner-entity/', PartnerEntityAutocompleteView.as_view(), name='partner_entity'),
         path('reference-partner-entity/', PartnerEntityReferenceAutocompleteView.as_view(), name='reference_partner_entity'),
         path('faculty_entity/', FacultyEntityAutocompleteView.as_view(), name='faculty_entity'),

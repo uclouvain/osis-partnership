@@ -25,6 +25,7 @@ __all__ = [
     'PartnershipProjectForm',
 ]
 
+
 class PartnershipBaseForm(forms.ModelForm):
     partner_entities = forms.ModelMultipleChoiceField(
         label=_('partner'),
@@ -260,9 +261,9 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 
 class PartnershipCourseForm(PartnershipBaseForm):
-    ucl_reference =  forms.ChoiceField(
+    ucl_reference = forms.ChoiceField(
         label=_('ucl_reference'),
-        choices=[('True', 'Oui'), ('False', 'Non')],)
+        choices=[('True', 'Oui'), ('False', 'Non')], )
 
     partner_referent = forms.ModelChoiceField(
         label=_('partner_referent'),
@@ -271,7 +272,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         widget=autocomplete.ModelSelect2(
             url='partnerships:autocomplete:reference_partner_entity',
             forward=['partner_entities', 'ucl_reference'],
-            attrs = {"disabled": "disabled" }
+            attrs={"disabled": "disabled"}
         ),
     )
 
@@ -336,6 +337,7 @@ class PartnershipDoctorateForm(PartnershipBaseForm):
         self.fields['subtype'].label = _('partnership_subtype_doctorate')
         self.fields['subtype'].label_from_instance = lambda o: o.label
 
+
 class PartnershipProjectForm(PartnershipWithDatesMixin):
     class Meta(PartnershipWithDatesMixin.Meta):
         fields = PartnershipWithDatesMixin.Meta.fields + (
@@ -347,25 +349,11 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
         )
 
 
-
 class PartnershipPartnerRelationForm(forms.ModelForm):
     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
                  label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, renderer=None):
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
                          use_required_attribute, renderer)
-
-        print(self.instance)
-
-    # partners = forms.ModelChoiceField(
-    #     label=_('Partner entités'),
-    #     required=True,
-    #     queryset=EntityProxy.objects.partner_entities(),
-    #     widget=autocomplete.ModelSelect2(
-    #         url='partnerships:autocomplete:complement',
-    #         forward=['partnership'],
-    #     ),
-    # )
-    #
 
     class Meta:
         model = PartnershipPartnerRelation
