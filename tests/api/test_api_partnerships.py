@@ -30,7 +30,7 @@ from reference.models.continent import Continent
 from reference.tests.factories.country import CountryFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
-PARTNERSHIP_COUNT = 6
+PARTNERSHIP_COUNT = 7
 
 
 class PartnershipApiViewTest(TestCase):
