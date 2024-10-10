@@ -383,10 +383,11 @@ class PartnershipUpdateViewTest(TestCase):
         data['year-end_academic_year'] = self.start_academic_year.pk
         data['year-start_academic_year'] = self.end_academic_year.pk
         response = self.client.post(self.url, data=data)
-        msg = _('start_date_after_end_date')
-        self.assertFormError(response.context['form_year'], 'start_academic_year', msg)
-        msg = _('start_date_after_from_date')
-        self.assertFormError(response.context['form_year'], 'start_academic_year', msg)
+        self.assertFormError(
+            response.context['form_year'],
+            'start_academic_year',
+            [_('start_date_after_end_date'), _('start_date_after_from_date')]
+        )
         msg = _('from_date_after_end_date')
         self.assertFormError(response.context['form_year'], 'from_academic_year', msg)
 
