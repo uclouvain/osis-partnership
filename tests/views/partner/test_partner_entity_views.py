@@ -322,11 +322,11 @@ class PartnerEntityDeleteViewTest(TestCase):
 
     def test_get_as_ajax(self):
         self.client.force_login(self.user_adri)
-        response = self.client.get(self.url, data={}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(self.url, data={}, headers={"x-requested-with": 'XMLHttpRequest'})
         self.assertTemplateUsed(response, 'partnerships/partners/entities/includes/partner_entity_delete.html')
         self.assertTemplateNotUsed(response, 'partnerships/partners/entities/partner_entity_delete.html')
 
     def test_post_as_ajax(self):
         self.client.force_login(self.user_adri)
-        response = self.client.post(self.url, data={}, HTTP_X_REQUESTED_WITH='XMLHttpRequest', follow=True)
+        response = self.client.post(self.url, data={}, headers={"x-requested-with": 'XMLHttpRequest'}, follow=True)
         self.assertEqual(response.status_code, 200)

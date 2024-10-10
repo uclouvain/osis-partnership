@@ -17,6 +17,7 @@ class TypeField(forms.CheckboxSelectMultiple):
         return super().format_value(value)
 
 
+@admin.register(PartnershipEntityManager)
 class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     list_display = ('person', 'entity', 'scopes')
     search_fields = ['person__first_name', 'person__last_name', 'entity__entityversion__acronym']
@@ -26,10 +27,12 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     }
 
 
+@admin.register(PartnershipViewer)
 class PartnershipViewerAdmin(RoleModelAdmin):
     raw_id_fields = ('person',)
 
 
+@admin.register(PartnerEntity)
 class PartnerEntityAdmin(admin.ModelAdmin):
     model = PartnerEntity
     raw_id_fields = (
@@ -39,6 +42,7 @@ class PartnerEntityAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
     search_fields = (
         'organization__name',
@@ -108,6 +112,7 @@ class PartnershipPartnerRelationInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(Partnership)
 class PartnershipAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'ucl_entity',
@@ -140,33 +145,39 @@ class ValueAdmin(admin.ModelAdmin):
         return {}
 
 
+@admin.register(Financing)
 class FinancingAdmin(admin.ModelAdmin):
     list_display = ('type', 'academic_year')
     search_fields = ('type__name', 'countries__name',)
     list_filter = ('type__name', 'academic_year')
 
 
+@admin.register(FundingType)
 class FundingTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'program')
     search_fields = ('name',)
     list_filter = ('program__name', 'program__source__name')
 
 
+@admin.register(FundingProgram)
 class FundingProgramAdmin(admin.ModelAdmin):
     list_display = ('name', 'source')
     search_fields = ('name',)
     list_filter = ('source__name',)
 
 
+@admin.register(FundingSource)
 class FundingSourceAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
     list_filter = ('visibility', 'is_visible_in_portal')
 
 
+@admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     search_fields = ('last_name', 'first_name', 'email')
 
@@ -175,6 +186,7 @@ class AddressAdmin(admin.ModelAdmin):
     raw_id_fields = ('country',)
 
 
+@admin.register(PartnershipYear)
 class PartnershipYearAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'partnership',
@@ -196,6 +208,7 @@ class PartnershipTypeListFilter(admin.SimpleListFilter):
             return queryset.filter(types__contains=[self.value()])
 
 
+@admin.register(PartnershipMission)
 class PartnershipMissionAdmin(admin.ModelAdmin):
     list_display = ('code', 'label', 'type_values')
     formfield_overrides = {
@@ -203,12 +216,14 @@ class PartnershipMissionAdmin(admin.ModelAdmin):
     }
     list_filter = (PartnershipTypeListFilter, )
 
+    @admin.display(
+        description=_('partnership_type')
+    )
     def type_values(self, obj):
         return ", ".join(str(PartnershipType.get_value(k)) for k in obj.types)
 
-    type_values.short_description = _('partnership_type')
 
-
+@admin.register(PartnershipSubtype)
 class PartnershipSubtypeAdmin(OrderedModelAdmin, PartnershipMissionAdmin):
     list_display = PartnershipMissionAdmin.list_display + (
         'is_active',
@@ -220,6 +235,7 @@ class PartnershipSubtypeAdmin(OrderedModelAdmin, PartnershipMissionAdmin):
     ordering = ('order', )
 
 
+@admin.register(UCLManagementEntity)
 class UCLManagementEntityAdmin(admin.ModelAdmin):
     raw_id_fields = (
         'entity',
@@ -230,23 +246,8 @@ class UCLManagementEntityAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(PartnershipEntityManager, PartnershipEntityManagerAdmin)
-admin.site.register(PartnershipViewer, PartnershipViewerAdmin)
 admin.site.register(PartnerTag)
-admin.site.register(Partner, PartnerAdmin)
-admin.site.register(PartnerEntity, PartnerEntityAdmin)
 admin.site.register(PartnershipTag)
 admin.site.register(PartnershipYearEducationLevel)
-admin.site.register(Partnership, PartnershipAdmin)
-admin.site.register(Financing, FinancingAdmin)
-admin.site.register(FundingType, FundingTypeAdmin)
-admin.site.register(FundingProgram, FundingProgramAdmin)
-admin.site.register(FundingSource, FundingSourceAdmin)
-admin.site.register(Media, MediaAdmin)
 admin.site.register(ContactType)
 admin.site.register(MediaType)
-admin.site.register(Contact, ContactAdmin)
-admin.site.register(UCLManagementEntity, UCLManagementEntityAdmin)
-admin.site.register(PartnershipYear, PartnershipYearAdmin)
-admin.site.register(PartnershipMission, PartnershipMissionAdmin)
-admin.site.register(PartnershipSubtype, PartnershipSubtypeAdmin)

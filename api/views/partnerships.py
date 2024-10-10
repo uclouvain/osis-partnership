@@ -15,7 +15,6 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from base.models.academic_year import AcademicYear
-from base.models.organization import Organization
 from partnership.models import (
     EntityProxy,
     AgreementStatus,
@@ -246,7 +245,7 @@ def partnership_get_export_url(request):  # pragma: no cover
     return JsonResponse({
         'url': '{scheme}://{host}{path}'.format(
             scheme=request.scheme,
-            host=request.META["HTTP_HOST"],
+            host=request.headers["host"],
             path=url + '?' + request.GET.urlencode()
         ),
     })
