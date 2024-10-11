@@ -1,5 +1,4 @@
 import uuid
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Max, Min, Prefetch
@@ -9,7 +8,6 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
-
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import (

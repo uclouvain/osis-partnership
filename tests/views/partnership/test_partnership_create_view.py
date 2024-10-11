@@ -18,10 +18,11 @@ from partnership.tests.factories import (
     PartnershipYearEducationLevelFactory,
     UCLManagementEntityFactory,
 )
+
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
 
-class PartnershipCreateViewTest(TestCase):
+class PartnershipMobilityCreateViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -223,3 +224,121 @@ class PartnershipCreateViewTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(str(self.user_gs), mail.outbox[0].body)
         mail.outbox = []
+#
+#
+# class PartnershipCourseComplementCreateViewTest(TestCase):
+#
+#     @classmethod
+#     def setUpTestData(cls):
+#         cls.user = UserFactory()
+#         cls.user_qopa = UserFactory()
+#         cls.user_gs = UserFactory()
+#         cls.user_gf = UserFactory()
+#         cls.user_other_gf = UserFactory()
+#         cls.user_2_types = UserFactory()
+#
+#         root = EntityVersionFactory(parent=None, entity_type='').entity
+#         entity_version = EntityVersionFactory(acronym='QOPA', parent=root)
+#         PartnershipEntityManagerFactory(
+#             entity=entity_version.entity,
+#             person__user=cls.user_qopa,
+#         )
+#         PartnershipEntityManagerFactory(
+#             entity=entity_version.entity,
+#             person__user=cls.user_2_types,
+#             scopes=[PartnershipType.COURSE.name, PartnershipType.GENERAL.name]
+#         )
+#
+#         cls.partner = PartnerFactory()
+#         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
+#         cls.partner_entity_2 = PartnerEntityFactory(partner=cls.partner)
+#
+#         cls.start_academic_year = AcademicYearFactory(year=2150)
+#         cls.end_academic_year = AcademicYearFactory(year=2151)
+#         AcademicYearFactory.produce_in_future(quantity=3)
+#
+#         cls.education_field = DomainIscedFactory()
+#         cls.education_level = PartnershipYearEducationLevelFactory()
+#
+#         cls.course_url = reverse(
+#             'partnerships:complement',
+#             kwargs={'pk': 1},
+#         )
+#
+#         # Ucl
+#         sector = EntityVersionFactory(
+#             parent=root,
+#             entity_type=SECTOR,
+#         ).entity
+#
+#         cls.ucl_university = EntityVersionFactory(
+#             parent=sector,
+#             entity_type=FACULTY,
+#         ).entity
+#         cls.ucl_university_labo = EntityVersionFactory(
+#             parent=cls.ucl_university,
+#         ).entity
+#         UCLManagementEntityFactory(entity=cls.ucl_university)
+#         UCLManagementEntityFactory()
+#
+#         cls.ucl_university_not_choice = EntityVersionFactory(
+#             entity_type=FACULTY,
+#         ).entity
+#         cls.ucl_university_labo_not_choice = EntityVersionFactory(
+#             parent=cls.ucl_university_not_choice,
+#         ).entity
+#         cls.university_offer = EducationGroupYearFactory(administration_entity=cls.ucl_university_labo)
+#
+#         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)
+#         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
+#         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
+#         PartnershipEntityManagerFactory(person__user=cls.user_2_types, entity=cls.ucl_university)
+#
+#         cls.data = {
+#             'partnership_type': PartnershipType.COURSE.name,
+#             'comment': '',
+#             # 'partner': cls.partner.pk,
+#             'partner_entities': [cls.partner_entity.entity_id, cls.partner_entity_2.entity_id],
+#             'supervisor': '',
+#             'ucl_entity': cls.ucl_university.pk,
+#
+#         }
+#
+#     def test_get_view_anonymous(self):
+#         response = self.client.get(self.course_url, follow=True)
+#         self.assertTemplateNotUsed(response, 'partnerships/includes/partnership_relation_form.html')
+#         self.assertTemplateUsed(response, 'access_denied.html')
+#
+#     def test_get_view_authenticated(self):
+#         self.client.force_login(self.user)
+#         response = self.client.get(self.course_url, follow=True)
+#         self.assertTemplateNotUsed(response, 'partnerships/includes/partnership_relation_form.html')
+#         self.assertTemplateUsed(response, 'access_denied.html')
+#
+#     def test_get_view_as_qopa(self):
+#         self.client.force_login(self.user_qopa)
+#         response = self.client.get(self.course_url, follow=True)
+#         self.assertTemplateUsed(response, 'partnerships/includes/partnership_relation_form.html')
+#
+#     def test_get_view_as_(self):
+#         self.client.force_login(self.user_2_types)
+#         response = self.client.get(self.course_url, follow=True)
+#         self.assertTemplateUsed(response, 'partnerships/includes/partnership_relation_form.html')
+#
+#     def test_get_view_as_gf(self):
+#         self.client.force_login(self.user_gf)
+#         response = self.client.get(self.course_url, follow=True)
+#         self.assertTemplateNotUsed(response, 'partnerships/partnership/type_choose.html')
+#         self.assertTemplateUsed(response, 'partnerships/includes/partnership_relation_form.html')
+#         self.assertNotIn('is_public', response.context_data['form'].fields)
+
+    # def test_get_view_as_gs(self):
+    #     self.client.force_login(self.user_gs)
+    #     response = self.client.get(self.course_url, follow=True)
+    #     self.assertTemplateNotUsed(response, 'partnerships/partnership/type_choose.html')
+    #     self.assertTemplateUsed(response, 'partnerships/includes/partnership_relation_form.html')
+    #
+    # def test_get_choose_view(self):
+    #     self.client.force_login(self.user_2_types)
+    #     response = self.client.get(self.course_url)
+    #     self.assertTemplateUsed(response, 'partnerships/includes/partnership_relation_form.html')
