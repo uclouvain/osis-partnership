@@ -120,29 +120,34 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
 
-    # def get_queryset(self):
-    #     partnership_pk = self.kwargs.get('pk')
-    #     self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
-    #     return PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
-    #         'entity__organization')
+    def get_partnership(self):
+        partnership_pk = self.kwargs.get('pk')
+        self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
+        return self.partnership
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        formset = PartnershipPartnerRelationFormSet(queryset=queryset,
-                                                    initial=[{'entity': queryset.values('entity__organization__name')}])
+        self.get_partnership()
+
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related('entity__organization')
+
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset, initial=[{'entity': obj['entity__organization__name']} for obj in queryset.values('entity__organization__name')])
+
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        self.get_partnership()
+
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+
         formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
+
         if formset.is_valid():
             instances = formset.save(commit=False)
             for instance in instances:
                 instance.partnership = self.partnership
                 instance.save()
-            return redirect(reverse_lazy('partnerships:detail', kwargs={'pk': self.partnership.id}))
+            return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
         else:
             messages.error(self.request, _('partnership_error'))
-
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
