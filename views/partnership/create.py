@@ -115,7 +115,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
 
 class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
-    template_name = 'partnerships/includes/partnership_relation_form.html'
+    template_name = 'partnerships/partnership/partnership_relation_update.html'
     success_url = 'partnerships:detail'
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
