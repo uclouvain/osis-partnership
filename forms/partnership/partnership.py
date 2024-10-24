@@ -1,4 +1,5 @@
 from dal import autocomplete
+from dal_select2.widgets import Select2Multiple, Select2, ModelSelect2
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Func, OuterRef, Q
@@ -358,7 +359,6 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
     class Meta:
         model = PartnershipPartnerRelation
         fields = [
-            # 'partners',
             'diploma_with_ucl_by_partner',
             'diploma_prod_by_partner',
             'supplement_prod_by_partner',
@@ -366,10 +366,10 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
         ]
 
         widgets = {
-            # 'entity': forms.Select,
+            'diploma_with_ucl_by_partner': ModelSelect2(),
+            'supplement_prod_by_partner': ModelSelect2(),
             'partnership': forms.HiddenInput,
         }
-
 
 PartnershipPartnerRelationFormSet = modelformset_factory(
     PartnershipPartnerRelation,

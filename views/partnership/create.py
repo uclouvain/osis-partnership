@@ -102,11 +102,9 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             self.notify_admin_mail(title, 'partnership_creation.html', {
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
-            return redirect(partnership)
 
         if (self.partnership_type == "COURSE"):
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
-
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
@@ -128,9 +126,12 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         self.get_partnership()
 
-        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related('entity__organization')
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
+            'entity__organization')
 
-        formset = PartnershipPartnerRelationFormSet(queryset=queryset, initial=[{'entity': obj['entity__organization__name']} for obj in queryset.values('entity__organization__name')])
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset,
+                                                    initial=[{'entity': obj['entity__organization__name']} for obj in
+                                                             queryset.values('entity__organization__name')])
 
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
