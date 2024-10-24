@@ -16,7 +16,7 @@ class PartnershipContactDeleteView(PartnershipContactMixin, DeleteView):
             return 'partnerships/contacts/includes/contact_delete_form.html'
         return self.template_name
 
-    def delete(self, request, *args, **kwargs):
-        response = super().delete(request, *args, **kwargs)
-        messages.success(request, _("contact_delete_success"))
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _("contact_delete_success"))
         return response

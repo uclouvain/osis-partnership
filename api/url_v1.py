@@ -1,9 +1,10 @@
-from django.conf.urls import include
 from django.urls import path, re_path
 
 from .views.configuration import ConfigurationView
-from .views.partners import PartnersApiListView, InternshipPartnerListApiView, InternshipPartnerDetailApiView, \
-    DeclareOrganizationAsInternshipPartnerApiView
+from .views.partners import (
+    PartnersApiListView, InternshipPartnerListApiView, InternshipPartnerDetailApiView,
+    DeclareOrganizationAsInternshipPartnerApiView,
+)
 from .views.partnerships import (
     PartnershipsApiExportView,
     PartnershipsApiListView,

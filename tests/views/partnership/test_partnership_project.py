@@ -212,7 +212,7 @@ class PartnershipUpdateProjectViewTest(TestCase):
             self.partner_entity_2.entity_id,
         ]
         response = self.client.post(self.url, data=data, follow=True)
-        self.assertFormError(response, 'form', 'project_acronym', _('required'))
+        self.assertFormError(response.context['form'], 'project_acronym', _('required'))
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_detail.html')
 
     def test_multilateral(self):

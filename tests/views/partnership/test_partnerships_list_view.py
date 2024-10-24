@@ -331,24 +331,24 @@ class PartnershipsListViewTest(TestCase):
     def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(12):
-            self.client.get(self.url, HTTP_ACCEPT='application/json')
+            self.client.get(self.url, headers={"accept": 'application/json'})
 
     def test_get_list_ordering(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=partner', HTTP_ACCEPT='application/json')
+        response = self.client.get(self.url + '?ordering=partner', headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(results[0]['uuid'], str(self.partnership_first_name.uuid))
 
     def test_get_list_ordering_country(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=country', HTTP_ACCEPT='application/json')
+        response = self.client.get(self.url + '?ordering=country', headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(results[0]['uuid'], str(self.partnership_city.uuid))
         self.assertEqual(results[1]['uuid'], str(self.partnership_partner.uuid))
 
     def test_get_list_ordering_ucl(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.url + '?ordering=ucl', HTTP_ACCEPT='application/json')
+        response = self.client.get(self.url + '?ordering=ucl', headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
         self.assertEqual(results[1]['uuid'], str(self.partnership_ucl_university_labo.uuid))
@@ -359,7 +359,7 @@ class PartnershipsListViewTest(TestCase):
             'ucl_entity': self.ucl_university.pk,
             'ucl_entity_with_child': True,
             'ordering': 'ucl',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
@@ -368,7 +368,7 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url, {
             'ucl_entity': self.ucl_university.pk,
             'ucl_entity_with_child': False,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university.uuid))
@@ -377,7 +377,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'ucl_entity': self.ucl_university_labo.pk
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_ucl_university_labo.uuid))
@@ -386,7 +386,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'university_offer': self.university_offer.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         json = response.json()
         uuids = [o['uuid'] for o in json['object_list']]
         self.assertIn(str(self.partnership_university_offer.uuid), uuids)
@@ -397,7 +397,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'partner_entity': self.partner_entity.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partner_entity.uuid))
@@ -406,7 +406,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'use_egracons': True
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_use_egracons.uuid))
@@ -415,7 +415,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'partner_type': RESEARCH_CENTER,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partner_type.uuid))
@@ -424,7 +424,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'city': 'Berat',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_city.uuid))
@@ -433,7 +433,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'country': self.country.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_country.uuid))
@@ -442,7 +442,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'continent': self.continent.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_continent.uuid))
@@ -451,7 +451,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'partner_tags': self.partner_tag.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partner_tags.uuid))
@@ -460,7 +460,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'education_field': self.education_field.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_education_field.uuid))
@@ -469,7 +469,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'education_level': self.education_level.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_education_level.uuid))
@@ -478,7 +478,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'is_sms': True,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_is_sms.uuid))
@@ -487,7 +487,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'is_smp': True,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_is_smp.uuid))
@@ -496,7 +496,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'is_sta': True,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_is_sta.uuid))
@@ -505,7 +505,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'is_stt': True,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_is_stt.uuid))
@@ -514,7 +514,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'partnership_type': PartnershipType.GENERAL.name,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
@@ -523,7 +523,7 @@ class PartnershipsListViewTest(TestCase):
 
         response = self.client.get(self.url, {
             'partnership_type': PartnershipType.COURSE.name,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_course.uuid))
@@ -533,7 +533,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'tags': self.tag.pk,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_tag.uuid))
@@ -542,7 +542,7 @@ class PartnershipsListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, {
             'comment': 'foo',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_comment.uuid))
@@ -552,7 +552,7 @@ class PartnershipsListViewTest(TestCase):
         academic_year = self.partnership_partnership_in.agreements.first().start_academic_year_id
         response = self.client.get(self.url, {
             'partnership_in': academic_year,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_in.uuid))
@@ -562,7 +562,7 @@ class PartnershipsListViewTest(TestCase):
         academic_year = self.partnership_partnership_ending_in.agreements.first().end_academic_year_id
         response = self.client.get(self.url, {
             'partnership_ending_in': academic_year,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_ending_in.uuid))
@@ -572,7 +572,7 @@ class PartnershipsListViewTest(TestCase):
         academic_year = self.partnership_partnership_valid_in.agreements.first().start_academic_year_id
         response = self.client.get(self.url, {
             'partnership_valid_in': academic_year,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_valid_in.uuid))
@@ -583,7 +583,7 @@ class PartnershipsListViewTest(TestCase):
         academic_year = self.partnership_partnership_not_valid_in.agreements.first().start_academic_year_id
         response = self.client.get(self.url, {
             'partnership_not_valid_in': academic_year,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_not_valid_in.uuid))
@@ -594,7 +594,7 @@ class PartnershipsListViewTest(TestCase):
         academic_year = self.partnership_partnership_no_agreement_in.years.first().academic_year_id
         response = self.client.get(self.url, {
             'partnership_with_no_agreements_in': academic_year,
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_partnership_no_agreement_in.uuid))
@@ -625,7 +625,7 @@ class PartnershipsListViewTest(TestCase):
             'partnership_date_type': DateFilterType.ONGOING.name,
             'partnership_date_from': '25/10/2160',
             'partnership_date_to': '25/10/2160',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
@@ -633,7 +633,7 @@ class PartnershipsListViewTest(TestCase):
         response = self.client.get(self.url, {
             'partnership_date_type': DateFilterType.ONGOING.name,
             'partnership_date_from': '25/10/2160',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
@@ -644,7 +644,7 @@ class PartnershipsListViewTest(TestCase):
             'partnership_date_type': DateFilterType.STOPPING.name,
             'partnership_date_from': '25/06/2020',
             'partnership_date_to': '05/07/2020',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0]['uuid'], str(self.partnership_general.uuid))
@@ -675,7 +675,7 @@ class PartnershipsListViewTest(TestCase):
             'partnership_valid_in': AcademicYear.objects.get(year=2127).pk,
             'partnership_not_valid_in': AcademicYear.objects.get(year=2126).pk,
         }
-        response = self.client.get(self.url, data, HTTP_ACCEPT='application/json')
+        response = self.client.get(self.url, data, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_all_filters.uuid))
