@@ -109,8 +109,8 @@
                 <tbody>
                 <tr>
                     <td>UCLouvain</td>
-                    <td>{{ partnership.ucl_reference|yesno }}</td>
-                    <td>{{ partnership.diploma_prod_by_ucl|yesno }}
+                    <td>{{ partnership.ucl_reference|yesno:"Oui;Non" }}</td>
+                    <td>{{ partnership.diploma_prod_by_ucl|yesno:"Oui;Non" }}
                         {{ partnership.get_diploma_by_ucl_display |default_if_none:""}}</td>
                     <td>{{ partnership.get_supplement_prod_by_ucl_display |default_if_none:"-"}}</td>
                 </tr>
@@ -120,7 +120,7 @@
                         <td>
                             {% if not partnership.ucl_reference and  item_partner.entity == partnership.partner_referent %}
                                 oui{% else %}non{% endif %}</td>
-                        <td>{{ item_partner.diploma_prod_by_partner|yesno }}
+                        <td>{{ item_partner.diploma_prod_by_partner|yesno:"Oui;Non" }}
                             {{ item_partner.get_diploma_with_ucl_by_partner_display |default_if_none:""}}</td>
                         <td>{{ item_partner.get_supplement_prod_by_partner_display |default_if_none:"-" }}</td>
                     </tr>
