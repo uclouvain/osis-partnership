@@ -103,7 +103,7 @@ class PartnershipCreateCourseViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertEqual(response.status_code, 200)
-        # self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
 
 class PartnershipUpdateCourseViewTest(TestCase):
