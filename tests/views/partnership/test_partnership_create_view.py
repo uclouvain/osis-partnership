@@ -293,7 +293,6 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_2_types, entity=cls.ucl_university)
-
         cls.data = {
             'partnership_type': PartnershipType.COURSE.name,
             'comment': '',
