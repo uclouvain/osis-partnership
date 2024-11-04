@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
@@ -34,6 +35,9 @@ class PartnershipCreateCourseViewTest(TestCase):
             person__user=cls.user,
             scopes=[PartnershipType.COURSE.name, PartnershipType.GENERAL.name]
         )
+        a = Permission.objects.get(codename='change_partnership')
+        cls.user.user_permissions.set([a.pk])
+
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
@@ -95,6 +99,7 @@ class PartnershipCreateCourseViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post(self):
+        #todo : ici
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertEqual(response.status_code, 200)

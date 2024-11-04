@@ -18,7 +18,7 @@ __all__ = [
     'PartnershipTypeChooseView',
 ]
 
-from partnership.views.partnership.mixins import PartnershipFormMixin
+from partnership.views.partnership.mixins import PartnershipFormMixin, PartnershipRelatedMixin
 
 
 class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
@@ -112,20 +112,17 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         return super().post(request, *args, **kwargs)
 
 
-class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
+class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin, View):
     template_name = 'partnerships/partnership/partnership_relation_update.html'
     success_url = 'partnerships:detail'
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
 
-    def get_partnership(self):
-        partnership_pk = self.kwargs.get('pk')
-        self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
-        return self.partnership
+    def dispatch(self, request, *args, **kwargs):
+        kwargs["partnership_pk"] = kwargs.get("pk")
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        self.get_partnership()
-
         queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
             'entity__organization')
 
@@ -137,7 +134,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        self.get_partnership()
+        # self.get_partnership()
 
         queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
 

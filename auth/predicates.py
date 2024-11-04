@@ -17,6 +17,21 @@ def is_agreement_waiting(user, agreement):
     from partnership.models import AgreementStatus
     return agreement.status == AgreementStatus.WAITING.name
 
+@rules.predicate(bind=True)
+def is_qopa(self, user):
+    from .roles.partnership_manager import PartnershipEntityManager
+    if self.context:
+        qs = self.context['role_qs']
+    else:
+        qs = PartnershipEntityManager.objects.filter(
+            person=getattr(user, 'person', None)
+        )
+    return qs.filter(
+        Q(entity__entityversion__end_date__gte=date.today())
+        | Q(entity__entityversion__end_date__isnull=True),
+        entity__entityversion__start_date__lte=date.today(),
+        entity__entityversion__acronym='QOPA',
+    ).exists()
 
 @rules.predicate(bind=True)
 def is_linked_to_adri_entity(self, user):
@@ -110,6 +125,11 @@ def partnership_allowed_for_user_scope(self, user, partnership):
 @rules.predicate(bind=True)
 def has_mobility_scope(self, user):
     return any(PartnershipType.MOBILITY.name in role_row.scopes
+               for role_row in self.context['role_qs'])
+
+@rules.predicate(bind=True)
+def has_course_scope(self, user):
+    return any(PartnershipType.COURSE.name in role_row.scopes
                for role_row in self.context['role_qs'])
 
 

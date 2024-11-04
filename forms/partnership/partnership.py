@@ -264,7 +264,7 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 class PartnershipCourseForm(PartnershipBaseForm):
     ucl_reference = forms.ChoiceField(
         label=_('ucl_reference'),
-        choices=[('True', 'Oui'), ('False', 'Non')], )
+        choices=[(True, 'Oui'), (False, 'Non')], )
 
     partner_referent = forms.ModelChoiceField(
         label=_('partner_referent'),
@@ -279,12 +279,12 @@ class PartnershipCourseForm(PartnershipBaseForm):
 
     all_student = forms.ChoiceField(
         label=_('all_student'),
-        choices=[('True', 'Oui'), ('False', 'Non')],
+        choices=[(True, 'Oui'), (False, 'Non')],
     )
 
     diploma_prod_by_ucl = forms.ChoiceField(
         label=_('diploma_prod_by_ucl'),
-        choices=[('True', 'Oui'), ('False', 'Non')],
+        choices=[(True, 'Oui'), (False, 'Non')],
     )
 
     diploma_by_ucl = forms.ChoiceField(

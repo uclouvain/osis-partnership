@@ -36,6 +36,7 @@ class PartnershipEntityManager(EntityRoleModel):
         can_change_agreement = (
                 is_linked_to_adri_entity
                 | (is_agreement_waiting & is_faculty_manager_for_agreement)
+                | is_qopa
         )
         return RuleSet({
             # Partnership
@@ -44,7 +45,7 @@ class PartnershipEntityManager(EntityRoleModel):
                 (is_linked_to_adri_entity | is_faculty_manager)
                 & partnership_type_allowed_for_user_scope,
             'partnership.change_partnership':
-                (is_linked_to_adri_entity | is_faculty_manager_for_partnership)
+                (is_linked_to_adri_entity | is_faculty_manager_for_partnership |is_qopa)
                 & partnership_allowed_for_user_scope,
             'partnership.delete_partnership':
                 (is_linked_to_adri_entity & partnership_allowed_for_user_scope
@@ -58,11 +59,11 @@ class PartnershipEntityManager(EntityRoleModel):
 
             # UCLManagementEntity
             'partnership.view_uclmanagemententity':
-                (is_linked_to_adri_entity | is_faculty_manager) & has_mobility_scope,
+                (is_linked_to_adri_entity | is_faculty_manager | is_qopa) & (has_mobility_scope|has_course_scope),
             'partnership.add_uclmanagemententity':
-                is_linked_to_adri_entity & has_mobility_scope,
+                (is_linked_to_adri_entity | is_qopa) & (has_mobility_scope|has_course_scope),
             'partnership.change_uclmanagemententity':
-                (is_linked_to_adri_entity | is_faculty_manager_for_ume) & has_mobility_scope,
+                (is_linked_to_adri_entity | is_faculty_manager_for_ume |is_qopa) & (has_mobility_scope|has_course_scope),
             'partnership.delete_uclmanagemententity':
                 (is_linked_to_adri_entity & ~ume_has_partnerships) & has_mobility_scope,
 
