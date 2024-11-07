@@ -25,6 +25,11 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
         ArrayField: {'widget': TypeField(choices=PartnershipType.choices())}
     }
 
+    def _build_model_from_csv_row(self, csv_row: Dict):
+        partnership_manager = super()._build_model_from_csv_row(csv_row)
+        partnership_manager.scopes = csv_row.get('SCOPES', 'ALL').split("|")
+        return partnership_manager
+
 
 class PartnershipViewerAdmin(RoleModelAdmin):
     raw_id_fields = ('person',)
