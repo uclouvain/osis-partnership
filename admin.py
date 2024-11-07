@@ -1,3 +1,5 @@
+from typing import Dict
+
 from django import forms
 from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
