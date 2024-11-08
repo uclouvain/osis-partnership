@@ -19,23 +19,6 @@ def is_agreement_waiting(user, agreement):
 
 
 @rules.predicate(bind=True)
-def is_qopa(self, user):
-    from .roles.partnership_manager import PartnershipEntityManager
-    if self.context:
-        qs = self.context['role_qs']
-    else:
-        qs = PartnershipEntityManager.objects.filter(
-            person=getattr(user, 'person', None)
-        )
-    return qs.filter(
-        Q(entity__entityversion__end_date__gte=date.today())
-        | Q(entity__entityversion__end_date__isnull=True),
-        entity__entityversion__start_date__lte=date.today(),
-        entity__entityversion__acronym='QOPA',
-    ).exists()
-
-
-@rules.predicate(bind=True)
 def is_linked_to_adri_entity(self, user):
     from .roles.partnership_manager import PartnershipEntityManager
     if self.context:
