@@ -1117,7 +1117,7 @@ msgid "partnership_supervisor_from_entity_management"
 msgstr "Partnership supervisor"
 
 msgid "partnership_supplement"
-msgstr "Production supplement"
+msgstr "Supplement production"
 
 msgid "partnership_type"
 msgstr "Partnership type"
