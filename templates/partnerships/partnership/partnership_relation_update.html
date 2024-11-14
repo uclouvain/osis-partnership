@@ -33,10 +33,26 @@
                 {% csrf_token %}
                 {{ formset.management_form }}
                 {% for form in formset %}
-                    <h5>{% trans 'partner' %} {{ form.instance.entity.organization.name }}</h5>
+                    <h5>{% trans 'partner' %} : {{ form.instance.entity.organization.name }}</h5>
                     <hr>
                     <div>
-                        {{ form.as_p }}
+                    <div>
+                        <div class="row">
+                            <div class="col-12">
+                                {% bootstrap_field form.diploma_with_ucl_by_partner %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {% bootstrap_field form.diploma_prod_by_partner %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {% bootstrap_field form.supplement_prod_by_partner %}
+                            </div>
+                        </div>
+
                     </div>
                 {% endfor %}
                 <button class="btn btn-primary" type="submit">Enregistrer</button>

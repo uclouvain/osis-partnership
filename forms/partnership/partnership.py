@@ -371,6 +371,13 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
             'partnership': forms.HiddenInput,
         }
 
+        labels = {
+            'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
+            'diploma_prod_by_partner': _('diploma_prod_by_partner'),
+            'supplement_prod_by_partner': _('supplement_prod_by_partner'),
+            'partnership': _('partnership'),
+        }
+
 PartnershipPartnerRelationFormSet = modelformset_factory(
     PartnershipPartnerRelation,
     form=PartnershipPartnerRelationForm,
