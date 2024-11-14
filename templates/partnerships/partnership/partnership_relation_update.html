@@ -33,7 +33,7 @@
                 {% csrf_token %}
                 {{ formset.management_form }}
                 {% for form in formset %}
-                    <h5>Partner : {{ form.instance.entity.organization.name }}</h5>
+                    <h5>{% trans 'partner' %} {{ form.instance.entity.organization.name }}</h5>
                     <hr>
                     <div>
                         {{ form.as_p }}

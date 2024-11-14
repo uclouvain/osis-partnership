@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+msgid "all_student"
+msgstr "For all students"
+
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -63,6 +66,12 @@ msgstr ""
 
 msgid "Coverage"
 msgstr ""
+
+msgid "diploma_by_ucl"
+msgstr "Diploma UCLouvain"
+
+msgid "diploma_prod_by_ucl"
+msgstr "Diploma produced by UCLouvain"
 
 msgid "EU-wide network"
 msgstr ""
@@ -586,6 +595,12 @@ msgstr "Delete mobility management entity"
 msgid "description"
 msgstr "Description"
 
+msgid "diploma_with_ucl_by_partner"
+msgstr "Diploma with ucl by partner"
+
+msgid "diploma_prod_by_partner"
+msgstr "Diploma produced by the partner"
+
 msgid "during (all or part of) the period from"
 msgstr ""
 
@@ -1065,6 +1080,12 @@ msgstr "Partnership not valid in"
 msgid "partnership_project_acronym"
 msgstr "Multilateral partnership acronym or abbreviation"
 
+msgid "partner_referent"
+msgstr "Referent partner"
+
+msgid "partnership_diploma_ucl"
+msgstr "Production of the UCLouvain diploma"
+
 msgid "partnership_start_date"
 msgstr "Start date"
 
@@ -1094,6 +1115,9 @@ msgstr "Partnership supervisor"
 
 msgid "partnership_supervisor_from_entity_management"
 msgstr "Partnership supervisor"
+
+msgid "partnership_supplement"
+msgstr "Production supplement"
 
 msgid "partnership_type"
 msgstr "Partnership type"
@@ -1218,6 +1242,12 @@ msgstr ""
 
 msgid "society"
 msgstr "Society"
+
+msgid "supplement_prod_by_ucl"
+msgstr "Diploma supplement produced by UCLouvain"
+
+msgid "supplement_prod_by_partner"
+msgstr "Supplement produced by the partner"
 
 msgid "start_academic_year"
 msgstr "Start academic year"

@@ -658,6 +658,12 @@ msgstr "Supprimer l'entité de gestion mobilité"
 msgid "description"
 msgstr "Description"
 
+msgid "diploma_with_ucl_by_partner"
+msgstr "Diplôme avec ucl par le partenaire"
+
+msgid "diploma_prod_by_partner"
+msgstr "Diplôme produit par le partenaire"
+
 msgid "during (all or part of) the period from"
 msgstr "pendant (toute ou partie) de la période du"
 
@@ -1257,8 +1263,8 @@ msgstr "Institution référente"
 msgid "partnership_diploma_ucl"
 msgstr "Production du diplôme UCLouvain"
 
-msgid "partnership_annexe"
-msgstr "Production d'annexe"
+msgid "partnership_supplement"
+msgstr "Production supplément"
 
 msgid "diploma_prod_by_ucl"
 msgstr "Diplôme produit par UCLouvain"
@@ -1271,6 +1277,9 @@ msgstr "Parntenaire référent"
 
 msgid "supplement_prod_by_ucl"
 msgstr "Supplément diplôme produit par UCLouvain"
+
+msgid "supplement_prod_by_partner"
+msgstr "Supplément produit par le partenaire"
 
 msgid "ucl_reference"
 msgstr "UCLouvain référente"

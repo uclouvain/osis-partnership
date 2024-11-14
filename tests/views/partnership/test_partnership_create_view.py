@@ -227,18 +227,16 @@ class PartnershipMobilityCreateViewTest(TestCase):
 
 
 class PartnershipCourseComplementCreateViewTest(TestCase):
-    #todo: ici
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.user_qopa = UserFactory()
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
         cls.user_2_types = UserFactory()
 
         root = EntityVersionFactory(parent=None, entity_type='').entity
-        entity_version = EntityVersionFactory(acronym='QOPA', parent=root)
+        entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
             person__user=cls.user_qopa,
