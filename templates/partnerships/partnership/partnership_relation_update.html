@@ -37,22 +37,7 @@
                     <hr>
                     <div>
                     <div>
-                        <div class="row">
-                            <div class="col-12">
-                                {% bootstrap_field form.diploma_with_ucl_by_partner %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                {% bootstrap_field form.diploma_prod_by_partner %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                {% bootstrap_field form.supplement_prod_by_partner %}
-                            </div>
-                        </div>
-
+                        {{ form.as_p }}
                     </div>
                 {% endfor %}
                 <button class="btn btn-primary" type="submit">Enregistrer</button>
