@@ -1,3 +1,4 @@
+import freezegun
 from django.test import TestCase
 
 from base.tests.factories.academic_year import (
@@ -7,6 +8,7 @@ from base.tests.factories.academic_year import (
 from partnership.forms import PartnershipConfigurationForm
 
 
+@freezegun.freeze_time('2024-01-30')
 class ConfigurationFormTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):

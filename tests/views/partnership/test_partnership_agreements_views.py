@@ -95,7 +95,7 @@ class PartnershipAgreementsListViewTest(TestCase):
     def test_num_queries_serializer(self):
         self.client.force_login(self.user)
         with self.assertNumQueriesLessThan(10):
-            self.client.get(self.url, HTTP_ACCEPT='application/json')
+            self.client.get(self.url, headers={"accept": 'application/json'})
 
     def test_get_list_adri(self):
         self.client.force_login(self.user_adri)
@@ -108,7 +108,7 @@ class PartnershipAgreementsListViewTest(TestCase):
             'partnership_date_type': DateFilterType.ONGOING.name,
             'partnership_date_from': '25/06/2024',
             'partnership_date_to': '05/07/2026',
-        }, HTTP_ACCEPT='application/json')
+        }, headers={"accept": 'application/json'})
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
 

@@ -1,5 +1,6 @@
 from datetime import date
 
+import freezegun
 from django.contrib.gis.geos import Point
 from django.test import tag
 from django.urls import reverse
@@ -33,6 +34,7 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 PARTNERSHIP_COUNT = 6
 
 
+@freezegun.freeze_time('2024-10-24')
 class PartnershipApiViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
