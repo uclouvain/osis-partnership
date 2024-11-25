@@ -82,4 +82,4 @@ class FinancingListViewTest(TestCase):
             self.client.get(self.default_url)
 
         with self.assertNumQueriesLessThan(12):
-            self.client.get(self.default_url, HTTP_ACCEPT='application/json')
+            self.client.get(self.default_url, headers={"accept": 'application/json'})
