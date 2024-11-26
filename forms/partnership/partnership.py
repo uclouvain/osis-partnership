@@ -284,11 +284,11 @@ class PartnershipCourseForm(PartnershipBaseForm):
 
     diploma_prod_by_ucl = forms.ChoiceField(
         label=_('diploma_prod_by_ucl'),
-        choices=[(True, 'Oui'), (False, 'Non')],
+        # choices=[(True, 'Oui'), (False, 'Non')],
     )
 
     diploma_by_ucl = forms.ChoiceField(
-        label=_('diploma_by_ucl'),
+        label=_('type_diploma_by_ucl'),
         choices=PartnershipDiplomaWithUCL.choices,
     )
 
@@ -359,8 +359,8 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
     class Meta:
         model = PartnershipPartnerRelation
         fields = [
-            'diploma_with_ucl_by_partner',
             'diploma_prod_by_partner',
+            'diploma_with_ucl_by_partner',
             'supplement_prod_by_partner',
             'partnership'
         ]
@@ -372,8 +372,8 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
         }
 
         labels = {
-            'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
             'diploma_prod_by_partner': _('diploma_prod_by_partner'),
+            'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
             'supplement_prod_by_partner': _('supplement_prod_by_partner'),
             'partnership': _('partnership'),
         }

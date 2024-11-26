@@ -659,7 +659,7 @@ msgid "description"
 msgstr "Description"
 
 msgid "diploma_with_ucl_by_partner"
-msgstr "Diplôme avec ucl par le partenaire"
+msgstr "Type de diplôme"
 
 msgid "diploma_prod_by_partner"
 msgstr "Diplôme produit par le partenaire"
@@ -1404,6 +1404,9 @@ msgstr "Pour synchroniser avec EPC"
 msgctxt "partnership"
 msgid "type"
 msgstr "Type"
+
+msgid "type_diploma_by_ucl"
+msgstr "Type de diplome"
 
 msgid "ucl"
 msgstr "UCLouvain"

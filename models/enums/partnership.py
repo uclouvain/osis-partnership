@@ -20,9 +20,10 @@ class PartnershipType(ChoiceEnum):
         ]
 
 class PartnershipDiplomaWithUCL(ChoiceEnum):
-    UNIQUE = _('Partenaire unique')
-    SEPARED = _('Partenaire séparé')
+    UNIQUE = _('Unique')
+    SEPARED = _('Séparé')
     NO_CODIPLOMA = _('Non co-diplômant')
+    SHARED = _('Partagé')
 
 
 class PartnershipProductionSupplement(ChoiceEnum):

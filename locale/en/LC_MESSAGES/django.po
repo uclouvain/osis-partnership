@@ -299,6 +299,9 @@ msgstr ""
 msgid "Partnerships"
 msgstr "Partnerships"
 
+msgid "partnership_referente"
+msgstr "Reference institution"
+
 #, python-format
 msgid "Per country in %(academic_year)s"
 msgstr ""
@@ -596,7 +599,7 @@ msgid "description"
 msgstr "Description"
 
 msgid "diploma_with_ucl_by_partner"
-msgstr "Diploma with ucl by partner"
+msgstr "Type of diploma"
 
 msgid "diploma_prod_by_partner"
 msgstr "Diploma produced by the partner"
@@ -1317,8 +1320,14 @@ msgctxt "partnership"
 msgid "type"
 msgstr "Type"
 
+msgid "type_diploma_by_ucl"
+msgstr "Type of diploma"
+
 msgid "ucl"
 msgstr "UCLouvain"
+
+msgid "ucl_reference"
+msgstr "UCLouvain referent"
 
 msgid "ucl_entity"
 msgstr "UCLouvain entity"
