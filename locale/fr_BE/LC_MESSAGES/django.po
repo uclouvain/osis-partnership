@@ -1266,6 +1266,9 @@ msgstr "Production du diplôme UCLouvain"
 msgid "partnership_supplement"
 msgstr "Production supplément"
 
+msgid "partnership_diploma"
+msgstr "Production diplome"
+
 msgid "diploma_prod_by_ucl"
 msgstr "Diplôme produit par UCLouvain"
 
@@ -1304,6 +1307,12 @@ msgstr "Code postal"
 
 msgid "required"
 msgstr "Obligatoire"
+
+msgid "required"
+msgstr "Obligatoire"
+
+msgid "referent"
+msgstr "Référent"
 
 msgid "reset_search_fields"
 msgstr "Supprimer tous les filtres"

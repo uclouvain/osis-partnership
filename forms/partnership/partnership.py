@@ -366,8 +366,8 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
         ]
 
         widgets = {
-            'diploma_with_ucl_by_partner': ModelSelect2(),
             'supplement_prod_by_partner': ModelSelect2(),
+            'diploma_with_ucl_by_partner': ModelSelect2(),
             'partnership': forms.HiddenInput,
         }
 

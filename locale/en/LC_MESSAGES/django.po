@@ -1089,6 +1089,9 @@ msgstr "Referent partner"
 msgid "partnership_diploma_ucl"
 msgstr "Production of the UCLouvain diploma"
 
+msgid "partnership_diploma"
+msgstr "Production diploma"
+
 msgid "partnership_start_date"
 msgstr "Start date"
 
@@ -1121,6 +1124,9 @@ msgstr "Partnership supervisor"
 
 msgid "partnership_supplement"
 msgstr "Supplement production"
+
+msgid "referent"
+msgstr "Referent"
 
 msgid "partnership_type"
 msgstr "Partnership type"
