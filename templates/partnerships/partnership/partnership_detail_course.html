@@ -101,17 +101,18 @@
                 <thead>
                 <tr>
                     <th>{% trans "Partner" %}</th>
-                    <th>{% trans "Référent" %}</th>
-                    <th>{% trans "Production diplome" %}</th>
-                    <th>{% trans "Production annexe" %}</th>
+                    <th>{% trans "referent" %}</th>
+                    <th>{% trans "partnership_diploma" %}</th>
+                    <th>{% trans "diploma_with_ucl_by_partner" %}</th>
+                    <th>{% trans "partnership_supplement" %}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>UCLouvain</td>
-                    <td>{% if partnership.ucl_reference == True %}Oui{% else %}Non{% endif %}</td>
-                    <td>{% if partnership.diploma_prod_by_ucl == True %}Oui /{% else %}Non /{% endif %}
-                        {{ partnership.get_diploma_by_ucl_display|default_if_none:""}}</td>
+                    <td>{% if partnership.ucl_reference == True %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
+                    <td>{% if partnership.diploma_prod_by_ucl == True %}{% trans 'Yes' %} /{% else %}{% trans 'No' %}{% endif %}</td>
+                    <td>{{ partnership.get_diploma_by_ucl_display|default_if_none:""}}</td>
                     <td>{{ partnership.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
                 </tr>
                 {% for item_partner in partnership.partnershiprelation.all %}
@@ -120,8 +121,8 @@
                         <td>
                             {% if not partnership.ucl_reference and  item_partner.entity == partnership.partner_referent %}
                                 Oui{% else %}Non{% endif %}</td>
-                        <td>{% if item_partner.diploma_prod_by_partner%}Oui /{% else %}Non /{% endif %}
-                            {{ item_partner.get_diploma_with_ucl_by_partner_display |default_if_none:""}}</td>
+                        <td>{% if item_partner.diploma_prod_by_partner%}{% trans 'Yes' %} /{% else %}{% trans 'No' %} /{% endif %}</td>
+                        <td>{{ item_partner.get_diploma_with_ucl_by_partner_display |default_if_none:""}}</td>
                         <td>{{ item_partner.get_supplement_prod_by_partner_display |default_if_none:"-" }}</td>
                     </tr>
                 {% endfor %}
