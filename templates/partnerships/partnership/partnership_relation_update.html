@@ -37,7 +37,8 @@
                     <hr>
                     <div>
                     <div>
-                        {{ form.as_p }}
+                    {% bootstrap_form form %}
+{#                        {{ form.as_p }}#}
                     </div>
                 {% endfor %}
                 <button class="btn btn-primary" type="submit">Enregistrer</button>
