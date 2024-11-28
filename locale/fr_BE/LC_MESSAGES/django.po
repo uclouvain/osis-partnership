@@ -1308,9 +1308,6 @@ msgstr "Code postal"
 msgid "required"
 msgstr "Obligatoire"
 
-msgid "required"
-msgstr "Obligatoire"
-
 msgid "referent"
 msgstr "Référent"
 
