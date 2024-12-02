@@ -1412,7 +1412,7 @@ msgid "type"
 msgstr "Type"
 
 msgid "type_diploma_by_ucl"
-msgstr "Type de diplome"
+msgstr "Type de diplôme"
 
 msgid "ucl"
 msgstr "UCLouvain"

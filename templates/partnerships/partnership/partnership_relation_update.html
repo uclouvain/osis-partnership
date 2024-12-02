@@ -36,12 +36,11 @@
                     <h5>{% trans 'partner' %} : {{ form.instance.entity.organization.name }}</h5>
                     <hr>
                     <div>
-                    <div>
                     {% bootstrap_form form %}
 {#                        {{ form.as_p }}#}
                     </div>
                 {% endfor %}
-                <button class="btn btn-primary" type="submit">Enregistrer</button>
+                <button class="btn btn-primary" type="submit">{% trans 'save' %}</button>
             </form>
         </div>
     </div>

@@ -279,12 +279,14 @@ class PartnershipCourseForm(PartnershipBaseForm):
 
     all_student = forms.BooleanField(
         label=_('all_student'),
+        required=False,
         # widget= forms.CheckboxSelectMultiple(),
         # choices=[(True, 'Oui'), (False, 'Non')],
     )
 
     diploma_prod_by_ucl = forms.BooleanField(
         label=_('diploma_prod_by_ucl'),
+        required=False,
         # widget=forms.CheckboxSelectMultiple(),
         # choices=[(True, 'Oui'), (False, 'Non')],
     )
