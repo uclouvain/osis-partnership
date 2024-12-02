@@ -327,12 +327,6 @@ msgstr ""
 msgid "Other"
 msgstr "Autre"
 
-msgid "Oui"
-msgstr ""
-
-msgid "Partagé"
-msgstr ""
-
 msgid "Partenariat de co-organisation de doctorat"
 msgstr "Partenariat de co-organisation de doctorat"
 

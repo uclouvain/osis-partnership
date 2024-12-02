@@ -264,7 +264,9 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 class PartnershipCourseForm(PartnershipBaseForm):
     ucl_reference = forms.ChoiceField(
         label=_('ucl_reference'),
-        choices=[(True, 'Oui'), (False, 'Non')], )
+        required=True,
+        choices=[(True, _('Oui')), (False, _('Non'))],
+        )
 
     partner_referent = forms.ModelChoiceField(
         label=_('partner_referent'),

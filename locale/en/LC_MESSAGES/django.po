@@ -246,11 +246,6 @@ msgstr ""
 msgid "National Youth Council"
 msgstr ""
 
-msgid "No"
-msgstr "No"
-
-#, fuzzy
-#| msgid "No"
 msgid "Non"
 msgstr "No"
 
@@ -269,8 +264,6 @@ msgstr "Autres"
 msgid "Oui"
 msgstr "Yes"
 
-#, fuzzy
-#| msgid "Partner"
 msgid "Partagé"
 msgstr "Shared"
 
