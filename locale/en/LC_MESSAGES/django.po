@@ -1,11 +1,3 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-msgid "all_student"
-msgstr "For all students"
-
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -66,12 +58,6 @@ msgstr ""
 
 msgid "Coverage"
 msgstr ""
-
-msgid "diploma_by_ucl"
-msgstr "Diploma UCLouvain"
-
-msgid "diploma_prod_by_ucl"
-msgstr "Diploma produced by UCLouvain"
 
 msgid "EU-wide network"
 msgstr ""
@@ -263,6 +249,14 @@ msgstr ""
 msgid "No"
 msgstr "No"
 
+#, fuzzy
+#| msgid "No"
+msgid "Non"
+msgstr "No"
+
+msgid "Non co-diplômant"
+msgstr "No co-graduate"
+
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
@@ -270,7 +264,15 @@ msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
 msgid "Other"
-msgstr ""
+msgstr "Autres"
+
+msgid "Oui"
+msgstr "Yes"
+
+#, fuzzy
+#| msgid "Partner"
+msgid "Partagé"
+msgstr "Shared"
 
 msgid "Partenariat de co-organisation de doctorat"
 msgstr ""
@@ -298,9 +300,6 @@ msgstr ""
 
 msgid "Partnerships"
 msgstr "Partnerships"
-
-msgid "partnership_referente"
-msgstr "Reference institution"
 
 #, python-format
 msgid "Per country in %(academic_year)s"
@@ -357,8 +356,14 @@ msgstr ""
 msgid "Sport league"
 msgstr ""
 
+msgid "Spar"
+msgstr ""
+
 msgid "This funding type can not be enabled as its parent is not active."
 msgstr "This funding type can not be enabled as its program is not active."
+
+msgid "Unique conjoint"
+msgstr ""
 
 msgid "Warning! This will also delete all linked objects."
 msgstr ""
@@ -416,6 +421,14 @@ msgstr "Entities"
 
 msgid "all_offers"
 msgstr "All offers"
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid "all_student"
+msgstr "For all students"
 
 msgid "april"
 msgstr "April"
@@ -598,11 +611,14 @@ msgstr "Delete mobility management entity"
 msgid "description"
 msgstr "Description"
 
-msgid "diploma_with_ucl_by_partner"
-msgstr "Type of diploma"
-
 msgid "diploma_prod_by_partner"
 msgstr "Diploma produced by the partner"
+
+msgid "diploma_prod_by_ucl"
+msgstr "Diploma produced by UCLouvain"
+
+msgid "diploma_with_ucl_by_partner"
+msgstr "Type of diploma"
 
 msgid "during (all or part of) the period from"
 msgstr ""
@@ -939,6 +955,9 @@ msgstr "Partner media successfully saved"
 msgid "partner_name"
 msgstr "Partner name"
 
+msgid "partner_referent"
+msgstr "Referent partner"
+
 msgid "partner_saved"
 msgstr "Partner successfully saved"
 
@@ -993,6 +1012,16 @@ msgstr "Agreement finishes after the partnership end."
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
+#, fuzzy
+#| msgid "partnership_subject"
+msgid "partnership_all_student"
+msgstr "Partnership subject"
+
+#, fuzzy
+#| msgid "partnership_year_entities_help_text"
+msgid "partnership_all_student_help_text"
+msgstr "If none selected, then all entities will be concerned"
+
 msgid "partnership_api_year"
 msgstr "Visible academic year for API"
 
@@ -1012,6 +1041,12 @@ msgid "partnership_creation_update_min_year"
 msgstr ""
 "Minimum academic year (included) available to faculty managers for creation "
 "or modification of a partnership"
+
+msgid "partnership_diploma"
+msgstr "Production diploma"
+
+msgid "partnership_diploma_ucl"
+msgstr "Production of the UCLouvain diploma"
 
 msgid "partnership_doctorate_years_entity"
 msgstr "Doctorate commission for domain"
@@ -1083,14 +1118,8 @@ msgstr "Partnership not valid in"
 msgid "partnership_project_acronym"
 msgstr "Multilateral partnership acronym or abbreviation"
 
-msgid "partner_referent"
-msgstr "Referent partner"
-
-msgid "partnership_diploma_ucl"
-msgstr "Production of the UCLouvain diploma"
-
-msgid "partnership_diploma"
-msgstr "Production diploma"
+msgid "partnership_referente"
+msgstr "Reference institution"
 
 msgid "partnership_start_date"
 msgstr "Start date"
@@ -1125,11 +1154,18 @@ msgstr "Partnership supervisor"
 msgid "partnership_supplement"
 msgstr "Supplement production"
 
-msgid "referent"
-msgstr "Referent"
-
 msgid "partnership_type"
 msgstr "Partnership type"
+
+#, fuzzy
+#| msgid "partnership_referente"
+msgid "partnership_ucl_reference"
+msgstr "Reference institution"
+
+#, fuzzy
+#| msgid "partnership_year_entities_help_text"
+msgid "partnership_ucl_reference_help_text"
+msgstr "If none selected, then all entities will be concerned"
 
 msgid "partnership_valid_in"
 msgstr "Partnership valid in"
@@ -1217,6 +1253,9 @@ msgstr "Portal"
 msgid "postal_code"
 msgstr "Postal code"
 
+msgid "referent"
+msgstr "Referent"
+
 msgid "required"
 msgstr "Required"
 
@@ -1225,6 +1264,9 @@ msgstr "Reset search fields"
 
 msgid "same_supervisor_than_management_entity"
 msgstr "Create mobility management entities"
+
+msgid "save"
+msgstr ""
 
 msgid "search"
 msgstr "Search"
@@ -1244,6 +1286,9 @@ msgstr "Sector"
 msgid "september"
 msgstr "September"
 
+msgid "Séparé"
+msgstr "Separate"
+
 msgid "similar_partners_possible"
 msgstr ""
 "This partner may already exists. Please check in the following list before "
@@ -1251,12 +1296,6 @@ msgstr ""
 
 msgid "society"
 msgstr "Society"
-
-msgid "supplement_prod_by_ucl"
-msgstr "Diploma supplement produced by UCLouvain"
-
-msgid "supplement_prod_by_partner"
-msgstr "Supplement produced by the partner"
 
 msgid "start_academic_year"
 msgstr "Start academic year"
@@ -1313,6 +1352,12 @@ msgstr "Submit"
 msgid "supervisor"
 msgstr "Supervisor"
 
+msgid "supplement_prod_by_partner"
+msgstr "Supplement produced by the partner"
+
+msgid "supplement_prod_by_ucl"
+msgstr "Diploma supplement produced by UCLouvain"
+
 msgid "tags"
 msgstr "Tags"
 
@@ -1331,9 +1376,6 @@ msgstr "Type of diploma"
 
 msgid "ucl"
 msgstr "UCLouvain"
-
-msgid "ucl_reference"
-msgstr "UCLouvain referent"
 
 msgid "ucl_entity"
 msgstr "UCLouvain entity"
@@ -1358,6 +1400,9 @@ msgstr "Mobility management entity contacts"
 
 msgid "ucl_management_entity_create_success"
 msgstr "Mobility management entity successfully created."
+
+msgid "ucl_reference"
+msgstr "UCLouvain referent"
 
 msgid "ucl_university"
 msgstr "UCLouvain university"
@@ -1418,3 +1463,6 @@ msgstr "Visible on the public interface"
 
 msgid "website"
 msgstr "Website"
+
+#~ msgid "diploma_by_ucl"
+#~ msgstr "Diploma UCLouvain"
