@@ -60,27 +60,27 @@ function initDataTable (storageKey, url, columnDefs, extra) {
     var type = $('#id_partnership_type')
     function collapseMobilityFields () {
         var value = type.val();
-        $('.only-mobility').toggle(value === 'MOBILITY' ? 'show' : 'hide');
+        $('.only-mobility').toggle(value === 'MOBILITY');
         if (value !== 'MOBILITY') {
             $('.only-mobility select').val('')
         }
-        $('#project-fields').toggle(value === 'PROJECT' ? 'show' : 'hide');
+        $('#project-fields').toggle(value === 'PROJECT');
         if (value !== 'PROJECT') {
             $('#project-fields select').val('')
         }
-        $('#subtype-field').toggle(['', 'MOBILITY', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        $('#subtype-field').toggle(!['', 'MOBILITY', 'PROJECT'].includes(value));
         if (['', 'MOBILITY', 'PROJECT'].includes(value)) {
             $('#subtype-field select').val('')
         }
-        $('.except-general-project').toggle(['', 'GENERAL', 'PROJECT'].includes(value) ? 'hide' : 'show');
+        $('.except-general-project').toggle(!['', 'GENERAL', 'PROJECT'].includes(value));
         if (['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.except-general-project select').val('')
         }
-        $('.special-dates-filter').toggle(['', 'GENERAL', 'PROJECT'].includes(value) ? 'show' : 'hide');
+        $('.special-dates-filter').toggle(['', 'GENERAL', 'PROJECT'].includes(value));
         if (!['', 'GENERAL', 'PROJECT'].includes(value)) {
             $('.special-dates-filter select').val('')
         }
-        $('.agreements-dates-filter').toggle(value !== 'MOBILITY' ? 'show' : 'hide');
+        $('.agreements-dates-filter').toggle(value !== 'MOBILITY');
         if (value === 'MOBILITY') {
             $('.agreements-dates-filter select').val('')
         }
