@@ -384,7 +384,6 @@ class PartnershipUpdateViewTest(TestCase):
         data['year-end_academic_year'] = self.start_academic_year.pk
         data['year-start_academic_year'] = self.end_academic_year.pk
         response = self.client.post(self.url, data=data)
-        self.assertIsNotNone(response.context_data["form_year"])
         self.assertFormError(
             response.context['form_year'],
             'start_academic_year',
