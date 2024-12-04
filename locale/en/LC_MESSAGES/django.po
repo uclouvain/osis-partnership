@@ -250,7 +250,7 @@ msgid "Non"
 msgstr "No"
 
 msgid "Non co-diplômant"
-msgstr "No co-graduate"
+msgstr "No joint diploma"
 
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
@@ -356,7 +356,7 @@ msgid "This funding type can not be enabled as its parent is not active."
 msgstr "This funding type can not be enabled as its program is not active."
 
 msgid "Unique conjoint"
-msgstr ""
+msgstr "Unique joint"
 
 msgid "Warning! This will also delete all linked objects."
 msgstr ""

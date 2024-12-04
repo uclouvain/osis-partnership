@@ -1,5 +1,6 @@
 from django.core import mail
 from django.forms import ModelChoiceField
+from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,14 +10,14 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import PartnershipType
+from partnership.models import PartnershipType, PartnershipMission, PartnershipConfiguration
 from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
     PartnershipEntityManagerFactory,
     PartnershipMissionFactory,
     PartnershipYearEducationLevelFactory,
-    UCLManagementEntityFactory,
+    UCLManagementEntityFactory, PartnershipFactory, PartnershipYearFactory,
 )
 
 from reference.tests.factories.domain_isced import DomainIscedFactory
@@ -230,55 +231,53 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
+        cls.user_adri = UserFactory()
+        entity_version = EntityVersionFactory(acronym='ADRI')
+        PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
         cls.user_gs = UserFactory()
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
-        cls.user_2_types = UserFactory()
-
-        root = EntityVersionFactory(parent=None, entity_type='').entity
-        entity_version = EntityVersionFactory(acronym='ADRI', parent=root)
+        cls.user_project = UserFactory()
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
-            person__user=cls.user_qopa,
-        )
-        PartnershipEntityManagerFactory(
-            entity=entity_version.entity,
-            person__user=cls.user_2_types,
-            scopes=[PartnershipType.COURSE.name, PartnershipType.GENERAL.name]
+            person__user=cls.user_project,
+            scopes=[PartnershipType.PROJECT.name]
         )
 
+        # Dates :
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
-        cls.partner_entity_2 = PartnerEntityFactory(partner=cls.partner)
 
+        # Years
+        cls.academic_year_2149 = AcademicYearFactory(year=2149)
         cls.start_academic_year = AcademicYearFactory(year=2150)
-        cls.end_academic_year = AcademicYearFactory(year=2151)
-        AcademicYearFactory.produce_in_future(quantity=3)
+        cls.from_academic_year = AcademicYearFactory(year=2151)
+        cls.end_academic_year = AcademicYearFactory(year=2152)
+        cls.academic_year_2153 = AcademicYearFactory(year=2153)
+
+        # Initialize config
+        PartnershipConfiguration.objects.update(
+            partnership_creation_update_min_year_id=cls.academic_year_2149.pk
+        )
 
         cls.education_field = DomainIscedFactory()
         cls.education_level = PartnershipYearEducationLevelFactory()
 
-        cls.course_url = reverse(
-            'partnerships:complement',
-            kwargs={'pk': 1},
-        )
-
         # Ucl
+        root = EntityVersionFactory(parent=None, entity_type='').entity
         sector = EntityVersionFactory(
-            parent=root,
             entity_type=SECTOR,
+            parent=root,
         ).entity
-
         cls.ucl_university = EntityVersionFactory(
             parent=sector,
             entity_type=FACULTY,
         ).entity
+        UCLManagementEntityFactory(entity=cls.ucl_university)
         cls.ucl_university_labo = EntityVersionFactory(
             parent=cls.ucl_university,
         ).entity
-        UCLManagementEntityFactory(entity=cls.ucl_university)
-        UCLManagementEntityFactory()
-
+        UCLManagementEntityFactory(entity=cls.ucl_university_labo)
         cls.ucl_university_not_choice = EntityVersionFactory(
             entity_type=FACULTY,
         ).entity
@@ -290,52 +289,76 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         PartnershipEntityManagerFactory(person__user=cls.user_gs, entity=sector)
         PartnershipEntityManagerFactory(person__user=cls.user_gf, entity=cls.ucl_university)
         PartnershipEntityManagerFactory(person__user=cls.user_other_gf, entity=cls.ucl_university)
-        PartnershipEntityManagerFactory(person__user=cls.user_2_types, entity=cls.ucl_university)
+
+        mission = PartnershipMission.objects.create(
+            label="Enseignement",
+            code='ENS',
+            types=[
+                PartnershipType.COURSE.name,
+            ],
+        )
+        cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
+        cls.partnership = PartnershipFactory(
+            partner=cls.partner,
+            partner_entity=cls.partner_entity.entity,
+            author=cls.user_gf.person,
+            years=[],
+            ucl_entity=cls.ucl_university,
+            missions=[mission],
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.start_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.from_academic_year,
+        )
+        PartnershipYearFactory(
+            partnership=cls.partnership,
+            academic_year=cls.end_academic_year,
+        )
+        cls.url = resolve_url('partnerships:complement', pk=cls.partnership.pk)
+
+        cls.other_partnership = PartnershipFactory(
+            partnership_type=PartnershipType.PROJECT.name,
+        )
+        cls.other_url = resolve_url('partnerships:complement', pk=cls.other_partnership.pk)
+
+
         cls.data = {
             'partnership_type': PartnershipType.COURSE.name,
             'comment': '',
-            # 'partner': cls.partner.pk,
-            'partner_entities': [cls.partner_entity.entity_id, cls.partner_entity_2.entity_id],
+            'partnership': cls.partnership.pk,
+            'partner_entities': [ cls.partner_entity.entity],
             'supervisor': '',
             'ucl_entity': cls.ucl_university.pk,
 
         }
 
     def test_get_view_anonymous(self):
-        response = self.client.get(self.course_url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_relation_update.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(self.course_url, follow=True)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_relation_update.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_qopa(self):
-        self.client.force_login(self.user_qopa)
-        response = self.client.get(self.course_url, follow=True)
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
     def test_get_view_as_(self):
-        self.client.force_login(self.user_2_types)
-        response = self.client.get(self.course_url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
-
-    def test_get_view_as_gf(self):
         self.client.force_login(self.user_gf)
-        response = self.client.get(self.course_url, follow=True)
-        self.assertTemplateNotUsed(response, 'partnerships/partnership/type_choose.html')
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
-        self.assertNotIn('is_public', response.context_data['form'].fields)
 
     def test_get_view_as_gs(self):
         self.client.force_login(self.user_gs)
-        response = self.client.get(self.course_url, follow=True)
-        # self.assertTemplateNotUsed(response, 'partnerships/partnership/type_choose.html')
+        response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
-    def test_get_choose_view(self):
-        self.client.force_login(self.user_2_types)
-        response = self.client.get(self.course_url)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
