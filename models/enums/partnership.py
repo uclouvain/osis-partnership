@@ -19,6 +19,7 @@ class PartnershipType(ChoiceEnum):
             PartnershipType.DOCTORATE.name,
         ]
 
+
 class PartnershipDiplomaWithUCL(ChoiceEnum):
     UNIQUE = _('Unique conjoint')
     SEPARED = _('Séparé')
@@ -30,5 +31,3 @@ class PartnershipProductionSupplement(ChoiceEnum):
     YES = _('Oui')
     NO = _('Non')
     SHARED = _('Partagé')
-
-

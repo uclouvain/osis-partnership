@@ -251,7 +251,7 @@ class Partnership(models.Model):
         null=False,
         blank=True
     )
-    diploma_by_ucl =models.CharField(
+    diploma_by_ucl = models.CharField(
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
         null=True,
@@ -378,9 +378,9 @@ class Partnership(models.Model):
                 return True
             else:
                 return (
-                    len(self.valid_agreements_dates_ranges) > 1
-                    or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
-                    or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
+                        len(self.valid_agreements_dates_ranges) > 1
+                        or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
+                        or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
                 )
         return False
 
@@ -389,9 +389,9 @@ class Partnership(models.Model):
         now = timezone.now()
         return (
             self.years
-                .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
-                .prefetch_related('education_fields', 'education_levels')
-                .first()
+            .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
+            .prefetch_related('education_fields', 'education_levels')
+            .first()
         )
 
     is_general = property(lambda self: self.partnership_type == PartnershipType.GENERAL.name)

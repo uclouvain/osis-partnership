@@ -266,7 +266,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         label=_('ucl_reference'),
         required=True,
         choices=[(True, _('Oui')), (False, _('Non'))],
-        )
+    )
 
     partner_referent = forms.ModelChoiceField(
         label=_('partner_referent'),
@@ -282,15 +282,12 @@ class PartnershipCourseForm(PartnershipBaseForm):
     all_student = forms.BooleanField(
         label=_('all_student'),
         required=False,
-        # widget= forms.CheckboxSelectMultiple(),
-        # choices=[(True, 'Oui'), (False, 'Non')],
     )
 
     diploma_prod_by_ucl = forms.BooleanField(
         label=_('diploma_prod_by_ucl'),
         required=False,
-        # widget=forms.CheckboxSelectMultiple(),
-        # choices=[(True, 'Oui'), (False, 'Non')],
+        initial=True
     )
 
     diploma_by_ucl = forms.ChoiceField(
@@ -325,6 +322,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
         self.fields['supervisor'].required = False
+        self.fields['diploma_prod_by_ucl'].initial = True
 
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
@@ -383,6 +381,7 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
             'supplement_prod_by_partner': _('supplement_prod_by_partner'),
             'partnership': _('partnership'),
         }
+
 
 PartnershipPartnerRelationFormSet = modelformset_factory(
     PartnershipPartnerRelation,
