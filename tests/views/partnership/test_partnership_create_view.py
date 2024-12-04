@@ -4,12 +4,12 @@ from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
 from base.models.enums.entity_type import FACULTY, SECTOR
 from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
+from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
 from partnership.models import PartnershipType, PartnershipMission, PartnershipConfiguration
 from partnership.tests.factories import (
     PartnerEntityFactory,
@@ -21,6 +21,7 @@ from partnership.tests.factories import (
 )
 
 from reference.tests.factories.domain_isced import DomainIscedFactory
+
 
 
 class PartnershipMobilityCreateViewTest(TestCase):
@@ -227,7 +228,9 @@ class PartnershipMobilityCreateViewTest(TestCase):
         mail.outbox = []
 
 
+
 class PartnershipCourseComplementCreateViewTest(TestCase):
+
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -325,7 +328,6 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         )
         cls.other_url = resolve_url('partnerships:complement', pk=cls.other_partnership.pk)
 
-
         cls.data = {
             'partnership_type': PartnershipType.COURSE.name,
             'comment': '',
@@ -347,7 +349,6 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_relation_update.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
-
     def test_get_view_as_(self):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
@@ -357,4 +358,50 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
+
+    def test_get_request_loads_formset(self):
+        self.client.force_login(self.user_gs)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partnerships/partnership/partnership_relation_update.html")
+        formset = response.context["formset"]
+        self.assertIsInstance(formset, PartnershipPartnerRelationFormSet)
+        self.assertEqual(formset.queryset.count(), 1)
+
+    def test_post_request_valid_formset(self):
+        self.client.force_login(self.user_gs)
+        data = {
+            "form-TOTAL_FORMS": "1",
+            "form-INITIAL_FORMS": "1",
+            "form-MIN_NUM_FORMS": "0",
+            "form-MAX_NUM_FORMS": "1000",
+            "form-0-id": self.partnership.id,
+            "form-0-diploma_prod_by_partner": False,
+            "form-0-diploma_with_ucl_by_partner": True,
+            "form-0-supplement_prod_by_partner": "",
+            "form-0-partnership": self.partnership.id,
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        # self.assertRedirects(response, reverse("partnerships:detail", kwargs={"pk": self.partnership.pk}))
+
+    def test_post_request_invalid_formset(self):
+        self.client.force_login(self.user_gs)
+        data = {
+            "form-TOTAL_FORMS": "1",
+            "form-INITIAL_FORMS": "1",
+            "form-MIN_NUM_FORMS": "0",
+            "form-MAX_NUM_FORMS": "1000",
+            "form-0-id": self.partnership.id,
+            "form-0-diploma_prod_by_partner": "",  # Valeur invalide
+            "form-0-diploma_with_ucl_by_partner": True,
+            "form-0-supplement_prod_by_partner": "",
+            "form-0-partnership": self.partnership.id,
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "partnerships/partnership/partnership_relation_update.html")
+        formset = response.context["formset"]
+        self.assertFalse(formset.is_valid())
+
 
