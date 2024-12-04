@@ -282,6 +282,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
     all_student = forms.BooleanField(
         label=_('all_student'),
         required=False,
+        initial=True
     )
 
     diploma_prod_by_ucl = forms.BooleanField(
