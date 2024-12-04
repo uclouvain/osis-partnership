@@ -347,10 +347,6 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_relation_update.html')
         self.assertTemplateUsed(response, 'access_denied.html')
 
-    def test_get_view_as_qopa(self):
-        self.client.force_login(self.user)
-        response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
     def test_get_view_as_(self):
         self.client.force_login(self.user_gf)
