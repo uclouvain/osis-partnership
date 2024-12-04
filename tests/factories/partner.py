@@ -11,7 +11,8 @@ from base.tests.factories.entity_version_address import (
     EntityVersionAddressFactory
 )
 from base.tests.factories.organization import OrganizationFactory
-from partnership.models import Partner, PartnerEntity, PartnerTag
+from partnership.models import Partner, PartnerEntity, PartnerTag, PartnershipPartnerRelation, \
+    PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 
 __all__ = [
     'PartnerFactory',

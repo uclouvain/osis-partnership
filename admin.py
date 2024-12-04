@@ -1,3 +1,5 @@
+from typing import Dict
+
 from django import forms
 from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
@@ -25,6 +27,11 @@ class PartnershipEntityManagerAdmin(EntityRoleModelAdmin):
     formfield_overrides = {
         ArrayField: {'widget': TypeField(choices=PartnershipType.choices())}
     }
+
+    def _build_model_from_csv_row(self, csv_row: Dict):
+        partnership_manager = super()._build_model_from_csv_row(csv_row)
+        partnership_manager.scopes = csv_row.get('SCOPES', 'ALL').split("|")
+        return partnership_manager
 
 
 @admin.register(PartnershipViewer)
