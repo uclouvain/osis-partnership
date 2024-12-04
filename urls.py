@@ -114,7 +114,6 @@ urlpatterns = [
     path('autocomplete/', include(([
                                        path('person/', PersonAutocompleteView.as_view(), name='person'),
                                        path('partnership/', PartnershipAutocompleteView.as_view(), name='partnership'),
-                                       # path('partner-complement/', PartnershipPartnerRelationCompleteView.as_view(), name="complement"),
                                        path('partner-entity/', PartnerEntityAutocompleteView.as_view(),
                                             name='partner_entity'),
                                        path('reference-partner-entity/',
