@@ -186,7 +186,7 @@ class PartnershipCreateViewTest(TestCase):
         data['ucl_entity'] = self.ucl_university_not_choice.pk
         response = self.client.post(self.mobility_url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
-        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
+        self.assertFormError(response.context['form'], 'ucl_entity', invalid_choice)
 
     def test_post_multiple_partners_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -196,7 +196,7 @@ class PartnershipCreateViewTest(TestCase):
             self.partner_entity_2.entity_id,
         ]
         response = self.client.post(self.mobility_url, data=data)
-        self.assertFormError(response, 'form', 'partner_entities', _('no_multilateral_for_mobility'))
+        self.assertFormError(response.context['form'], 'partner_entities', _('no_multilateral_for_mobility'))
 
     def test_post_ucl_university_labo_invalid_as_adri(self):
         self.client.force_login(self.user_adri)
@@ -204,7 +204,7 @@ class PartnershipCreateViewTest(TestCase):
         data['ucl_entity'] = self.ucl_university_labo_not_choice.pk
         response = self.client.post(self.mobility_url, data=data)
         invalid_choice = ModelChoiceField.default_error_messages['invalid_choice']
-        self.assertFormError(response, 'form', 'ucl_entity', invalid_choice)
+        self.assertFormError(response.context['form'], 'ucl_entity', invalid_choice)
 
     def test_post_post_start_date_as_gf(self):
         self.client.force_login(self.user_gf)
