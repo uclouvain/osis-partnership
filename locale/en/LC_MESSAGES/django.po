@@ -255,10 +255,6 @@ msgstr ""
 msgid "Non"
 msgstr ""
 
-# msgid "Non"
-# msgstr "No"
-# msgid "Non co-diplômant"
-# msgstr "No joint diploma"
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
@@ -422,11 +418,6 @@ msgstr "Entities"
 msgid "all_offers"
 msgstr "All offers"
 
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid "all_student"
 msgstr "For all students"
 
@@ -1278,8 +1269,6 @@ msgstr "Sector"
 msgid "september"
 msgstr "September"
 
-# msgid "Séparé"
-# msgstr "Separate"
 msgid "similar_partners_possible"
 msgstr ""
 "This partner may already exists. Please check in the following list before "
