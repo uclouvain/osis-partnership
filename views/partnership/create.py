@@ -132,10 +132,7 @@ class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin, View):
 
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
-        # self.get_partnership()
-
         queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
 
         formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)

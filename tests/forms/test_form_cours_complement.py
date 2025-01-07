@@ -7,9 +7,10 @@ from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from partnership.forms import PartnershipCourseForm
 from partnership.forms.partnership.partnership import PartnershipPartnerRelationForm, PartnershipPartnerRelationFormSet
-from partnership.models import  PartnershipDiplomaWithUCL, PartnershipProductionSupplement
+from partnership.models import PartnershipDiplomaWithUCL, PartnershipProductionSupplement, PartnershipType, \
+    PartnershipPartnerRelation
 from partnership.tests.factories import PartnershipYearEducationLevelFactory, PartnerEntityFactory, PartnerFactory, \
-    PartnershipFactory
+    PartnershipFactory, PartnershipMissionFactory, FundingTypeFactory, PartnershipSubtypeFactory
 from partnership.tests.factories.parternship_partner_relation import PartnerEntityRelationFactory
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -41,6 +42,35 @@ class TestPartnershipCourseForm(TestCase):
         cls.start_academic_year = AcademicYearFactory(year=2150)
         cls.end_academic_year = AcademicYearFactory(year=2151)
 
+        #
+        cls.subtype = PartnershipSubtypeFactory(types=[
+            PartnershipType.COURSE.name,
+        ])
+        cls.data =  {
+                'partnership_type': PartnershipType.COURSE.name,
+                'comment': '',
+                'partner': cls.partner.pk,
+                'partner_entities': [cls.partner_entity.entity_id],
+                'supervisor': PersonFactory().pk,
+                'ucl_entity': cls.ucl_university.pk,
+                'university_offers': [cls.university_offer.pk],
+                'year-education_fields': [cls.education_field.pk],
+                'year-education_levels': [cls.education_level.pk],
+                'year-entities': [],
+                'year-offers': [],
+                'year-start_academic_year': cls.start_academic_year.pk,
+                'year-end_academic_year': cls.end_academic_year.pk,
+                'year-funding_type': FundingTypeFactory().pk,
+                'missions': [3,2],
+                'subtype': '',
+                'all_student': True,
+                'ucl_reference': True,
+                'diploma_prod_by_ucl': True,
+                'diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
+                'supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
+                }
+        print(cls.subtype)
+
         cls.entity = EntityFactory()
 
     def test_partnership_course_form(self):
@@ -70,36 +100,6 @@ class TestPartnershipCourseForm(TestCase):
 
         # Not In
         self.assertNotIn("supplement_prod", form.fields)
-
-    # def test_partnership_course_form_post(self):
-    #     """Test que le formulaire valide correctement les données valides"""
-    #     data = {
-    #             'partnership_type': PartnershipType.COURSE.name,
-    #             'comment': '',
-    #             'partner': self.partner.pk,
-    #             'partner_entities': [self.partner_entity.entity_id],
-    #             'supervisor': PersonFactory().pk,
-    #             'ucl_entity': self.ucl_university.pk,
-    #             'university_offers': [self.university_offer.pk],
-    #             'year-education_fields': [self.education_field.pk],
-    #             'year-education_levels': [self.education_level.pk],
-    #             'year-entities': [],
-    #             'year-offers': [],
-    #             'year-start_academic_year': self.start_academic_year.pk,
-    #             'year-end_academic_year': self.end_academic_year.pk,
-    #             'year-funding_type': FundingTypeFactory().pk,
-    #             'missions_id': PartnershipMissionFactory().pk,
-    #             'subtype_id': PartnershipSubtypeFactory().pk,
-    #             'all_student': True,
-    #             'ucl_reference': True,
-    #             'diploma_prod_by_ucl': True,
-    #             'diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
-    #             'supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
-    #             }
-    #
-    #     form = PartnershipCourseForm(data=data, initial={"partnership_type":PartnershipType.COURSE.name})
-    #     print(form.errors)
-    #     self.assertTrue(form.is_valid())
 
 
 # Factory pour Partnership
@@ -160,32 +160,28 @@ class PartnershipPartnerRelationFormSetTests(TestCase):
         self.assertEqual(len(formset.forms), 2)
         self.assertIn('diploma_with_ucl_by_partner', formset.forms[0].fields)
 
-    # def test_formset_validation_success(self):
-    #     """Test que le formset valide correctement les données valides"""
-    #     formset_data = {
-    #         'form-TOTAL_FORMS': 1,
-    #         'form-INITIAL_FORMS': 0,
-    #         'form-0-id': self.relation.id,
-    #         'form-0-diploma_with_ucl_by_partner': 'UNIQUE',
-    #         'form-0-diploma_prod_by_partner': True,
-    #         'form-0-supplement_prod_by_partner': 'Yes',
-    #         'form-0-partnership': self.partnership,
-    #         'form-0-partnership': self.entity
-    #     }
-    #     formset = PartnershipPartnerRelationFormSet(data=formset_data)
-    #     self.assertTrue(formset.is_valid())
+    def test_formset_validation_success(self):
+        """Test que le formset valide correctement les données valides"""
+        formset_data = {
+            'form-TOTAL_FORMS': 1,
+            'form-INITIAL_FORMS': 0,
+            'form-0-id': self.relation.id,
+            'form-0-diploma_with_ucl_by_partner': 'UNIQUE',
+            'form-0-diploma_prod_by_partner': True,
+            'form-0-supplement_prod_by_partner': PartnershipProductionSupplement.YES.name,
+            'form-0-partnership': self.partnership.pk,
+        }
+        formset = PartnershipPartnerRelationFormSet(data=formset_data)
+        self.assertTrue(formset.is_valid())
 
-    # def test_formset_validation_failure(self):
-    #     """Test que le formset ne valide pas des données invalides"""
-    #     formset_data = {
-    #         'form-0-id': self.relation.id,
-    #         'form-0-diploma_with_ucl_by_partner': 'invalid_choice',
-    #         'form-0-diploma_prod_by_partner': 'not_boolean',
-    #         'form-0-supplement_prod_by_partner': 'invalid_choice',
-    #         'form-0-partnership': self.partnership.id
-    #     }
-    #     formset = PartnershipPartnerRelationFormSet(data=formset_data, queryset=PartnershipPartnerRelation.objects.all())
-    #     self.assertFalse(formset.is_valid())
-    #     self.assertIn('diploma_with_ucl_by_partner', formset.forms[0].errors)
-    #     self.assertIn('diploma_prod_by_partner', formset.forms[0].errors)
-    #     self.assertIn('supplement_prod_by_partner', formset.forms[0].errors)
+    def test_formset_validation_failure(self):
+        """Test que le formset ne valide pas des données invalides"""
+        formset_data = {
+            'form-0-id': self.relation.id,
+            'form-0-diploma_with_ucl_by_partner': 'invalid_choice',
+            'form-0-diploma_prod_by_partner': 'not_boolean',
+            'form-0-supplement_prod_by_partner': 'invalid_choice',
+            'form-0-partnership': self.partnership.id
+        }
+        formset = PartnershipPartnerRelationFormSet(data=formset_data, queryset=PartnershipPartnerRelation.objects.all())
+        self.assertFalse(formset.is_valid())

@@ -254,8 +254,8 @@ class Partnership(models.Model):
     diploma_by_ucl = models.CharField(
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
-        null=True,
-        blank=True
+        null=False,
+        default=''
     )
     diploma_prod_by_ucl = models.BooleanField(
         default=False
@@ -263,8 +263,8 @@ class Partnership(models.Model):
     supplement_prod_by_ucl = models.CharField(
         max_length=64,
         choices=PartnershipProductionSupplement.choices(),
-        null=True,
-        blank=True
+        null=False,
+        default=''
     )
 
     objects = PartnershipManager()

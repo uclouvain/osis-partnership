@@ -314,8 +314,8 @@ msgstr "Conseil national de la jeunesse"
 msgid "No"
 msgstr "Non"
 
-msgid "Non co-diplômant"
-msgstr ""
+msgid "No joint diploma"
+msgstr "Non co-diplômant"
 
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr "Organisation non gouvernementale/association/entreprise sociale"
@@ -398,6 +398,12 @@ msgid ""
 msgstr ""
 "École/Institut/Centre éducatif - Formation professionnelle (niveau tertiaire)"
 
+msgid "Separed"
+msgstr "Séparé"
+
+msgid "Shared"
+msgstr "Partagé"
+
 msgid "Small and medium sized enterprise"
 msgstr "Petite et moyenne entreprise"
 
@@ -417,14 +423,11 @@ msgstr "Fédération sportive"
 msgid "Sport league"
 msgstr "Ligue sportive"
 
-msgid "Spar"
-msgstr ""
-
 msgid "This funding type can not be enabled as its parent is not active."
 msgstr "Ce financement ne peut être activé car son programme n'est pas actif."
 
-msgid "Unique conjoint"
-msgstr ""
+msgid "Unique joint"
+msgstr "Unique conjoint"
 
 msgid "Warning! This will also delete all linked objects."
 msgstr "Attention ! Ceci supprimera également les sous-objets liés."

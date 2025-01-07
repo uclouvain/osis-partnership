@@ -246,12 +246,19 @@ msgstr ""
 msgid "National Youth Council"
 msgstr ""
 
+msgid "No"
+msgstr ""
+
+msgid "No joint diploma"
+msgstr ""
+
 msgid "Non"
-msgstr "No"
+msgstr ""
 
-msgid "Non co-diplômant"
-msgstr "No joint diploma"
-
+# msgid "Non"
+# msgstr "No"
+# msgid "Non co-diplômant"
+# msgstr "No joint diploma"
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
@@ -259,13 +266,10 @@ msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
 msgid "Other"
-msgstr "Autres"
+msgstr ""
 
 msgid "Oui"
-msgstr "Yes"
-
-msgid "Partagé"
-msgstr "Shared"
+msgstr ""
 
 msgid "Partenariat de co-organisation de doctorat"
 msgstr ""
@@ -332,6 +336,12 @@ msgid ""
 "School/Institute/Educational centre - Vocational Training (tertiary level)"
 msgstr ""
 
+msgid "Separed"
+msgstr ""
+
+msgid "Shared"
+msgstr ""
+
 msgid "Small and medium sized enterprise"
 msgstr ""
 
@@ -349,13 +359,10 @@ msgstr ""
 msgid "Sport league"
 msgstr ""
 
-msgid "Spar"
-msgstr ""
-
 msgid "This funding type can not be enabled as its parent is not active."
 msgstr "This funding type can not be enabled as its program is not active."
 
-msgid "Unique conjoint"
+msgid "Unique joint"
 msgstr "Unique joint"
 
 msgid "Warning! This will also delete all linked objects."
@@ -1005,13 +1012,9 @@ msgstr "Agreement finishes after the partnership end."
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
-#, fuzzy
-#| msgid "partnership_subject"
 msgid "partnership_all_student"
 msgstr "Partnership subject"
 
-#, fuzzy
-#| msgid "partnership_year_entities_help_text"
 msgid "partnership_all_student_help_text"
 msgstr "If none selected, then all entities will be concerned"
 
@@ -1150,13 +1153,9 @@ msgstr "Supplement production"
 msgid "partnership_type"
 msgstr "Partnership type"
 
-#, fuzzy
-#| msgid "partnership_referente"
 msgid "partnership_ucl_reference"
 msgstr "Reference institution"
 
-#, fuzzy
-#| msgid "partnership_year_entities_help_text"
 msgid "partnership_ucl_reference_help_text"
 msgstr "If none selected, then all entities will be concerned"
 
@@ -1279,9 +1278,8 @@ msgstr "Sector"
 msgid "september"
 msgstr "September"
 
-msgid "Séparé"
-msgstr "Separate"
-
+# msgid "Séparé"
+# msgstr "Separate"
 msgid "similar_partners_possible"
 msgstr ""
 "This partner may already exists. Please check in the following list before "

@@ -21,13 +21,13 @@ class PartnershipType(ChoiceEnum):
 
 
 class PartnershipDiplomaWithUCL(ChoiceEnum):
-    UNIQUE = _('Unique conjoint')
-    SEPARED = _('Séparé')
-    NO_CODIPLOMA = _('Non co-diplômant')
-    SHARED = _('Partagé')
+    UNIQUE = _('Unique joint')
+    SEPARED = _('Separed')
+    NO_CODIPLOMA = _('No joint diploma')
+    SHARED = _('Shared')
 
 
 class PartnershipProductionSupplement(ChoiceEnum):
-    YES = _('Oui')
-    NO = _('Non')
-    SHARED = _('Partagé')
+    YES = _('Yes')
+    NO = _('No')
+    SHARED = _('Shared')

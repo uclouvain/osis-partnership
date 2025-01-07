@@ -174,15 +174,12 @@ class PartnershipUpdateViewTest(TestCase):
         self.client.force_login(self.user_gf)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
-        # self.assertIn('start_academic_year', response.context_data['form_year'].fields)
-        # self.assertNotIn('is_public', response.context_data['form'].fields)
+
 
     def test_get_own_partnership_as_gs(self):
         self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
-        # self.assertIn('start_academic_year', response.context_data['form_year'].fields)
-        # self.assertNotIn('start_academic_year', response.context_data['form_year'].fields)
 
     def test_get_other_partnership_as_adri(self):
         self.client.force_login(self.user_adri)
