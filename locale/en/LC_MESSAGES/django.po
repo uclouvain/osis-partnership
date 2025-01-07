@@ -1454,6 +1454,3 @@ msgstr "Visible on the public interface"
 
 msgid "website"
 msgstr "Website"
-
-#~ msgid "diploma_by_ucl"
-#~ msgstr "Diploma UCLouvain"

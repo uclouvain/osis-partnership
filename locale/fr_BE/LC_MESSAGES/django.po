@@ -768,11 +768,11 @@ msgstr "Financement"
 msgid "financing_csv_file_invalid_extension"
 msgstr "Merci d'importer un fichier CSV."
 
-#, python-brace-format
+
 msgid "financing_url_invalid_{country}_{url}"
 msgstr "Pays {country} : URL “{url}” invalide."
 
-#, python-brace-format
+
 msgid "financing_{field}_not_imported_{value}"
 msgstr "Valeur {value} du champ {field} non importée"
 
@@ -1127,7 +1127,6 @@ msgstr "Email destinataire des notifications de créations"
 msgid "partnership_end_date"
 msgstr "Date de fin"
 
-#, python-brace-format
 msgid "partnership_end_year_updated_{partner}_{faculty}"
 msgstr ""
 "Année académique de fin modifiée pour le partenariat avec {partner} "
@@ -1176,7 +1175,6 @@ msgstr "Missions et thématique"
 msgid "partnership_missions"
 msgstr "Missions et thématique"
 
-#, python-brace-format
 msgid "partnership_multilateral_{acronym}"
 msgstr "Partenariat multilatéral ({acronym})"
 
@@ -1245,7 +1243,6 @@ msgstr ""
 "Partenariats ayant une année configurée mais pas d'accord pour cette année "
 "académique."
 
-#, python-brace-format
 msgid "partnership_with_{partner}"
 msgstr "Partenariat avec {partner}"
 
@@ -1282,7 +1279,6 @@ msgstr "Intitulé du projet"
 msgid "partnership_year_ucl_status"
 msgstr "Statut UCLouvain"
 
-#, python-brace-format
 msgid "partnership_year_{partnership}_{year}"
 msgstr "{partnership} pour l'année {year}"
 
@@ -1292,7 +1288,6 @@ msgstr "Montrer toutes les années."
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
 
-#, python-format
 msgid "partnerships_export_yearly %(year)s"
 msgstr "Données annualisées pour %(year)s"
 
@@ -1524,6 +1519,3 @@ msgstr "Visible sur l'interface publique"
 
 msgid "website"
 msgstr "Site web"
-
-#~ msgid "diploma_by_ucl"
-#~ msgstr "Diplôme UCLouvain"
