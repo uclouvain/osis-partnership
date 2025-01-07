@@ -1083,13 +1083,9 @@ msgstr "L'accord finit après le partenariat."
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
-#, fuzzy
-#| msgid "partnership_subject"
 msgid "partnership_all_student"
 msgstr "Objet du partenariat"
 
-#, fuzzy
-#| msgid "partnership_year_entities_help_text"
 msgid "partnership_all_student_help_text"
 msgstr "Si non précisé alors toutes les entités seront concernées."
 
