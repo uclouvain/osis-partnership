@@ -175,7 +175,6 @@ class PartnershipUpdateViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
 
-
     def test_get_own_partnership_as_gs(self):
         self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
