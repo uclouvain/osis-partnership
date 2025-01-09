@@ -1325,7 +1325,7 @@ msgid "same_supervisor_than_management_entity"
 msgstr "Idem répondant mobilité facultaire"
 
 msgid "save"
-msgstr ""
+msgstr "Enregistrer"
 
 msgid "search"
 msgstr "Rechercher"
