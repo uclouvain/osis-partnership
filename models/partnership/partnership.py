@@ -1,5 +1,4 @@
 import uuid
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Max, Min, Prefetch
@@ -9,12 +8,11 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
-
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import (
     AgreementStatus,
-    PartnershipType,
+    PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement,
 )
 from partnership.utils import merge_agreement_ranges
 
@@ -232,6 +230,43 @@ class Partnership(models.Model):
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
 
+    ucl_reference = models.BooleanField(
+        verbose_name=_('partnership_ucl_reference'),
+        default=True,
+        help_text=_('partnership_ucl_reference_help_text'),
+        null=False,
+        blank=True
+    )
+    partner_referent = models.ForeignKey(
+        'base.Entity',
+        related_name='partner_referent',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
+    all_student = models.BooleanField(
+        verbose_name=_('partnership_all_student'),
+        default=True,
+        help_text=_('partnership_all_student_help_text'),
+        null=False,
+        blank=True
+    )
+    diploma_by_ucl = models.CharField(
+        max_length=64,
+        choices=PartnershipDiplomaWithUCL.choices(),
+        null=False,
+        default=''
+    )
+    diploma_prod_by_ucl = models.BooleanField(
+        default=False
+    )
+    supplement_prod_by_ucl = models.CharField(
+        max_length=64,
+        choices=PartnershipProductionSupplement.choices(),
+        null=False,
+        default=''
+    )
+
     objects = PartnershipManager()
 
     class Meta:
@@ -343,9 +378,9 @@ class Partnership(models.Model):
                 return True
             else:
                 return (
-                    len(self.valid_agreements_dates_ranges) > 1
-                    or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
-                    or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
+                        len(self.valid_agreements_dates_ranges) > 1
+                        or self.valid_agreements_dates_ranges[0]['start'] > self.start_academic_year.year
+                        or self.valid_agreements_dates_ranges[0]['end'] < self.end_academic_year.year
                 )
         return False
 
@@ -354,9 +389,9 @@ class Partnership(models.Model):
         now = timezone.now()
         return (
             self.years
-                .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
-                .prefetch_related('education_fields', 'education_levels')
-                .first()
+            .filter(academic_year__start_date__lte=now, academic_year__end_date__gte=now)
+            .prefetch_related('education_fields', 'education_levels')
+            .first()
         )
 
     is_general = property(lambda self: self.partnership_type == PartnershipType.GENERAL.name)
@@ -387,3 +422,10 @@ class Partnership(models.Model):
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
+
+    def save(self, *args, **kwargs):
+        if self.ucl_reference:
+            self.partner_referent = None
+            super(Partnership, self).save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
