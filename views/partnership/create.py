@@ -103,7 +103,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
 
-        if (self.partnership_type == "COURSE"):
+        if self.partnership_type == "COURSE":
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)
 

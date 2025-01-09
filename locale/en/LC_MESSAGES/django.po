@@ -252,9 +252,6 @@ msgstr ""
 msgid "No joint diploma"
 msgstr ""
 
-msgid "Non"
-msgstr ""
-
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
@@ -262,9 +259,6 @@ msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
 msgid "Other"
-msgstr ""
-
-msgid "Oui"
 msgstr ""
 
 msgid "Partenariat de co-organisation de doctorat"
