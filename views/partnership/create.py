@@ -18,7 +18,7 @@ __all__ = [
     'PartnershipTypeChooseView',
 ]
 
-from partnership.views.partnership.mixins import PartnershipFormMixin
+from partnership.views.partnership.mixins import PartnershipFormMixin, PartnershipRelatedMixin
 
 
 class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
@@ -102,8 +102,9 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             self.notify_admin_mail(title, 'partnership_creation.html', {
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
-        if (self.partnership_type == "COURSE"):
-            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk':partnership.pk}))
+
+        if self.partnership_type == "COURSE":
+            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
@@ -111,46 +112,37 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         return super().post(request, *args, **kwargs)
 
 
-class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, View):
-    template_name = 'partnerships/includes/partnership_relation_form.html'
+class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin, View):
+    template_name = 'partnerships/partnership/partnership_relation_update.html'
     success_url = 'partnerships:detail'
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
 
-    def get_queryset(self):
-        partnership_pk = self.kwargs.get('pk')
-        self.partnership = get_object_or_404(Partnership, pk=partnership_pk)
-        return PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related('entity__organization')
-
-
+    def dispatch(self, request, *args, **kwargs):
+        kwargs["partnership_pk"] = kwargs.get("pk")
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        formset = PartnershipPartnerRelationFormSet(queryset=queryset, initial=[{'entity':queryset.values('entity__organization__name')}])
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
+            'entity__organization')
+
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset,
+                                                    initial=[{'entity': obj['entity__organization__name']} for obj in
+                                                             queryset.values('entity__organization__name')])
+
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+
         formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
+
         if formset.is_valid():
             instances = formset.save(commit=False)
             for instance in instances:
                 instance.partnership = self.partnership
                 instance.save()
-            return redirect(reverse_lazy('partnerships:detail', kwargs={'pk':self.partnership.id}))
+            return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
         else:
             messages.error(self.request, _('partnership_error'))
-
         return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
-    # todo: verification distinct selectMultipleChoice ; ok
-    # todo : instance partner encodé avec ses valeurs lors de l'edit ; ok
-    # todo: message error si pas succes ; OK
-    # todo:transaction atomique ; OK
-    # todo: Message formulaire (template) ; OK
-    # todo: Text des titres (traduction fr-en);  OK
-    # todo: empecher le  page back (retour en arrière de page) ok
-    # todo: ajouter les détail d'information  : /partnerships/id/ (prefect dans view read)
-    # todo: redicrection après formulaire vers : /partnerships/id/ ; OK
-
-

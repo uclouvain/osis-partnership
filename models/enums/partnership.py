@@ -19,15 +19,15 @@ class PartnershipType(ChoiceEnum):
             PartnershipType.DOCTORATE.name,
         ]
 
+
 class PartnershipDiplomaWithUCL(ChoiceEnum):
-    UNIQUE = _('Partenaire unique')
-    SEPARED = _('Partenaire séparé')
-    NO_CODIPLOMA = _('Non co-diplômant')
+    UNIQUE = _('Unique joint')
+    SEPARED = _('Separed')
+    NO_CODIPLOMA = _('No joint diploma')
+    SHARED = _('Shared')
 
 
 class PartnershipProductionSupplement(ChoiceEnum):
-    YES = _('Oui')
-    NO = _('Non')
-    SHARED = _('Partagé')
-
-
+    YES = _('Yes')
+    NO = _('No')
+    SHARED = _('Shared')

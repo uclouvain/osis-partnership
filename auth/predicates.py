@@ -113,6 +113,12 @@ def has_mobility_scope(self, user):
                for role_row in self.context['role_qs'])
 
 
+@rules.predicate(bind=True)
+def has_course_scope(self, user):
+    return any(PartnershipType.COURSE.name in role_row.scopes
+               for role_row in self.context['role_qs'])
+
+
 @rules.predicate
 def partnership_has_agreement(user, partnership):
     return partnership.agreements.exists()
