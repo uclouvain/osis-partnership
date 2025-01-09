@@ -58,11 +58,11 @@ class PartnershipEntityManager(EntityRoleModel):
 
             # UCLManagementEntity
             'partnership.view_uclmanagemententity':
-                (is_linked_to_adri_entity | is_faculty_manager) & has_mobility_scope,
+                (is_linked_to_adri_entity | is_faculty_manager) & (has_mobility_scope | has_course_scope),
             'partnership.add_uclmanagemententity':
-                is_linked_to_adri_entity & has_mobility_scope,
+                (is_linked_to_adri_entity) & (has_mobility_scope | has_course_scope),
             'partnership.change_uclmanagemententity':
-                (is_linked_to_adri_entity | is_faculty_manager_for_ume) & has_mobility_scope,
+                (is_linked_to_adri_entity | is_faculty_manager_for_ume) & (has_mobility_scope | has_course_scope),
             'partnership.delete_uclmanagemententity':
                 (is_linked_to_adri_entity & ~ume_has_partnerships) & has_mobility_scope,
 
