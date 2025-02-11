@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0709_alter_specificiufcinformations_registration_required'),
         ('partnership', '0010_merge_20250109_1343'),
     ]
 
