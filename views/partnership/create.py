@@ -6,10 +6,12 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, TemplateView
-from base.models.academic_year import find_academic_years
+from base.models.academic_year import find_academic_years, AcademicYear
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
-from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation
+from partnership.forms.partnership.year import PartnerRelationYearFormSet, PartnershipRelationYearWithoutDatesForm
+from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipConfiguration
+from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.views.mixins import NotifyAdminMailMixin
 from osis_role.contrib.views import PermissionRequiredMixin
 
@@ -93,6 +95,16 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             partnership_year.save()
             form_year.save_m2m()
 
+        # create partnershiprelationyear
+        if self.partnership_type == "COURSE":
+            entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
+            for entity in entities:
+                for academic_year in academic_years:
+                    PartnershipPartnerRelationYear.objects.create(
+                        partnership_relation_id=entity.pk,
+                        academic_year=academic_year
+                    )
+
         messages.success(self.request, _('partnership_success'))
         if not is_linked_to_adri_entity(self.request.user):
             title = '{} - {}'.format(
@@ -112,36 +124,72 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         return super().post(request, *args, **kwargs)
 
 
-class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin, View):
+
+class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin,PartnershipFormMixin,View):
+    model = Partnership
     template_name = 'partnerships/partnership/partnership_relation_update.html'
     success_url = 'partnerships:detail'
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
+    #todo: adapter la view > relation year n'existe pas mais partnerrelatione xiste
 
     def dispatch(self, request, *args, **kwargs):
         kwargs["partnership_pk"] = kwargs.get("pk")
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
-            'entity__organization')
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.partnership_creation_update_min_year
 
-        formset = PartnershipPartnerRelationFormSet(queryset=queryset,
-                                                    initial=[{'entity': obj['entity__organization__name']} for obj in
-                                                             queryset.values('entity__organization__name')])
+        # queryset = PartnershipPartnerRelationYear.objects.filter(
+        #     partnership_relation__partnership=self.partnership,
+        #
+        # )
 
-        return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
+        queryset = PartnershipPartnerRelationYear.objects.filter(
+            partnership_relation__partnership=self.partnership,
+            academic_year=current_academic_year
+        ).select_related(
+            'partnership_relation__entity__organization')
+
+        formset = PartnerRelationYearFormSet(queryset=queryset)
+        # form_year = PartnershipRelationYearWithoutDatesForm(Partnership.objects.get(pk=kwargs['pk']))
+
+        return render(request, self.template_name, {
+                                                    'formset':formset,
+                                                    'partnership': self.partnership})
 
     def post(self, request, *args, **kwargs):
-        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = AcademicYear.objects.get(pk=config.partnership_creation_update_min_year_id)
 
-        formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
+        queryset = PartnershipPartnerRelationYear.objects.filter(
+            partnership_relation__partnership=self.partnership,
+            academic_year=current_academic_year
+        )
+
+        formset = PartnerRelationYearFormSet(request.POST, queryset=queryset)
+
+        end_year= Partnership.objects.get(pk = self.partnership.id).end_date.year
+        academic_years = find_academic_years(start_year=current_academic_year.year, end_year=end_year)
 
         if formset.is_valid():
             instances = formset.save(commit=False)
             for instance in instances:
-                instance.partnership = self.partnership
-                instance.save()
+                relation = instance.partnership_relation
+                for year in academic_years:
+                    print(year)
+                    PartnershipPartnerRelationYear.objects.filter(
+                        partnership_relation= relation,
+                        academic_year=year.id).update(
+                        diploma_with_ucl_by_partner=instance.diploma_with_ucl_by_partner,
+                        diploma_prod_by_partner = instance.diploma_prod_by_partner,
+                        supplement_prod_by_partner = instance.supplement_prod_by_partner,
+                        partner_referent = instance.partner_referent,
+                    )
+
+                # instance.academic_year = current_academic_year
+                # instance.save()
             return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
         else:
             messages.error(self.request, _('partnership_error'))

@@ -55,7 +55,6 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                 'ucl_entity',
                 'author__user',
                 'supervisor',
-                'partner_referent',
                 'ucl_entity__uclmanagement_entity__academic_responsible',
                 'ucl_entity__uclmanagement_entity__contact_in_person',
                 'ucl_entity__uclmanagement_entity__contact_out_person',
@@ -78,10 +77,10 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                     'partner_entities__organization',
                     queryset=Organization.objects.order_by('name').select_related('partner')
                 ),
-                Prefetch(
-                    'partner_referent__organization',
-                    queryset=Organization.objects.order_by('name').select_related('partner')
-                ),
+                # Prefetch(
+                #     'partner_referent__organization',
+                #     queryset=Organization.objects.order_by('name').select_related('partner')
+                # ),
             ),
             pk=self.kwargs['pk'],
         )

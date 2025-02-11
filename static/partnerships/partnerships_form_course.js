@@ -1,6 +1,6 @@
  document.addEventListener('DOMContentLoaded', function() {
-            let uclReference = document.getElementById('id_ucl_reference');
-            let partnerReferent = document.getElementById('id_partner_referent');
+            let uclReference = document.getElementById('id_year-ucl_reference');
+            let partnerReferent = document.getElementById('id_year-partner_referent');
 
             function toggleSelects() {
                 if (uclReference.value === 'False') {

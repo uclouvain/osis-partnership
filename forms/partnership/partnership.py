@@ -26,6 +26,8 @@ __all__ = [
     'PartnershipProjectForm',
 ]
 
+from ...models.relation_year import PartnershipPartnerRelationYear
+
 
 class PartnershipBaseForm(forms.ModelForm):
     partner_entities = forms.ModelMultipleChoiceField(
@@ -262,56 +264,56 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 
 class PartnershipCourseForm(PartnershipBaseForm):
-    ucl_reference = forms.ChoiceField(
-        label=_('ucl_reference'),
-        required=True,
-        choices=[(True, _('Yes')), (False, _('No'))],
-    )
-
-    partner_referent = forms.ModelChoiceField(
-        label=_('partner_referent'),
-        required=False,
-        queryset=EntityProxy.objects.partner_entities(),
-        widget=autocomplete.ModelSelect2(
-            url='partnerships:autocomplete:reference_partner_entity',
-            forward=['partner_entities', 'ucl_reference'],
-            attrs={"disabled": "disabled"}
-        ),
-    )
-
-    all_student = forms.BooleanField(
-        label=_('all_student'),
-        required=False,
-        initial=True
-    )
-
-    diploma_prod_by_ucl = forms.BooleanField(
-        label=_('diploma_prod_by_ucl'),
-        required=False,
-        initial=True
-    )
-
-    diploma_by_ucl = forms.ChoiceField(
-        label=_('type_diploma_by_ucl'),
-        choices=PartnershipDiplomaWithUCL.choices,
-    )
-
-    supplement_prod_by_ucl = forms.ChoiceField(
-        label=_('supplement_prod_by_ucl'),
-        choices=PartnershipProductionSupplement.choices(),
-    )
+    # ucl_reference = forms.ChoiceField(
+    #     label=_('ucl_reference'),
+    #     required=True,
+    #     choices=[(True, _('Yes')), (False, _('No'))],
+    # )
+    #
+    # partner_referent = forms.ModelChoiceField(
+    #     label=_('partner_referent'),
+    #     required=False,
+    #     queryset=EntityProxy.objects.partner_entities(),
+    #     widget=autocomplete.ModelSelect2(
+    #         url='partnerships:autocomplete:reference_partner_entity',
+    #         forward=['partner_entities', 'ucl_reference'],
+    #         attrs={"disabled": "disabled"}
+    #     ),
+    # )
+    #
+    # all_student = forms.BooleanField(
+    #     label=_('all_student'),
+    #     required=False,
+    #     initial=True
+    # )
+    #
+    # diploma_prod_by_ucl = forms.BooleanField(
+    #     label=_('diploma_prod_by_ucl'),
+    #     required=False,
+    #     initial=True
+    # )
+    #
+    # diploma_by_ucl = forms.ChoiceField(
+    #     label=_('type_diploma_by_ucl'),
+    #     choices=PartnershipDiplomaWithUCL.choices,
+    # )
+    #
+    # supplement_prod_by_ucl = forms.ChoiceField(
+    #     label=_('supplement_prod_by_ucl'),
+    #     choices=PartnershipProductionSupplement.choices(),
+    # )
 
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',
             'description',
             'project_acronym',
-            'ucl_reference',
-            'partner_referent',
-            'all_student',
-            'diploma_prod_by_ucl',
-            'diploma_by_ucl',
-            'supplement_prod_by_ucl'
+            # 'ucl_reference',
+            # 'partner_referent',
+            # 'all_student',
+            # 'diploma_prod_by_ucl',
+            # 'diploma_by_ucl',
+            # 'supplement_prod_by_ucl'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,
@@ -323,7 +325,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
         self.fields['supervisor'].required = False
-        self.fields['diploma_prod_by_ucl'].initial = True
+        # self.fields['diploma_prod_by_ucl'].initial = True
 
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
@@ -363,25 +365,26 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
 
     class Meta:
         model = PartnershipPartnerRelation
-        fields = [
-            'diploma_prod_by_partner',
-            'diploma_with_ucl_by_partner',
-            'supplement_prod_by_partner',
-            'partnership'
-        ]
-
-        widgets = {
-            'supplement_prod_by_partner': ModelSelect2(),
-            'diploma_with_ucl_by_partner': ModelSelect2(),
-            'partnership': forms.HiddenInput,
-        }
-
-        labels = {
-            'diploma_prod_by_partner': _('diploma_prod_by_partner'),
-            'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
-            'supplement_prod_by_partner': _('supplement_prod_by_partner'),
-            'partnership': _('partnership'),
-        }
+        exclude = ['id']
+        # fields = [
+        #     'partner_referent',
+        #     'diploma_prod_by_partner',
+        #     'diploma_with_ucl_by_partner',
+        #     'supplement_prod_by_partner',
+        #
+        # ]
+        #
+        # widgets = {
+        #     'supplement_prod_by_partner': ModelSelect2(),
+        #     'diploma_with_ucl_by_partner': ModelSelect2(),
+        # }
+        #
+        # labels = {
+        #     'partner_referent': _('partner_referent'),
+        #     'diploma_prod_by_partner': _('diploma_prod_by_partner'),
+        #     'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
+        #     'supplement_prod_by_partner': _('supplement_prod_by_partner'),
+        # }
 
 
 PartnershipPartnerRelationFormSet = modelformset_factory(
@@ -389,3 +392,5 @@ PartnershipPartnerRelationFormSet = modelformset_factory(
     form=PartnershipPartnerRelationForm,
     extra=0
 )
+
+

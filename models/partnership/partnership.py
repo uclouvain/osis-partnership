@@ -230,43 +230,6 @@ class Partnership(models.Model):
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
 
-    ucl_reference = models.BooleanField(
-        verbose_name=_('partnership_ucl_reference'),
-        default=True,
-        help_text=_('partnership_ucl_reference_help_text'),
-        null=False,
-        blank=True
-    )
-    partner_referent = models.ForeignKey(
-        'base.Entity',
-        related_name='partner_referent',
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True
-    )
-    all_student = models.BooleanField(
-        verbose_name=_('partnership_all_student'),
-        default=True,
-        help_text=_('partnership_all_student_help_text'),
-        null=False,
-        blank=True
-    )
-    diploma_by_ucl = models.CharField(
-        max_length=64,
-        choices=PartnershipDiplomaWithUCL.choices(),
-        null=False,
-        default=''
-    )
-    diploma_prod_by_ucl = models.BooleanField(
-        default=False
-    )
-    supplement_prod_by_ucl = models.CharField(
-        max_length=64,
-        choices=PartnershipProductionSupplement.choices(),
-        null=False,
-        default=''
-    )
-
     objects = PartnershipManager()
 
     class Meta:
@@ -423,9 +386,9 @@ class Partnership(models.Model):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
 
-    def save(self, *args, **kwargs):
-        if self.ucl_reference:
-            self.partner_referent = None
-            super(Partnership, self).save(*args, **kwargs)
-        else:
-            super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.ucl_reference:
+    #         self.partner_referent = None
+    #         super(Partnership, self).save(*args, **kwargs)
+    #     else:
+    #         super().save(*args, **kwargs)

@@ -58,33 +58,33 @@
         {% bootstrap_field form.is_public %}
     </div>
     <div class="col-12">
-        {% bootstrap_field form.all_student %}
+        {% bootstrap_field form_year.all_student %}
     </div>
 </div>
 <h2>{% trans "partnership_referente" %}</h2>
 <div class="row">
     <div class="col-12">
-        {% bootstrap_field form.ucl_reference %}
+        {% bootstrap_field form_year.ucl_reference %}
     </div>
-    <div class="col-12">
-        {% bootstrap_field form.partner_referent %}
-    </div>
+{#    <div class="col-12">#}
+{#        {% bootstrap_field form_year.partner_referent %}#}
+{#    </div>#}
 </div>
 
 <h2>{% trans "partnership_diploma_ucl" %}</h2>
 <div class="row">
     <div class="col-12">
-        {% bootstrap_field form.diploma_prod_by_ucl %}
+        {% bootstrap_field form_year.diploma_prod_by_ucl %}
     </div>
     <div class="col-12">
-        {% bootstrap_field form.diploma_by_ucl %}
+        {% bootstrap_field form_year.type_diploma_by_ucl %}
     </div>
 </div>
 
 <h2>{% trans "partnership_supplement" %}</h2>
 <div class="row">
     <div class="col-12">
-        {% bootstrap_field form.supplement_prod_by_ucl %}
+        {% bootstrap_field form_year.supplement_prod_by_ucl %}
     </div>
 </div>
 

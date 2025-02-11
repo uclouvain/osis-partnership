@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from ordered_model.models import OrderedModel
 
 from base.models.entity_version import EntityVersion
-from ..enums.partnership import PartnershipType
+from ..enums.partnership import PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 
 __all__ = [
     'PartnershipMission',
@@ -92,6 +92,36 @@ class PartnershipYear(models.Model):
         related_name='years',
         null=True,
         blank=True,
+    )
+
+    ucl_reference = models.BooleanField(
+        verbose_name=_('partnership_ucl_reference'),
+        default=True,
+        help_text=_('partnership_ucl_reference_help_text'),
+        null=False,
+        blank=True
+    )
+    all_student = models.BooleanField(
+        verbose_name=_('partnership_all_student'),
+        default=True,
+        help_text=_('partnership_all_student_help_text'),
+        null=False,
+        blank=True
+    )
+    type_diploma_by_ucl = models.CharField(
+        max_length=64,
+        choices=PartnershipDiplomaWithUCL.choices(),
+        null=False,
+        default=''
+    )
+    diploma_prod_by_ucl = models.BooleanField(
+        default=False
+    )
+    supplement_prod_by_ucl = models.CharField(
+        max_length=64,
+        choices=PartnershipProductionSupplement.choices(),
+        null=False,
+        default=''
     )
 
     class Meta:
