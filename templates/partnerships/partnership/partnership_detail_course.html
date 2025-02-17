@@ -141,7 +141,7 @@
                                 {{ partner_year.partner_referent|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
                         </td>
 {#                        <td>{% if partner_year.partner_referent%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
-                        <td>{{  partner_year.get_diploma_with_ucl_by_partner_display|default_if_none:"-"}}</td>
+                        <td>{{  partner_year.get_type_diploma_by_partner_display|default_if_none:"-"}}</td>
                         <td>{% if partner_year.diploma_prod_by_partner%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
                         <td>{{  partner_year.get_supplement_prod_by_partner_display|default_if_none:"-"}}</td>
                 </tr>
