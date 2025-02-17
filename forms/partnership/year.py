@@ -327,9 +327,10 @@ class PartnershipRelationYearBaseForm(forms.ModelForm):
         model = Partnership
         fields = ('partnership_type',)
 
-    def __init__(self, partnership_type=None, *args, **kwargs):
+    def __init__(self, partnership_type="COURSE", *args, **kwargs):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
+        # self.fields['partnership_type'].required = False
         super().__init__(*args, **kwargs)
 
 class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
@@ -352,23 +353,24 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
         required=True,
     )
 
-    def __init__(self, partnership_type="COURSE", *args, **kwargs):
-        super().__init__( *args, **kwargs)
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         config = PartnershipConfiguration.get_configuration()
         current_academic_year = config.partnership_creation_update_min_year
 
+
         is_adri = True
         # is_linked_to_adri_entity(self.user)
-        if self.instance.partnership_id:
+        if self.instance:
             # Update
-            partnership = self.instance.partnership
+            partnership = self.instance
             if (current_academic_year is not None
                     and current_academic_year.year > partnership.end_academic_year.year):
                 self.fields['end_academic_year'].initial = current_academic_year
             else:
                 self.fields['end_academic_year'].initial = partnership.end_academic_year
-            if is_adri or partnership_type != PartnershipType.COURSE.name:
+            if is_adri :
                 self.fields['start_academic_year'].initial = partnership.start_academic_year
             else:
                 del self.fields['start_academic_year']
@@ -378,6 +380,12 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
             self.fields['start_academic_year'].initial = current_academic_year
             del self.fields['from_academic_year']
             self.fields['end_academic_year'].initial = current_academic_year
+
+        self.fields['start_academic_year'].disabled = True
+        self.fields['from_academic_year'].disabled = False
+        self.fields['end_academic_year'].disabled = True
+
+
 
     def clean(self):
         data = super().clean()
@@ -410,7 +418,7 @@ class PartnershipRelationYearCourseForm(forms.ModelForm):
         fields = (
             'partner_referent',
             'diploma_prod_by_partner',
-            'diploma_with_ucl_by_partner',
+            'type_diploma_by_partner',
             'supplement_prod_by_partner',
         )
 

@@ -20,7 +20,7 @@ class PartnershipPartnerRelationYear(models.Model):
         on_delete=models.PROTECT,
         related_name='+',
     )
-    diploma_with_ucl_by_partner = models.CharField(
+    type_diploma_by_partner = models.CharField(
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
         null=False,

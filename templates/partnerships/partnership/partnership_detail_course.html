@@ -2,12 +2,12 @@
 {% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
-    <dt class="col-10 float-start width-md-160 text-md-end">Destiné à tous les étudiants</dt>
-    <dd class="col-12 col-md-auto mb-2 mb-md-0">
-        <div class="row">
-            <p>{% if partnership.all_student %} Oui {% else %} Non {% endif %}</p>
-        </div>
-    </dd>
+{#    <dt class="col-10 float-start width-md-160 text-md-end">Destiné à tous les étudiants</dt>#}
+{#    <dd class="col-12 col-md-auto mb-2 mb-md-0">#}
+{#        <div class="row">#}
+{#            <p>{% if partnership.all_student %} Oui {% else %} Non {% endif %}</p>#}
+{#        </div>#}
+{#    </dd>#}
     <br>
     {% if partnership.description %}
         <dt class="col-10 float-start width-md-160 text-md-end">{% trans "partnership_year_description" %}</dt>
@@ -28,6 +28,7 @@
                 <th>{% trans "education_levels" %}</th>
                 <th>{% trans "partnership_year_entities" %}</th>
                 <th>{% trans "partnership_year_offers" %}</th>
+                <th>{% trans "all_student" %}</th>
                 <th>{% trans "is_valid" %}</th>
             </tr>
             </thead>
@@ -86,6 +87,10 @@
                     </td>
                     <td>
                         <i class="fas
+                                {{ partnership_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                    </td>
+                    <td>
+                        <i class="fas
                                 {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
                     </td>
                 </tr>
@@ -95,11 +100,12 @@
     </div>
 
     <br>
-    <div>
-        <div class="table-responsive">
+
+    <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th></th>
                     <th>{% trans "Partner" %}</th>
                     <th>{% trans "referent" %}</th>
                     <th>{% trans "partnership_diploma" %}</th>
@@ -108,27 +114,40 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>UCLouvain</td>
-                    <td>{% if partnership_year.ucl_reference == True %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
-                    <td>{% if partnership_year.diploma_prod_by_ucl == True %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
-                    <td>{{ partnership_year.get_diploma_by_ucl_display|default_if_none:""}}</td>
-                    <td>{{ partnership_year.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
+                 {% for partnership_year in partnership.years.all %}
+                 <tr  {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+                        {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}
+                 >
+                        <th>{{ partnership_year.academic_year }}</th>
+                        <td>UCLouvain</td>
+                        <td><i class="fas
+                                {{ partnership_year.ucl_reference|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                        </td>
+{#                        <td>{% if partnership_year.ucl_reference %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
+                        <td>{% if partnership_year.diploma_prod_by_ucl %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
+                        <td>{{ partnership_year.get_type_diploma_by_ucl_display|default_if_none:"-"}}</td>
+                        <td>{{ partnership_year.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
                 </tr>
-                {% for item_partner in partnership.partnershiprelation.all %}
-                    <tr>
-                        <td>{{ item_partner.entity.organization.name }}</td>
-                        <td>
-                            {% if not partnership_year.ucl_reference and  item_partner.entity == partnership_year.partner_referent %}
-                                {% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
-{#                        <td>{% if item_partner.diploma_prod_by_partner%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
-{#                        <td>{{ item_partner.get_diploma_with_ucl_by_partner_display |default_if_none:""}}</td>#}
-{#                        <td>{{ item_partner.get_supplement_prod_by_partner_display |default_if_none:"-" }}</td>#}
-                    </tr>
+                 {% endfor %}
+                {% for partnershiprel in partnership.partnershiprelation.all %}
+                    {% for partner_year in partnershiprel.partnershiprelation.all %}
+
+                <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+                        {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}
+                 >
+                        <th>{{ partner_year.academic_year }}</th>
+                        <td>{{ partnershiprel.entity.organization.name }}</td>
+                        <td><i class="fas
+                                {{ partner_year.partner_referent|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                        </td>
+{#                        <td>{% if partner_year.partner_referent%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
+                        <td>{{  partner_year.get_diploma_with_ucl_by_partner_display|default_if_none:"-"}}</td>
+                        <td>{% if partner_year.diploma_prod_by_partner%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
+                        <td>{{  partner_year.get_supplement_prod_by_partner_display|default_if_none:"-"}}</td>
+                </tr>
+                    {% endfor %}
                 {% endfor %}
                 </tbody>
             </table>
-            <br>
-            <hr>
-        </div>
+    </div>
 {% endblock %}

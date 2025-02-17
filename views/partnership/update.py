@@ -104,16 +104,6 @@ class PartnershipUpdateView(PartnershipFormMixin,
             partnership_year.save()
             form_year.save_m2m()
 
-            if self.partnership_type == "COURSE":
-                entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
-                for entity in entities:
-                    for academic_year in academic_years:
-                        object, created = PartnershipPartnerRelationYear.objects.get_or_create(
-                            partnership_relation_id=entity.pk,
-                            academic_year=academic_year
-                        )
-
-
         # Delete no longer used years
         if partnership.partnership_type in PartnershipType.with_synced_dates():
             query = Q(academic_year__year__gt=end_year)
@@ -124,8 +114,17 @@ class PartnershipUpdateView(PartnershipFormMixin,
             query |= Q(academic_year__end_date__lt=partnership.start_date)
         partnership.years.filter(query).delete()
 
+        # code added when business request to add co-diplomation (program FIE and osis base history)
         if self.partnership_type == "COURSE":
             entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
+            for entity in entities:
+                for academic_year in academic_years:
+                    # update or create according to range start_year and end_year
+                    object, created = PartnershipPartnerRelationYear.objects.get_or_create(
+                        partnership_relation_id=entity.pk,
+                        academic_year=academic_year
+                    )
+            # delete according to range start_year and end_year
             object = PartnershipPartnerRelationYear.objects.filter(
                 partnership_relation_id__in=entities).filter(
                 Q(academic_year__year__gt=end_year) | Q(academic_year__year__lt=start_year)
