@@ -15,7 +15,11 @@ class PartnerFilter(filters.FilterSet):
             ('city', 'city'),
         )
     )
+    name = filters.CharFilter(
+        field_name='organization__name',
+        lookup_expr='icontains',
+    )
 
     class Meta:
         model = Partner
-        fields = ['ordering']
+        fields = ['ordering', 'name']
