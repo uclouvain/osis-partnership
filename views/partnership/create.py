@@ -189,7 +189,7 @@ class PartnershipPartnerRelationUpdateView(FormView):
                         PartnershipPartnerRelationYear.objects.filter(
                             partnership_relation=relation,
                             academic_year=year.id).update(
-                            diploma_with_ucl_by_partner=instance.diploma_with_ucl_by_partner,
+                            type_diploma_by_partner=instance.type_diploma_by_partner,
                             diploma_prod_by_partner=instance.diploma_prod_by_partner,
                             supplement_prod_by_partner=instance.supplement_prod_by_partner,
                             partner_referent=instance.partner_referent,
