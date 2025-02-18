@@ -425,7 +425,7 @@ class PartnershipRelationYearCourseForm(forms.ModelForm):
         labels = {
             'partner_referent': _('partner_referent'),
             'diploma_prod_by_partner': _('diploma_prod_by_partner'),
-            'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
+            'type_diploma_by_partner': _('type_diploma_by_partner'),
             'supplement_prod_by_partner': _('supplement_prod_by_partner'),
         }
 
