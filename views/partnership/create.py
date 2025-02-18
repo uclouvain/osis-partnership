@@ -212,77 +212,8 @@ class PartnershipPartnerRelationUpdateView(FormView):
                     mess = f"Aucune instance n'a été mise à jour"
                     messages.error(self.request, mess)
 
-                # formset.save()
-
             return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
         else:
             messages.error(self.request, _('partnership_error'))
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
-
-    # def dispatch(self, request, *args, **kwargs):
-    #     kwargs["partnership_pk"] = kwargs.get("pk")
-    #     return super().dispatch(request, *args, **kwargs)
-    #
-    # def get(self, request, *args, **kwargs):
-    #     config = PartnershipConfiguration.get_configuration()
-    #     current_academic_year = config.partnership_creation_update_min_year
-    #
-    #     # queryset = PartnershipPartnerRelationYear.objects.filter(
-    #     #     partnership_relation__partnership=self.partnership,
-    #     #
-    #     # )
-    #
-    #     queryset = PartnershipPartnerRelationYear.objects.filter(
-    #         partnership_relation__partnership=self.partnership,
-    #         academic_year=current_academic_year
-    #     ).select_related(
-    #         'partnership_relation__entity__organization')
-    #
-    #     formset = PartnerRelationYearFormSet(queryset=queryset)
-    #     # form_year = PartnershipRelationYearWithoutDatesForm(Partnership.objects.get(pk=kwargs['pk']))
-    #
-    #     return render(request, self.template_name, {
-    #                                                 'formset':formset,
-    #                                                 'partnership': self.partnership})
-    #
-    # def form_valid(self, form, formset):
-    #     partnership = formset.save(commit=False)
-    #     partnership = form.save(commit=False)
-
-    # def post(self, request, *args, **kwargs):
-    #
-    #     config = PartnershipConfiguration.get_configuration()
-    #     current_academic_year = AcademicYear.objects.get(pk=config.partnership_creation_update_min_year_id)
-    #
-    #     queryset = PartnershipPartnerRelationYear.objects.filter(
-    #         partnership_relation__partnership=self.partnership,
-    #         academic_year=current_academic_year
-    #     )
-    #
-    #     formset = PartnerRelationYearFormSet(request.POST, queryset=queryset)
-    #
-    #     end_year= Partnership.objects.get(pk = self.partnership.id).end_date.year
-    #     academic_years = find_academic_years(start_year=current_academic_year.year, end_year=end_year)
-    #
-    #     if formset.is_valid():
-    #         instances = formset.save(commit=False)
-    #         for instance in instances:
-    #             relation = instance.partnership_relation
-    #             for year in academic_years:
-    #                 print(year)
-    #                 PartnershipPartnerRelationYear.objects.filter(
-    #                     partnership_relation= relation,
-    #                     academic_year=year.id).update(
-    #                     diploma_with_ucl_by_partner=instance.diploma_with_ucl_by_partner,
-    #                     diploma_prod_by_partner = instance.diploma_prod_by_partner,
-    #                     supplement_prod_by_partner = instance.supplement_prod_by_partner,
-    #                     partner_referent = instance.partner_referent,
-    #                 )
-    #
-    #             # instance.academic_year = current_academic_year
-    #             # instance.save()
-    #         return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
-    #     else:
-    #         messages.error(self.request, _('partnership_error'))
-    #     return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
