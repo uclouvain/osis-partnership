@@ -330,8 +330,9 @@ class PartnershipRelationYearBaseForm(forms.ModelForm):
     def __init__(self, partnership_type="COURSE", *args, **kwargs):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
-        # self.fields['partnership_type'].required = False
+        #self.fields['partnership_type'].initial = partnership_type
         super().__init__(*args, **kwargs)
+
 
 class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
     """
