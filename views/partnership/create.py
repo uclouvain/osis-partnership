@@ -157,7 +157,7 @@ class PartnershipPartnerRelationUpdateView(FormView):
         else:
             queryset = PartnershipPartnerRelationYear.objects.filter(
                         partnership_relation__partnership=self.partnership,
-                        academic_year__year = current_academic_year
+                        academic_year = current_academic_year
                     ).select_related(
                         'partnership_relation__entity__organization')
 

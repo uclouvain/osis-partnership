@@ -91,7 +91,6 @@ class PartnershipUpdateView(PartnershipFormMixin,
             end_year = academic_years.last().year
 
 
-
         for academic_year in academic_years:
             partnership_year = form_year.save(commit=False)
             existing_year = PartnershipYear.objects.filter(
