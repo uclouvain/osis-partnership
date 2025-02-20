@@ -799,6 +799,12 @@ paths:
       operationId: getPartnersList
       parameters:
         - in: query
+          name: name
+          description: A part of the name of the partner to search for, case insensitive.
+          schema:
+            type: string
+            example: Middle East
+        - in: query
           name: ordering
           description: The ordering of the items returned
           schema:
