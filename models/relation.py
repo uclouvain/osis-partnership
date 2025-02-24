@@ -4,7 +4,8 @@ from django.db.models.functions import Now
 
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
-from partnership.models import Financing, AgreementStatus, PartnershipType
+from partnership.models import Financing, AgreementStatus, PartnershipType, PartnershipDiplomaWithUCL, \
+    PartnershipProductionSupplement
 
 __all__ = ['PartnershipPartnerRelation']
 
@@ -105,12 +106,29 @@ class PartnershipPartnerRelation(models.Model):
     """
     partnership = models.ForeignKey(
         'partnership.Partnership',
+        related_name='partnershiprelation',
         on_delete=models.CASCADE,
     )
     entity = models.ForeignKey(
         'base.Entity',
         related_name='partner_of',
         on_delete=models.PROTECT,
+    )
+
+    diploma_with_ucl_by_partner = models.CharField(
+        max_length=64,
+        choices=PartnershipDiplomaWithUCL.choices(),
+        null=False,
+        default=''
+    )
+    diploma_prod_by_partner = models.BooleanField(
+        default=False
+    )
+    supplement_prod_by_partner = models.CharField(
+        max_length=64,
+        choices=PartnershipProductionSupplement.choices(),
+        null=False,
+        default=''
     )
 
     objects = PartnershipPartnerRelationQuerySet.as_manager()

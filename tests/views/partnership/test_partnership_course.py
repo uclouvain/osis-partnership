@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
@@ -8,7 +9,7 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.person import PersonFactory
 from base.tests.factories.user import UserFactory
-from partnership.models import PartnershipType
+from partnership.models import PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 from partnership.tests.factories import (
     FundingTypeFactory, PartnerEntityFactory,
     PartnerFactory,
@@ -32,8 +33,11 @@ class PartnershipCreateCourseViewTest(TestCase):
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
             person__user=cls.user,
-            scopes=[PartnershipType.COURSE.name]
+            scopes=[PartnershipType.COURSE.name, PartnershipType.GENERAL.name]
         )
+        a = Permission.objects.get(codename='change_partnership')
+        cls.user.user_permissions.set([a.pk])
+
 
         cls.partner = PartnerFactory()
         cls.partner_entity = PartnerEntityFactory(partner=cls.partner)
@@ -82,6 +86,11 @@ class PartnershipCreateCourseViewTest(TestCase):
             'year-funding_type': FundingTypeFactory().pk,
             'missions': PartnershipMissionFactory().pk,
             'subtype': PartnershipSubtypeFactory().pk,
+            'all_student': True,
+            'ucl_reference': True,
+            'diploma_prod_by_ucl': True,
+            'diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
+            'supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
         }
 
     def test_get_view_as_adri(self):
@@ -90,9 +99,11 @@ class PartnershipCreateCourseViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post(self):
+        #todo : ici
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
 
 class PartnershipUpdateCourseViewTest(TestCase):
@@ -182,4 +193,5 @@ class PartnershipUpdateCourseViewTest(TestCase):
     def test_post_partnership(self):
         self.client.force_login(self.user)
         response = self.client.post(self.url, data=self.data, follow=True)
-        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_detail.html')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'partnerships/partnership/partnership_update.html')
