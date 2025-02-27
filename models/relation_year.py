@@ -24,6 +24,7 @@ class PartnershipPartnerRelationYear(models.Model):
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
         null=False,
+        blank=True,
         default=''
     )
     diploma_prod_by_partner = models.BooleanField(
@@ -33,6 +34,7 @@ class PartnershipPartnerRelationYear(models.Model):
         max_length=64,
         choices=PartnershipProductionSupplement.choices(),
         null=False,
+        blank=True,
         default=''
     )
     partner_referent = models.BooleanField(

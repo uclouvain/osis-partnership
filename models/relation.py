@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import OuterRef, Subquery, Q
 from django.db.models.functions import Now
-
+from django.core.exceptions import ValidationError
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import Financing, AgreementStatus, PartnershipType, PartnershipDiplomaWithUCL, \
@@ -119,3 +119,4 @@ class PartnershipPartnerRelation(models.Model):
 
     class Meta:
         unique_together = ['partnership', 'entity']
+
