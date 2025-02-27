@@ -1302,6 +1302,33 @@ msgstr "Configuration des financements"
 msgid "partnerships_general_configuration"
 msgstr "Configuration générale"
 
+msgid "partnership_referente"
+msgstr "Institution référente"
+
+msgid "partnership_diploma_ucl"
+msgstr "Production du diplôme UCLouvain"
+
+msgid "partnership_annexe"
+msgstr "Production d'annexe"
+
+msgid "diploma_prod_by_ucl"
+msgstr "Diplôme produit par UCLouvain"
+
+msgid "diploma_by_ucl"
+msgstr "Diplôme UCLouvain"
+
+msgid "partner_referent"
+msgstr "Parntenaire référent"
+
+msgid "supplement_prod_by_ucl"
+msgstr "Supplément diplôme produit par UCLouvain"
+
+msgid "ucl_reference"
+msgstr "UCLouvain référente"
+
+msgid "all_student"
+msgstr "Pour tous les étudiant•e•s"
+
 msgid "phone"
 msgstr "Téléphone"
 
