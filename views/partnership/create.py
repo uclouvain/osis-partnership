@@ -106,6 +106,11 @@ class PartnershipCreateView(NotifyAdminMailMixin,
                     )
 
         messages.success(self.request, _('partnership_success'))
+
+
+        if self.partnership_type == "COURSE":
+            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
+
         if not is_linked_to_adri_entity(self.request.user):
             title = '{} - {}'.format(
                 _('partnership_created'),
@@ -115,8 +120,6 @@ class PartnershipCreateView(NotifyAdminMailMixin,
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
 
-        if self.partnership_type == "COURSE":
-            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):

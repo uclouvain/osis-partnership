@@ -390,7 +390,6 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
 
     def clean(self):
         data = super().clean()
-
         start_academic_year = data.get('start_academic_year', None)
         from_academic_year = data.get('from_academic_year', None)
         end_academic_year = data.get('end_academic_year', None)
@@ -422,7 +421,6 @@ class PartnershipRelationYearCourseForm(forms.ModelForm):
             'type_diploma_by_partner',
             'supplement_prod_by_partner',
         )
-
         labels = {
             'partner_referent': _('partner_referent'),
             'diploma_prod_by_partner': _('diploma_prod_by_partner'),
