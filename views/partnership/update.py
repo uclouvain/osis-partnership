@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 
@@ -118,4 +119,6 @@ class PartnershipUpdateView(PartnershipFormMixin,
             partnership.save()
 
         messages.success(self.request, _('partnership_success'))
+        if self.partnership_type == "COURSE":
+            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)

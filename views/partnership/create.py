@@ -1,20 +1,24 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView, TemplateView
-
 from base.models.academic_year import find_academic_years
 from partnership.auth.predicates import is_linked_to_adri_entity
-from partnership.models import Partnership, PartnershipType
+from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
+from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation
 from partnership.views.mixins import NotifyAdminMailMixin
-from partnership.views.partnership.mixins import PartnershipFormMixin
+from osis_role.contrib.views import PermissionRequiredMixin
 
 __all__ = [
     'PartnershipCreateView',
     'PartnershipTypeChooseView',
 ]
+
+from partnership.views.partnership.mixins import PartnershipFormMixin, PartnershipRelatedMixin
 
 
 class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
@@ -98,8 +102,47 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             self.notify_admin_mail(title, 'partnership_creation.html', {
                 'partnership': Partnership.objects.get(pk=partnership.pk),  # Reload to get annotations
             })
+
+        if self.partnership_type == "COURSE":
+            return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)
 
     def post(self, request, *args, **kwargs):
         self.object = None
         return super().post(request, *args, **kwargs)
+
+
+class PartnershipPartnerRelationUpdateView(PartnershipRelatedMixin, View):
+    template_name = 'partnerships/partnership/partnership_relation_update.html'
+    success_url = 'partnerships:detail'
+    login_url = 'access_denied'
+    permission_required = 'partnership.change_partnership'
+
+    def dispatch(self, request, *args, **kwargs):
+        kwargs["partnership_pk"] = kwargs.get("pk")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership).select_related(
+            'entity__organization')
+
+        formset = PartnershipPartnerRelationFormSet(queryset=queryset,
+                                                    initial=[{'entity': obj['entity__organization__name']} for obj in
+                                                             queryset.values('entity__organization__name')])
+
+        return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
+
+    def post(self, request, *args, **kwargs):
+        queryset = PartnershipPartnerRelation.objects.filter(partnership=self.partnership)
+
+        formset = PartnershipPartnerRelationFormSet(request.POST, queryset=queryset)
+
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.partnership = self.partnership
+                instance.save()
+            return redirect(reverse_lazy(self.success_url, kwargs={'pk': self.partnership.id}))
+        else:
+            messages.error(self.request, _('partnership_error'))
+        return render(request, self.template_name, {'formset': formset, 'partnership': self.partnership})
