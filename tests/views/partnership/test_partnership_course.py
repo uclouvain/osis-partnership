@@ -86,11 +86,11 @@ class PartnershipCreateCourseViewTest(TestCase):
             'year-funding_type': FundingTypeFactory().pk,
             'missions': PartnershipMissionFactory().pk,
             'subtype': PartnershipSubtypeFactory().pk,
-            'all_student': True,
-            'ucl_reference': True,
-            'diploma_prod_by_ucl': True,
-            'diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
-            'supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
+            'year-all_student': True,
+            'year-ucl_reference': True,
+            'year-diploma_prod_by_ucl': True,
+            'year-type_diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
+            'year-supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
         }
 
     def test_get_view_as_adri(self):
@@ -178,6 +178,11 @@ class PartnershipUpdateCourseViewTest(TestCase):
             'year-entities': [],
             'year-offers': [],
             'year-funding_type': FundingTypeFactory().pk,
+            'year-all_student': True,
+            'year-ucl_reference': True,
+            'year-diploma_prod_by_ucl': True,
+            'year-type_diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
+            'year-supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
             'missions': [
                 PartnershipMissionFactory().pk,
                 PartnershipMissionFactory().pk,
