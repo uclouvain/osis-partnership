@@ -308,12 +308,6 @@ class PartnershipCourseForm(PartnershipBaseForm):
             'subtype',
             'description',
             'project_acronym',
-            # 'ucl_reference',
-            # 'partner_referent',
-            # 'all_student',
-            # 'diploma_prod_by_ucl',
-            # 'diploma_by_ucl',
-            # 'supplement_prod_by_ucl'
         )
         widgets = {
             **PartnershipBaseForm.Meta.widgets,

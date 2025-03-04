@@ -1417,8 +1417,6 @@ msgctxt "partnership"
 msgid "type"
 msgstr "Type"
 
-#, fuzzy
-#| msgid "diploma_prod_by_partner"
 msgid "type_diploma_by_partner"
 msgstr "Diplôme produit par le partenaire"
 
