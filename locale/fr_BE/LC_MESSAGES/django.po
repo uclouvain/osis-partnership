@@ -1083,12 +1083,6 @@ msgstr "L'accord finit après le partenariat."
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
-msgid "partnership_all_student"
-msgstr "Tout les étudiants"
-
-msgid "partnership_all_student_help_text"
-msgstr "Si non précisé alors toutes les entités seront concernées."
-
 msgid "partnership_api_year"
 msgstr "Année académique visible sur l'API"
 
@@ -1111,9 +1105,6 @@ msgstr ""
 
 msgid "partnership_diploma"
 msgstr "Production diplome"
-
-msgid "partnership_diploma_ucl"
-msgstr "Production du diplôme UCLouvain"
 
 msgid "partnership_doctorate_years_entity"
 msgstr "Commission doctorale de domaine concernée"
@@ -1225,12 +1216,6 @@ msgstr "Production supplément"
 msgid "partnership_type"
 msgstr "Type de partenariat"
 
-msgid "partnership_ucl_reference"
-msgstr "Institution référente"
-
-msgid "partnership_ucl_reference_help_text"
-msgstr "Si non précisé alors toutes les entités seront concernées."
-
 msgid "partnership_valid_in"
 msgstr "Partenariats ayant un accord validé en"
 
@@ -1301,33 +1286,6 @@ msgstr "Configuration des financements"
 
 msgid "partnerships_general_configuration"
 msgstr "Configuration générale"
-
-msgid "partnership_referente"
-msgstr "Institution référente"
-
-msgid "partnership_diploma_ucl"
-msgstr "Production du diplôme UCLouvain"
-
-msgid "partnership_annexe"
-msgstr "Production d'annexe"
-
-msgid "diploma_prod_by_ucl"
-msgstr "Diplôme produit par UCLouvain"
-
-msgid "diploma_by_ucl"
-msgstr "Diplôme UCLouvain"
-
-msgid "partner_referent"
-msgstr "Parntenaire référent"
-
-msgid "supplement_prod_by_ucl"
-msgstr "Supplément diplôme produit par UCLouvain"
-
-msgid "ucl_reference"
-msgstr "UCLouvain référente"
-
-msgid "all_student"
-msgstr "Pour tous les étudiant•e•s"
 
 msgid "phone"
 msgstr "Téléphone"
@@ -1459,6 +1417,11 @@ msgctxt "partnership"
 msgid "type"
 msgstr "Type"
 
+#, fuzzy
+#| msgid "diploma_prod_by_partner"
+msgid "type_diploma_by_partner"
+msgstr "Diplôme produit par le partenaire"
+
 msgid "type_diploma_by_ucl"
 msgstr "Type de diplôme"
 
@@ -1551,3 +1514,18 @@ msgstr "Visible sur l'interface publique"
 
 msgid "website"
 msgstr "Site web"
+
+#~ msgid "partnership_all_student"
+#~ msgstr "Objet du partenariat"
+
+#~ msgid "partnership_all_student_help_text"
+#~ msgstr "Si non précisé alors toutes les entités seront concernées."
+
+#~ msgid "partnership_diploma_ucl"
+#~ msgstr "Production du diplôme UCLouvain"
+
+#~ msgid "partnership_ucl_reference"
+#~ msgstr "Institution référente"
+
+#~ msgid "partnership_ucl_reference_help_text"
+#~ msgstr "Si non précisé alors toutes les entités seront concernées."
