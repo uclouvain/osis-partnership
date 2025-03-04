@@ -107,7 +107,6 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
         messages.success(self.request, _('partnership_success'))
 
-
         if self.partnership_type == "COURSE":
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
 
@@ -128,7 +127,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
 
 
-class PartnershipPartnerRelationUpdateView(FormView):
+class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
     model = Partnership
     template_name = 'partnerships/partnership/partnership_relation_update.html'
     success_url = 'partnerships:detail'
@@ -146,7 +145,6 @@ class PartnershipPartnerRelationUpdateView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['partnership'] = self.partnership
-
         config = PartnershipConfiguration.get_configuration()
         current_academic_year = config.partnership_creation_update_min_year
         start_year = self.partnership.start_date
