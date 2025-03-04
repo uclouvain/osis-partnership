@@ -1084,7 +1084,7 @@ msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
 msgid "partnership_all_student"
-msgstr "Tout les étudants"
+msgstr "Tout les étudiants"
 
 msgid "partnership_all_student_help_text"
 msgstr "Si non précisé alors toutes les entités seront concernées."
