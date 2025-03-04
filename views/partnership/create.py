@@ -192,22 +192,27 @@ class PartnershipPartnerRelationUpdateView(FormView):
                 current_academic_year_id = modification_academic_year.pk
                 end_year = self.partnership.end_date.year
                 academic_years = find_academic_years(start_year=modification_academic_year.year, end_year=end_year)
+                print('ici')
 
-                instances = formset.save(commit=False)
                 count = 0
+                instances = formset.cleaned_data
                 for instance in instances:
-                    relation = instance.partnership_relation
+                    print("ici 1")
+                    relation = instance['id'].partnership_relation
                     for year in academic_years:
                         obj = PartnershipPartnerRelationYear.objects.filter(
                             partnership_relation=relation,
                             academic_year=year.id)
+
                         result = obj.update(
-                            type_diploma_by_partner=instance.type_diploma_by_partner,
-                            diploma_prod_by_partner=instance.diploma_prod_by_partner,
-                            supplement_prod_by_partner=instance.supplement_prod_by_partner,
-                            partner_referent=instance.partner_referent,
+                            type_diploma_by_partner=instance["type_diploma_by_partner"],
+                            diploma_prod_by_partner=instance["diploma_prod_by_partner"],
+                            supplement_prod_by_partner=instance["supplement_prod_by_partner"],
+                            partner_referent=instance["partner_referent"],
                         )
+                        print(obj)
                         count = count + result
+
                 if count > 0:
                     mess = f'Mise à jour avec succès de {count} instance'
                     messages.success(self.request, mess)
