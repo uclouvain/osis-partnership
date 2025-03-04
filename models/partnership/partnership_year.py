@@ -95,29 +95,30 @@ class PartnershipYear(models.Model):
     )
 
     ucl_reference = models.BooleanField(
-        verbose_name=_('partnership_ucl_reference'),
+        verbose_name=_('ucl_reference'),
         default=True,
-        help_text=_('partnership_ucl_reference_help_text'),
         null=False,
         blank=True
     )
     all_student = models.BooleanField(
-        verbose_name=_('partnership_all_student'),
+        verbose_name=_('all_student'),
         default=True,
-        help_text=_('partnership_all_student_help_text'),
         null=False,
         blank=True
     )
     type_diploma_by_ucl = models.CharField(
+        verbose_name=_('type_diploma_by_ucl'),
         max_length=64,
         choices=PartnershipDiplomaWithUCL.choices(),
         null=False,
         default=''
     )
     diploma_prod_by_ucl = models.BooleanField(
+        verbose_name=_('diploma_prod_by_ucl'),
         default=False
     )
     supplement_prod_by_ucl = models.CharField(
+        verbose_name=_('supplement_prod_by_ucl'),
         max_length=64,
         choices=PartnershipProductionSupplement.choices(),
         null=False,
