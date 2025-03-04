@@ -126,7 +126,6 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         return super().post(request, *args, **kwargs)
 
 
-
 class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
     model = Partnership
     template_name = 'partnerships/partnership/partnership_relation_update.html'
@@ -152,13 +151,13 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         if start_year.year > current_academic_year.year:
             queryset = PartnershipPartnerRelationYear.objects.filter(
                 partnership_relation__partnership=self.partnership,
-                academic_year__year = start_year.year
+                academic_year__year=start_year.year
             ).select_related(
                 'partnership_relation__entity__organization')
         else:
             queryset = PartnershipPartnerRelationYear.objects.filter(
                         partnership_relation__partnership=self.partnership,
-                        academic_year = current_academic_year
+                        academic_year=current_academic_year
                     ).select_related(
                         'partnership_relation__entity__organization')
 
@@ -214,7 +213,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                 if count > 0:
                     mess = f'Mise à jour avec succès de {count} instance'
                     messages.success(self.request, mess)
-                else :
+                else:
                     mess = f"Aucune instance n'a été mise à jour"
                     messages.error(self.request, mess)
 
@@ -222,4 +221,3 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         else:
             messages.error(self.request, _('partnership_error'))
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
-

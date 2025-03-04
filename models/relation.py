@@ -119,4 +119,3 @@ class PartnershipPartnerRelation(models.Model):
 
     class Meta:
         unique_together = ['partnership', 'entity']
-

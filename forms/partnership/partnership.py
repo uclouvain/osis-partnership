@@ -360,25 +360,6 @@ class PartnershipPartnerRelationForm(forms.ModelForm):
     class Meta:
         model = PartnershipPartnerRelation
         exclude = ['id']
-        # fields = [
-        #     'partner_referent',
-        #     'diploma_prod_by_partner',
-        #     'diploma_with_ucl_by_partner',
-        #     'supplement_prod_by_partner',
-        #
-        # ]
-        #
-        # widgets = {
-        #     'supplement_prod_by_partner': ModelSelect2(),
-        #     'diploma_with_ucl_by_partner': ModelSelect2(),
-        # }
-        #
-        # labels = {
-        #     'partner_referent': _('partner_referent'),
-        #     'diploma_prod_by_partner': _('diploma_prod_by_partner'),
-        #     'diploma_with_ucl_by_partner': _('diploma_with_ucl_by_partner'),
-        #     'supplement_prod_by_partner': _('supplement_prod_by_partner'),
-        # }
 
 
 PartnershipPartnerRelationFormSet = modelformset_factory(
@@ -386,5 +367,3 @@ PartnershipPartnerRelationFormSet = modelformset_factory(
     form=PartnershipPartnerRelationForm,
     extra=0
 )
-
-

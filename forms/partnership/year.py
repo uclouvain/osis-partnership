@@ -320,8 +320,6 @@ class PartnershipYearProjectForm(FundingMixin, PartnershipYearBaseForm):
         )
 
 
-
-
 class PartnershipRelationYearBaseForm(forms.ModelForm):
     class Meta:
         model = Partnership
@@ -330,7 +328,6 @@ class PartnershipRelationYearBaseForm(forms.ModelForm):
     def __init__(self, partnership_type="COURSE", *args, **kwargs):
         self.user = kwargs.pop('user')
         self.partnership_type = partnership_type
-        #self.fields['partnership_type'].initial = partnership_type
         super().__init__(*args, **kwargs)
 
 
@@ -359,8 +356,6 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
 
         config = PartnershipConfiguration.get_configuration()
         current_academic_year = config.partnership_creation_update_min_year
-
-
         is_adri = True
         # is_linked_to_adri_entity(self.user)
         if self.instance:
@@ -371,7 +366,7 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
                 self.fields['end_academic_year'].initial = current_academic_year
             else:
                 self.fields['end_academic_year'].initial = partnership.end_academic_year
-            if is_adri :
+            if is_adri:
                 self.fields['start_academic_year'].initial = partnership.start_academic_year
             else:
                 del self.fields['start_academic_year']
@@ -385,7 +380,6 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
         self.fields['start_academic_year'].disabled = True
         self.fields['from_academic_year'].disabled = False
         self.fields['end_academic_year'].disabled = True
-
 
 
     def clean(self):

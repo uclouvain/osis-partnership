@@ -1,9 +1,9 @@
 from django.db import models
-from partnership.models import  PartnershipDiplomaWithUCL, \
-    PartnershipProductionSupplement
+from partnership.models import  PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 from django.utils.translation import gettext_lazy as _
 
 __all__ = ['PartnershipPartnerRelationYear']
+
 
 class PartnershipPartnerRelationYear(models.Model):
     """
