@@ -55,6 +55,7 @@ class PartnershipPartnerRelationCompleteView(PartnerEntityAutocompleteView):
         if entities:
             qs = qs.filter(pk__in=entities)
         return qs
+
     def get_result_label(self, result):
         return format_partner_entity(result)
 
