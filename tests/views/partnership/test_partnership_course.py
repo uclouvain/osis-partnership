@@ -29,7 +29,7 @@ from reference.tests.factories.domain_isced import DomainIscedFactory
 class PartnershipCreateCourseViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(is_superuser=True)
+        cls.user = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,
@@ -117,7 +117,7 @@ class PartnershipCreateCourseViewTest(TestCase):
 class PartnershipUpdateCourseViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(is_superuser=True)
+        cls.user = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(
             entity=entity_version.entity,

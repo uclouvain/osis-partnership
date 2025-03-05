@@ -8,7 +8,6 @@ from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 from base.models.academic_year import find_academic_years, AcademicYear
 from partnership.auth.predicates import is_linked_to_adri_entity
-from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
 from partnership.forms.partnership.year import PartnerRelationYearFormSet, PartnershipRelationYearWithoutDatesForm
 from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipConfiguration
 from partnership.models.relation_year import PartnershipPartnerRelationYear
@@ -186,7 +185,6 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
             modification_academic_year = form.cleaned_data.get('from_academic_year')
 
             if modification_academic_year:
-                current_academic_year_id = modification_academic_year.pk
                 end_year = self.partnership.end_date.year
                 academic_years = find_academic_years(start_year=modification_academic_year.year, end_year=end_year)
                 print('ici')

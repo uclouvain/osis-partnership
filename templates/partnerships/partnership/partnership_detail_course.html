@@ -2,12 +2,6 @@
 {% load i18n partnerships static years osis_role getattr %}
 
 {% block partnership_years %}
-{#    <dt class="col-10 float-start width-md-160 text-md-end">Destiné à tous les étudiants</dt>#}
-{#    <dd class="col-12 col-md-auto mb-2 mb-md-0">#}
-{#        <div class="row">#}
-{#            <p>{% if partnership.all_student %} Oui {% else %} Non {% endif %}</p>#}
-{#        </div>#}
-{#    </dd>#}
     <br>
     {% if partnership.description %}
         <dt class="col-10 float-start width-md-160 text-md-end">{% trans "partnership_year_description" %}</dt>
@@ -123,7 +117,6 @@
                         <td><i class="fas
                                 {{ partnership_year.ucl_reference|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
                         </td>
-{#                        <td>{% if partnership_year.ucl_reference %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
                         <td>{% if partnership_year.diploma_prod_by_ucl %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
                         <td>{{ partnership_year.get_type_diploma_by_ucl_display|default_if_none:"-"}}</td>
                         <td>{{ partnership_year.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
@@ -140,7 +133,6 @@
                         <td><i class="fas
                                 {{ partner_year.partner_referent|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
                         </td>
-{#                        <td>{% if partner_year.partner_referent%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>#}
                         <td>{% if partner_year.diploma_prod_by_partner%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
                         <td>{{  partner_year.get_type_diploma_by_partner_display|default_if_none:"-"}}</td>
                         <td>{{  partner_year.get_supplement_prod_by_partner_display|default_if_none:"-"}}</td>

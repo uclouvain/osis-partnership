@@ -385,10 +385,3 @@ class Partnership(models.Model):
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
-
-    # def save(self, *args, **kwargs):
-    #     if self.ucl_reference:
-    #         self.partner_referent = None
-    #         super(Partnership, self).save(*args, **kwargs)
-    #     else:
-    #         super().save(*args, **kwargs)
