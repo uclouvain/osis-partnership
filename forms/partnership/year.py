@@ -11,12 +11,12 @@ from base.models.entity import Entity
 from base.models.enums.education_group_types import TrainingType
 from base.models.enums.entity_type import DOCTORAL_COMMISSION
 from partnership.auth.predicates import is_linked_to_adri_entity
+from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.models import (
     PartnershipConfiguration,
     PartnershipType, PartnershipYear,
     PartnershipYearEducationLevel, FundingProgram, FundingType, FundingSource,
 )
-from .partnership import PartnershipBaseForm
 from ..fields import (
     EducationGroupYearChoiceSelect, EntityChoiceMultipleField,
     FundingChoiceField,
@@ -30,7 +30,7 @@ __all__ = [
     'PartnershipYearProjectForm',
 ]
 
-from ...models.relation_year import PartnershipPartnerRelationYear
+
 
 
 class PartnershipYearBaseForm(forms.ModelForm):

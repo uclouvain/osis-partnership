@@ -3,7 +3,7 @@ import factory
 from base.tests.factories.academic_year import AcademicYearFactory
 from partnership.models import PartnershipPartnerRelation, PartnershipProductionSupplement, PartnershipDiplomaWithUCL
 from . import PartnershipFactory
-from ...models.relation_year import PartnershipPartnerRelationYear
+from partnership.models.relation_year import PartnershipPartnerRelationYear
 
 
 class PartnershipPartnerRelationFactory(factory.django.DjangoModelFactory):
