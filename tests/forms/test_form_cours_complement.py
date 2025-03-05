@@ -50,30 +50,6 @@ class TestPartnershipCourseForm(TestCase):
         cls.subtype = PartnershipSubtypeFactory(types=[
             PartnershipType.COURSE.name,
         ])
-        cls.data =  {
-                'partnership_type': PartnershipType.COURSE.name,
-                'comment': '',
-                'partner': cls.partner.pk,
-                'partner_entities': [cls.partner_entity.entity_id],
-                'supervisor': PersonFactory().pk,
-                'ucl_entity': cls.ucl_university.pk,
-                'university_offers': [cls.university_offer.pk],
-                'year-education_fields': [cls.education_field.pk],
-                'year-education_levels': [cls.education_level.pk],
-                'year-entities': [],
-                'year-offers': [],
-                'year-start_academic_year': cls.start_academic_year.pk,
-                'year-end_academic_year': cls.end_academic_year.pk,
-                'year-funding_type': FundingTypeFactory().pk,
-                'missions': [3,2],
-                'subtype': '',
-                'year-all_student': True,
-                'year-ucl_reference': True,
-                'year-diploma_prod_by_ucl': True,
-                'year-type_diploma_by_ucl': PartnershipDiplomaWithUCL.SEPARED.name,
-                'year-supplement_prod_by_ucl': PartnershipProductionSupplement.SHARED.name,
-                }
-        print(cls.subtype)
 
         cls.entity = EntityFactory()
 

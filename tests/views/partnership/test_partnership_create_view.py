@@ -239,7 +239,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-        cls.user_gs = UserFactory()
+        cls.user_gs = UserFactory(is_superuser=True)
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
         cls.user_project = UserFactory()
@@ -333,16 +333,6 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         )
         cls.other_url = resolve_url('partnerships:complement', pk=cls.other_partnership.pk)
 
-        # cls.data = {
-        #     'partnership_type': PartnershipType.COURSE.name,
-        #     'comment': '',
-        #     'partnership': cls.partnership.pk,
-        #     'partner_entities': [ cls.partner_entity.entity],
-        #     'supervisor': '',
-        #     'ucl_entity': cls.ucl_university.pk,
-        #
-        # }
-
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_relation_update.html')
@@ -355,7 +345,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_(self):
-        self.client.force_login(self.user_gf)
+        self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
@@ -365,7 +355,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
     def test_get_request_loads_formset(self):
-        self.client.force_login(self.user_adri)
+        self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "partnerships/partnership/partnership_relation_update.html")
@@ -388,7 +378,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
-        # self.assertRedirects(response, reverse("partnerships:detail", kwargs={"pk": self.partnership.pk}))
+
 
     def test_post_request_invalid_formset(self):
         self.client.force_login(self.user_gs)
