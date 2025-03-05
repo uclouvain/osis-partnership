@@ -381,7 +381,6 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
         self.fields['from_academic_year'].disabled = False
         self.fields['end_academic_year'].disabled = True
 
-
     def clean(self):
         data = super().clean()
         start_academic_year = data.get('start_academic_year', None)
