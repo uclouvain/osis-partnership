@@ -108,7 +108,6 @@ class PartnershipCreateCourseViewTest(TestCase):
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_create.html')
 
     def test_post(self):
-        #todo : ici
         self.client.force_login(self.user_adri)
         response = self.client.post(self.url, data=self.data, follow=True)
         self.assertEqual(response.status_code, 200)
