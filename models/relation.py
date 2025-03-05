@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import OuterRef, Subquery, Q
 from django.db.models.functions import Now
-
+from django.core.exceptions import ValidationError
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
 from partnership.models import Financing, AgreementStatus, PartnershipType, PartnershipDiplomaWithUCL, \
@@ -113,22 +113,6 @@ class PartnershipPartnerRelation(models.Model):
         'base.Entity',
         related_name='partner_of',
         on_delete=models.PROTECT,
-    )
-
-    diploma_with_ucl_by_partner = models.CharField(
-        max_length=64,
-        choices=PartnershipDiplomaWithUCL.choices(),
-        null=False,
-        default=''
-    )
-    diploma_prod_by_partner = models.BooleanField(
-        default=False
-    )
-    supplement_prod_by_partner = models.CharField(
-        max_length=64,
-        choices=PartnershipProductionSupplement.choices(),
-        null=False,
-        default=''
     )
 
     objects = PartnershipPartnerRelationQuerySet.as_manager()

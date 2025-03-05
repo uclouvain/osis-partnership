@@ -14,6 +14,8 @@ __all__ = [
     'PartnershipDetailView',
 ]
 
+from partnership.models.relation_year import PartnershipPartnerRelationYear
+
 
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):
     model = Partnership
@@ -55,7 +57,6 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                 'ucl_entity',
                 'author__user',
                 'supervisor',
-                'partner_referent',
                 'ucl_entity__uclmanagement_entity__academic_responsible',
                 'ucl_entity__uclmanagement_entity__contact_in_person',
                 'ucl_entity__uclmanagement_entity__contact_out_person',
@@ -79,9 +80,13 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                     queryset=Organization.objects.order_by('name').select_related('partner')
                 ),
                 Prefetch(
-                    'partner_referent__organization',
-                    queryset=Organization.objects.order_by('name').select_related('partner')
+                    'partnershiprelation__partnershiprelation',
+                    queryset=PartnershipPartnerRelationYear.objects.order_by('academic_year')
                 ),
-            ),
+                # Prefetch(
+                #     'partner_referent__organization',
+                #     queryset=Organization.objects.order_by('name').select_related('partner')
+                # ),
+            ).order_by('partnershiprelation__partnershiprelation__academic_year'),
             pk=self.kwargs['pk'],
         )
