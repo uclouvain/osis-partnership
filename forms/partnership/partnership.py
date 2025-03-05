@@ -13,7 +13,7 @@ from base.models.person import Person
 from base.utils.cte import CTESubquery
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
-from partnership.models import Partnership, EntityProxy,PartnershipPartnerRelation
+from partnership.models import Partnership, EntityProxy, PartnershipPartnerRelation
 from partnership.utils import format_partner_entity
 from ..fields import EntityChoiceField, PersonChoiceField
 
