@@ -318,20 +318,9 @@ class PartnershipYearProjectForm(FundingMixin, PartnershipYearBaseForm):
         )
 
 
-class PartnershipRelationYearBaseForm(forms.ModelForm):
-    class Meta:
-        model = Partnership
-        fields = ('partnership_type',)
-
-    def __init__(self, partnership_type="COURSE", *args, **kwargs):
-        self.user = kwargs.pop('user')
-        self.partnership_type = partnership_type
-        super().__init__(*args, **kwargs)
-
-
-class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
+class PartnershipRelationYearWithoutDatesForm(forms.ModelForm):
     """
-    The duration of the partnership is encoded through academic_years
+    The duration of the partnership is encoded through academic_years - form partnership complement course
     """
     start_academic_year = forms.ModelChoiceField(
         label=_('start_academic_year'),
@@ -349,7 +338,13 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
         required=True,
     )
 
-    def __init__(self,  *args, **kwargs):
+    class Meta:
+        model = Partnership
+        fields = ('partnership_type',)
+
+    def __init__(self, partnership_type="COURSE", *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.partnership_type = partnership_type
         super().__init__(*args, **kwargs)
 
         config = PartnershipConfiguration.get_configuration()
