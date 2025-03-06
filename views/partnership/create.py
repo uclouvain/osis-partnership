@@ -95,7 +95,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             form_year.save_m2m()
 
         # create partnershiprelationyear
-        if self.partnership_type == "COURSE":
+        if self.partnership_type == PartnershipType.COURSE.name:
             entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
             for entity in entities:
                 for academic_year in academic_years:
@@ -106,7 +106,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
         messages.success(self.request, _('partnership_success'))
 
-        if self.partnership_type == "COURSE":
+        if self.partnership_type == PartnershipType.COURSE.name:
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
 
         if not is_linked_to_adri_entity(self.request.user):
@@ -146,24 +146,24 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         config = PartnershipConfiguration.get_configuration()
         update_academic_year = config.partnership_creation_update_min_year
         start_year = self.partnership.start_date
+        queryset = PartnershipPartnerRelationYear.objects.filter(
+            partnership_relation__partnership=self.partnership,
+        ).select_related(
+            'partnership_relation__entity__organization')
 
         if start_year.year > update_academic_year.year:
-            queryset = PartnershipPartnerRelationYear.objects.filter(
-                partnership_relation__partnership=self.partnership,
+            queryset = queryset.filter(
                 academic_year__year=start_year.year
-            ).select_related(
-                'partnership_relation__entity__organization')
+            )
         else:
-            queryset = PartnershipPartnerRelationYear.objects.filter(
-                        partnership_relation__partnership=self.partnership,
+            queryset = queryset.filter(
                         academic_year=update_academic_year
                     ).select_related(
                         'partnership_relation__entity__organization')
 
-        context['formset'] = PartnerRelationYearFormSet(
+        context['formsets'] = PartnerRelationYearFormSet(
             queryset=queryset
         )
-
         return context
 
     def post(self, request, *args, **kwargs):
@@ -191,18 +191,17 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                 instances = formset.cleaned_data
                 for instance in instances:
                     relation = instance['id'].partnership_relation
-                    for year in academic_years:
-                        obj = PartnershipPartnerRelationYear.objects.filter(
-                            partnership_relation=relation,
-                            academic_year=year.id)
+                    obj = PartnershipPartnerRelationYear.objects.filter(
+                        partnership_relation=relation,
+                        academic_year__in=[year.id for year in academic_years])
 
-                        result = obj.update(
-                            type_diploma_by_partner=instance["type_diploma_by_partner"],
-                            diploma_prod_by_partner=instance["diploma_prod_by_partner"],
-                            supplement_prod_by_partner=instance["supplement_prod_by_partner"],
-                            partner_referent=instance["partner_referent"],
-                        )
-                        count = count + result
+                    result = obj.update(
+                        type_diploma_by_partner=instance["type_diploma_by_partner"],
+                        diploma_prod_by_partner=instance["diploma_prod_by_partner"],
+                        supplement_prod_by_partner=instance["supplement_prod_by_partner"],
+                        partner_referent=instance["partner_referent"],
+                    )
+                    count = count + result
 
                 if count > 0:
                     mess = f'Mise à jour avec succès de {count} instance'

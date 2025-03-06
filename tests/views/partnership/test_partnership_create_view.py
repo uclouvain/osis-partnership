@@ -359,7 +359,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "partnerships/partnership/partnership_relation_update.html")
-        formset = response.context["formset"]
+        formset = response.context["formsets"]
         self.assertIsInstance(formset, PartnerRelationYearFormSet)
 
 

@@ -32,12 +32,12 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                {{ formset.management_form }}
-                {% for form2 in formset %}
-                    <h5>{% trans 'partner' %} : {{ form2.instance.partnership_relation.entity.organization.name }}</h5>
+                {{ formsets.management_form }}
+                {% for formset in formsets %}
+                    <h5>{% trans 'partner' %} : {{ formset.instance.partnership_relation.entity.organization.name }}</h5>
                     <hr>
                     <div>
-                        {% bootstrap_form form2 %}
+                        {% bootstrap_form formset %}
                     </div>
                 {% endfor %}
                 <br>

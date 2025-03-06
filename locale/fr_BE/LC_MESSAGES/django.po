@@ -1512,18 +1512,3 @@ msgstr "Visible sur l'interface publique"
 
 msgid "website"
 msgstr "Site web"
-
-#~ msgid "partnership_all_student"
-#~ msgstr "Objet du partenariat"
-
-#~ msgid "partnership_all_student_help_text"
-#~ msgstr "Si non précisé alors toutes les entités seront concernées."
-
-#~ msgid "partnership_diploma_ucl"
-#~ msgstr "Production du diplôme UCLouvain"
-
-#~ msgid "partnership_ucl_reference"
-#~ msgstr "Institution référente"
-
-#~ msgid "partnership_ucl_reference_help_text"
-#~ msgstr "Si non précisé alors toutes les entités seront concernées."

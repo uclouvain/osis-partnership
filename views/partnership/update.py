@@ -114,7 +114,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
         partnership.years.filter(query).delete()
 
         # code added when business request to add co-diplomation (program FIE and osis base history)
-        if self.partnership_type == "COURSE":
+        if self.partnership_type == PartnershipType.COURSE.name:
             entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
             for entity in entities:
                 for academic_year in academic_years:
@@ -139,6 +139,6 @@ class PartnershipUpdateView(PartnershipFormMixin,
             partnership.save()
 
         messages.success(self.request, _('partnership_success'))
-        if self.partnership_type == "COURSE":
+        if self.partnership_type == PartnershipType.COURSE.name:
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)

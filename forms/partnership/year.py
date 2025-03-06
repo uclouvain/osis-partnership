@@ -31,8 +31,6 @@ __all__ = [
 ]
 
 
-
-
 class PartnershipYearBaseForm(forms.ModelForm):
     # Used for the dal forward
     entity = forms.CharField(required=False, widget=forms.HiddenInput())
@@ -356,7 +354,6 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
 
         config = PartnershipConfiguration.get_configuration()
         current_academic_year = config.partnership_creation_update_min_year
-        is_adri = is_linked_to_adri_entity(self.user)
         if self.instance:
             # Update
             partnership = self.instance
@@ -365,10 +362,7 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
                 self.fields['end_academic_year'].initial = current_academic_year
             else:
                 self.fields['end_academic_year'].initial = partnership.end_academic_year
-            if is_adri:
-                self.fields['start_academic_year'].initial = partnership.start_academic_year
-            else:
-                del self.fields['start_academic_year']
+            self.fields['start_academic_year'].initial = partnership.start_academic_year
             self.fields['from_academic_year'].initial = current_academic_year
         else:
             # Create
@@ -382,9 +376,9 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
 
     def clean(self):
         data = super().clean()
-        start_academic_year = data.get('start_academic_year', None)
-        from_academic_year = data.get('from_academic_year', None)
-        end_academic_year = data.get('end_academic_year', None)
+        start_academic_year = data.get('start_academic_year')
+        from_academic_year = data.get('from_academic_year')
+        end_academic_year = data.get('end_academic_year')
         if start_academic_year is not None:
             if start_academic_year.year > end_academic_year.year:
                 self.add_error(

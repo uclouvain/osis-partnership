@@ -6,7 +6,6 @@ from django.db.models import Func, OuterRef, Q
 from django.forms import modelformset_factory
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
-
 from base.forms.utils.datefield import DATE_FORMAT, DatePickerInput
 from base.models.entity_version import EntityVersion
 from base.models.person import Person
@@ -24,8 +23,6 @@ __all__ = [
     'PartnershipDoctorateForm',
     'PartnershipProjectForm',
 ]
-
-
 
 
 class PartnershipBaseForm(forms.ModelForm):
@@ -311,19 +308,19 @@ class PartnershipProjectForm(PartnershipWithDatesMixin):
         )
 
 
-class PartnershipPartnerRelationForm(forms.ModelForm):
-    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
-                 label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, renderer=None):
-        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
-                         use_required_attribute, renderer)
-
-    class Meta:
-        model = PartnershipPartnerRelation
-        exclude = ['id']
-
-
-PartnershipPartnerRelationFormSet = modelformset_factory(
-    PartnershipPartnerRelation,
-    form=PartnershipPartnerRelationForm,
-    extra=0
-)
+# class PartnershipPartnerRelationForm(forms.ModelForm):
+#     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
+#                  label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, renderer=None):
+#         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+#                          use_required_attribute, renderer)
+#
+#     class Meta:
+#         model = PartnershipPartnerRelation
+#         exclude = ['id']
+#
+#
+# PartnershipPartnerRelationFormSet = modelformset_factory(
+#     PartnershipPartnerRelation,
+#     form=PartnershipPartnerRelationForm,
+#     extra=0
+# )

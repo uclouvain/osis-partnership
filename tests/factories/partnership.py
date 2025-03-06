@@ -80,4 +80,5 @@ class PartnershipConfigurationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PartnershipConfiguration
 
-    # partnership_creation_update_min_year = AcademicYearFactory(year=2151)
+    partnership_creation_update_min_year = factory.SubFactory(AcademicYearFactory)
+

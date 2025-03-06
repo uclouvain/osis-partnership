@@ -82,11 +82,7 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
                 Prefetch(
                     'partnershiprelation__partnershiprelation',
                     queryset=PartnershipPartnerRelationYear.objects.order_by('academic_year')
-                ),
-                # Prefetch(
-                #     'partner_referent__organization',
-                #     queryset=Organization.objects.order_by('name').select_related('partner')
-                # ),
+                )
             ).order_by('partnershiprelation__partnershiprelation__academic_year'),
             pk=self.kwargs['pk'],
         )
