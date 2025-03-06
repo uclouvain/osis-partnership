@@ -144,10 +144,10 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         context['partnership'] = self.partnership
         config = PartnershipConfiguration.get_configuration()
-        current_academic_year = config.partnership_creation_update_min_year
+        update_academic_year = config.partnership_creation_update_min_year
         start_year = self.partnership.start_date
 
-        if start_year.year > current_academic_year.year:
+        if start_year.year > update_academic_year.year:
             queryset = PartnershipPartnerRelationYear.objects.filter(
                 partnership_relation__partnership=self.partnership,
                 academic_year__year=start_year.year
@@ -156,7 +156,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         else:
             queryset = PartnershipPartnerRelationYear.objects.filter(
                         partnership_relation__partnership=self.partnership,
-                        academic_year=current_academic_year
+                        academic_year=update_academic_year
                     ).select_related(
                         'partnership_relation__entity__organization')
 
@@ -187,12 +187,9 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
             if modification_academic_year:
                 end_year = self.partnership.end_date.year
                 academic_years = find_academic_years(start_year=modification_academic_year.year, end_year=end_year)
-                print('ici')
-
                 count = 0
                 instances = formset.cleaned_data
                 for instance in instances:
-                    print("ici 1")
                     relation = instance['id'].partnership_relation
                     for year in academic_years:
                         obj = PartnershipPartnerRelationYear.objects.filter(
@@ -205,7 +202,6 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                             supplement_prod_by_partner=instance["supplement_prod_by_partner"],
                             partner_referent=instance["partner_referent"],
                         )
-                        print(obj)
                         count = count + result
 
                 if count > 0:
