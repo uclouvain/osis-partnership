@@ -1348,6 +1348,9 @@ msgstr "Type"
 msgid "type_diploma_by_ucl"
 msgstr "Type of diploma"
 
+msgid "type_diploma_by_partner"
+msgstr "Diplôme produit par le partenaire"
+
 msgid "ucl"
 msgstr "UCLouvain"
 
