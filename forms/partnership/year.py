@@ -356,8 +356,7 @@ class PartnershipRelationYearWithoutDatesForm(PartnershipRelationYearBaseForm):
 
         config = PartnershipConfiguration.get_configuration()
         current_academic_year = config.partnership_creation_update_min_year
-        is_adri = True
-        # is_linked_to_adri_entity(self.user)
+        is_adri = is_linked_to_adri_entity(self.user)
         if self.instance:
             # Update
             partnership = self.instance
