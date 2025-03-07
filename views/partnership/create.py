@@ -158,8 +158,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         else:
             queryset = queryset.filter(
                         academic_year=update_academic_year
-                    ).select_related(
-                        'partnership_relation__entity__organization')
+                    )
 
         context['formsets'] = PartnerRelationYearFormSet(
             queryset=queryset
@@ -171,13 +170,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
         form = self.get_form()
         formset = PartnerRelationYearFormSet(request.POST)
 
-        if "start_academic_year" in form.errors:
-            messages.error(self.request, _('partnership_error'))
-            return self.render_to_response(self.get_context_data(form=form, formset=formset))
-        elif "from_academic_year" in form.errors:
-            messages.error(self.request, _('partnership_error'))
-            return self.render_to_response(self.get_context_data(form=form, formset=formset))
-        elif "end_academic_year" in form.errors:
+        if any(field in form.errors for field in ("start_academic_year", "from_academic_year", "end_academic_year")):
             messages.error(self.request, _('partnership_error'))
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
