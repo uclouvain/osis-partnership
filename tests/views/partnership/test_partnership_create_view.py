@@ -1,4 +1,5 @@
 from django.core import mail
+import datetime
 from django.forms import ModelChoiceField
 from django.shortcuts import resolve_url
 from django.test import TestCase
@@ -9,7 +10,7 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
-from partnership.forms.partnership.partnership import PartnershipPartnerRelationFormSet
+from partnership.forms.partnership.year import PartnerRelationYearFormSet
 from partnership.models import PartnershipType, PartnershipMission, PartnershipConfiguration
 from partnership.tests.factories import (
     PartnerEntityFactory,
@@ -19,6 +20,7 @@ from partnership.tests.factories import (
     PartnershipYearEducationLevelFactory,
     UCLManagementEntityFactory, PartnershipFactory, PartnershipYearFactory,
 )
+from partnership.tests.factories.partnership import PartnershipConfigurationFactory
 
 from reference.tests.factories.domain_isced import DomainIscedFactory
 
@@ -237,7 +239,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         cls.user_adri = UserFactory()
         entity_version = EntityVersionFactory(acronym='ADRI')
         PartnershipEntityManagerFactory(entity=entity_version.entity, person__user=cls.user_adri)
-        cls.user_gs = UserFactory()
+        cls.user_gs = UserFactory(is_superuser=True)
         cls.user_gf = UserFactory()
         cls.user_other_gf = UserFactory()
         cls.user_project = UserFactory()
@@ -259,7 +261,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         cls.academic_year_2153 = AcademicYearFactory(year=2153)
 
         # Initialize config
-        PartnershipConfiguration.objects.update(
+        PartnershipConfigurationFactory(
             partnership_creation_update_min_year_id=cls.academic_year_2149.pk
         )
 
@@ -302,6 +304,9 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         )
         cls.partner_gf = PartnerFactory(author=cls.user_gf.person)
         cls.partnership = PartnershipFactory(
+            partnership_type= PartnershipType.COURSE.name,
+            start_date=datetime.date(cls.start_academic_year.year, 9, 15),
+            end_date=datetime.date(cls.end_academic_year.year, 6, 30),
             partner=cls.partner,
             partner_entity=cls.partner_entity.entity,
             author=cls.user_gf.person,
@@ -324,19 +329,9 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         cls.url = resolve_url('partnerships:complement', pk=cls.partnership.pk)
 
         cls.other_partnership = PartnershipFactory(
-            partnership_type=PartnershipType.PROJECT.name,
+            partnership_type=PartnershipType.COURSE.name,
         )
         cls.other_url = resolve_url('partnerships:complement', pk=cls.other_partnership.pk)
-
-        cls.data = {
-            'partnership_type': PartnershipType.COURSE.name,
-            'comment': '',
-            'partnership': cls.partnership.pk,
-            'partner_entities': [ cls.partner_entity.entity],
-            'supervisor': '',
-            'ucl_entity': cls.ucl_university.pk,
-
-        }
 
     def test_get_view_anonymous(self):
         response = self.client.get(self.url, follow=True)
@@ -350,7 +345,7 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'access_denied.html')
 
     def test_get_view_as_(self):
-        self.client.force_login(self.user_gf)
+        self.client.force_login(self.user_gs)
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_relation_update.html')
 
@@ -364,9 +359,9 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "partnerships/partnership/partnership_relation_update.html")
-        formset = response.context["formset"]
-        self.assertIsInstance(formset, PartnershipPartnerRelationFormSet)
-        self.assertEqual(formset.queryset.count(), 1)
+        formset = response.context["formsets"]
+        self.assertIsInstance(formset, PartnerRelationYearFormSet)
+
 
     def test_post_request_valid_formset(self):
         self.client.force_login(self.user_gs)
@@ -377,13 +372,13 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
             "form-MAX_NUM_FORMS": "1000",
             "form-0-id": self.partnership.id,
             "form-0-diploma_prod_by_partner": False,
-            "form-0-diploma_with_ucl_by_partner": True,
-            "form-0-supplement_prod_by_partner": "",
-            "form-0-partnership": self.partnership.id,
+            "form-0-type_diploma_by_partner": 'UNIQUE',
+            "form-0-supplement_prod_by_partner": "NO",
+            "form-0-partner_referent": "on"
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
-        # self.assertRedirects(response, reverse("partnerships:detail", kwargs={"pk": self.partnership.pk}))
+
 
     def test_post_request_invalid_formset(self):
         self.client.force_login(self.user_gs)
@@ -393,10 +388,10 @@ class PartnershipCourseComplementCreateViewTest(TestCase):
             "form-MIN_NUM_FORMS": "0",
             "form-MAX_NUM_FORMS": "1000",
             "form-0-id": self.partnership.id,
-            "form-0-diploma_prod_by_partner": "",  # Valeur invalide
-            "form-0-diploma_with_ucl_by_partner": True,
-            "form-0-supplement_prod_by_partner": "",
-            "form-0-partnership": self.partnership.id,
+            "form-0-diploma_prod_by_partner": False,
+            "form-0-type_diploma_by_partner": 'UNIQUES', # error
+            "form-0-supplement_prod_by_partner": "NO",
+            "form-0-partner_referent": "on"
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
