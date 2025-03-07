@@ -998,7 +998,7 @@ msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
 msgid "partnership_all_student"
-msgstr "All student"
+msgstr "All students"
 
 msgid "partnership_all_student_help_text"
 msgstr "If none selected, then all entities will be concerned"
