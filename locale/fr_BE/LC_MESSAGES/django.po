@@ -1083,12 +1083,6 @@ msgstr "L'accord finit après le partenariat."
 msgid "partnership_agreement_warning_before"
 msgstr "L'accord commence avant le partenariat."
 
-msgid "partnership_all_student"
-msgstr "Objet du partenariat"
-
-msgid "partnership_all_student_help_text"
-msgstr "Si non précisé alors toutes les entités seront concernées."
-
 msgid "partnership_api_year"
 msgstr "Année académique visible sur l'API"
 
@@ -1111,9 +1105,6 @@ msgstr ""
 
 msgid "partnership_diploma"
 msgstr "Production diplome"
-
-msgid "partnership_diploma_ucl"
-msgstr "Production du diplôme UCLouvain"
 
 msgid "partnership_doctorate_years_entity"
 msgstr "Commission doctorale de domaine concernée"
@@ -1224,12 +1215,6 @@ msgstr "Production supplément"
 
 msgid "partnership_type"
 msgstr "Type de partenariat"
-
-msgid "partnership_ucl_reference"
-msgstr "Institution référente"
-
-msgid "partnership_ucl_reference_help_text"
-msgstr "Si non précisé alors toutes les entités seront concernées."
 
 msgid "partnership_valid_in"
 msgstr "Partenariats ayant un accord validé en"
@@ -1431,6 +1416,9 @@ msgstr "Pour synchroniser avec EPC"
 msgctxt "partnership"
 msgid "type"
 msgstr "Type"
+
+msgid "type_diploma_by_partner"
+msgstr "Diplôme produit par le partenaire"
 
 msgid "type_diploma_by_ucl"
 msgstr "Type de diplôme"

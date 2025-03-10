@@ -9,8 +9,9 @@ from django.views.generic import UpdateView
 from base.models.academic_year import find_academic_years
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import (
-    PartnershipType, PartnershipYear,
+    PartnershipType, PartnershipYear, PartnershipPartnerRelation,
 )
+from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.views.mixins import NotifyAdminMailMixin
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
@@ -89,11 +90,13 @@ class PartnershipUpdateView(PartnershipFormMixin,
             )
             end_year = academic_years.last().year
 
+
         for academic_year in academic_years:
             partnership_year = form_year.save(commit=False)
             existing_year = PartnershipYear.objects.filter(
                 partnership=partnership, academic_year=academic_year
             ).first()
+
             partnership_year.pk = existing_year.pk if existing_year else None
             partnership_year.partnership = partnership
             partnership_year.academic_year = academic_year
@@ -110,6 +113,23 @@ class PartnershipUpdateView(PartnershipFormMixin,
             query |= Q(academic_year__end_date__lt=partnership.start_date)
         partnership.years.filter(query).delete()
 
+        # code added when business request to add co-diplomation (program FIE and osis base history)
+        if self.partnership_type == PartnershipType.COURSE.name:
+            entities = PartnershipPartnerRelation.objects.filter(partnership=partnership)
+            for entity in entities:
+                for academic_year in academic_years:
+                    # update or create according to range start_year and end_year
+                    object, created = PartnershipPartnerRelationYear.objects.get_or_create(
+                        partnership_relation_id=entity.pk,
+                        academic_year=academic_year
+                    )
+            # delete according to range start_year and end_year
+            object = PartnershipPartnerRelationYear.objects.filter(
+                partnership_relation_id__in=entities).filter(
+                Q(academic_year__year__gt=end_year) | Q(academic_year__year__lt=start_year)
+            ).delete()
+
+
         # Sync dates
         if not form.cleaned_data.get('start_date') and start_academic_year:
             partnership.start_date = start_academic_year.start_date
@@ -119,6 +139,6 @@ class PartnershipUpdateView(PartnershipFormMixin,
             partnership.save()
 
         messages.success(self.request, _('partnership_success'))
-        if self.partnership_type == "COURSE":
+        if self.partnership_type == PartnershipType.COURSE.name:
             return redirect(reverse_lazy('partnerships:complement', kwargs={'pk': partnership.pk}))
         return redirect(partnership)
