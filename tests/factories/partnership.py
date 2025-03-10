@@ -1,8 +1,9 @@
 import factory
 
 from base.models.enums.organization_type import ACADEMIC_PARTNER
+from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.entity import EntityWithVersionFactory
-from partnership.models import Partnership, PartnershipTag, PartnershipType
+from partnership.models import Partnership, PartnershipTag, PartnershipType, PartnershipConfiguration
 from .partner import PartnerFactory
 from .partnership_year import PartnershipYearFactory
 
@@ -72,3 +73,12 @@ class PartnershipFactory(factory.django.DjangoModelFactory):
                 organization=obj.partner_entity.organization,
                 **kwargs,
             )
+
+
+
+class PartnershipConfigurationFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PartnershipConfiguration
+
+    partnership_creation_update_min_year = factory.SubFactory(AcademicYearFactory)
+
