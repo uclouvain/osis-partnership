@@ -16,7 +16,7 @@ from partnership.models import (
     PartnerTag,
     PartnershipSubtype, PartnershipTag,
     PartnershipType,
-    PartnershipYearEducationLevel,
+    PartnershipYearEducationLevel, PartnershipFlowDirection,
 )
 from partnership.auth.roles.partnership_manager import PartnershipEntityManager
 from reference.models.continent import Continent
@@ -156,6 +156,11 @@ class PartnershipFilterForm(forms.Form):
         label=_('education_field'),
         queryset=DomainIsced.objects.filter(partnershipyear__isnull=False).distinct(),
         widget=autocomplete.ModelSelect2(attrs={'data-width': '100%'}),
+        required=False,
+    )
+    flow_direction = forms.ChoiceField(
+        label=_('Partnership flow direction'),
+        choices=((None, '---------'),) + PartnershipFlowDirection.choices(),
         required=False,
     )
     is_sms = forms.NullBooleanField(

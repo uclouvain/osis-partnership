@@ -31,3 +31,9 @@ class PartnershipProductionSupplement(ChoiceEnum):
     YES = _('Yes')
     NO = _('No')
     SHARED = _('Shared')
+
+
+class PartnershipFlowDirection(ChoiceEnum):
+    IN = _('IN')
+    OUT = _('OUT')
+    IN_OUT = _('IN/OUT')
