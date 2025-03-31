@@ -109,6 +109,10 @@ class PartnershipFilterForm(forms.Form):
         ),
         required=False,
     )
+    partner_entity_with_child = forms.BooleanField(
+        label=_('Include subordinate entities'),
+        required=False,
+    )
     partner_type = forms.ChoiceField(
         label=_('partner_type'),
         choices=((None, '---------'),) + ORGANIZATION_TYPE,
