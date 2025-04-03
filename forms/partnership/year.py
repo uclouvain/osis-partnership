@@ -279,13 +279,14 @@ class PartnershipYearCourseForm(PartnershipYearWithoutDatesForm):
             del self.fields['eligible']
 
             if current_academic_year is not None:
+                past_academic_years = AcademicYear.objects.all()
                 future_academic_years = AcademicYear.objects.filter(
                     year__gte=current_academic_year.year
                 )
                 if 'start_academic_year' in self.fields:
-                    self.fields['start_academic_year'].queryset = future_academic_years
+                    self.fields['start_academic_year'].queryset = past_academic_years
                 if 'from_academic_year' in self.fields:
-                    self.fields['from_academic_year'].queryset = future_academic_years
+                    self.fields['from_academic_year'].queryset = past_academic_years
                 self.fields['end_academic_year'].queryset = future_academic_years
 
 

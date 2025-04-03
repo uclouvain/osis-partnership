@@ -9,7 +9,7 @@ from django.views.generic import UpdateView
 from base.models.academic_year import find_academic_years
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.models import (
-    PartnershipType, PartnershipYear, PartnershipPartnerRelation,
+    PartnershipType, PartnershipYear, PartnershipPartnerRelation, PartnershipYearOffers,
 )
 from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.views.mixins import NotifyAdminMailMixin
@@ -102,6 +102,15 @@ class PartnershipUpdateView(PartnershipFormMixin,
             partnership_year.academic_year = academic_year
             partnership_year.save()
             form_year.save_m2m()
+
+            if self.partnership_type == PartnershipType.COURSE.name:
+                for offer in form_year.cleaned_data["offers"]:
+                    obj, created = PartnershipYearOffers.objects.update_or_create(
+                        partnershipyear=partnership_year,
+                        educationgroupyear= offer,
+                    )
+                    obj.educationgroup = offer.education_group
+                    obj.save()
 
         # Delete no longer used years
         if partnership.partnership_type in PartnershipType.with_synced_dates():

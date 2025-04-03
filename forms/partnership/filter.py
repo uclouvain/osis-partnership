@@ -87,7 +87,7 @@ class PartnershipFilterForm(forms.Form):
         queryset=(
             EducationGroupYear.objects
                 .select_related('academic_year')
-                .filter(partnerships__isnull=False)
+                # .filter(partnership_offers__isnull=False) #.filter(partnerships__isnull=False)
                 .distinct()
         ),
         required=False,
