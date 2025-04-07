@@ -53,7 +53,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_offers',
-            forward=['entity', 'entities', 'education_levels'],
+            forward=['entity', 'entities', 'education_levels', 'partnership_type'],
         ),
     )
 

@@ -95,6 +95,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             partnership_year.save()
             form_year.save_m2m()
             if self.partnership_type == PartnershipType.COURSE.name:
+                # to create a system for displaying co-diplomas in the annualised training catalogue
                 for offer in form_year.cleaned_data["offers"]:
                     obj, created = PartnershipYearOffers.objects.update_or_create(
                         partnershipyear=partnership_year,
@@ -142,15 +143,15 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
     form_class = PartnershipRelationYearWithoutDatesForm
+    partnership = ''
 
-    # def get_permission_object(self):
-    #     self.partnership_type = self.kwargs['instance'].partnership_type
-    #     return self.kwargs['instance'].partnership_type
+    def get_permission_object(self):
+        self.partnership = get_object_or_404(Partnership, pk=self.kwargs['pk'])
+        return  self.partnership
+
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.partnership = get_object_or_404(Partnership, pk=self.kwargs['pk'])
-        self.partnership_type = self.partnership.partnership_type
         kwargs['user'] = self.request.user
         kwargs['instance'] = self.partnership
         return kwargs

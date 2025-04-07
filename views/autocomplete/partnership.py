@@ -1,7 +1,8 @@
+from datetime import datetime
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q, F
-
+from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity_version import EntityVersion
 from base.models.enums.entity_type import DOCTORAL_COMMISSION, FACULTY, SECTOR
@@ -93,22 +94,30 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        config = PartnershipConfiguration.get_configuration()
-        next_academic_year = config.partnership_creation_update_min_year
-
         education_levels = self.forwarded.get('education_levels', None)
         entities = self.forwarded.get('entities', None)
         entity = self.forwarded.get('entity', None)
+        partnership_type = self.forwarded.get('partnership_type', None)
 
         # Return nothing if we don't have all the data
         if education_levels is None or (entities is None and entity is None):
             return EducationGroupYear.objects.none()
 
-        qs = EducationGroupYear.objects.filter(
-            joint_diploma=True,
-            academic_year=next_academic_year,
-            education_group_type__partnership_education_levels__in=education_levels,
-        ).select_related('academic_year')
+        if partnership_type==PartnershipType.COURSE.name :
+            current_academic_year = AcademicYear.objects.get(year=datetime.today().year)
+            qs = EducationGroupYear.objects.filter(
+                joint_diploma=True,
+                academic_year__gte=current_academic_year,
+                education_group_type__partnership_education_levels__in=education_levels,
+            ).select_related('academic_year')
+        else:
+            config = PartnershipConfiguration.get_configuration()
+            next_academic_year = config.partnership_creation_update_min_year
+            qs = EducationGroupYear.objects.filter(
+                joint_diploma=True,
+                academic_year=next_academic_year,
+                education_group_type__partnership_education_levels__in=education_levels,
+            ).select_related('academic_year')
 
         # Entities filter
         if entities is not None:
