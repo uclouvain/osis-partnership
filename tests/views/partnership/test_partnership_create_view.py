@@ -11,7 +11,7 @@ from base.tests.factories.education_group_year import EducationGroupYearFactory
 from base.tests.factories.entity_version import EntityVersionFactory
 from base.tests.factories.user import UserFactory
 from partnership.forms.partnership.year import PartnerRelationYearFormSet
-from partnership.models import PartnershipType, PartnershipMission, PartnershipConfiguration
+from partnership.models import PartnershipType, PartnershipMission, PartnershipConfiguration, PartnershipFlowDirection
 from partnership.tests.factories import (
     PartnerEntityFactory,
     PartnerFactory,
@@ -102,6 +102,7 @@ class PartnershipMobilityCreateViewTest(TestCase):
             'supervisor': '',
             'ucl_entity': cls.ucl_university.pk,
             'university_offers': [cls.university_offer.pk],
+            'year-flow_direction': PartnershipFlowDirection.IN_OUT.name,
             'year-is_sms': True,
             'year-is_smp': False,
             'year-is_sta': True,

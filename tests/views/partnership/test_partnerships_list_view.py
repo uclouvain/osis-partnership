@@ -16,7 +16,7 @@ from base.tests.factories.entity_version import EntityVersionFactory as BaseEnti
 from base.tests.factories.user import UserFactory
 from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.forms import PartnershipFilterForm
-from partnership.models import AgreementStatus, PartnershipType
+from partnership.models import AgreementStatus, PartnershipType, PartnershipFlowDirection
 from partnership.models.enums.filter import DateFilterType
 from partnership.tests import TestCase
 from partnership.tests.factories import (
@@ -164,6 +164,11 @@ class PartnershipsListViewTest(TestCase):
         partnership_year.education_levels.add(cls.education_level)
         cls.partnership_education_level = partnership_year.partnership
 
+        # flow_direction
+        cls.partnership_flow_direction = PartnershipYearFactory(
+            flow_direction=PartnershipFlowDirection.OUT.name,
+            academic_year__year=2150,
+        ).partnership
         # is_sms
         cls.partnership_is_sms = PartnershipYearFactory(
             is_sms=True,
@@ -324,7 +329,7 @@ class PartnershipsListViewTest(TestCase):
     def test_get_list_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
-        self.assertEqual(response.context['object_list'].count(), 29)
+        self.assertEqual(response.context['object_list'].count(), 30)
         self.assertTemplateUsed(response, 'partnerships/partnership/partnership_list.html')
 
     @tag('perf')
@@ -390,8 +395,8 @@ class PartnershipsListViewTest(TestCase):
         json = response.json()
         uuids = [o['uuid'] for o in json['object_list']]
         self.assertIn(str(self.partnership_university_offer.uuid), uuids)
-        # Include partnerships with offers at None (29 total - 2 with other offers)
-        self.assertEqual(json['total'], 27)
+        # Include partnerships with offers at None (30 total - 2 with other offers)
+        self.assertEqual(json['total'], 28)
 
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
@@ -473,6 +478,15 @@ class PartnershipsListViewTest(TestCase):
         results = response.json()['object_list']
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['uuid'], str(self.partnership_education_level.uuid))
+
+    def test_filter_flow_direction(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, {
+            'flow_direction': PartnershipFlowDirection.OUT.name,
+        }, headers={"accept": 'application/json'})
+        results = response.json()['object_list']
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['uuid'], str(self.partnership_flow_direction.uuid))
 
     def test_filter_is_sms(self):
         self.client.force_login(self.user)

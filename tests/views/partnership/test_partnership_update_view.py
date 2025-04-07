@@ -17,7 +17,7 @@ from partnership.models import (
     Partnership,
     PartnershipConfiguration,
     PartnershipMission,
-    PartnershipType,
+    PartnershipType, PartnershipFlowDirection,
 )
 from partnership.tests.factories import (
     PartnerEntityFactory,
@@ -141,6 +141,7 @@ class PartnershipUpdateViewTest(TestCase):
             'partner_entities': [cls.partner_entity.entity_id],
             'supervisor': '',
             'ucl_entity': cls.ucl_university_labo.pk,
+            'year-flow_direction': PartnershipFlowDirection.IN_OUT.name,
             'year-is_sms': True,
             'year-is_smp': False,
             'year-is_smst': True,

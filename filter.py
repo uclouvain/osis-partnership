@@ -178,6 +178,9 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='entity__organization__partner__use_egracons',
         widget=CustomNullBooleanSelect()
     )
+    flow_direction = filters.ChoiceFilter(
+        field_name='partnership__years__flow_direction',
+    )
     is_sms = filters.BooleanFilter(
         field_name='partnership__years__is_sms',
         widget=CustomNullBooleanSelect(),
@@ -256,6 +259,7 @@ class PartnershipAdminFilter(filters.FilterSet):
             'city',
             'partner_tags',
             'education_field',
+            'flow_direction',
             'is_sms',
             'is_smp',
             'is_sta',

@@ -32,7 +32,11 @@
 </div>
 
 <h4>{% trans "planned_activity" %}</h4>
-<div class="row" id="partnership-form-sm-inputs">
+<div class="row">
+  <div class="col-12">
+    {% bootstrap_field form_year.flow_direction %}
+  </div>
+</div><div class="row" id="partnership-form-sm-inputs">
   <div class="col-12 col-md-4">
     {% bootstrap_field form_year.is_sms %}
   </div>
