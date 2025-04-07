@@ -146,7 +146,9 @@ class PartnershipAdminFilter(filters.FilterSet):
     supervisor = filters.ModelChoiceFilter(
         field_name='partnership__supervisor',
     )
-    partner_entity = filters.ModelChoiceFilter(field_name='entity')
+    partner_entity = filters.ModelChoiceFilter(method='filter_partner_entity')
+    # This is a noop filter, as its logic is in filter_ucl_entity()
+    partner_entity_with_child = filters.BooleanFilter(method=lambda qs, *_: qs)
     tags = filters.ModelMultipleChoiceFilter(
         field_name='partnership__tags',
     )
@@ -299,6 +301,15 @@ class PartnershipAdminFilter(filters.FilterSet):
                 Q(partnership__years__entities=value)
                 | Q(partnership__years__entities__isnull=True)
             )
+        return queryset
+
+    def filter_partner_entity(self, queryset, name, value):
+        if value:
+            if self.form.cleaned_data.get('partner_entity_with_child', False) and not hasattr(value, 'partnerentity'):
+                queryset = queryset.filter(entity__organization=value.organization)
+            else:
+                queryset = queryset.filter(entity=value)
+
         return queryset
 
     def filter_ucl_entity(self, queryset, name, value):
