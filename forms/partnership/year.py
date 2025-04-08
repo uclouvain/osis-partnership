@@ -204,6 +204,7 @@ class FundingMixin(forms.Form):
 class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
+            'flow_direction',
             'is_sms',
             'is_smp',
             'is_smst',
