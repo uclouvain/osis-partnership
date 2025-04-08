@@ -287,7 +287,6 @@ class PartnershipCourseForm(PartnershipBaseForm):
         return cleaned_data
 
 
-
 class PartnershipDoctorateForm(PartnershipBaseForm):
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
