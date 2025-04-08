@@ -278,6 +278,22 @@ class PartnershipCourseForm(PartnershipBaseForm):
         self.fields['supervisor'].required = False
         self.fields['project_acronym'].required = False
 
+    # def clean_project_acronym(self):
+    #     data = self.cleaned_data.get('project_acronym')
+    #     # Si vide ou None, on retourne une chaîne vide
+    #     if not data:
+    #         return ''
+    #     return data
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if 'project_acronym' in self.errors:
+            if not cleaned_data.get('project_acronym'):
+                del self.errors['project_acronym']
+                cleaned_data["project_acronym"]=''
+        return cleaned_data
+
+
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
     class Meta(PartnershipBaseForm.Meta):
