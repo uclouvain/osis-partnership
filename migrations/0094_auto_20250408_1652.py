@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('partnership', '0011_remove_partnership_all_student_and_more'),
+        ('partnership', '0093_partnershipyear_flow_direction'),
     ]
 
     state_operations = [
