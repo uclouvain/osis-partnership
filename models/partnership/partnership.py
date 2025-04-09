@@ -382,6 +382,8 @@ class Partnership(models.Model):
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
+        if self.partnership_type == PartnershipType.COURSE.name:
+            return None
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
