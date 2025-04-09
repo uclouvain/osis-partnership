@@ -709,16 +709,12 @@ msgstr "Domaine d'étude"
 msgid "education_fields"
 msgstr "Domaines"
 
-#, fuzzy
-#| msgid "education_group_types"
 msgid "education_group"
 msgstr "Groupe d'éducation"
 
 msgid "education_group_types"
 msgstr "Types de groupe d'éducation"
 
-#, fuzzy
-#| msgid "education_group_types"
 msgid "education_group_year"
 msgstr "Types de groupe d'éducation"
 
