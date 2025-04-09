@@ -1,9 +1,10 @@
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
+
 class PartnershipYearOffers(models.Model):
     """
-    Le modèle représentant une relation entre une entité et un partenariat
+    Le modèle représentant une relation entre le catalogue de formation et un partenariat
     """
     partnershipyear = models.ForeignKey(
         'partnership.PartnershipYear',
@@ -29,4 +30,3 @@ class PartnershipYearOffers(models.Model):
 
     class Meta:
         db_table = 'partnership_partnershipyear_offers'
-

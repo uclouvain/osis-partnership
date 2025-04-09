@@ -107,7 +107,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
                 for offer in form_year.cleaned_data["offers"]:
                     obj, created = PartnershipYearOffers.objects.update_or_create(
                         partnershipyear=partnership_year,
-                        educationgroupyear= offer,
+                        educationgroupyear=offer,
                     )
                     obj.educationgroup = offer.education_group
                     obj.save()

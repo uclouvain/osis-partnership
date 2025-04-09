@@ -283,7 +283,7 @@ class PartnershipCourseForm(PartnershipBaseForm):
         if 'project_acronym' in self.errors:
             if not cleaned_data.get('project_acronym'):
                 del self.errors['project_acronym']
-                cleaned_data["project_acronym"]=''
+                cleaned_data["project_acronym"] = ''
         return cleaned_data
 
 

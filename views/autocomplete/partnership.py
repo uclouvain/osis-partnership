@@ -103,7 +103,7 @@ class PartnershipYearOffersAutocompleteView(PermissionRequiredMixin, autocomplet
         if education_levels is None or (entities is None and entity is None):
             return EducationGroupYear.objects.none()
 
-        if partnership_type==PartnershipType.COURSE.name :
+        if partnership_type == PartnershipType.COURSE.name:
             current_academic_year = AcademicYear.objects.get(year=datetime.today().year)
             qs = EducationGroupYear.objects.filter(
                 joint_diploma=True,

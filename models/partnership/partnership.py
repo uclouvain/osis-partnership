@@ -244,7 +244,7 @@ class Partnership(models.Model):
             # This is the case when using factory-boy, just return a string
             return 'Missing annotation'
         # When having multiple partner entities (from annotation), take project_acronym
-        if self.num_partners > 1 and len(self.project_acronym)>0:
+        if self.num_partners > 1 and len(self.project_acronym) > 0:
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
