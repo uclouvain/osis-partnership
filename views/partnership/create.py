@@ -147,7 +147,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
 
     def get_permission_object(self):
         self.partnership = get_object_or_404(Partnership, pk=self.kwargs['pk'])
-        return  self.partnership
+        return self.partnership
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
