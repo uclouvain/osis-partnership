@@ -4,10 +4,11 @@ try:
     from .partnership import *
     from .partnership_year import *
     from .partnership_year_education import *
+    from .partnership_year_offers import *
 
     # Prevent polluting the namespace with module names
     for name in ['agreement', 'configuration', 'partnership',
-                 'partnership_year', 'partnership_year_education']:
+                 'partnership_year', 'partnership_year_education', 'partnership_year_offers']:
         del globals()[name]
 except RuntimeError as e:  # pragma: no cover
     # There's a weird bug when running tests, the test runner seeing a models
