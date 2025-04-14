@@ -59,9 +59,6 @@ msgstr ""
 msgid "Coverage"
 msgstr ""
 
-msgid "Direction:"
-msgstr ""
-
 msgid "EU-wide network"
 msgstr ""
 
@@ -228,12 +225,6 @@ msgstr ""
 msgid "Higher education institution (tertiary level)"
 msgstr ""
 
-msgid "IN"
-msgstr ""
-
-msgid "IN/OUT"
-msgstr ""
-
 msgid "Include subordinate entities"
 msgstr ""
 
@@ -264,9 +255,6 @@ msgstr ""
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
-msgid "OUT"
-msgstr ""
-
 msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
@@ -284,9 +272,6 @@ msgstr ""
 
 msgid "Partner"
 msgstr "Partner"
-
-msgid "Partnership flow direction"
-msgstr ""
 
 msgid "Partnership manager"
 msgstr ""
