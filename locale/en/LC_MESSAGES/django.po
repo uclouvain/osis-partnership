@@ -59,6 +59,9 @@ msgstr ""
 msgid "Coverage"
 msgstr ""
 
+msgid "Direction:"
+msgstr ""
+
 msgid "EU-wide network"
 msgstr ""
 
@@ -225,6 +228,12 @@ msgstr ""
 msgid "Higher education institution (tertiary level)"
 msgstr ""
 
+msgid "IN"
+msgstr ""
+
+msgid "IN/OUT"
+msgstr ""
+
 msgid "Include subordinate entities"
 msgstr ""
 
@@ -255,6 +264,9 @@ msgstr ""
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
+msgid "OUT"
+msgstr ""
+
 msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
@@ -272,6 +284,9 @@ msgstr ""
 
 msgid "Partner"
 msgstr "Partner"
+
+msgid "Partnership flow direction"
+msgstr ""
 
 msgid "Partnership manager"
 msgstr ""
@@ -618,7 +633,7 @@ msgid "education_fields"
 msgstr "Education fields"
 
 msgid "education_group"
-msgstr "Education group"
+msgstr "Education group types"
 
 msgid "education_group_types"
 msgstr "Education group types"
@@ -1431,18 +1446,3 @@ msgstr "Visible on the public interface"
 
 msgid "website"
 msgstr "Website"
-
-#~ msgid "partnership_all_student"
-#~ msgstr "All students"
-
-#~ msgid "partnership_all_student_help_text"
-#~ msgstr "If none selected, then all entities will be concerned"
-
-#~ msgid "partnership_diploma_ucl"
-#~ msgstr "Production of the UCLouvain diploma"
-
-#~ msgid "partnership_ucl_reference"
-#~ msgstr "Reference institution"
-
-#~ msgid "partnership_ucl_reference_help_text"
-#~ msgstr "If none selected, then all entities will be concerned"
