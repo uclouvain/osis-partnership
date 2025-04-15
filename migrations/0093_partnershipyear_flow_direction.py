@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("partnership", "0092_copy_partner_address_to_new_version"),
-        ("partnership", "0011_remove_partnership_all_student_and_more"),
+        ("partnership", "0012_auto_20250414_1138"),
     ]
 
     operations = [
