@@ -632,7 +632,13 @@ msgstr "Education field"
 msgid "education_fields"
 msgstr "Education fields"
 
+msgid "education_group"
+msgstr "Education group types"
+
 msgid "education_group_types"
+msgstr "Education group types"
+
+msgid "education_group_year"
 msgstr "Education group types"
 
 msgid "education_level_filter"
@@ -1346,7 +1352,7 @@ msgid "type"
 msgstr "Type"
 
 msgid "type_diploma_by_partner"
-msgstr "Diplôme produit par le partenaire"
+msgstr "Type of diploma produced by partner"
 
 msgid "type_diploma_by_ucl"
 msgstr "Type of diploma"

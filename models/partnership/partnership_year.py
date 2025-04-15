@@ -62,6 +62,7 @@ class PartnershipYear(models.Model):
         help_text=_('partnership_year_offers_help_text'),
         related_name='partnerships',
         blank=True,
+        through='partnership.PartnershipYearOffers',
     )
 
     # For MOBILITY type

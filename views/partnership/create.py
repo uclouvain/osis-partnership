@@ -9,7 +9,8 @@ from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 from base.models.academic_year import find_academic_years, AcademicYear
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms.partnership.year import PartnerRelationYearFormSet, PartnershipRelationYearWithoutDatesForm
-from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipConfiguration
+from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipConfiguration, \
+    PartnershipYearOffers
 from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.views.mixins import NotifyAdminMailMixin
 from osis_role.contrib.views import PermissionRequiredMixin
@@ -93,6 +94,15 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             partnership_year.academic_year = academic_year
             partnership_year.save()
             form_year.save_m2m()
+            if self.partnership_type == PartnershipType.COURSE.name:
+                # to create a system for displaying co-diplomas in the annualised training catalogue
+                for offer in form_year.cleaned_data["offers"]:
+                    obj, created = PartnershipYearOffers.objects.update_or_create(
+                        partnershipyear=partnership_year,
+                        educationgroupyear=offer,
+                    )
+                    obj.educationgroup = offer.education_group
+                    obj.save()
 
         # create partnershiprelationyear
         if self.partnership_type == PartnershipType.COURSE.name:
@@ -132,10 +142,14 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
     login_url = 'access_denied'
     permission_required = 'partnership.change_partnership'
     form_class = PartnershipRelationYearWithoutDatesForm
+    partnership = ''
+
+    def get_permission_object(self):
+        self.partnership = get_object_or_404(Partnership, pk=self.kwargs['pk'])
+        return self.partnership
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.partnership = get_object_or_404(Partnership, pk=self.kwargs['pk'])
         kwargs['user'] = self.request.user
         kwargs['instance'] = self.partnership
         return kwargs
