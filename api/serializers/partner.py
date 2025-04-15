@@ -3,6 +3,8 @@ import datetime
 import json
 
 from django.db import transaction
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers, status
 
 from base.models.entity_version import EntityVersion
@@ -26,8 +28,8 @@ from reference.models.country import Country
 
 class PartnerListSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='organization.name')
-    city = serializers.ReadOnlyField()
-    country = serializers.ReadOnlyField(source='country_name')
+    city = serializers.CharField(read_only=True)
+    country = serializers.CharField(source='country_name', read_only=True)
     country_iso = serializers.CharField(source='country_iso_code')
     partnerships_count = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
@@ -39,9 +41,18 @@ class PartnerListSerializer(serializers.ModelSerializer):
             'location', 'partnerships_count',
         ]
 
+    @extend_schema_field(OpenApiTypes.INT)
     def get_partnerships_count(self, obj):
         return self.context['counts'][obj.pk]
 
+    @extend_schema_field({
+        "type": "array",
+        "items": {
+            "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2,
+    })
     def get_location(self, obj):
         if obj.location:
             return json.loads(obj.location.json)
