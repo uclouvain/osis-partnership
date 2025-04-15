@@ -121,6 +121,9 @@ class PartnershipPartnerRelationInline(admin.TabularInline):
 
 @admin.register(Partnership)
 class PartnershipAdmin(admin.ModelAdmin):
+    search_fields = (
+        'partnershiprelation__entity__organization__name',
+    )
     raw_id_fields = (
         'ucl_entity',
         'supervisor',

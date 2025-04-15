@@ -45,7 +45,12 @@
               {% endfor %}
             </ul>
           </td>
-          <td>{{ partnership_year.planned_activity }}</td>
+          <td>
+            {{ partnership_year.planned_activity }}
+            <br>
+            <br>
+            {% translate "Direction:" %} {{ partnership_year.get_flow_direction_display }}
+          </td>
           <td>
             {% if partnership_year.has_sm %}
               <ul class="list-unstyled">

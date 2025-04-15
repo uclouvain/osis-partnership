@@ -6,7 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from ordered_model.models import OrderedModel
 
 from base.models.entity_version import EntityVersion
-from ..enums.partnership import PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement
+from ..enums.partnership import PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement, \
+    PartnershipFlowDirection
 
 __all__ = [
     'PartnershipMission',
@@ -35,6 +36,12 @@ class PartnershipYear(models.Model):
         'reference.DomainIsced',
         verbose_name=_('partnership_year_education_fields'),
         blank=False,
+    )
+    flow_direction = models.CharField(
+        max_length=20,
+        verbose_name=_('Partnership flow direction'),
+        choices=PartnershipFlowDirection.choices(),
+        default=PartnershipFlowDirection.IN_OUT.name,
     )
     education_levels = models.ManyToManyField(
         'partnership.PartnershipYearEducationLevel',

@@ -11,7 +11,7 @@ from partnership.models import (
     PartnershipYear,
     FundingSource,
     FundingProgram,
-    FundingType,
+    FundingType, PartnershipFlowDirection,
 )
 
 
@@ -89,6 +89,10 @@ class PartnershipPartnerRelationFilter(filters.FilterSet):
         label=_('mobility_type'),
         choices=(('student', "Student"), ('staff', "Staff")),
         method='filter_mobility_type',
+    )
+    flow_direction = filters.ChoiceFilter(
+        field_name='partnership__years__flow_direction',
+        choices=PartnershipFlowDirection.choices(),
     )
     funding_source = filters.ModelChoiceFilter(
         queryset=FundingSource.objects.all(),

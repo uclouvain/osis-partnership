@@ -124,8 +124,11 @@
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="filter-partner">
                   <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 col-lg-8">
                       {% bootstrap_field form.partner_entity %}
+                    </div>
+                    <div class="col-12 col-lg-4">
+                      {% bootstrap_field form.partner_entity_with_child %}
                     </div>
                   </div>
                   <div class="row">
@@ -175,6 +178,9 @@
                   </div>
                   <div class="row collapse fade show only-mobility">
                     <div class="col-12 col-lg-4">
+                      {% bootstrap_field form.flow_direction %}
+                    </div>
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_sms %}
                     </div>
                     <div class="col-12 col-lg-4">
@@ -183,10 +189,10 @@
                     <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_sta %}
                     </div>
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_stt %}
                     </div>
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-4">
                       {% bootstrap_field form.is_smst %}
                     </div>
                   </div>
