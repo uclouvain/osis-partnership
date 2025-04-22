@@ -244,7 +244,7 @@ class Partnership(models.Model):
             # This is the case when using factory-boy, just return a string
             return 'Missing annotation'
         # When having multiple partner entities (from annotation), take project_acronym
-        if self.num_partners > 1:
+        if self.num_partners > 1 and len(self.project_acronym) > 0:
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
@@ -382,6 +382,8 @@ class Partnership(models.Model):
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
+        if self.partnership_type == PartnershipType.COURSE.name:
+            return None
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible

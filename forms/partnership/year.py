@@ -53,7 +53,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_offers',
-            forward=['entity', 'entities', 'education_levels'],
+            forward=['entity', 'entities', 'education_levels', 'partnership_type'],
         ),
     )
 
@@ -204,6 +204,7 @@ class FundingMixin(forms.Form):
 class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
+            'flow_direction',
             'is_sms',
             'is_smp',
             'is_smst',
@@ -279,13 +280,14 @@ class PartnershipYearCourseForm(PartnershipYearWithoutDatesForm):
             del self.fields['eligible']
 
             if current_academic_year is not None:
+                past_academic_years = AcademicYear.objects.all()
                 future_academic_years = AcademicYear.objects.filter(
                     year__gte=current_academic_year.year
                 )
                 if 'start_academic_year' in self.fields:
-                    self.fields['start_academic_year'].queryset = future_academic_years
+                    self.fields['start_academic_year'].queryset = past_academic_years
                 if 'from_academic_year' in self.fields:
-                    self.fields['from_academic_year'].queryset = future_academic_years
+                    self.fields['from_academic_year'].queryset = past_academic_years
                 self.fields['end_academic_year'].queryset = future_academic_years
 
 

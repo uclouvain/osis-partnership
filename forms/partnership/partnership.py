@@ -277,6 +277,15 @@ class PartnershipCourseForm(PartnershipBaseForm):
         self.fields['subtype'].label = _('partnership_subtype_course')
         self.fields['subtype'].label_from_instance = lambda o: o.label
         self.fields['supervisor'].required = False
+        self.fields['project_acronym'].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if 'project_acronym' in self.errors:
+            if not cleaned_data.get('project_acronym'):
+                del self.errors['project_acronym']
+                cleaned_data["project_acronym"] = ''
+        return cleaned_data
 
 
 class PartnershipDoctorateForm(PartnershipBaseForm):
