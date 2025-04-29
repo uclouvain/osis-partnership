@@ -1046,7 +1046,7 @@ msgid "partner_name"
 msgstr "Nom du partenaire"
 
 msgid "partner_referent"
-msgstr "Parntenaire référent"
+msgstr "Partenaire référent"
 
 msgid "partner_saved"
 msgstr "Partenaire sauvegardé avec succès."
