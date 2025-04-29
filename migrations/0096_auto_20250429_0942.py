@@ -22,8 +22,8 @@ def add_education_group_type_fie(apps, schema_editor):
     )
 
     isced_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
-    isced_master.education_group_types=m4_type
-    isced_master.education_group_types=m5_type
+    isced_master.education_group_types.add(m4_type)
+    isced_master.education_group_types.add(m5_type)
     isced_master.save()
 
     # Change label/field subtype of partnership
@@ -32,7 +32,7 @@ def add_education_group_type_fie(apps, schema_editor):
     other_diplomation = PartnershipSubtype.objects.get(
         code='OTHER_DI'
     )
-    other_diplomation.lable="autre collaboration pour la diplomation"
+    other_diplomation.label="autre collaboration pour la diplomation"
     other_diplomation.save()
 
 class Migration(migrations.Migration):
