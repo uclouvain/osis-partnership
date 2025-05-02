@@ -150,7 +150,7 @@ class PartnershipYear(models.Model):
 
     @cached_property
     def is_valid(self):
-        if self.partnership.is_project:
+        if self.partnership.is_project or self.partnership.is_course:
             return True
 
         ranges = self.partnership.valid_agreements_dates_ranges
