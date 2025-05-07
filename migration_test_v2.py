@@ -39,12 +39,12 @@ def migrate_data_codiplomation(apps):
             'education_group_year__education_group').filter(education_group_year__education_group=item_ego)
 
         start = codiplomations_by_eg.aggregate(min_acad=Min('education_group_year__academic_year__year'))
-        end = codiplomations_by_eg.aggregate(min_acad=Max('education_group_year__academic_year__year'))
+        end = codiplomations_by_eg.aggregate(max_acad=Max('education_group_year__academic_year__year'))
 
         start_date = AcademicYear.objects.get(year=start['min_acad'])
         end_date = AcademicYear.objects.get(year=end['max_acad'])
 
-        old_partnership = codiplomations_by_eg.order_by('-academic_year').first() # tri descend
+        old_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first() # tri descend
 
         # Creation one partnership
         mission = PartnershipMission.objects.get(code="ENS")
@@ -67,7 +67,7 @@ def migrate_data_codiplomation(apps):
             partner_referent=None,
             all_student=old_partnership.all_students,
             diploma_by_ucl=old_partnership.diploma,
-            diploma_prod_by_ucl=old_partnership.is_producing_cerfificate,
+            diploma_prod_by_ucl=old_partnership.is_producing_cerfificate, #is_producing_cerfificate
             supplement_prod_by_ucl=old_partnership.is_producing_annexe,
             # other fields
         )
@@ -75,7 +75,7 @@ def migrate_data_codiplomation(apps):
         # lien avec les entity. (entity_id qui fait le lien avec base_entity)
         # non_concerne serait les non-référents
 
-        entity = Entity.objects.filter(old_partnership.organization_id)
+        entity = Entity.objects.filter(organization_id=old_partnership.organization_id)
 
         relation = Relation(
             partnership=partnership,
@@ -108,11 +108,12 @@ def migrate_data_codiplomation(apps):
                 funding_type_id=None,
                 funding_program_id=None,
                 funding_source_id=None,
-                education_fields_id= codiplomation.isced_domain_id, # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
-                education_levels= partnership.PartnershipYearEducationLevel,
-                entities=entity,  # partnership_year_entities > Base-entity ?? many-to-many? A vérifier.
-                # offers=PartnershipYearOffers(),  # base.EducationGroupYear
             )
+            partnership_year.education_fields.add(codiplomation.isced_domain) # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
+            partnership_year.education_levels.add(partnership.PartnershipYearEducationLevel) # partnership_year_entities > Base-entity ?? many-to-many? A vérifier.
+            partnership_year.entities.add(entity) # base.EducationGroupYear
+            partnership_year.offers.add() #
+
             relation_year.save()
             partnership_year.save()
 
