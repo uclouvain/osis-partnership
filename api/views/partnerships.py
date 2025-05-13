@@ -9,8 +9,10 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
+from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterMixin
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
@@ -251,8 +253,28 @@ def partnership_get_export_url(request):  # pragma: no cover
     })
 
 
-class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportView):
+@extend_schema_view(get=extend_schema(
+    responses=OpenApiResponse(
+        description='A xls file with partnerships',
+        response={
+            'application/xls.ms-excel': {
+                'schema': {
+                    "type": "string",
+                    "format": "binary",
+                }
+            }
+        },
+    ),
+))
+class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportView, generics.ListAPIView):
+    # This need to inherit from ListAPIView and to have filter_backends
+    # in order to have parameters in schema generation
+    filter_backends = [DjangoFilterBackend]
     filterset_class = PartnershipPartnerRelationFilter
+
+    def dispatch(self, request, *args, **kwargs):
+        """ Ensure we do not call GenericAPIView.dispatch """
+        return View.dispatch(self, request, *args, **kwargs)
 
     def get_xls_headers(self):
         return [

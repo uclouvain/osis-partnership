@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.utils.translation import get_language
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from base.models.education_group_year import EducationGroupYear
@@ -31,6 +33,7 @@ class CountryConfigurationSerializer(serializers.ModelSerializer):
         model = Country
         fields = ['name', 'iso_code', 'cities']
 
+    @extend_schema_field(serializers.ListSerializer(child=serializers.CharField()))
     def get_cities(self, country):
         return country.cities.split(';')
 
@@ -70,6 +73,7 @@ class UCLUniversityConfigurationSerializer(serializers.ModelSerializer):
         fields = ['value', 'label']
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_label(result):
         if not result.acronym_path:  # pragma: no cover
             # TODO: remove this edge case when entity is malformed
@@ -105,6 +109,7 @@ class EducationFieldConfigurationSerializer(serializers.ModelSerializer):  # pra
         fields = ['value', 'label']
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_label(result):
         label = 'title_fr' if get_language() == settings.LANGUAGE_CODE_FR else 'title_en'
         return result[label]
@@ -119,6 +124,7 @@ class OfferSerializer(serializers.ModelSerializer):
         fields = ['value', 'label']
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_label(result):
         label = 'title' if get_language() == settings.LANGUAGE_CODE_FR else 'title_english'
         return "{} - {}".format(result['acronym'], result[label])
@@ -127,3 +133,35 @@ class OfferSerializer(serializers.ModelSerializer):
 class PartnershipTypeSerializer(serializers.Serializer):
     value = serializers.CharField(source='name')
     label = serializers.CharField(source='value')
+
+
+# Used for schema generation only
+@extend_schema_field({
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "value": {
+                "type": "string",
+            },
+            "text": {
+                "type": "string",
+            },
+        },
+    },
+})
+class FundingField(serializers.Field):
+    pass
+
+
+# Used for schema generation only
+class ConfigurationSerializer(serializers.Serializer):
+    continents = ContinentConfigurationSerializer(many=True)
+    partners = PartnerConfigurationSerializer(many=True)
+    ucl_universities = UCLUniversityConfigurationSerializer(many=True)
+    education_levels = EducationLevelSerializer(many=True)
+    fundings = FundingField()
+    partnership_types = PartnershipTypeSerializer(many=True)
+    tags = serializers.ListSerializer(child=serializers.CharField())
+    partner_tags = serializers.ListSerializer(child=serializers.CharField())
+    offers = OfferSerializer(many=True)

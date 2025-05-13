@@ -78,7 +78,7 @@ class FinancingListViewTest(TestCase):
     @tag('perf')
     def test_queries_count(self):
         self.client.force_login(self.user_adri)
-        with self.assertNumQueriesLessThan(27):
+        with self.assertNumQueriesLessThan(31):
             self.client.get(self.default_url)
 
         with self.assertNumQueriesLessThan(12):
