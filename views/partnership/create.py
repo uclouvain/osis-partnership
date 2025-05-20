@@ -114,7 +114,6 @@ class PartnershipCreateView(NotifyAdminMailMixin,
                         academic_year=academic_year
                     )
 
-
         messages.success(self.request, _('partnership_success'))
 
         if self.partnership_type == PartnershipType.COURSE.name:
