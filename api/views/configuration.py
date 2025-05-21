@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Prefetch
 from django.utils.translation import get_language
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,7 +16,7 @@ from partnership.api.serializers import (
 )
 from partnership.api.serializers.configuration import (
     EducationLevelSerializer,
-    PartnershipTypeSerializer,
+    PartnershipTypeSerializer, ConfigurationSerializer,
 )
 from partnership.models import (
     EntityProxy,
@@ -35,6 +36,9 @@ class ConfigurationView(APIView):
 
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        responses=ConfigurationSerializer,
+    )
     def get(self, request):
         config = PartnershipConfiguration.get_configuration()
         current_year = config.get_current_academic_year_for_api()

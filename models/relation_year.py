@@ -44,6 +44,12 @@ class PartnershipPartnerRelationYear(models.Model):
         verbose_name=_('partner_referent'),
         default=False
     )
+    all_student = models.BooleanField(
+        verbose_name=_('all_student'),
+        default=True,
+        null=False,
+        blank=True
+    )
 
     class Meta:
         unique_together = ['partnership_relation', 'academic_year']
