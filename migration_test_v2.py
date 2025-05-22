@@ -82,10 +82,11 @@ def migrate_data_codiplomation(apps):
                 )
             relation.save()
 
+            referents = []
             for codiplomation_year in codiplomations_by_eg.filter(organization=organization):
                 supplement = PartnershipProductionSupplement.YES.name if codiplomation_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
                 type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if codiplomation_year.diploma == "UNIQUE" else PartnershipDiplomaWithUCL.SEPARED.name
-
+                referents.append(codiplomation_year.enrollement_place)
                 relation_year = PartnershipPartnerRelationYear(
                     partnership_relation=relation,
                     academic_year=codiplomation_year.education_group_year.academic_year,
@@ -97,6 +98,7 @@ def migrate_data_codiplomation(apps):
                 relation_year.save()
 
         # education_group_year > annuel / domain >> 23 relation
+        ucl_referent = False if True in referents else False # si aucun partneraire n'est référent uclouvain est référent
         for i in range(start['min_acad'], end['max_acad']+1):
             partnership_year = PartnershipYear(
                 academic_year=AcademicYear.object.get(year=i), #codiplomation_year.education_group_year.academic_year, #educationgrouyear_academic_year
@@ -105,7 +107,7 @@ def migrate_data_codiplomation(apps):
                 funding_program=None,
                 funding_source=None,
                 flow_direction=PartnershipFlowDirection.IN.name,
-                ucl_reference=True,
+                ucl_reference=ucl_referent,
                 all_student=codiplomation_year.all_students, # organization (
                 diploma_prod_by_ucl=codiplomation_year.is_producing_cerfificate,
                 supplement_prod_by_ucl=codiplomation_year.is_producing_annexe,
