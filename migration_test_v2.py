@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import migrations
-from models.enums.partnership import PartnershipProductionSupplement, PartnershipType, PartnershipFlowDirection, \
+from partnership.models.enums.partnership import PartnershipProductionSupplement, PartnershipType, PartnershipFlowDirection, \
     PartnershipDiplomaWithUCL
 from django.db.models import Min, Max
 
@@ -15,21 +15,21 @@ from django.db.models import Min, Max
 # années gérée dans partnership_partnership_year_offer (lien vers base year offer) (lié depuis partnership_partnership -> partnership_partnership_year -> ...offer)
 
 
-def migrate_data_codiplomation(apps):
+def migrate_data_codiplomation(apps, schema_editor):
     if settings.TESTING:
         return
-    AcademicYear = apps.get_model('partnership', 'AcademicYear')
+    AcademicYear = apps.get_model('base', 'AcademicYear')
     EducationGroupYear = apps.get_model("base", "EducationGroupYear")
     EducationGroupOrganization = apps.get_model("base", "EducationGroupOrganization")
-    Entity = apps.get_model("Base", "Entity")
-    Partnership = apps.get_model("Partnership", "Partnership")
-    PartnershipPartnerRelation = apps.get_model("Partnership", "PartnershipPartnerRelation")
-    PartnershipPartnerRelationYear = apps.get_model("Partnership", "PartnershipPartnerRelationYear")
-    PartnershipYear = apps.get_model("Patnership", "PartnershipYear")
-    PartnershipMission = apps.get_model("Partnership", "PartnershipMission")
-    PartnershipSubtype = apps.get_model("Partnership", "PartnershipSubtype")
-    PartnershipYearEducationLevel = apps.apps.get_model("Partnership", "PartnershipYearEducationLevel")
-    PartnershipYearOffers = apps.get_model("Partnership", "PartnershipYearOffers")
+    Entity = apps.get_model("base", "Entity")
+    Partnership = apps.get_model("partnership", "Partnership")
+    PartnershipPartnerRelation = apps.get_model("partnership", "PartnershipPartnerRelation")
+    PartnershipPartnerRelationYear = apps.get_model("partnership", "PartnershipPartnerRelationYear")
+    PartnershipYear = apps.get_model("partnership", "PartnershipYear")
+    PartnershipMission = apps.get_model("partnership", "PartnershipMission")
+    PartnershipSubtype = apps.get_model("partnership", "PartnershipSubtype")
+    PartnershipYearEducationLevel = apps.get_model("partnership", "PartnershipYearEducationLevel")
+    PartnershipYearOffers = apps.get_model("partnership", "PartnershipYearOffers")
 
     all_education_group_organization = EducationGroupOrganization.objects.all().prefetch_related(
         'education_group_year__education_group').order_by(
@@ -86,14 +86,14 @@ def migrate_data_codiplomation(apps):
             for codiplomation_year in codiplomations_by_eg.filter(organization=organization):
                 supplement = PartnershipProductionSupplement.YES.name if codiplomation_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
                 type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if codiplomation_year.diploma == "UNIQUE" else PartnershipDiplomaWithUCL.SEPARED.name
-                referents.append(codiplomation_year.enrollement_place)
+                referents.append(codiplomation_year.enrollment_place)
                 relation_year = PartnershipPartnerRelationYear(
                     partnership_relation=relation,
                     academic_year=codiplomation_year.education_group_year.academic_year,
                     type_diploma_by_partner=type_diploma,
                     diploma_prod_by_partner=codiplomation_year.is_producing_cerfificate,
                     supplement_prod_by_partner=supplement,
-                    partner_referent=codiplomation_year.enrollement_place
+                    partner_referent=codiplomation_year.enrollment_place
                 )
                 relation_year.save()
 
@@ -101,7 +101,7 @@ def migrate_data_codiplomation(apps):
         ucl_referent = False if True in referents else False # si aucun partneraire n'est référent uclouvain est référent
         for i in range(start['min_acad'], end['max_acad']+1):
             partnership_year = PartnershipYear(
-                academic_year=AcademicYear.object.get(year=i), #codiplomation_year.education_group_year.academic_year, #educationgrouyear_academic_year
+                academic_year=AcademicYear.objects.get(year=i), #codiplomation_year.education_group_year.academic_year, #educationgrouyear_academic_year
                 partnership=partnership,
                 funding_type=None,
                 funding_program=None,
@@ -115,19 +115,28 @@ def migrate_data_codiplomation(apps):
             )
             partnership_year.save()
             # isced = codiplomation.education_group_year.isced_domain if codiplomation.education_group_year.isced_domain else: ...
-            # education_level = PartnershipYearEducationLevel
+
+            type_ba = PartnershipYearEducationLevel.objects.get(code='ISCED-6')
+            type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
+            type_doct = PartnershipYearEducationLevel.objects.get(code='ISCED-8')
+
+            dict_training = {1: type_ba,
+                             2: type_master,
+                             3: type_doct,
+                             }
+
             partnership_year.education_fields.add(codiplomation_year.education_group_year.isced_domain) # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
-            partnership_year.education_levels.add(partnership.PartnershipYearEducationLevel)
-            partnership_year.entities.add(entity) # base.EducationGroupYear
+            partnership_year.education_levels.add(dict_training.get(codiplomation_year.education_group_year.education_group_type.cycle))
+            partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id) # base.EducationGroupYear
             partnership_year.offers.add() #
 
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('partnership', '0008_auto_20240723_0947'),
+        ('partnership', '0096_auto_20250527_1438'), #0008_auto_20240723_0947
     ]
 
     operations = [
-        migrations.RunPython(migrate_data_codiplomation, ),
+        migrations.RunPython(code=migrate_data_codiplomation),
     ]
