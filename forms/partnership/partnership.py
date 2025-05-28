@@ -260,7 +260,6 @@ class PartnershipMobilityForm(PartnershipBaseForm):
 
 
 class PartnershipCourseForm(PartnershipBaseForm):
-
     class Meta(PartnershipBaseForm.Meta):
         fields = PartnershipBaseForm.Meta.fields + (
             'subtype',

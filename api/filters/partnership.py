@@ -2,6 +2,8 @@ from django.contrib.gis.geos import Polygon
 from django.db.models import OuterRef, Q, Case, When, Subquery, F
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 
 from base.models.entity_version import EntityVersion
 from partnership.models import (
@@ -94,17 +96,23 @@ class PartnershipPartnerRelationFilter(filters.FilterSet):
         field_name='partnership__years__flow_direction',
         choices=PartnershipFlowDirection.choices(),
     )
-    funding_source = filters.ModelChoiceFilter(
-        queryset=FundingSource.objects.all(),
-        method=filter_funding('funding_source_id', 'type__program__source_id'),
+    funding_source = extend_schema_field(OpenApiTypes.NUMBER)(
+        filters.ModelChoiceFilter(
+            queryset=FundingSource.objects.all(),
+            method=filter_funding('funding_source_id', 'type__program__source_id'),
+        )
     )
-    funding_program = filters.ModelChoiceFilter(
-        queryset=FundingProgram.objects.all(),
-        method=filter_funding('funding_program_id', 'type__program_id'),
+    funding_program = extend_schema_field(OpenApiTypes.NUMBER)(
+        filters.ModelChoiceFilter(
+            queryset=FundingProgram.objects.all(),
+            method=filter_funding('funding_program_id', 'type__program_id'),
+        )
     )
-    funding_type = filters.ModelChoiceFilter(
-        queryset=FundingType.objects.all(),
-        method=filter_funding('funding_type_id', 'type_id'),
+    funding_type = extend_schema_field(OpenApiTypes.NUMBER)(
+        filters.ModelChoiceFilter(
+            queryset=FundingType.objects.all(),
+            method=filter_funding('funding_type_id', 'type_id'),
+        )
     )
 
     bbox = filters.CharFilter(method='filter_bbox')
