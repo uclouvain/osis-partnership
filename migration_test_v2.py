@@ -48,69 +48,72 @@ def migrate_data_codiplomation(apps, schema_editor):
         start_date = AcademicYear.objects.get(year=start['min_acad']).start_date
         end_date = AcademicYear.objects.get(year=end['max_acad']).end_date
 
-        newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first() # tri descend
+        newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first()  # tri descend
 
         # Creation one partnership
         mission = PartnershipMission.objects.get(code="ENS")
-        subtype = PartnershipSubtype.objects.get(code="ORG_WITH") # co-organisation avec co-diplomation
+        subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # co-organisation avec co-diplomation
 
         partnership = Partnership(
             comment='',
-            ucl_entity_id=newer_partnership.education_group_year.management_entity_id,  # adminstration_entity_id > management_entity_id ? pas null
+            ucl_entity_id=newer_partnership.education_group_year.management_entity_id,
+            # adminstration_entity_id > management_entity_id ? pas null
             supervisor_id=None,
             author_id=None,
             partnership_type=PartnershipType.COURSE.name,
             end_date=end_date,
             start_date=start_date,
             is_public=True,
-            # missions=mission,
             description='',
             subtype=subtype
         )
         partnership.save()
         partnership.missions.add(mission)
 
-        # lien avec les entity. (entity_id qui fait le lien avec base_entity)
-        # non_concerne serait les non-référents
-
-        entities_coorganization=codiplomations_by_eg.values_list('organization', flat=True).distinct()
-        for organization in entities_coorganization:
-            entity_obj = Entity.objects.filter(organization_id=organization).first()
+        # id entity partner afin de créer la relation des partners
+        all_id_entities_coorganization = codiplomations_by_eg.values_list('organization', flat=True).distinct()
+        for partner_id in all_id_entities_coorganization:
+            entity_obj = Entity.objects.filter(organization_id=partner_id).first()
             relation = PartnershipPartnerRelation(
-                    partnership=partnership,
-                    entity=entity_obj
-                )
+                partnership=partnership,
+                entity=entity_obj
+            )
             relation.save()
 
+            # Relation Year
             referents = []
-            for codiplomation_year in codiplomations_by_eg.filter(organization=organization):
-                supplement = PartnershipProductionSupplement.YES.name if codiplomation_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
-                type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if codiplomation_year.diploma == "UNIQUE" else PartnershipDiplomaWithUCL.SEPARED.name
-                referents.append(codiplomation_year.enrollment_place)
+            partner_years = codiplomations_by_eg.filter(organization=partner_id).order_by(
+                'education_group_year__academic_year')
+            for partner_year in partner_years:
+                supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
+                # todo: en attente de ingrid exemple : 1988 partnerhsip id
+                type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name else PartnershipDiplomaWithUCL.SEPARED.name
+                referents.append(partner_year.enrollment_place)
                 relation_year = PartnershipPartnerRelationYear(
                     partnership_relation=relation,
-                    academic_year=codiplomation_year.education_group_year.academic_year,
+                    academic_year=partner_year.education_group_year.academic_year,
                     type_diploma_by_partner=type_diploma,
-                    diploma_prod_by_partner=codiplomation_year.is_producing_cerfificate,
+                    diploma_prod_by_partner=partner_year.is_producing_cerfificate,
                     supplement_prod_by_partner=supplement,
-                    partner_referent=codiplomation_year.enrollment_place
+                    partner_referent=partner_year.enrollment_place,
+                    all_student=partner_year.all_students
                 )
                 relation_year.save()
 
-        # education_group_year > annuel / domain >> 23 relation
-        ucl_referent = False if True in referents else False # si aucun partneraire n'est référent uclouvain est référent
-        for i in range(start['min_acad'], end['max_acad']+1):
+        ucl_referent = False if True in referents else False  # si aucun partneraire n'est référent uclouvain est référent
+        for i in range(start['min_acad'], end['max_acad'] + 1):
             partnership_year = PartnershipYear(
-                academic_year=AcademicYear.objects.get(year=i), #codiplomation_year.education_group_year.academic_year, #educationgrouyear_academic_year
+                academic_year=AcademicYear.objects.get(year=i),
+                # partner_year.education_group_year.academic_year, #educationgrouyear_academic_year
                 partnership=partnership,
                 funding_type=None,
                 funding_program=None,
                 funding_source=None,
                 flow_direction=PartnershipFlowDirection.IN.name,
                 ucl_reference=ucl_referent,
-                all_student=codiplomation_year.all_students, # organization (
-                diploma_prod_by_ucl=codiplomation_year.is_producing_cerfificate,
-                supplement_prod_by_ucl=codiplomation_year.is_producing_annexe,
+                all_student=partner_year.all_students,  # organization (
+                diploma_prod_by_ucl=partner_year.is_producing_cerfificate,
+                supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name,
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
             partnership_year.save()
@@ -125,10 +128,15 @@ def migrate_data_codiplomation(apps, schema_editor):
                              3: type_doct,
                              }
 
-            partnership_year.education_fields.add(codiplomation_year.education_group_year.isced_domain) # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
-            partnership_year.education_levels.add(dict_training.get(codiplomation_year.education_group_year.education_group_type.cycle))
-            partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id) # base.EducationGroupYear
-            partnership_year.offers.add() #
+            partnership_year.education_fields.add(
+                partner_year.education_group_year.isced_domain)  # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
+            partnership_year.education_levels.add(
+                dict_training.get(partner_year.education_group_year.education_group_type.cycle))
+            partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id)
+            offer = PartnershipYearOffers(partnershipyear=partnership_year,
+                                          educationgroup=partner_year.education_group_year.education_group,
+                                          educationgroupyear=partner_year.education_group_year)
+            offer.save()
 
 
 
