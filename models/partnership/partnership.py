@@ -230,43 +230,6 @@ class Partnership(models.Model):
     start_date = models.DateField(_('start_date'), null=True)
     end_date = models.DateField(_('end_date'), null=True)
 
-    ucl_reference = models.BooleanField(
-        verbose_name=_('partnership_ucl_reference'),
-        default=True,
-        help_text=_('partnership_ucl_reference_help_text'),
-        null=False,
-        blank=True
-    )
-    partner_referent = models.ForeignKey(
-        'base.Entity',
-        related_name='partner_referent',
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True
-    )
-    all_student = models.BooleanField(
-        verbose_name=_('partnership_all_student'),
-        default=True,
-        help_text=_('partnership_all_student_help_text'),
-        null=False,
-        blank=True
-    )
-    diploma_by_ucl = models.CharField(
-        max_length=64,
-        choices=PartnershipDiplomaWithUCL.choices(),
-        null=False,
-        default=''
-    )
-    diploma_prod_by_ucl = models.BooleanField(
-        default=False
-    )
-    supplement_prod_by_ucl = models.CharField(
-        max_length=64,
-        choices=PartnershipProductionSupplement.choices(),
-        null=False,
-        default=''
-    )
-
     objects = PartnershipManager()
 
     class Meta:
@@ -281,7 +244,7 @@ class Partnership(models.Model):
             # This is the case when using factory-boy, just return a string
             return 'Missing annotation'
         # When having multiple partner entities (from annotation), take project_acronym
-        if self.num_partners > 1:
+        if self.num_partners > 1 and len(self.project_acronym) > 0:
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
@@ -419,13 +382,8 @@ class Partnership(models.Model):
     def get_supervisor(self):
         if self.supervisor is not None:
             return self.supervisor
+        if self.partnership_type == PartnershipType.COURSE.name:
+            return None
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
-
-    def save(self, *args, **kwargs):
-        if self.ucl_reference:
-            self.partner_referent = None
-            super(Partnership, self).save(*args, **kwargs)
-        else:
-            super().save(*args, **kwargs)

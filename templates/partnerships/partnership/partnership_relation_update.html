@@ -23,6 +23,7 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="page-header">
         <h1>{{ partnership }}</h1>
     </div>
@@ -31,15 +32,38 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                {{ formset.management_form }}
-                {% for form in formset %}
-                    <h5>{% trans 'partner' %} : {{ form.instance.entity.organization.name }}</h5>
+                {{ formsets.management_form }}
+                {% for formset in formsets %}
+                    <h5>{% trans 'partner' %} : {{ formset.instance.partnership_relation.entity.organization.name }}</h5>
                     <hr>
                     <div>
-                    {% bootstrap_form form %}
-{#                        {{ form.as_p }}#}
+                        {% bootstrap_form formset %}
                     </div>
                 {% endfor %}
+                <br>
+                <h3>{% trans "partnership_when" %}</h3>
+                <div class="row">
+                    {% if form.start_academic_year %}
+                        <div class="col-12">
+                            {% bootstrap_field form.start_academic_year %}
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <dl>
+                                <dt>{% trans "start_academic_year" %}</dt>
+                                <dd>{{ object.start_academic_year }}</dd>
+                            </dl>
+                        </div>
+                    {% endif %}
+                    {% if form.from_academic_year %}
+                        <div class="col-12">
+                            {% bootstrap_field form.from_academic_year %}
+                        </div>
+                    {% endif %}
+                    <div class="col-12">
+                        {% bootstrap_field form.end_academic_year %}
+                    </div>
+                </div>
                 <button class="btn btn-primary" type="submit">{% trans 'save' %}</button>
             </form>
         </div>

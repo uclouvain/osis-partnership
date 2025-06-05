@@ -6,7 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from ordered_model.models import OrderedModel
 
 from base.models.entity_version import EntityVersion
-from ..enums.partnership import PartnershipType
+from ..enums.partnership import PartnershipType, PartnershipDiplomaWithUCL, PartnershipProductionSupplement, \
+    PartnershipFlowDirection
 
 __all__ = [
     'PartnershipMission',
@@ -36,6 +37,12 @@ class PartnershipYear(models.Model):
         verbose_name=_('partnership_year_education_fields'),
         blank=False,
     )
+    flow_direction = models.CharField(
+        max_length=20,
+        verbose_name=_('Partnership flow direction'),
+        choices=PartnershipFlowDirection.choices(),
+        default=PartnershipFlowDirection.IN_OUT.name,
+    )
     education_levels = models.ManyToManyField(
         'partnership.PartnershipYearEducationLevel',
         verbose_name=_('partnership_year_education_levels'),
@@ -55,6 +62,7 @@ class PartnershipYear(models.Model):
         help_text=_('partnership_year_offers_help_text'),
         related_name='partnerships',
         blank=True,
+        through='partnership.PartnershipYearOffers',
     )
 
     # For MOBILITY type
@@ -92,6 +100,37 @@ class PartnershipYear(models.Model):
         related_name='years',
         null=True,
         blank=True,
+    )
+
+    ucl_reference = models.BooleanField(
+        verbose_name=_('ucl_reference'),
+        default=True,
+        null=False,
+        blank=True
+    )
+    all_student = models.BooleanField(
+        verbose_name=_('all_student'),
+        default=True,
+        null=False,
+        blank=True
+    )
+    type_diploma_by_ucl = models.CharField(
+        verbose_name=_('type_diploma_by_ucl'),
+        max_length=64,
+        choices=PartnershipDiplomaWithUCL.choices(),
+        null=False,
+        default=''
+    )
+    diploma_prod_by_ucl = models.BooleanField(
+        verbose_name=_('diploma_prod_by_ucl'),
+        default=False
+    )
+    supplement_prod_by_ucl = models.CharField(
+        verbose_name=_('supplement_prod_by_ucl'),
+        max_length=64,
+        choices=PartnershipProductionSupplement.choices(),
+        null=False,
+        default=''
     )
 
     class Meta:

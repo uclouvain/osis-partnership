@@ -2,14 +2,16 @@ from dal import autocomplete
 from dal.forward import Const
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import modelformset_factory
 from django.utils.translation import gettext_lazy as _
-
+from partnership.models import EntityProxy, Partnership
 from base.models.academic_year import AcademicYear
 from base.models.education_group_year import EducationGroupYear
 from base.models.entity import Entity
 from base.models.enums.education_group_types import TrainingType
 from base.models.enums.entity_type import DOCTORAL_COMMISSION
 from partnership.auth.predicates import is_linked_to_adri_entity
+from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.models import (
     PartnershipConfiguration,
     PartnershipType, PartnershipYear,
@@ -51,7 +53,7 @@ class PartnershipYearBaseForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url='partnerships:autocomplete:partnership_year_offers',
-            forward=['entity', 'entities', 'education_levels'],
+            forward=['entity', 'entities', 'education_levels', 'partnership_type'],
         ),
     )
 
@@ -202,6 +204,7 @@ class FundingMixin(forms.Form):
 class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm):
     class Meta(PartnershipYearBaseForm.Meta):
         fields = PartnershipYearBaseForm.Meta.fields + (
+            'flow_direction',
             'is_sms',
             'is_smp',
             'is_smst',
@@ -254,10 +257,39 @@ class PartnershipYearMobilityForm(FundingMixin, PartnershipYearWithoutDatesForm)
 
 
 class PartnershipYearCourseForm(PartnershipYearWithoutDatesForm):
+    class Meta(PartnershipYearBaseForm.Meta):
+        fields = PartnershipYearBaseForm.Meta.fields + (
+            'all_student',
+            'diploma_prod_by_ucl',
+            'supplement_prod_by_ucl',
+            'type_diploma_by_ucl',
+            'ucl_reference',
+        )
+
     def __init__(self, partnership_type=None, *args, **kwargs):
         super().__init__(partnership_type, *args, **kwargs)
 
         self.fields['education_levels'].required = True
+        self.fields['diploma_prod_by_ucl'].initial = True
+
+        is_adri = is_linked_to_adri_entity(self.user)
+
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.partnership_creation_update_min_year
+        if not is_adri:
+            del self.fields['eligible']
+
+            if current_academic_year is not None:
+                past_academic_years = AcademicYear.objects.all()
+                future_academic_years = AcademicYear.objects.filter(
+                    year__gte=current_academic_year.year
+                )
+                if 'start_academic_year' in self.fields:
+                    self.fields['start_academic_year'].queryset = past_academic_years
+                if 'from_academic_year' in self.fields:
+                    self.fields['from_academic_year'].queryset = past_academic_years
+                self.fields['end_academic_year'].queryset = future_academic_years
+
 
 
 class PartnershipYearDoctorateForm(PartnershipYearWithoutDatesForm):
@@ -286,3 +318,103 @@ class PartnershipYearProjectForm(FundingMixin, PartnershipYearBaseForm):
             'funding_program',
             'funding_type',
         )
+
+
+class PartnershipRelationYearWithoutDatesForm(forms.ModelForm):
+    """
+    The duration of the partnership is encoded through academic_years - form partnership complement course
+    """
+    start_academic_year = forms.ModelChoiceField(
+        label=_('start_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    from_academic_year = forms.ModelChoiceField(
+        label=_('from_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+    end_academic_year = forms.ModelChoiceField(
+        label=_('end_academic_year'),
+        queryset=AcademicYear.objects.all(),
+        required=True,
+    )
+
+    class Meta:
+        model = Partnership
+        fields = ('partnership_type',)
+
+    def __init__(self, partnership_type="COURSE", *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.partnership_type = partnership_type
+        super().__init__(*args, **kwargs)
+
+        config = PartnershipConfiguration.get_configuration()
+        current_academic_year = config.partnership_creation_update_min_year
+        if self.instance:
+            # Update
+            partnership = self.instance
+            if (current_academic_year and current_academic_year.year > partnership.end_academic_year.year):
+                self.fields['end_academic_year'].initial = current_academic_year
+            else:
+                self.fields['end_academic_year'].initial = partnership.end_academic_year
+            self.fields['start_academic_year'].initial = partnership.start_academic_year
+            self.fields['from_academic_year'].initial = current_academic_year
+        else:
+            # Create
+            self.fields['start_academic_year'].initial = current_academic_year
+            del self.fields['from_academic_year']
+            self.fields['end_academic_year'].initial = current_academic_year
+
+        self.fields['start_academic_year'].disabled = True
+        self.fields['from_academic_year'].disabled = False
+        self.fields['end_academic_year'].disabled = True
+
+    def clean(self):
+        data = super().clean()
+        start_academic_year = data.get('start_academic_year')
+        from_academic_year = data.get('from_academic_year')
+        end_academic_year = data.get('end_academic_year')
+        if start_academic_year is not None:
+            if start_academic_year.year > end_academic_year.year:
+                self.add_error(
+                    'start_academic_year',
+                    ValidationError(_('start_date_after_end_date')),
+                )
+            if from_academic_year is not None and start_academic_year.year > from_academic_year.year:
+                self.add_error(
+                    'start_academic_year',
+                    ValidationError(_('start_date_after_from_date')),
+                )
+        if from_academic_year is not None and from_academic_year.year > end_academic_year.year:
+            self.add_error(
+                'from_academic_year',
+                ValidationError(_('from_date_after_end_date')),
+            )
+        return data
+
+
+class PartnershipRelationYearCourseForm(forms.ModelForm):
+    class Meta:
+        model = PartnershipPartnerRelationYear
+        fields = (
+            'partner_referent',
+            'diploma_prod_by_partner',
+            'type_diploma_by_partner',
+            'supplement_prod_by_partner',
+            'all_student'
+        )
+        labels = {
+            'partner_referent': _('partner_referent'),
+            'diploma_prod_by_partner': _('diploma_prod_by_partner'),
+            'type_diploma_by_partner': _('type_diploma_by_partner'),
+            'supplement_prod_by_partner': _('supplement_prod_by_partner'),
+        }
+
+
+PartnerRelationYearFormSet = modelformset_factory(
+    PartnershipPartnerRelationYear,
+    form=PartnershipRelationYearCourseForm,
+    extra=0,
+    can_delete=False
+)

@@ -11,12 +11,13 @@
     $(document).on('change', '#partnership-form-sm-inputs', function(event) {
         check_show_sm_details();
     });
-
+    var $partnershipType = $('#id_partnership_type');
     var $projectAcronym = $('#project-acronym');
     var $partnerEntities = $('#id_partner_entities');
     $partnerEntities.on('change', function () {
         var multiplePartners = $partnerEntities.val() && $partnerEntities.val().length > 1;
-        $projectAcronym.toggle(!!(multiplePartners || $projectAcronym.val()))
+        var isCourse = $partnershipType.val() === 'COURSE';
+        $projectAcronym.toggle(!!(multiplePartners || $projectAcronym.val() || isCourse))
     }).trigger('change');
 
     $('input[name="year-entity"]').val($('select[name="ucl_entity"]').val());

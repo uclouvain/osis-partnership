@@ -59,6 +59,9 @@ msgstr ""
 msgid "Coverage"
 msgstr ""
 
+msgid "Direction:"
+msgstr ""
+
 msgid "EU-wide network"
 msgstr ""
 
@@ -225,6 +228,12 @@ msgstr ""
 msgid "Higher education institution (tertiary level)"
 msgstr ""
 
+msgid "IN"
+msgstr ""
+
+msgid "IN/OUT"
+msgstr ""
+
 msgid "Include subordinate entities"
 msgstr ""
 
@@ -255,6 +264,9 @@ msgstr ""
 msgid "Non-governmental organisation/association/social enterprise"
 msgstr ""
 
+msgid "OUT"
+msgstr ""
+
 msgid "Organisation or association representing (parts of) the sport sector"
 msgstr ""
 
@@ -272,6 +284,9 @@ msgstr ""
 
 msgid "Partner"
 msgstr "Partner"
+
+msgid "Partnership flow direction"
+msgstr ""
 
 msgid "Partnership manager"
 msgstr ""
@@ -617,7 +632,13 @@ msgstr "Education field"
 msgid "education_fields"
 msgstr "Education fields"
 
+msgid "education_group"
+msgstr "Education group types"
+
 msgid "education_group_types"
+msgstr "Education group types"
+
+msgid "education_group_year"
 msgstr "Education group types"
 
 msgid "education_level_filter"
@@ -997,12 +1018,6 @@ msgstr "Agreement finishes after the partnership end."
 msgid "partnership_agreement_warning_before"
 msgstr "Agreement begins before the partnership start."
 
-msgid "partnership_all_student"
-msgstr "Partnership subject"
-
-msgid "partnership_all_student_help_text"
-msgstr "If none selected, then all entities will be concerned"
-
 msgid "partnership_api_year"
 msgstr "Visible academic year for API"
 
@@ -1025,9 +1040,6 @@ msgstr ""
 
 msgid "partnership_diploma"
 msgstr "Production diploma"
-
-msgid "partnership_diploma_ucl"
-msgstr "Production of the UCLouvain diploma"
 
 msgid "partnership_doctorate_years_entity"
 msgstr "Doctorate commission for domain"
@@ -1137,12 +1149,6 @@ msgstr "Supplement production"
 
 msgid "partnership_type"
 msgstr "Partnership type"
-
-msgid "partnership_ucl_reference"
-msgstr "Reference institution"
-
-msgid "partnership_ucl_reference_help_text"
-msgstr "If none selected, then all entities will be concerned"
 
 msgid "partnership_valid_in"
 msgstr "Partnership valid in"
@@ -1344,6 +1350,9 @@ msgstr "To synchronize with EPC"
 msgctxt "partnership"
 msgid "type"
 msgstr "Type"
+
+msgid "type_diploma_by_partner"
+msgstr "Type of diploma produced by partner"
 
 msgid "type_diploma_by_ucl"
 msgstr "Type of diploma"
