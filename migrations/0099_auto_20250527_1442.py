@@ -4,18 +4,10 @@ from partnership.models.enums.partnership import PartnershipProductionSupplement
     PartnershipDiplomaWithUCL
 from django.db.models import Min, Max
 
-
-# fields: changed, education_group_year, organization,
-# enrollment_place,
-# done :  is_producing_cerfificate, is_producing_annexe, all_students,  diploma
-
-# base_entity, base_organization,
-# lien depuis partnership_partnership avec les base_entity
-# partnership_partnership avec un id de partenaire référent si c'est le cas. (partner_referent_id)
-# années gérée dans partnership_partnership_year_offer (lien vers base year offer) (lié depuis partnership_partnership -> partnership_partnership_year -> ...offer)
-
-
 def migrate_data_codiplomation(apps, schema_editor):
+    """
+        Migration to import historical data from base_organization into the partnerhsip module
+    """
     if settings.TESTING:
         return
     AcademicYear = apps.get_model('base', 'AcademicYear')
@@ -52,12 +44,11 @@ def migrate_data_codiplomation(apps, schema_editor):
 
         # Creation one partnership
         mission = PartnershipMission.objects.get(code="ENS")
-        subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # co-organisation avec co-diplomation
+        subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # label : co-organisation avec co-diplomation
 
         partnership = Partnership(
             comment='',
             ucl_entity_id=newer_partnership.education_group_year.management_entity_id,
-            # adminstration_entity_id > management_entity_id ? pas null
             supervisor_id=None,
             author_id=None,
             partnership_type=PartnershipType.COURSE.name,
@@ -70,7 +61,7 @@ def migrate_data_codiplomation(apps, schema_editor):
         partnership.save()
         partnership.missions.add(mission)
 
-        # id entity partner afin de créer la relation des partners
+        # id of entity partner to create the partner relationship
         all_id_entities_coorganization = codiplomations_by_eg.values_list('organization', flat=True).distinct()
         for partner_id in all_id_entities_coorganization:
             entity_obj = Entity.objects.filter(organization_id=partner_id).first()
@@ -80,7 +71,7 @@ def migrate_data_codiplomation(apps, schema_editor):
             )
             relation.save()
 
-            # Relation Year
+            # Creation of the relationship year
             referents = []
             partner_years = codiplomations_by_eg.filter(organization=partner_id).order_by(
                 'education_group_year__academic_year')
@@ -100,24 +91,22 @@ def migrate_data_codiplomation(apps, schema_editor):
                 )
                 relation_year.save()
 
-        ucl_referent = True if True in referents else False  # si aucun partneraire n'est référent uclouvain est référent
+        ucl_referent = True if True in referents else False  # if no partner is referent uclouvain is referent
         for i in range(start['min_acad'], end['max_acad'] + 1):
             partnership_year = PartnershipYear(
                 academic_year=AcademicYear.objects.get(year=i),
-                # partner_year.education_group_year.academic_year, #educationgrouyear_academic_year
                 partnership=partnership,
                 funding_type=None,
                 funding_program=None,
                 funding_source=None,
                 flow_direction=PartnershipFlowDirection.IN.name,
                 ucl_reference=ucl_referent,
-                all_student=partner_year.all_students,  # organization (
+                all_student=partner_year.all_students,
                 diploma_prod_by_ucl=partner_year.is_producing_cerfificate,
                 supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name,
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
             partnership_year.save()
-            # isced = codiplomation.education_group_year.isced_domain if codiplomation.education_group_year.isced_domain else: ...
 
             type_ba = PartnershipYearEducationLevel.objects.get(code='ISCED-6')
             type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')

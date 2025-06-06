@@ -5,10 +5,9 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from django.views.generic import DetailView
-
 from base.models.organization import Organization
 from partnership.models import (
-    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear, PartnershipYearOffers,
+    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear
 )
 
 __all__ = [
@@ -88,54 +87,3 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             pk=self.kwargs['pk'],
         )
 
-
-
-class PartnershipDetailBaseView(PermissionRequiredMixin, DetailView):
-    model = Partnership
-    context_object_name = 'partnership'
-    login_url = 'access_denied'
-    permission_required = 'partnership.can_access_partnerships'
-
-    def get_object(self, queryset=None):
-        educationgroup = self.kwargs.get('educationgroup')
-        year = self.kwargs.get('academic_year')
-
-        try:
-            return (Partnership.objects
-            .add_acronyms()
-            .filter(years__academic_year=year, years__partnership_year__educationgroup=educationgroup, partnershiprelation__partnershiprelation__academic_year=year)
-            .select_related(
-                'ucl_entity',
-                'ucl_entity__uclmanagement_entity__academic_responsible',
-            )
-            .prefetch_related(
-                'contacts',
-                'tags',
-                Prefetch(
-                    'years',
-                    queryset=PartnershipYear.objects.filter(academic_year=year).select_related('academic_year')
-                ),
-                Prefetch(
-                    'partner_entities__organization',
-                    queryset=Organization.objects.order_by('name').select_related('partner')
-                ),
-                Prefetch(
-                    'partnershiprelation__partnershiprelation',
-                    queryset=PartnershipPartnerRelationYear.objects.filter(academic_year=year)
-                ),
-                Prefetch('years__partnership_year',
-                         queryset=PartnershipYearOffers.objects.filter(educationgroup=educationgroup)
-
-            )).order_by('partnershiprelation__partnershiprelation__academic_year')).first()
-
-        except Partnership.DoesNotExist:
-            raise Http404("Aucun partenariat trouvé pour ces critères.")
-
-    def get_template_names(self):
-        return [
-            'partnerships/partnership/partnership_detail_for_base.html',
-        ]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
