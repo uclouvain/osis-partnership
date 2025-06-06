@@ -1,0 +1,157 @@
+{#{% extends "bootstrap5/layout.html" %}#}
+{% load i18n partnerships static years osis_role getattr %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'partnerships/partnerships.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if partnership.years.all %}
+    <br>
+    <h5>Co-organisation</h5>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>{% trans "education_fields" %}</th>
+                        <th>{% trans "partnership_subtype_course" %}</th>
+                        <th>{% trans "education_levels" %}</th>
+                        <th>{% trans "partnership_year_entities" %}</th>
+                        <th>{% trans "partnership_year_offers" %}</th>
+                        <th>{% trans "is_valid" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for partnership_year in partnership.years.all %}
+                        <tr
+                                {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+                                {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}
+                        >
+                            <th>{{ partnership_year.academic_year }}</th>
+                            <td>
+                                <ul class="list-unstyled">
+                                    {% for education_field in partnership_year.education_fields.all %}
+                                        <li>
+                                            <strong>{{ education_field.code }}</strong>
+                                            - {{ education_field }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ partnership.subtype }}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    {% for education_level in partnership_year.education_levels.all %}
+                                        <li>
+                                            <strong>{{ education_level.code }}</strong>
+                                            - {{ education_level.label }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    {% for entity in partnership_year.get_entities_with_titles %}
+                                        <li>
+                                            <strong>{{ entity.most_recent_acronym }}</strong>
+                                            - {{ entity.most_recent_title }}
+                                        </li>
+                                        {% empty %}
+                                        <li>
+                                            {% trans "all_entities" %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    {% for offer in partnership_year.offers.all %}
+                                        <li>
+                                            <strong>{{ offer.acronym }}</strong> - {{ offer.title }}
+                                        </li>
+                                        {% empty %}
+                                        <li>{% trans "all_offers" %}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <i class="fas
+                                {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>{% trans "Partner" %}</th>
+                        <th>{% trans "referent" %}</th>
+                        <th>{% trans "partnership_diploma" %}</th>
+                        <th>{% trans "diploma_with_ucl_by_partner" %}</th>
+                        <th>{% trans "partnership_supplement" %}</th>
+                        <th>{% trans "all_student" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for partnership_year in partnership.years.all %}
+                        <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+                            {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}
+                        >
+                            <th>{{ partnership_year.academic_year }}</th>
+                            <td>UCLouvain</td>
+                            <td><i class="fas
+
+                                    {{ partnership_year.ucl_reference|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                            </td>
+                            <td>{% if partnership_year.diploma_prod_by_ucl %}{% trans 'Yes' %}{% else %}
+                                {% trans 'No' %}{% endif %}</td>
+                            <td>{{ partnership_year.get_type_diploma_by_ucl_display|default_if_none:"-"}}</td>
+                            <td>{{ partnership_year.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
+                            <td><i class="fas
+
+                                    {{ partnership_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    {% for partnershiprel in partnership.partnershiprelation.all %}
+                        {% for partner_year in partnershiprel.partnershiprelation.all %}
+
+                            <tr {% if partnership.current_year is not None and partnership_year != partnership.current_year and partnership_year.academic_year.year != partnership.current_year.academic_year.year|add:1 %}class="collapse years-collapse"{% endif %}
+                                {% if partnership.current_year is None and not forloop.first %}class="collapse years-collapse"{% endif %}
+                            >
+                                <th>{{ partner_year.academic_year }}</th>
+                                <td>{{ partnershiprel.entity.organization.name }}</td>
+                                <td><i class="fas
+
+                                        {{ partner_year.partner_referent|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                                </td>
+                                <td>{% if partner_year.diploma_prod_by_partner %}{% trans 'Yes' %}{% else %}
+                                    {% trans 'No' %}{% endif %}</td>
+                                <td>{{ partner_year.get_type_diploma_by_partner_display|default_if_none:"-"}}</td>
+                                <td>{{ partner_year.get_supplement_prod_by_partner_display|default_if_none:"-"}}</td>
+                                <td><i class="fas
+                                {{ partner_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

@@ -40,6 +40,7 @@ class PartnershipEntityManager(EntityRoleModel):
         return RuleSet({
             # Partnership
             'partnership.can_access_partnerships': rules.always_allow,
+            # 'partnership.can_view_partnerships': rules.always_allow,
             'partnership.add_partnership':
                 (is_linked_to_adri_entity | is_faculty_manager)
                 & partnership_type_allowed_for_user_scope,

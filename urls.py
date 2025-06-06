@@ -4,6 +4,7 @@ from .converters import PartnershipTypeConverter, FundingModelConverter
 from .views import *
 from .views.autocomplete.partner import PartnerEntityReferenceAutocompleteView
 from .views.partnership.create import PartnershipPartnerRelationUpdateView
+from .views.partnership.read import PartnershipDetailBaseView
 
 # from .views.partnership.create import PartnershipComplementCreateView
 
@@ -18,6 +19,7 @@ urlpatterns = [
     path('export_agreements/', PartnershipAgreementExportView.as_view(), name="export_agreements"),
     path('configuration/', PartnershipConfigurationUpdateView.as_view(), name='configuration_update'),
     path('<int:pk>/', PartnershipDetailView.as_view(), name="detail"),
+    path('<int:educationgroup>/<int:academic_year>/', PartnershipDetailBaseView.as_view(), name="detail_base"),
     path('complement/<int:pk>/update', PartnershipPartnerRelationUpdateView.as_view(), name="complement"),
     path('create/', PartnershipTypeChooseView.as_view(), name="create"),
     path('create/<partnership_type:type>/', PartnershipCreateView.as_view(), name="create"),
