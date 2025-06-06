@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.db import migrations
-from partnership.models.enums.partnership import PartnershipProductionSupplement, PartnershipType, PartnershipFlowDirection, \
+from partnership.models.enums.partnership import PartnershipProductionSupplement, PartnershipType, \
+    PartnershipFlowDirection, \
     PartnershipDiplomaWithUCL
 from django.db.models import Min, Max
+
 
 def migrate_data_codiplomation(apps, schema_editor):
     """
@@ -122,10 +124,11 @@ def migrate_data_codiplomation(apps, schema_editor):
             partnership_year.education_levels.add(
                 dict_training.get(partner_year.education_group_year.education_group_type.cycle))
             partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id)
-            offer= PartnershipYearOffers(partnershipyear=partnership_year,
-                                         educationgroup=partner_year.education_group_year.education_group,
-                                         educationgroupyear=partner_year.education_group_year)
+            offer = PartnershipYearOffers(partnershipyear=partnership_year,
+                                          educationgroup=partner_year.education_group_year.education_group,
+                                          educationgroupyear=partner_year.education_group_year)
             offer.save()
+
 
 class Migration(migrations.Migration):
     dependencies = [
