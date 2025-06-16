@@ -101,9 +101,10 @@ def migrate_data_codiplomation(apps, schema_editor):
 
         for i in range(start['min_acad'], end['max_acad'] + 1):
             value_referent_year = referents.get(i)
-            ucl_referent = True
             if value_referent_year:
                 ucl_referent = False if True in value_referent_year else True  # if no partner is referent uclouvain is referent
+            else:
+                ucl_referent = True
 
             partnership_year = PartnershipYear(
                 academic_year=AcademicYear.objects.get(year=i),
