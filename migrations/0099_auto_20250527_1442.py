@@ -74,14 +74,19 @@ def migrate_data_codiplomation(apps, schema_editor):
             relation.save()
 
             # Creation of the relationship year
-            referents = []
+            referents = {}
             partner_years = codiplomations_by_eg.filter(organization=partner_id).order_by(
                 'education_group_year__academic_year')
             for partner_year in partner_years:
                 supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
                 # todo: en attente de ingrid exemple : 1988 partnerhsip id
                 type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name else PartnershipDiplomaWithUCL.SEPARED.name
-                referents.append(partner_year.enrollment_place)
+                year = partner_year.education_group_year.academic_year
+                if not referents.get(year):
+                    referents[year] = [partner_year.enrollment_place]
+                else:
+                    referents[year].append(partner_year.enrollment_place)
+
                 relation_year = PartnershipPartnerRelationYear(
                     partnership_relation=relation,
                     academic_year=partner_year.education_group_year.academic_year,
@@ -93,8 +98,11 @@ def migrate_data_codiplomation(apps, schema_editor):
                 )
                 relation_year.save()
 
-        ucl_referent = True if True in referents else False  # if no partner is referent uclouvain is referent
+
         for i in range(start['min_acad'], end['max_acad'] + 1):
+            value_referent_year = referents.get(i)
+            ucl_referent = True if True in value_referent_year else False  # if no partner is referent uclouvain is referent
+
             partnership_year = PartnershipYear(
                 academic_year=AcademicYear.objects.get(year=i),
                 partnership=partnership,
