@@ -81,7 +81,7 @@ def migrate_data_codiplomation(apps, schema_editor):
                 supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
                 # todo: en attente de ingrid exemple : 1988 partnerhsip id
                 type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name else PartnershipDiplomaWithUCL.SEPARED.name
-                year = partner_year.education_group_year.academic_year
+                year = partner_year.education_group_year.academic_year.year
                 if not referents.get(year):
                     referents[year] = [partner_year.enrollment_place]
                 else:
