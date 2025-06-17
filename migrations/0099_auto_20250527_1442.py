@@ -64,6 +64,7 @@ def migrate_data_codiplomation(apps, schema_editor):
         partnership.missions.add(mission)
 
         # id of entity partner to create the partner relationship
+        referents = {}
         all_id_entities_coorganization = codiplomations_by_eg.values_list('organization', flat=True).distinct()
         for partner_id in all_id_entities_coorganization:
             entity_obj = Entity.objects.filter(organization_id=partner_id).first()
@@ -74,7 +75,6 @@ def migrate_data_codiplomation(apps, schema_editor):
             relation.save()
 
             # Creation of the relationship year
-            referents = {}
             partner_years = codiplomations_by_eg.filter(organization=partner_id).order_by(
                 'education_group_year__academic_year')
             for partner_year in partner_years:
