@@ -312,6 +312,10 @@ class PartnershipFilterForm(forms.Form):
         widget=CustomNullBooleanSelect(),
         required=False,
     )
+    project_acronym = forms.CharField(
+        label=_('project_acronym'),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')

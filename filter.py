@@ -240,6 +240,10 @@ class PartnershipAdminFilter(filters.FilterSet):
         field_name='partnership__is_public',
         widget=CustomNullBooleanSelect(),
     )
+    project_acronym = filters.CharFilter(
+        field_name='partnership__project_acronym',
+        lookup_expr='icontains',
+    )
 
     class Meta:
         model = PartnershipPartnerRelation
@@ -280,6 +284,7 @@ class PartnershipAdminFilter(filters.FilterSet):
             'partnership_date_to',
             'comment',
             'is_public',
+            'project_acronym',
         ]
 
     @property
