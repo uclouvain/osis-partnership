@@ -13,7 +13,7 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
         qs = EducationGroupYear.objects.all().select_related('academic_year')
         next_academic_year = \
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        qs = qs.filter(academic_year=next_academic_year)
+        qs = qs.filter(academic_year__gte=next_academic_year)
         ucl_entity = self.forwarded.get('ucl_entity', None)
         education_level = self.forwarded.get('education_level', None)
         entity = self.forwarded.get('years_entity', None)
