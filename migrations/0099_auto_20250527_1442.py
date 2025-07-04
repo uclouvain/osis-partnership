@@ -1,9 +1,10 @@
 from django.conf import settings
-from django.db import migrations
+from django.db import migrations, models
+from django.db.models import Min
+
 from partnership.models.enums.partnership import PartnershipProductionSupplement, PartnershipType, \
     PartnershipFlowDirection, \
     PartnershipDiplomaWithUCL
-from django.db.models import Min, Max
 
 
 def migrate_data_codiplomation(apps, schema_editor):
@@ -13,7 +14,6 @@ def migrate_data_codiplomation(apps, schema_editor):
     if settings.TESTING:
         return
     AcademicYear = apps.get_model('base', 'AcademicYear')
-    EducationGroupYear = apps.get_model("base", "EducationGroupYear")
     EducationGroupOrganization = apps.get_model("base", "EducationGroupOrganization")
     Entity = apps.get_model("base", "Entity")
     Partnership = apps.get_model("partnership", "Partnership")
@@ -26,15 +26,19 @@ def migrate_data_codiplomation(apps, schema_editor):
     PartnershipYearOffers = apps.get_model("partnership", "PartnershipYearOffers")
 
     all_education_group_organization = EducationGroupOrganization.objects.all().prefetch_related(
-        'education_group_year__education_group').order_by(
-        'education_group_year__education_group').values_list('education_group_year__education_group', flat=True)
+        'education_group_year__education_group'
+    ).order_by(
+        'education_group_year__education_group'
+    ).values_list('education_group_year__education_group', flat=True)
 
     all_ego_set = set(all_education_group_organization)
 
     for item_ego in all_ego_set:
         codiplomations_by_eg = EducationGroupOrganization.objects.all().prefetch_related(
-            'education_group_year__education_group').order_by(
-            'education_group_year__education_group').filter(education_group_year__education_group=item_ego)
+            'education_group_year__education_group'
+        ).order_by(
+            'education_group_year__education_group'
+        ).filter(education_group_year__education_group=item_ego)
 
         test_date_fin = codiplomations_by_eg.first().education_group_year.education_group.end_year
         if test_date_fin:
@@ -44,10 +48,8 @@ def migrate_data_codiplomation(apps, schema_editor):
             end = {'max_acad': 2037}
             end_date = AcademicYear.objects.get(year=end['max_acad']).end_date
 
-
         start = codiplomations_by_eg.aggregate(min_acad=Min('education_group_year__academic_year__year'))
         start_date = AcademicYear.objects.get(year=start['min_acad']).start_date
-
 
         newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first()  # tri descend
 
@@ -104,7 +106,6 @@ def migrate_data_codiplomation(apps, schema_editor):
                 )
                 relation_year.save()
 
-
         for i in range(start['min_acad'], end['max_acad'] + 1):
             value_referent_year = referents.get(i)
             if value_referent_year:
@@ -131,19 +132,25 @@ def migrate_data_codiplomation(apps, schema_editor):
             type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
             type_doct = PartnershipYearEducationLevel.objects.get(code='ISCED-8')
 
-            dict_training = {1: type_ba,
-                             2: type_master,
-                             3: type_doct,
-                             }
+            dict_training = {
+                1: type_ba,
+                2: type_master,
+                3: type_doct,
+            }
 
             partnership_year.education_fields.add(
-                partner_year.education_group_year.isced_domain)  # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
+                partner_year.education_group_year.isced_domain
+            )  # reference_DomainIsced  <- base.EducationGroupYear:isced_domain_id
             partnership_year.education_levels.add(
-                dict_training.get(partner_year.education_group_year.education_group_type.cycle))
+                dict_training.get(partner_year.education_group_year.education_group_type.cycle)
+            )
             partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id)
-            offer = PartnershipYearOffers(partnershipyear=partnership_year,
-                                          educationgroup=partner_year.education_group_year.education_group,
-                                          educationgroupyear=partner_year.education_group_year)
+            offer = PartnershipYearOffers(
+                partnershipyear=partnership_year,
+                educationgroup=partner_year.education_group_year.education_group,
+                educationgroupyear=partner_year.education_group_year,
+                external_id=f"osis.partnership_year_offers_{partner_year.external_id.split('_')[-1]}",
+            )
             offer.save()
 
 
@@ -153,5 +160,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='partnershipyearoffers',
+            name='external_id',
+            field=models.CharField(blank=True, db_index=True, max_length=100, null=True, editable=False),
+        ),
         migrations.RunPython(code=migrate_data_codiplomation),
     ]
