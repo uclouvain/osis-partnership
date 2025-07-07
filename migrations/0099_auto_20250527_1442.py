@@ -163,7 +163,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partnershipyearoffers',
             name='external_id',
-            field=models.CharField(blank=True, db_index=True, max_length=100, null=True, editable=False),
+            field=models.CharField(blank=True, max_length=100, null=True, editable=False),
         ),
         migrations.RunPython(code=migrate_data_codiplomation),
     ]
