@@ -6,7 +6,7 @@ class PartnershipYearOffers(models.Model):
     """
     Le modèle représentant une relation entre le catalogue de formation et un partenariat
     """
-    external_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, editable=False)
+    external_id = models.CharField(max_length=100, blank=True, null=True, editable=False)
     partnershipyear = models.ForeignKey(
         'partnership.PartnershipYear',
         on_delete=models.CASCADE,
