@@ -149,7 +149,6 @@ def migrate_data_codiplomation(apps, schema_editor):
                 partnershipyear=partnership_year,
                 educationgroup=partner_year.education_group_year.education_group,
                 educationgroupyear=partner_year.education_group_year,
-                external_id=f"osis.partnership_year_offers_{partner_year.external_id.split('_')[-1]}",
             )
             offer.save()
 
