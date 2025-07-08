@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.conf import settings
 from django.db import migrations, models
 from django.db.models import Min
@@ -33,6 +35,10 @@ def migrate_data_codiplomation(apps, schema_editor):
 
     all_ego_set = set(all_education_group_organization)
 
+    # Creation one partnership
+    mission = PartnershipMission.objects.get(code="ENS")
+    subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # label : co-organisation avec co-diplomation
+
     for item_ego in all_ego_set:
         codiplomations_by_eg = EducationGroupOrganization.objects.all().prefetch_related(
             'education_group_year__education_group'
@@ -53,10 +59,6 @@ def migrate_data_codiplomation(apps, schema_editor):
 
         newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first()  # tri descend
 
-        # Creation one partnership
-        mission = PartnershipMission.objects.get(code="ENS")
-        subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # label : co-organisation avec co-diplomation
-
         partnership = Partnership(
             comment='',
             ucl_entity_id=newer_partnership.education_group_year.management_entity_id,
@@ -73,7 +75,7 @@ def migrate_data_codiplomation(apps, schema_editor):
         partnership.missions.add(mission)
 
         # id of entity partner to create the partner relationship
-        referents = {}
+        referents = defaultdict(list)
         all_id_entities_coorganization = codiplomations_by_eg.values_list('organization', flat=True).distinct()
         for partner_id in all_id_entities_coorganization:
             entity_obj = Entity.objects.filter(organization_id=partner_id).first()
@@ -85,15 +87,13 @@ def migrate_data_codiplomation(apps, schema_editor):
 
             # Creation of the relationship year
             partner_years = codiplomations_by_eg.filter(organization=partner_id).order_by(
-                'education_group_year__academic_year')
+                'education_group_year__academic_year'
+            )
             for partner_year in partner_years:
                 supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
                 type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name else PartnershipDiplomaWithUCL.NO_CODIPLOMA.name
                 year = partner_year.education_group_year.academic_year.year
-                if not referents.get(year):
-                    referents[year] = [partner_year.enrollment_place]
-                else:
-                    referents[year].append(partner_year.enrollment_place)
+                referents[year].append(partner_year.enrollment_place)
 
                 relation_year = PartnershipPartnerRelationYear(
                     partnership_relation=relation,
@@ -102,10 +102,20 @@ def migrate_data_codiplomation(apps, schema_editor):
                     diploma_prod_by_partner=partner_year.is_producing_cerfificate,
                     supplement_prod_by_partner=supplement,
                     partner_referent=partner_year.enrollment_place,
-                    all_student=partner_year.all_students
+                    all_student=partner_year.all_students,
+                    external_id=f"osis.partnership_partner_relation_year_{partner_year.external_id.split('_')[-1]}"
                 )
                 relation_year.save()
 
+        type_ba = PartnershipYearEducationLevel.objects.get(code='ISCED-6')
+        type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
+        type_doct = PartnershipYearEducationLevel.objects.get(code='ISCED-8')
+
+        dict_training = {
+            1: type_ba,
+            2: type_master,
+            3: type_doct,
+        }
         for i in range(start['min_acad'], end['max_acad'] + 1):
             value_referent_year = referents.get(i)
             if value_referent_year:
@@ -127,16 +137,6 @@ def migrate_data_codiplomation(apps, schema_editor):
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
             partnership_year.save()
-
-            type_ba = PartnershipYearEducationLevel.objects.get(code='ISCED-6')
-            type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
-            type_doct = PartnershipYearEducationLevel.objects.get(code='ISCED-8')
-
-            dict_training = {
-                1: type_ba,
-                2: type_master,
-                3: type_doct,
-            }
 
             partnership_year.education_fields.add(
                 partner_year.education_group_year.isced_domain
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='partnershipyearoffers',
+            model_name='partnershippartnerrelationyear',
             name='external_id',
             field=models.CharField(blank=True, max_length=100, null=True, editable=False),
         ),
