@@ -132,7 +132,7 @@ def migrate_data_codiplomation(apps, schema_editor):
                 flow_direction=PartnershipFlowDirection.IN.name,
                 ucl_reference=ucl_referent,
                 all_student=True,
-                diploma_prod_by_ucl=partner_year.is_producing_cerfificate,
+                diploma_prod_by_ucl=partner_year.is_producing_certificate,
                 supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name,
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
@@ -147,7 +147,7 @@ def migrate_data_codiplomation(apps, schema_editor):
             partnership_year.entities.add(newer_partnership.education_group_year.management_entity_id)
             offer = PartnershipYearOffers(
                 partnershipyear=partnership_year,
-                educationgroup=partner_year.education_group_year.education_group,
+                educationgroup_id=partner_year.education_group_year.education_group.id,
                 educationgroupyear=partner_year.education_group_year,
             )
             offer.save()
