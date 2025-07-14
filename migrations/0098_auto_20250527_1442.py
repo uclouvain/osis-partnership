@@ -132,7 +132,7 @@ def migrate_data_codiplomation(apps, schema_editor):
                 flow_direction=PartnershipFlowDirection.IN.name,
                 ucl_reference=ucl_referent,
                 all_student=True,
-                diploma_prod_by_ucl=partner_year.is_producing_certificate,
+                diploma_prod_by_ucl=partner_year.is_producing_cerfificate,
                 supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name,
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
@@ -155,7 +155,7 @@ def migrate_data_codiplomation(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('partnership', '0098_auto_20250527_1438'),
+        ('partnership', '0097_partnershippartnerrelationyear_all_student'),
     ]
 
     operations = [
