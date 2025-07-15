@@ -248,6 +248,10 @@ class Partnership(models.Model):
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
+        elif self.num_partners == 1 and len(self.project_acronym) > 0 :
+            return _('partnership_{acronym}').format(
+                acronym=self.project_acronym,
+            )
         # Else take the name of the first partner (from annotation)
         return _('partnership_with_{partner}').format(
             partner=self.first_partner_name,
