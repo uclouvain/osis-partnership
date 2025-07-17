@@ -47,7 +47,7 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
                         'supervisor',
                         'subtype',  # keep for xls export
                         'ucl_entity__uclmanagement_entity__academic_responsible',
-                    ),
+                    ).prefetch_related('years__offers'),#.prefetch_related('years__partnership_year__educationgroupyear'),
                 ),
             )
             # TODO remove when Entity city field is dropped (conflict)

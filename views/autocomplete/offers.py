@@ -1,5 +1,6 @@
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models import Q
 
 from base.models.education_group_year import EducationGroupYear
 from partnership.models import PartnershipConfiguration
@@ -10,22 +11,22 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.all().select_related('academic_year')
+        qs = EducationGroupYear.objects.filter(partnerships__isnull=False).distinct().select_related('academic_year')
         next_academic_year = \
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        # qs = qs.filter(academic_year__gte=next_academic_year) OSIS-10163 et OP-533
+        qs = qs.filter(academic_year__gte=next_academic_year)
+
         ucl_entity = self.forwarded.get('ucl_entity', None)
         education_level = self.forwarded.get('education_level', None)
         entity = self.forwarded.get('years_entity', None)
-        if not ucl_entity or not education_level:
-            return EducationGroupYear.objects.none()
+        if self.q:
+            qs = qs.filter(Q(title__icontains=self.q )|Q(acronym__icontains=self.q))
         if entity:
             qs = qs.filter(partnerships__entities=entity)
-        else:
+        elif education_level:
+            qs = qs.filter(education_group_type__partnership_education_levels=education_level)
+        elif ucl_entity:
             qs = qs.filter(partnerships__partnership__ucl_entity=ucl_entity)
-        qs = qs.filter(education_group_type__partnership_education_levels=education_level)
-        if self.q:
-            qs = qs.filter(title__icontains=self.q)
         return qs.distinct()
 
     def get_result_label(self, result):

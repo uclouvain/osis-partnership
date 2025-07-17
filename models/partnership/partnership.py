@@ -391,3 +391,12 @@ class Partnership(models.Model):
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
+
+    @cached_property
+    def get_university_offers(self):
+        offers = []
+        if self.years.all():
+            for pyear in self.years.all():
+                for offer in pyear.partnership_year.all():
+                    offers.append(f"{offer.educationgroupyear.acronym}")
+        return ', '.join(set(offers))

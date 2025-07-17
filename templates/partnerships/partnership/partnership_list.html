@@ -32,9 +32,10 @@
         { name: 'ucl',  data: 'entities_acronyms', targets: 4 },
         { data: 'validity_end', targets: 5, orderable: false },
         { data: 'type', targets: 6, orderable: false },
+        { name: 'university_offers', data: 'university_offers', targets: 7 },
         {
           data: 'url',
-          targets: 7,
+          targets: 8,
           orderable: false,
           render: renderLink('<i class="fas fa-eye"></i>', 'btn btn-default border border-dark-subtle'),
         },
@@ -288,6 +289,7 @@
                 <td>{% trans "ucl" %}</td>
                 <td>{% trans "validity_end" %}</td>
                 <td>{% trans "type" context 'partnership' %}</td>
+                <td>{% trans "university_offers_filter" %}</td>
               {% endblock %}
               <td></td>
             </tr>

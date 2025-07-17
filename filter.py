@@ -14,7 +14,7 @@ from partnership.models import (
     PartnershipAgreement,
     PartnershipYear,
     PartnershipPartnerRelation,
-    Partnership,
+    Partnership, PartnershipType,
 )
 from partnership.models.enums.filter import DateFilterType
 
@@ -341,10 +341,20 @@ class PartnershipAdminFilter(filters.FilterSet):
 
     @staticmethod
     def filter_university_offer(queryset, name, value):
+        """
+        For Partnership type course, we filter on the header of the base_education_group, for other types of
+        partnership, the header isn't available so we filter on the base_education_group_year.
+        """
         if value:
             queryset = queryset.filter(
-                Q(partnership__years__offers=value)
-                | Q(partnership__years__offers__isnull=True)
+                (Q(partnership__partnership_type=PartnershipType.COURSE.name) &
+                 Q(partnership__years__partnership_year__educationgroup=value.education_group)) |
+                (
+                        ~Q(partnership__partnership_type=PartnershipType.COURSE.name) & (
+                        Q(partnership__years__offers=value) |
+                        Q(partnership__years__offers__isnull=True)
+                )
+                )
             )
         return queryset
 
