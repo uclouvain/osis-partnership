@@ -5,8 +5,7 @@ from django.db import migrations, models
 from django.db.models import Min
 
 from partnership.models.enums.partnership import PartnershipProductionSupplement, PartnershipType, \
-    PartnershipFlowDirection, \
-    PartnershipDiplomaWithUCL
+    PartnershipFlowDirection, PartnershipDiplomaWithUCL
 
 
 def migrate_data_codiplomation(apps, schema_editor):
@@ -57,7 +56,8 @@ def migrate_data_codiplomation(apps, schema_editor):
         start = codiplomations_by_eg.aggregate(min_acad=Min('education_group_year__academic_year__year'))
         start_date = AcademicYear.objects.get(year=start['min_acad']).start_date
 
-        newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first()  # tri descend
+        newer_partnership = codiplomations_by_eg.order_by('-education_group_year__academic_year').first()
+        # tri descend
 
         partnership = Partnership(
             comment='',
@@ -90,8 +90,11 @@ def migrate_data_codiplomation(apps, schema_editor):
                 'education_group_year__academic_year'
             )
             for partner_year in partner_years:
-                supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name
-                type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name else PartnershipDiplomaWithUCL.NO_CODIPLOMA.name
+                supplement = PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe \
+                    else PartnershipProductionSupplement.NO.name
+                type_diploma = PartnershipDiplomaWithUCL.UNIQUE.name \
+                    if partner_year.diploma == PartnershipDiplomaWithUCL.UNIQUE.name \
+                    else PartnershipDiplomaWithUCL.NO_CODIPLOMA.name
                 year = partner_year.education_group_year.academic_year.year
                 referents[year].append(partner_year.enrollment_place)
 
@@ -119,7 +122,8 @@ def migrate_data_codiplomation(apps, schema_editor):
         for i in range(start['min_acad'], end['max_acad'] + 1):
             value_referent_year = referents.get(i)
             if value_referent_year:
-                ucl_referent = False if True in value_referent_year else True  # if no partner is referent uclouvain is referent
+                # if no partner is referent uclouvain is referent
+                ucl_referent = False if True in value_referent_year else True
             else:
                 ucl_referent = True
 
@@ -133,7 +137,8 @@ def migrate_data_codiplomation(apps, schema_editor):
                 ucl_reference=ucl_referent,
                 all_student=True,
                 diploma_prod_by_ucl=partner_year.is_producing_cerfificate,
-                supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe else PartnershipProductionSupplement.NO.name,
+                supplement_prod_by_ucl=PartnershipProductionSupplement.YES.name if partner_year.is_producing_annexe \
+                    else PartnershipProductionSupplement.NO.name,
                 type_diploma_by_ucl=PartnershipDiplomaWithUCL.UNIQUE.name
             )
             partnership_year.save()

@@ -7,14 +7,13 @@ from django.utils.translation import get_language
 from django.views.generic import DetailView
 from base.models.organization import Organization
 from partnership.models import (
-    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear
+    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear,PartnershipPartnerRelationYear
 )
 
 __all__ = [
     'PartnershipDetailView',
 ]
 
-from partnership.models.relation_year import PartnershipPartnerRelationYear
 
 
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):
