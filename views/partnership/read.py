@@ -86,4 +86,3 @@ class PartnershipDetailView(PermissionRequiredMixin, DetailView):
             ).order_by('partnershiprelation__partnershiprelation__academic_year'),
             pk=self.kwargs['pk'],
         )
-

@@ -20,7 +20,7 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
         education_level = self.forwarded.get('education_level', None)
         entity = self.forwarded.get('years_entity', None)
         if self.q:
-            qs = qs.filter(Q(title__icontains=self.q )|Q(acronym__icontains=self.q))
+            qs = qs.filter(Q(title__icontains=self.q) | Q(acronym__icontains=self.q))
         if entity:
             qs = qs.filter(partnerships__entities=entity)
         elif education_level:

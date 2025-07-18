@@ -472,7 +472,7 @@ class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
     @staticmethod
     @extend_schema_field(OpenApiTypes.STR)
     def get_partner(rel):
-        if rel.partnership.num_partners >= 1 and len(rel.partnership.project_acronym)>0:
+        if rel.partnership.num_partners >= 1 and len(rel.partnership.project_acronym) > 0:
             return "{} ({})".format(
                 rel.entity.organization.name,
                 rel.partnership.project_acronym,

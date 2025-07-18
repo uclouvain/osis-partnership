@@ -347,13 +347,14 @@ class PartnershipAdminFilter(filters.FilterSet):
         """
         if value:
             queryset = queryset.filter(
-                (Q(partnership__partnership_type=PartnershipType.COURSE.name) &
-                 Q(partnership__years__partnership_year__educationgroup=value.education_group)) |
-                (
-                        ~Q(partnership__partnership_type=PartnershipType.COURSE.name) & (
-                        Q(partnership__years__offers=value) |
-                        Q(partnership__years__offers__isnull=True)
-                )
+                (Q(partnership__partnership_type=PartnershipType.COURSE.name)
+                 & Q(partnership__years__partnership_year__educationgroup=value.education_group))
+                | (
+                        ~Q(partnership__partnership_type=PartnershipType.COURSE.name)
+                        & (
+                                Q(partnership__years__offers=value)
+                                | Q(partnership__years__offers__isnull=True)
+                        )
                 )
             )
         return queryset

@@ -248,7 +248,7 @@ class Partnership(models.Model):
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
-        elif self.num_partners == 1 and len(self.project_acronym) > 0 :
+        elif self.num_partners == 1 and len(self.project_acronym) > 0:
             return _('partnership_{acronym}').format(
                 acronym=self.project_acronym,
             )
