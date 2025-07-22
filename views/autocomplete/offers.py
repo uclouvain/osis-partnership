@@ -11,10 +11,9 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.filter(partnerships__isnull=False).distinct().select_related('academic_year')
+        qs = EducationGroupYear.objects.all().distinct('acronym').select_related('academic_year')
         next_academic_year = \
             PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
-        qs = qs.filter(academic_year__gte=next_academic_year)
 
         ucl_entity = self.forwarded.get('ucl_entity', None)
         education_level = self.forwarded.get('education_level', None)
@@ -27,7 +26,7 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
             qs = qs.filter(education_group_type__partnership_education_levels=education_level)
         elif ucl_entity:
             qs = qs.filter(partnerships__partnership__ucl_entity=ucl_entity)
-        return qs.distinct()
+        return qs.order_by('acronym').distinct('acronym')
 
     def get_result_label(self, result):
         return '{0.acronym} - {0.title}'.format(result)
