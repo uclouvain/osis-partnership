@@ -1,6 +1,6 @@
 from dal import autocomplete
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Subquery
 
 from base.models.education_group_year import EducationGroupYear
 from partnership.models import PartnershipConfiguration
@@ -11,9 +11,7 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
     permission_required = 'partnership.can_access_partnerships'
 
     def get_queryset(self):
-        qs = EducationGroupYear.objects.all().distinct('acronym').select_related('academic_year')
-        next_academic_year = \
-            PartnershipConfiguration.get_configuration().get_current_academic_year_for_creation_modification()
+        qs = EducationGroupYear.objects.all().select_related('academic_year')
 
         ucl_entity = self.forwarded.get('ucl_entity', None)
         education_level = self.forwarded.get('education_level', None)
