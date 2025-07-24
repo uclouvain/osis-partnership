@@ -7,7 +7,7 @@ from django.utils.translation import get_language
 from django.views.generic import DetailView
 from base.models.organization import Organization
 from partnership.models import (
-    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear,PartnershipPartnerRelationYear
+    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear, PartnershipPartnerRelationYear
 )
 
 __all__ = [

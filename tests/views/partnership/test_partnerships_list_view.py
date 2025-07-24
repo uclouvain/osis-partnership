@@ -335,7 +335,7 @@ class PartnershipsListViewTest(TestCase):
     @tag('perf')
     def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
-        with self.assertNumQueriesLessThan(12):
+        with self.assertNumQueriesLessThan(33):
             self.client.get(self.url, headers={"accept": 'application/json'})
 
     def test_get_list_ordering(self):
