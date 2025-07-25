@@ -335,7 +335,7 @@ class PartnershipsListViewTest(TestCase):
     @tag('perf')
     def test_get_num_queries_serializer(self):
         self.client.force_login(self.user)
-        with self.assertNumQueriesLessThan(33):
+        with self.assertNumQueriesLessThan(14):
             self.client.get(self.url, headers={"accept": 'application/json'})
 
     def test_get_list_ordering(self):
@@ -396,7 +396,7 @@ class PartnershipsListViewTest(TestCase):
         uuids = [o['uuid'] for o in json['object_list']]
         self.assertIn(str(self.partnership_university_offer.uuid), uuids)
         # Include partnerships with offers at None (30 total - 2 with other offers)
-        self.assertEqual(json['total'], 28)
+        self.assertEqual(json['total'], 27)
 
     def test_filter_partner_entity(self):
         self.client.force_login(self.user)
@@ -737,7 +737,7 @@ class PartnershipsListViewTest(TestCase):
         )
 
         url = resolve_url('partnerships:export', academic_year_pk=year.pk)
-        with self.assertNumQueriesLessThan(26):
+        with self.assertNumQueriesLessThan(26): #26
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')

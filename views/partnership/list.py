@@ -10,7 +10,7 @@ from partnership.api.serializers import PartnershipPartnerRelationAdminSerialize
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.filter import PartnershipAdminFilter
 from partnership.models import (
-    Partnership, PartnershipType, PartnershipPartnerRelation,
+    Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipYearOffers,
 )
 
 __all__ = [
@@ -47,8 +47,14 @@ class PartnershipsListView(PermissionRequiredMixin, SearchMixin, FilterView):
                         'supervisor',
                         'subtype',  # keep for xls export
                         'ucl_entity__uclmanagement_entity__academic_responsible',
-                    ).prefetch_related('years__offers'),
-                    # .prefetch_related('years__partnership_year__educationgroupyear'),
+                    ).prefetch_related(
+                        Prefetch(
+                            'years__partnership_year',
+                            queryset=PartnershipYearOffers.objects.select_related(
+                                'educationgroupyear', 'educationgroup',
+                            )
+                        ),
+                    )
                 ),
             )
             # TODO remove when Entity city field is dropped (conflict)
