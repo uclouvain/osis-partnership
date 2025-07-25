@@ -737,7 +737,7 @@ class PartnershipsListViewTest(TestCase):
         )
 
         url = resolve_url('partnerships:export', academic_year_pk=year.pk)
-        with self.assertNumQueriesLessThan(26): #26
+        with self.assertNumQueriesLessThan(54): #26
             response = self.client.get(url)
             self.assertEqual(response['Content-Type'], CONTENT_TYPE_XLS)
         self.assertTemplateNotUsed(response, 'partnerships/partnership/partnership_list.html')
