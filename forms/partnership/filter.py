@@ -313,7 +313,7 @@ class PartnershipFilterForm(forms.Form):
         required=False,
     )
     project_acronym = forms.CharField(
-        label=_('project_acronym'),
+        label=_('partnership_project_acronym'),
         required=False,
     )
 
