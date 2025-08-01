@@ -341,6 +341,8 @@ class PartnershipFilterForm(forms.Form):
         # If we have only one scope, pre-filter with this scope
         if len(allowed) == 1:
             self.fields['partnership_type'].initial = allowed[0].name
+        elif len(allowed) > 1 and PartnershipType.MOBILITY not in allowed and PartnershipType.COURSE in allowed :
+            self.fields['partnership_type'].initial = PartnershipType.COURSE.name
         elif len(allowed) > 1 and PartnershipType.MOBILITY in allowed:
             self.fields['partnership_type'].initial = PartnershipType.MOBILITY.name
 
