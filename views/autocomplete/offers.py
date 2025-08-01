@@ -25,9 +25,9 @@ class UniversityOffersAutocompleteFilterView(PermissionRequiredMixin, autocomple
 
         if entity:
             qs = qs.filter(partnerships__entities=entity)
-        elif education_level:
+        if education_level:
             qs = qs.filter(education_group_type__partnership_education_levels=education_level)
-        elif ucl_entity:
+        if ucl_entity:
             qs = qs.filter(partnerships__partnership__ucl_entity=ucl_entity)
         return qs.order_by('acronym').distinct('acronym')
 
