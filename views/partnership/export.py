@@ -109,15 +109,6 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                     queryset=year_qs,
                     to_attr='selected_year',
                 ),
-                # Prefetch(
-                #     'partnership__years',
-                #     queryset=PartnershipYear.objects.select_related('academic_year'),
-                # ),
-                # Prefetch(
-                #     'partnership__years',
-                #     queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
-                #     to_attr='reverse_years',
-                # ),
                 'entity__entityversion_set',
             )
             .select_related(
