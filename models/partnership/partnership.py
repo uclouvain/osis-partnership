@@ -248,6 +248,10 @@ class Partnership(models.Model):
             return _('partnership_multilateral_{acronym}').format(
                 acronym=self.project_acronym,
             )
+        elif self.num_partners == 1 and len(self.project_acronym) > 0:
+            return _('partnership_{acronym}').format(
+                acronym=self.project_acronym,
+            )
         # Else take the name of the first partner (from annotation)
         return _('partnership_with_{partner}').format(
             partner=self.first_partner_name,
@@ -387,3 +391,12 @@ class Partnership(models.Model):
         if not hasattr(self.ucl_entity, 'uclmanagement_entity'):
             return None
         return self.ucl_entity.uclmanagement_entity.academic_responsible
+
+    @cached_property
+    def get_university_offers(self):
+        offers = []
+        if self.years.all():
+            for pyear in self.years.all():
+                for offer in pyear.partnership_year.all():
+                    offers.append(f"{offer.educationgroupyear.acronym}")
+        return ', '.join(set(offers))

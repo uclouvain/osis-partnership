@@ -465,11 +465,14 @@ class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
     validity_end = serializers.ReadOnlyField(
         source='partnership.validity_end',
     )
+    university_offers = serializers.ReadOnlyField(
+        source='partnership.get_university_offers',
+    )
 
     @staticmethod
     @extend_schema_field(OpenApiTypes.STR)
     def get_partner(rel):
-        if rel.partnership.num_partners > 1:
+        if rel.partnership.num_partners >= 1 and len(rel.partnership.project_acronym) > 0:
             return "{} ({})".format(
                 rel.entity.organization.name,
                 rel.partnership.project_acronym,
@@ -480,5 +483,5 @@ class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
         model = PartnershipPartnerRelation
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'country', 'city',
-            'entities_acronyms', 'validity_end', 'type'
+            'entities_acronyms', 'validity_end', 'type', 'university_offers'
         ]
