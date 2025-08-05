@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Partnership API
-  version: 1.1.0
+  version: 1.1.1
   description: This API delivers data for the Partnership project.
   contact:
     name: UCLouvain - OSIS
@@ -241,7 +241,11 @@ paths:
       - in: query
         name: flow_direction
         schema:
-          type: number
+          type: string
+          enum:
+          - IN
+          - IN_OUT
+          - OUT
         description: The source id of funding
       - in: query
         name: funding_program
@@ -289,15 +293,9 @@ paths:
             - city
             - country_en
             - partner
-        description: |-
-          Ordre
-
-          * `partner` - Partenaire
-          * `-partner` - Partenaire (décroissant)
-          * `country_en` - Country en
-          * `-country_en` - Country en (décroissant)
-          * `city` - Ville
-          * `-city` - Ville (décroissant)
+        description: "Tri\n\n* `partner` - Partenaire\n* `-partner` - Partenaire (d\xE9\
+          croissant)\n* `country_en` - Country en\n* `-country_en` - Country en (d\xE9\
+          croissant)\n* `city` - Ville\n* `-city` - Ville (d\xE9croissant)"
         explode: false
         style: form
       - in: query
@@ -389,7 +387,7 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Domaine d'étude
+        description: "Domaine d'\xE9tude"
       - in: query
         name: education_level
         schema:
@@ -403,10 +401,11 @@ paths:
           - IN
           - IN_OUT
           - OUT
-        description: |-
-          * `IN` - IN
+        description: '* `IN` - IN
+
           * `OUT` - OUT
-          * `IN_OUT` - IN/OUT
+
+          * `IN_OUT` - IN/OUT'
       - in: query
         name: funding_program
         schema:
@@ -432,11 +431,7 @@ paths:
           enum:
           - staff
           - student
-        description: |-
-          Type de mobilité
-
-          * `student` - Student
-          * `staff` - Staff
+        description: "Type de mobilit\xE9\n\n* `student` - Student\n* `staff` - Staff"
       - in: query
         name: offer
         schema:
@@ -563,7 +558,7 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Domaine d'étude
+        description: "Domaine d'\xE9tude"
       - in: query
         name: education_level
         schema:
@@ -577,10 +572,11 @@ paths:
           - IN
           - IN_OUT
           - OUT
-        description: |-
-          * `IN` - IN
+        description: '* `IN` - IN
+
           * `OUT` - OUT
-          * `IN_OUT` - IN/OUT
+
+          * `IN_OUT` - IN/OUT'
       - in: query
         name: funding_program
         schema:
@@ -606,11 +602,7 @@ paths:
           enum:
           - staff
           - student
-        description: |-
-          Type de mobilité
-
-          * `student` - Student
-          * `staff` - Staff
+        description: "Type de mobilit\xE9\n\n* `student` - Student\n* `staff` - Staff"
       - in: query
         name: offer
         schema:
@@ -774,7 +766,7 @@ components:
       properties:
         title:
           nullable: true
-          title: Civilité
+          title: "Civilit\xE9"
           oneOf:
           - $ref: '#/components/schemas/TitleEnum'
           - $ref: '#/components/schemas/BlankEnum'
@@ -782,7 +774,7 @@ components:
         first_name:
           type: string
           nullable: true
-          title: Prénom
+          title: "Pr\xE9nom"
           maxLength: 255
         last_name:
           type: string
@@ -792,7 +784,7 @@ components:
         phone:
           type: string
           nullable: true
-          title: Téléphone
+          title: "T\xE9l\xE9phone"
           maxLength: 255
         email:
           type: string
@@ -831,36 +823,33 @@ components:
       - EPLUS-SPORT-CLUB
       - OTH
       type: string
-      description: |-
-        * `EPLUS-EDU-HEI` - Établissement d'enseignement supérieur (niveau tertiaire)
-        * `EPLUS-EDU-GEN-PRE` - École/Institut/Centre éducatif - Enseignement général (niveau préprimaire)
-        * `EPLUS-EDU-GEN-PRI` - École/Institut/Centre éducatif - Enseignement général (niveau primaire)
-        * `EPLUS-EDU-GEN-SEC` - École/Institut/Centre éducatif - Enseignement général (niveau secondaire)
-        * `EPLUS-EDU-VOC-SEC` - École/Institut/Centre éducatif - Formation professionnelle (niveau secondaire)
-        * `EPLUS-EDU-VOC-TER` - École/Institut/Centre éducatif - Formation professionnelle (niveau tertiaire)
-        * `EPLUS-EDU-ADULT` - École/Institut/Centre éducatif - Éducation des adultes
-        * `EPLUS-BODY-PUB-NAT` - Organisme publique national
-        * `EPLUS-BODY-PUB-REG` - Organisme publique régional
-        * `EPLUS-BODY-PUB-LOC` - Organisme publique local
-        * `EPLUS-ENT-SME` - Petite et moyenne entreprise
-        * `EPLUS-ENT-LARGE` - Grande entreprise
-        * `EPLUS-NGO` - Organisation non gouvernementale/association/entreprise sociale
-        * `EPLUS-FOUND` - Fondation
-        * `EPLUS-SOCIAL` - Partenaire social ou autre représentant de la vie professionnelle (chambres de commerce, syndicat, association professionnelle)
-        * `EPLUS-RES` - Institut/Centre de recherche
-        * `EPLUS-YOUTH-COUNCIL` - Conseil national de la jeunesse
-        * `EPLUS-ENGO` - ONG européenne
-        * `EPLUS-NET-EU` - Réseau européen
-        * `EPLUS-YOUTH-GROUP` - Groupe de jeunes actifs dans le domaine de la jeunesse
-        * `EPLUS-EURO-GROUP-COOP` - Groupement européen de coopération territoriale
-        * `EPLUS-BODY-ACCRED` - Accréditation, (certification ou organisme de qualification)
-        * `EPLUS-BODY-CONS` - Organisme de conseil
-        * `EPLUS-INTER` - Organisation internationale de droit public
-        * `EPLUS-SPORT-PARTIAL` - Organisation ou association représentant (des parties du) secteur du sport
-        * `EPLUS-SPORT-FED` - Fédération sportive
-        * `EPLUS-SPORT-LEAGUE` - Ligue sportive
-        * `EPLUS-SPORT-CLUB` - Club sportif
-        * `OTH` - Autre
+      description: "* `EPLUS-EDU-HEI` - \xC9tablissement d'enseignement sup\xE9rieur\
+        \ (niveau tertiaire)\n* `EPLUS-EDU-GEN-PRE` - \xC9cole/Institut/Centre \xE9\
+        ducatif - Enseignement g\xE9n\xE9ral (niveau pr\xE9primaire)\n* `EPLUS-EDU-GEN-PRI`\
+        \ - \xC9cole/Institut/Centre \xE9ducatif - Enseignement g\xE9n\xE9ral (niveau\
+        \ primaire)\n* `EPLUS-EDU-GEN-SEC` - \xC9cole/Institut/Centre \xE9ducatif\
+        \ - Enseignement g\xE9n\xE9ral (niveau secondaire)\n* `EPLUS-EDU-VOC-SEC`\
+        \ - \xC9cole/Institut/Centre \xE9ducatif - Formation professionnelle (niveau\
+        \ secondaire)\n* `EPLUS-EDU-VOC-TER` - \xC9cole/Institut/Centre \xE9ducatif\
+        \ - Formation professionnelle (niveau tertiaire)\n* `EPLUS-EDU-ADULT` - \xC9\
+        cole/Institut/Centre \xE9ducatif - \xC9ducation des adultes\n* `EPLUS-BODY-PUB-NAT`\
+        \ - Organisme publique national\n* `EPLUS-BODY-PUB-REG` - Organisme publique\
+        \ r\xE9gional\n* `EPLUS-BODY-PUB-LOC` - Organisme publique local\n* `EPLUS-ENT-SME`\
+        \ - Petite et moyenne entreprise\n* `EPLUS-ENT-LARGE` - Grande entreprise\n\
+        * `EPLUS-NGO` - Organisation non gouvernementale/association/entreprise sociale\n\
+        * `EPLUS-FOUND` - Fondation\n* `EPLUS-SOCIAL` - Partenaire social ou autre\
+        \ repr\xE9sentant de la vie professionnelle (chambres de commerce, syndicat,\
+        \ association professionnelle)\n* `EPLUS-RES` - Institut/Centre de recherche\n\
+        * `EPLUS-YOUTH-COUNCIL` - Conseil national de la jeunesse\n* `EPLUS-ENGO`\
+        \ - ONG europ\xE9enne\n* `EPLUS-NET-EU` - R\xE9seau europ\xE9en\n* `EPLUS-YOUTH-GROUP`\
+        \ - Groupe de jeunes actifs dans le domaine de la jeunesse\n* `EPLUS-EURO-GROUP-COOP`\
+        \ - Groupement europ\xE9en de coop\xE9ration territoriale\n* `EPLUS-BODY-ACCRED`\
+        \ - Accr\xE9ditation, (certification ou organisme de qualification)\n* `EPLUS-BODY-CONS`\
+        \ - Organisme de conseil\n* `EPLUS-INTER` - Organisation internationale de\
+        \ droit public\n* `EPLUS-SPORT-PARTIAL` - Organisation ou association repr\xE9\
+        sentant (des parties du) secteur du sport\n* `EPLUS-SPORT-FED` - F\xE9d\xE9\
+        ration sportive\n* `EPLUS-SPORT-LEAGUE` - Ligue sportive\n* `EPLUS-SPORT-CLUB`\
+        \ - Club sportif\n* `OTH` - Autre"
     ContinentConfiguration:
       type: object
       properties:
@@ -903,7 +892,7 @@ components:
         is_valid:
           type: boolean
           readOnly: true
-          title: Validé
+          title: "Valid\xE9"
         organization_identifier:
           type: string
           maxLength: 255
@@ -921,7 +910,7 @@ components:
         is_nonprofit:
           type: boolean
           nullable: true
-          title: Organisation à but non lucratif ?
+          title: "Organisation \xE0 but non lucratif ?"
         erasmus_code:
           type: string
           readOnly: true
@@ -935,39 +924,36 @@ components:
         contact_type:
           readOnly: true
           nullable: true
-          title: Type d’organisme
-          description: |-
-            Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES.
-
-            * `EPLUS-EDU-HEI` - Établissement d'enseignement supérieur (niveau tertiaire)
-            * `EPLUS-EDU-GEN-PRE` - École/Institut/Centre éducatif - Enseignement général (niveau préprimaire)
-            * `EPLUS-EDU-GEN-PRI` - École/Institut/Centre éducatif - Enseignement général (niveau primaire)
-            * `EPLUS-EDU-GEN-SEC` - École/Institut/Centre éducatif - Enseignement général (niveau secondaire)
-            * `EPLUS-EDU-VOC-SEC` - École/Institut/Centre éducatif - Formation professionnelle (niveau secondaire)
-            * `EPLUS-EDU-VOC-TER` - École/Institut/Centre éducatif - Formation professionnelle (niveau tertiaire)
-            * `EPLUS-EDU-ADULT` - École/Institut/Centre éducatif - Éducation des adultes
-            * `EPLUS-BODY-PUB-NAT` - Organisme publique national
-            * `EPLUS-BODY-PUB-REG` - Organisme publique régional
-            * `EPLUS-BODY-PUB-LOC` - Organisme publique local
-            * `EPLUS-ENT-SME` - Petite et moyenne entreprise
-            * `EPLUS-ENT-LARGE` - Grande entreprise
-            * `EPLUS-NGO` - Organisation non gouvernementale/association/entreprise sociale
-            * `EPLUS-FOUND` - Fondation
-            * `EPLUS-SOCIAL` - Partenaire social ou autre représentant de la vie professionnelle (chambres de commerce, syndicat, association professionnelle)
-            * `EPLUS-RES` - Institut/Centre de recherche
-            * `EPLUS-YOUTH-COUNCIL` - Conseil national de la jeunesse
-            * `EPLUS-ENGO` - ONG européenne
-            * `EPLUS-NET-EU` - Réseau européen
-            * `EPLUS-YOUTH-GROUP` - Groupe de jeunes actifs dans le domaine de la jeunesse
-            * `EPLUS-EURO-GROUP-COOP` - Groupement européen de coopération territoriale
-            * `EPLUS-BODY-ACCRED` - Accréditation, (certification ou organisme de qualification)
-            * `EPLUS-BODY-CONS` - Organisme de conseil
-            * `EPLUS-INTER` - Organisation internationale de droit public
-            * `EPLUS-SPORT-PARTIAL` - Organisation ou association représentant (des parties du) secteur du sport
-            * `EPLUS-SPORT-FED` - Fédération sportive
-            * `EPLUS-SPORT-LEAGUE` - Ligue sportive
-            * `EPLUS-SPORT-CLUB` - Club sportif
-            * `OTH` - Autre
+          title: "Type d\u2019organisme"
+          description: "Champ obligatoire si le partenaire n'a pas de code PIC et\
+            \ n'est pas une IES.\n\n* `EPLUS-EDU-HEI` - \xC9tablissement d'enseignement\
+            \ sup\xE9rieur (niveau tertiaire)\n* `EPLUS-EDU-GEN-PRE` - \xC9cole/Institut/Centre\
+            \ \xE9ducatif - Enseignement g\xE9n\xE9ral (niveau pr\xE9primaire)\n*\
+            \ `EPLUS-EDU-GEN-PRI` - \xC9cole/Institut/Centre \xE9ducatif - Enseignement\
+            \ g\xE9n\xE9ral (niveau primaire)\n* `EPLUS-EDU-GEN-SEC` - \xC9cole/Institut/Centre\
+            \ \xE9ducatif - Enseignement g\xE9n\xE9ral (niveau secondaire)\n* `EPLUS-EDU-VOC-SEC`\
+            \ - \xC9cole/Institut/Centre \xE9ducatif - Formation professionnelle (niveau\
+            \ secondaire)\n* `EPLUS-EDU-VOC-TER` - \xC9cole/Institut/Centre \xE9ducatif\
+            \ - Formation professionnelle (niveau tertiaire)\n* `EPLUS-EDU-ADULT`\
+            \ - \xC9cole/Institut/Centre \xE9ducatif - \xC9ducation des adultes\n\
+            * `EPLUS-BODY-PUB-NAT` - Organisme publique national\n* `EPLUS-BODY-PUB-REG`\
+            \ - Organisme publique r\xE9gional\n* `EPLUS-BODY-PUB-LOC` - Organisme\
+            \ publique local\n* `EPLUS-ENT-SME` - Petite et moyenne entreprise\n*\
+            \ `EPLUS-ENT-LARGE` - Grande entreprise\n* `EPLUS-NGO` - Organisation\
+            \ non gouvernementale/association/entreprise sociale\n* `EPLUS-FOUND`\
+            \ - Fondation\n* `EPLUS-SOCIAL` - Partenaire social ou autre repr\xE9\
+            sentant de la vie professionnelle (chambres de commerce, syndicat, association\
+            \ professionnelle)\n* `EPLUS-RES` - Institut/Centre de recherche\n* `EPLUS-YOUTH-COUNCIL`\
+            \ - Conseil national de la jeunesse\n* `EPLUS-ENGO` - ONG europ\xE9enne\n\
+            * `EPLUS-NET-EU` - R\xE9seau europ\xE9en\n* `EPLUS-YOUTH-GROUP` - Groupe\
+            \ de jeunes actifs dans le domaine de la jeunesse\n* `EPLUS-EURO-GROUP-COOP`\
+            \ - Groupement europ\xE9en de coop\xE9ration territoriale\n* `EPLUS-BODY-ACCRED`\
+            \ - Accr\xE9ditation, (certification ou organisme de qualification)\n\
+            * `EPLUS-BODY-CONS` - Organisme de conseil\n* `EPLUS-INTER` - Organisation\
+            \ internationale de droit public\n* `EPLUS-SPORT-PARTIAL` - Organisation\
+            \ ou association repr\xE9sentant (des parties du) secteur du sport\n*\
+            \ `EPLUS-SPORT-FED` - F\xE9d\xE9ration sportive\n* `EPLUS-SPORT-LEAGUE`\
+            \ - Ligue sportive\n* `EPLUS-SPORT-CLUB` - Club sportif\n* `OTH` - Autre"
           oneOf:
           - $ref: '#/components/schemas/ContactTypeEnum'
           - $ref: '#/components/schemas/NullEnum'
@@ -975,7 +961,7 @@ components:
           type: string
           readOnly: true
           nullable: true
-          title: Téléphone
+          title: "T\xE9l\xE9phone"
           description: Champ obligatoire si le partenaire n'a pas de code PIC et n'est
             pas une IES.
         email:
@@ -1077,7 +1063,7 @@ components:
         is_valid:
           type: boolean
           readOnly: true
-          title: Validé
+          title: "Valid\xE9"
         organization_identifier:
           type: string
           maxLength: 255
@@ -1095,7 +1081,7 @@ components:
         is_nonprofit:
           type: boolean
           nullable: true
-          title: Organisation à but non lucratif ?
+          title: "Organisation \xE0 but non lucratif ?"
         erasmus_code:
           type: string
           readOnly: true
@@ -1109,39 +1095,36 @@ components:
         contact_type:
           readOnly: true
           nullable: true
-          title: Type d’organisme
-          description: |-
-            Champ obligatoire si le partenaire n'a pas de code PIC et n'est pas une IES.
-
-            * `EPLUS-EDU-HEI` - Établissement d'enseignement supérieur (niveau tertiaire)
-            * `EPLUS-EDU-GEN-PRE` - École/Institut/Centre éducatif - Enseignement général (niveau préprimaire)
-            * `EPLUS-EDU-GEN-PRI` - École/Institut/Centre éducatif - Enseignement général (niveau primaire)
-            * `EPLUS-EDU-GEN-SEC` - École/Institut/Centre éducatif - Enseignement général (niveau secondaire)
-            * `EPLUS-EDU-VOC-SEC` - École/Institut/Centre éducatif - Formation professionnelle (niveau secondaire)
-            * `EPLUS-EDU-VOC-TER` - École/Institut/Centre éducatif - Formation professionnelle (niveau tertiaire)
-            * `EPLUS-EDU-ADULT` - École/Institut/Centre éducatif - Éducation des adultes
-            * `EPLUS-BODY-PUB-NAT` - Organisme publique national
-            * `EPLUS-BODY-PUB-REG` - Organisme publique régional
-            * `EPLUS-BODY-PUB-LOC` - Organisme publique local
-            * `EPLUS-ENT-SME` - Petite et moyenne entreprise
-            * `EPLUS-ENT-LARGE` - Grande entreprise
-            * `EPLUS-NGO` - Organisation non gouvernementale/association/entreprise sociale
-            * `EPLUS-FOUND` - Fondation
-            * `EPLUS-SOCIAL` - Partenaire social ou autre représentant de la vie professionnelle (chambres de commerce, syndicat, association professionnelle)
-            * `EPLUS-RES` - Institut/Centre de recherche
-            * `EPLUS-YOUTH-COUNCIL` - Conseil national de la jeunesse
-            * `EPLUS-ENGO` - ONG européenne
-            * `EPLUS-NET-EU` - Réseau européen
-            * `EPLUS-YOUTH-GROUP` - Groupe de jeunes actifs dans le domaine de la jeunesse
-            * `EPLUS-EURO-GROUP-COOP` - Groupement européen de coopération territoriale
-            * `EPLUS-BODY-ACCRED` - Accréditation, (certification ou organisme de qualification)
-            * `EPLUS-BODY-CONS` - Organisme de conseil
-            * `EPLUS-INTER` - Organisation internationale de droit public
-            * `EPLUS-SPORT-PARTIAL` - Organisation ou association représentant (des parties du) secteur du sport
-            * `EPLUS-SPORT-FED` - Fédération sportive
-            * `EPLUS-SPORT-LEAGUE` - Ligue sportive
-            * `EPLUS-SPORT-CLUB` - Club sportif
-            * `OTH` - Autre
+          title: "Type d\u2019organisme"
+          description: "Champ obligatoire si le partenaire n'a pas de code PIC et\
+            \ n'est pas une IES.\n\n* `EPLUS-EDU-HEI` - \xC9tablissement d'enseignement\
+            \ sup\xE9rieur (niveau tertiaire)\n* `EPLUS-EDU-GEN-PRE` - \xC9cole/Institut/Centre\
+            \ \xE9ducatif - Enseignement g\xE9n\xE9ral (niveau pr\xE9primaire)\n*\
+            \ `EPLUS-EDU-GEN-PRI` - \xC9cole/Institut/Centre \xE9ducatif - Enseignement\
+            \ g\xE9n\xE9ral (niveau primaire)\n* `EPLUS-EDU-GEN-SEC` - \xC9cole/Institut/Centre\
+            \ \xE9ducatif - Enseignement g\xE9n\xE9ral (niveau secondaire)\n* `EPLUS-EDU-VOC-SEC`\
+            \ - \xC9cole/Institut/Centre \xE9ducatif - Formation professionnelle (niveau\
+            \ secondaire)\n* `EPLUS-EDU-VOC-TER` - \xC9cole/Institut/Centre \xE9ducatif\
+            \ - Formation professionnelle (niveau tertiaire)\n* `EPLUS-EDU-ADULT`\
+            \ - \xC9cole/Institut/Centre \xE9ducatif - \xC9ducation des adultes\n\
+            * `EPLUS-BODY-PUB-NAT` - Organisme publique national\n* `EPLUS-BODY-PUB-REG`\
+            \ - Organisme publique r\xE9gional\n* `EPLUS-BODY-PUB-LOC` - Organisme\
+            \ publique local\n* `EPLUS-ENT-SME` - Petite et moyenne entreprise\n*\
+            \ `EPLUS-ENT-LARGE` - Grande entreprise\n* `EPLUS-NGO` - Organisation\
+            \ non gouvernementale/association/entreprise sociale\n* `EPLUS-FOUND`\
+            \ - Fondation\n* `EPLUS-SOCIAL` - Partenaire social ou autre repr\xE9\
+            sentant de la vie professionnelle (chambres de commerce, syndicat, association\
+            \ professionnelle)\n* `EPLUS-RES` - Institut/Centre de recherche\n* `EPLUS-YOUTH-COUNCIL`\
+            \ - Conseil national de la jeunesse\n* `EPLUS-ENGO` - ONG europ\xE9enne\n\
+            * `EPLUS-NET-EU` - R\xE9seau europ\xE9en\n* `EPLUS-YOUTH-GROUP` - Groupe\
+            \ de jeunes actifs dans le domaine de la jeunesse\n* `EPLUS-EURO-GROUP-COOP`\
+            \ - Groupement europ\xE9en de coop\xE9ration territoriale\n* `EPLUS-BODY-ACCRED`\
+            \ - Accr\xE9ditation, (certification ou organisme de qualification)\n\
+            * `EPLUS-BODY-CONS` - Organisme de conseil\n* `EPLUS-INTER` - Organisation\
+            \ internationale de droit public\n* `EPLUS-SPORT-PARTIAL` - Organisation\
+            \ ou association repr\xE9sentant (des parties du) secteur du sport\n*\
+            \ `EPLUS-SPORT-FED` - F\xE9d\xE9ration sportive\n* `EPLUS-SPORT-LEAGUE`\
+            \ - Ligue sportive\n* `EPLUS-SPORT-CLUB` - Club sportif\n* `OTH` - Autre"
           oneOf:
           - $ref: '#/components/schemas/ContactTypeEnum'
           - $ref: '#/components/schemas/NullEnum'
@@ -1149,7 +1132,7 @@ components:
           type: string
           readOnly: true
           nullable: true
-          title: Téléphone
+          title: "T\xE9l\xE9phone"
           description: Champ obligatoire si le partenaire n'a pas de code PIC et n'est
             pas une IES.
         email:
@@ -1416,11 +1399,11 @@ components:
           readOnly: true
         id_number:
           type: string
-          title: N° d'identification du projet
+          title: "N\xB0 d'identification du projet"
           readOnly: true
         project_title:
           type: string
-          title: Intitulé du projet
+          title: "Intitul\xE9 du projet"
           readOnly: true
         funding_program:
           allOf:
@@ -1565,20 +1548,18 @@ components:
       - DOCTORATE
       - PROJECT
       type: string
-      description: |-
-        * `GENERAL` - Accord général de collaboration
-        * `MOBILITY` - Partenariat de mobilité
-        * `COURSE` - Partenariat de co-organisation de formation
-        * `DOCTORATE` - Partenariat de co-organisation de doctorat
-        * `PROJECT` - Projet financé
+      description: "* `GENERAL` - Accord g\xE9n\xE9ral de collaboration\n* `MOBILITY`\
+        \ - Partenariat de mobilit\xE9\n* `COURSE` - Partenariat de co-organisation\
+        \ de formation\n* `DOCTORATE` - Partenariat de co-organisation de doctorat\n\
+        * `PROJECT` - Projet financ\xE9"
     SizeEnum:
       enum:
       - '>250'
       - <250
       type: string
-      description: |-
-        * `>250` - > 250
-        * `<250` - < 250
+      description: '* `>250` - > 250
+
+        * `<250` - < 250'
     SubtypeEnum:
       enum:
       - UNIVERSITY
@@ -1586,19 +1567,17 @@ components:
       - OTHER
       - HIGH_SCHOOL
       type: string
-      description: |-
-        * `UNIVERSITY` - Université
-        * `NON_UNIVERSITY_HIGHER` - Etablissement supérieur non universitaire
-        * `OTHER` - Autre
-        * `HIGH_SCHOOL` - Etablissement secondaire
+      description: "* `UNIVERSITY` - Universit\xE9\n* `NON_UNIVERSITY_HIGHER` - Etablissement\
+        \ sup\xE9rieur non universitaire\n* `OTHER` - Autre\n* `HIGH_SCHOOL` - Etablissement\
+        \ secondaire"
     TitleEnum:
       enum:
       - MISTER
       - MADAM
       type: string
-      description: |-
-        * `MISTER` - Monsieur
-        * `MADAM` - Madame
+      description: '* `MISTER` - Monsieur
+
+        * `MADAM` - Madame'
     TypeEnum:
       enum:
       - MAIN
@@ -1609,14 +1588,10 @@ components:
       - HOSPITAL
       - NGO
       type: string
-      description: |-
-        * `MAIN` - Principale
-        * `ACADEMIC_PARTNER` - Partenaire académique
-        * `EMBASSY` - Ambassade
-        * `RESEARCH_CENTER` - Centre de recherche
-        * `ENTERPRISE` - Entreprise
-        * `HOSPITAL` - Hôpital
-        * `NGO` - Organisation non-gouvernementale
+      description: "* `MAIN` - Principale\n* `ACADEMIC_PARTNER` - Partenaire acad\xE9\
+        mique\n* `EMBASSY` - Ambassade\n* `RESEARCH_CENTER` - Centre de recherche\n\
+        * `ENTERPRISE` - Entreprise\n* `HOSPITAL` - H\xF4pital\n* `NGO` - Organisation\
+        \ non-gouvernementale"
     UCLUniversityConfiguration:
       type: object
       properties:

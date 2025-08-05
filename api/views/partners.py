@@ -2,11 +2,11 @@ from collections import defaultdict
 
 from django.utils.dateparse import parse_date
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.contrib.django_filters import DjangoFilterExtension
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from osis_role.contrib.views import APIPermissionRequiredMixin
 from partnership.models import (
@@ -14,8 +14,6 @@ from partnership.models import (
     PartnershipPartnerRelation,
     PartnershipConfiguration,
 )
-from rest_framework.response import Response
-
 from ..filters import PartnershipPartnerRelationFilter, PartnerFilter
 from ..serializers import PartnerListSerializer
 from ..serializers.partner import InternshipPartnerSerializer, DeclareOrganizationAsInternshipPartnerSerializer
@@ -100,8 +98,9 @@ from ..serializers.partner import InternshipPartnerSerializer, DeclareOrganizati
             ),
             OpenApiParameter(
                 'flow_direction',
-                OpenApiTypes.NUMBER,
+                OpenApiTypes.STR,
                 description='The source id of funding',
+                enum=['IN', 'IN_OUT', 'OUT', ]
             ),
             OpenApiParameter(
                 'funding_source',
