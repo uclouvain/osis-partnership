@@ -6,6 +6,8 @@ class PartnershipYearOffers(models.Model):
     """
     Le modèle représentant une relation entre le catalogue de formation et un partenariat
     """
+    changed = models.DateTimeField(null=True, auto_now=True)
+
     partnershipyear = models.ForeignKey(
         'partnership.PartnershipYear',
         on_delete=models.CASCADE,
