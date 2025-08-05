@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Partnership API
-  version: 1.1.0
+  version: 1.1.1
   description: This API delivers data for the Partnership project.
   contact:
     name: UCLouvain - OSIS
@@ -241,7 +241,11 @@ paths:
       - in: query
         name: flow_direction
         schema:
-          type: number
+          type: string
+          enum:
+          - IN
+          - IN_OUT
+          - OUT
         description: The source id of funding
       - in: query
         name: funding_program
