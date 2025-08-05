@@ -670,7 +670,7 @@ paths:
       responses:
         '200':
           content:
-            application/json:
+            application/xls.ms-excel:
               schema:
                 type: object
                 required:
