@@ -35,8 +35,8 @@ def migrate_data_codiplomation(apps, schema_editor):
     all_ego_set = set(all_education_group_organization)
 
     # Creation one partnership
-    mission = PartnershipMission.objects.get(code="ENS")
-    subtype = PartnershipSubtype.objects.get(code="ORG_WITH")  # label : co-organisation avec co-diplomation
+    mission = PartnershipMission.objects.filter(code="ENS").first()
+    subtype = PartnershipSubtype.objects.filter(code="ORG_WITH").first()  # label : co-organisation avec co-diplomation
 
     for item_ego in all_ego_set:
         codiplomations_by_eg = EducationGroupOrganization.objects.all().prefetch_related(
@@ -110,9 +110,9 @@ def migrate_data_codiplomation(apps, schema_editor):
                 )
                 relation_year.save()
 
-        type_ba = PartnershipYearEducationLevel.objects.get(code='ISCED-6')
-        type_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
-        type_doct = PartnershipYearEducationLevel.objects.get(code='ISCED-8')
+        type_ba = PartnershipYearEducationLevel.objects.filter(code='ISCED-6').first()
+        type_master = PartnershipYearEducationLevel.objects.filter(code='ISCED-7').first()
+        type_doct = PartnershipYearEducationLevel.objects.filter(code='ISCED-8').first()
 
         dict_training = {
             1: type_ba,
