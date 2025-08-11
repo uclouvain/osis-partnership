@@ -10,6 +10,7 @@ class PartnershipPartnerRelationYear(models.Model):
     """
     Le modèle représentant une relation annuelle entre une entité et un partenariat
     """
+    external_id = models.CharField(max_length=100, blank=True, null=True, editable=False)
     changed = models.DateTimeField(null=True, auto_now=True)
     partnership_relation = models.ForeignKey(
         'partnership.PartnershipPartnerRelation',
