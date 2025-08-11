@@ -25,7 +25,7 @@
 # ##############################################################################
 from drf_spectacular.generators import SchemaGenerator
 
-PARTNERSHIP_SDK_VERSION = "1.1.0"
+PARTNERSHIP_SDK_VERSION = "1.1.1"
 
 
 class PartnershipSchemaGenerator(SchemaGenerator):
