@@ -3,6 +3,8 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import get_language
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 
@@ -20,6 +22,18 @@ __all__ = [
     'PartnershipPartnerRelationSerializer',
     'PartnershipPartnerRelationAdminSerializer',
 ]
+
+
+# Used for schema generation only
+class FundingSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    url = serializers.CharField()
+
+
+# Used for schema generation only
+class UclFacultySerializer(serializers.Serializer):
+    acronym = serializers.CharField()
+    title = serializers.CharField()
 
 
 class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
@@ -126,25 +140,32 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         except IndexError:  # pragma: no cover
             return None
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_sms(self, rel):
         return self._get_current_year_attr(rel.partnership, 'is_sms')
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_smp(self, rel):
         return self._get_current_year_attr(rel.partnership, 'is_smp')
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_smst(self, rel):
         return self._get_current_year_attr(rel.partnership, 'is_smst')
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_sta(self, rel):
         return self._get_current_year_attr(rel.partnership, 'is_sta')
 
+    @extend_schema_field(OpenApiTypes.BOOL)
     def get_is_stt(self, rel):
         return self._get_current_year_attr(rel.partnership, 'is_stt')
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_missions(rel):
         return ', '.join([mission.label for mission in rel.partnership.missions.all()])
 
+    @extend_schema_field(serializers.ListSerializer(child=serializers.CharField()))
     def get_education_fields(self, rel):
         education_fields = self._get_current_year_attr(rel.partnership, 'education_fields')
         if education_fields is None:  # pragma: no cover
@@ -154,6 +175,14 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         return [('{0.%s} ({0.code})' % label).format(field)
                 for field in education_fields.all()]
 
+    @extend_schema_field({
+        "type": "object",
+        "properties": {
+            "status": {"type": "string"},
+            "start_date": {"type": "string"},
+            "end_date": {"type": "string"},
+        },
+    })
     def get_status(self, rel):
         partnership = rel.partnership
         if partnership.is_mobility:
@@ -188,6 +217,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
                 if partnership.end_date else '',
             }
 
+    @extend_schema_field(AgreementMediaSerializer(many=True))
     def get_bilateral_agreements(self, rel):
         return [
             AgreementMediaSerializer(agreement, context=self.context).data
@@ -195,6 +225,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             if agreement.media.is_visible_in_portal
         ]
 
+    @extend_schema_field(serializers.ListSerializer(child=serializers.CharField()))
     def get_out_education_levels(self, rel):
         education_levels = self._get_current_year_attr(
             rel.partnership, 'education_levels'
@@ -203,12 +234,14 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             return None
         return [level.code for level in education_levels.all()]
 
+    @extend_schema_field(EntitySerializer(many=True))
     def get_out_entities(self, rel):
         entities = self._get_current_year_attr(rel.partnership, 'entities')
         if entities is None:  # pragma: no cover
             return None
         return [EntitySerializer(entity).data for entity in entities.all()]
 
+    @extend_schema_field(serializers.ListSerializer(child=serializers.CharField()))
     def get_out_university_offers(self, rel):
         offers = self._get_current_year_attr(rel.partnership, 'offers')
         if offers is None:  # pragma: no cover
@@ -216,6 +249,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         return ['{} - {}'.format(offer.acronym, offer.title)
                 for offer in offers.all()]
 
+    @extend_schema_field(ContactSerializer)
     def get_out_contact(self, rel):
         partnership = rel.partnership
         if not hasattr(partnership.ucl_entity, 'uclmanagement_entity'):
@@ -244,6 +278,25 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             contact['phone'] = person.phone
         return contact
 
+    @extend_schema_field({
+        "type": "object",
+        "properties": {
+            "fr": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            },
+            "en": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            },
+        },
+    })
     def get_out_course_catalogue(self, rel):
         if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return {}
@@ -275,12 +328,15 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         ]
         return medias
 
+    @extend_schema_field(MediaSerializer(many=True))
     def get_out_summary_tables(self, rel):
         return self.get_public_media(rel, MediaType.SUMMARY_TABLE)
 
+    @extend_schema_field(MediaSerializer(many=True))
     def get_out_useful_links(self, rel):
         return self.get_public_media(rel, MediaType.USEFUL_LINK)
 
+    @extend_schema_field(ContactSerializer)
     def get_in_contact(self, rel):
         if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return None
@@ -309,6 +365,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             contact['phone'] = person.phone
         return contact
 
+    @extend_schema_field(FundingSerializer)
     def get_funding(self, rel):
         partnership = rel.partnership
         funding_source = self._get_current_year_attr(partnership, 'funding_source')
@@ -321,6 +378,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
                 'url': rel.funding_url,
             }
 
+    @extend_schema_field(FundingSerializer)
     def get_funding_program(self, rel):
         label = ''
         partnership = rel.partnership
@@ -335,6 +393,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
             'url': funding_type and funding_type.url,
         }
 
+    @extend_schema_field(ContactSerializer)
     def get_staff_contact(self, rel):
         if not hasattr(rel.partnership.ucl_entity, 'uclmanagement_entity'):
             return None
@@ -348,6 +407,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         }
         return contact
 
+    @extend_schema_field(FundingSerializer)
     def get_staff_funding(self, rel):
         funding = self.get_funding(rel)
         if funding is None:
@@ -356,12 +416,14 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         return funding
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_ucl_sector(rel):
         if not rel.partnership.acronym_path or len(rel.partnership.acronym_path) < 2:
             return ''
         return rel.partnership.acronym_path[1]
 
     @staticmethod
+    @extend_schema_field(UclFacultySerializer)
     def get_ucl_faculty(rel):
         if not rel.partnership.acronym_path or len(rel.partnership.acronym_path) < 3:
             return {}
@@ -371,6 +433,7 @@ class PartnershipPartnerRelationSerializer(serializers.ModelSerializer):
         }
 
     @staticmethod
+    @extend_schema_field(serializers.ListSerializer(child=serializers.CharField()))
     def get_partner_entities(rel):
         if rel.partnership.num_partners == 1:
             return []
@@ -402,10 +465,14 @@ class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
     validity_end = serializers.ReadOnlyField(
         source='partnership.validity_end',
     )
+    university_offers = serializers.ReadOnlyField(
+        source='partnership.get_university_offers',
+    )
 
     @staticmethod
+    @extend_schema_field(OpenApiTypes.STR)
     def get_partner(rel):
-        if rel.partnership.num_partners > 1:
+        if rel.partnership.num_partners >= 1 and len(rel.partnership.project_acronym) > 0:
             return "{} ({})".format(
                 rel.entity.organization.name,
                 rel.partnership.project_acronym,
@@ -416,5 +483,5 @@ class PartnershipPartnerRelationAdminSerializer(serializers.ModelSerializer):
         model = PartnershipPartnerRelation
         fields = [
             'uuid', 'url', 'partner', 'supervisor', 'country', 'city',
-            'entities_acronyms', 'validity_end', 'type'
+            'entities_acronyms', 'validity_end', 'type', 'university_offers'
         ]

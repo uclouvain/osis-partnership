@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -19,6 +21,7 @@ class AgreementMediaSerializer(serializers.Serializer):
     url = serializers.SerializerMethodField()
     name = serializers.CharField(source='media.name')
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_url(self, agreement):
         media = agreement.media
         if media.file.name:  # pragma: no cover

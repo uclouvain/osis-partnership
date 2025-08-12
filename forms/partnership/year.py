@@ -270,6 +270,7 @@ class PartnershipYearCourseForm(PartnershipYearWithoutDatesForm):
         super().__init__(partnership_type, *args, **kwargs)
 
         self.fields['education_levels'].required = True
+        self.fields['type_diploma_by_ucl'].required = True
         self.fields['diploma_prod_by_ucl'].initial = True
 
         is_adri = is_linked_to_adri_entity(self.user)
@@ -402,6 +403,7 @@ class PartnershipRelationYearCourseForm(forms.ModelForm):
             'diploma_prod_by_partner',
             'type_diploma_by_partner',
             'supplement_prod_by_partner',
+            'all_student'
         )
         labels = {
             'partner_referent': _('partner_referent'),
@@ -409,6 +411,10 @@ class PartnershipRelationYearCourseForm(forms.ModelForm):
             'type_diploma_by_partner': _('type_diploma_by_partner'),
             'supplement_prod_by_partner': _('supplement_prod_by_partner'),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type_diploma_by_partner'].required = True
 
 
 PartnerRelationYearFormSet = modelformset_factory(

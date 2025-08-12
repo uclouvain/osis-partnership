@@ -1,11 +1,10 @@
 from django.db import models
 from django.db.models import OuterRef, Subquery, Q
 from django.db.models.functions import Now
-from django.core.exceptions import ValidationError
+
 from base.models.entity_version import EntityVersion
 from base.utils.cte import CTESubquery
-from partnership.models import Financing, AgreementStatus, PartnershipType, PartnershipDiplomaWithUCL, \
-    PartnershipProductionSupplement
+from partnership.models import Financing, AgreementStatus, PartnershipType
 
 __all__ = ['PartnershipPartnerRelation']
 
@@ -104,6 +103,7 @@ class PartnershipPartnerRelation(models.Model):
     """
     Le modèle représentant une relation entre une entité et un partenariat
     """
+    changed = models.DateTimeField(null=True, auto_now=True)
     partnership = models.ForeignKey(
         'partnership.Partnership',
         related_name='partnershiprelation',

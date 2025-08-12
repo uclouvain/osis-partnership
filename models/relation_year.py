@@ -1,6 +1,7 @@
 from django.db import models
-from partnership.models import PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 from django.utils.translation import gettext_lazy as _
+
+from partnership.models import PartnershipDiplomaWithUCL, PartnershipProductionSupplement
 
 __all__ = ['PartnershipPartnerRelationYear']
 
@@ -9,6 +10,8 @@ class PartnershipPartnerRelationYear(models.Model):
     """
     Le modèle représentant une relation annuelle entre une entité et un partenariat
     """
+    external_id = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    changed = models.DateTimeField(null=True, auto_now=True)
     partnership_relation = models.ForeignKey(
         'partnership.PartnershipPartnerRelation',
         related_name='partnershiprelation',
@@ -43,6 +46,12 @@ class PartnershipPartnerRelationYear(models.Model):
     partner_referent = models.BooleanField(
         verbose_name=_('partner_referent'),
         default=False
+    )
+    all_student = models.BooleanField(
+        verbose_name=_('all_student'),
+        default=True,
+        null=False,
+        blank=True
     )
 
     class Meta:

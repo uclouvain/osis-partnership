@@ -2,8 +2,11 @@ from collections import defaultdict
 
 from django.utils.dateparse import parse_date
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from osis_role.contrib.views import APIPermissionRequiredMixin
 from partnership.models import (
@@ -11,13 +14,118 @@ from partnership.models import (
     PartnershipPartnerRelation,
     PartnershipConfiguration,
 )
-from rest_framework.response import Response
-
-from ..filters import PartnerFilter, PartnershipPartnerRelationFilter
+from ..filters import PartnershipPartnerRelationFilter, PartnerFilter
 from ..serializers import PartnerListSerializer
 from ..serializers.partner import InternshipPartnerSerializer, DeclareOrganizationAsInternshipPartnerSerializer
 
 
+@extend_schema_view(
+    get=extend_schema(
+        parameters=[
+            # Parameters from PartnershipPartnerRelationFilter
+            OpenApiParameter(
+                'continent',
+                OpenApiTypes.STR,
+                description='The continent name',
+            ),
+            OpenApiParameter(
+                'country',
+                OpenApiTypes.STR,
+                description='The country iso code',
+            ),
+            OpenApiParameter(
+                'city',
+                OpenApiTypes.STR,
+                description='The city name',
+            ),
+            OpenApiParameter(
+                'partner',
+                OpenApiTypes.UUID,
+                description='The uuid of the partner',
+            ),
+            OpenApiParameter(
+                'ucl_entity',
+                OpenApiTypes.UUID,
+                description='The uuid of the faculty or school',
+            ),
+            OpenApiParameter(
+                'with_children',
+                OpenApiTypes.BOOL,
+                description='If children of ucl_entity should be taken into account',
+            ),
+            OpenApiParameter(
+                'type',
+                OpenApiTypes.STR,
+                description='The type of partnership',
+                enum=[
+                    'GENERAL',
+                    'MOBILITY',
+                    'COURSE',
+                    'DOCTORATE',
+                    'PROJECT',
+                ],
+            ),
+            OpenApiParameter(
+                'education_level',
+                OpenApiTypes.STR,
+                description='The education level code',
+            ),
+            OpenApiParameter(
+                'tag',
+                OpenApiTypes.STR,
+                description='The tag of the partnership',
+            ),
+            OpenApiParameter(
+                'partner_tag',
+                OpenApiTypes.STR,
+                description='The tag of the partner',
+            ),
+            OpenApiParameter(
+                'education_field',
+                OpenApiTypes.UUID,
+                description='The uuid of the education field',
+            ),
+            OpenApiParameter(
+                'offer',
+                OpenApiTypes.UUID,
+                description='The uuid of the offer',
+            ),
+            OpenApiParameter(
+                'mobility_type',
+                OpenApiTypes.STR,
+                description='The type of mobility, either for student or for staff',
+                enum=['student', 'staff',]
+            ),
+            OpenApiParameter(
+                'flow_direction',
+                OpenApiTypes.STR,
+                description='The source id of funding',
+                enum=['IN', 'IN_OUT', 'OUT', ]
+            ),
+            OpenApiParameter(
+                'funding_source',
+                OpenApiTypes.NUMBER,
+                description='The source id of funding',
+            ),
+            OpenApiParameter(
+                'funding_program',
+                OpenApiTypes.NUMBER,
+                description='The program id of funding',
+            ),
+            OpenApiParameter(
+                'funding_type',
+                OpenApiTypes.NUMBER,
+                description='The type id of funding',
+            ),
+            OpenApiParameter(
+                'bbox',
+                OpenApiTypes.STR,
+                description='The bounding box to export the partnerships',
+                examples=[OpenApiExample('bbox', '5.2,10.5,5.7,10.9')],
+            ),
+        ],
+    ),
+)
 class PartnersApiListView(generics.ListAPIView):
     serializer_class = PartnerListSerializer
     permission_classes = (AllowAny,)
@@ -74,6 +182,17 @@ class PartnersApiListView(generics.ListAPIView):
         return context
 
 
+@extend_schema_view(
+    get=extend_schema(
+        parameters=[OpenApiParameter(
+            name='from_date',
+            type=OpenApiTypes.DATE,
+            description='A date in the ISO format',
+            required=True,
+            examples=[OpenApiExample('date', '2023-10-12')],
+        )],
+    )
+)
 class InternshipPartnerListApiView(generics.CreateAPIView, generics.ListAPIView):
     """
     Internship are partner with different constraints than usual.
@@ -82,6 +201,9 @@ class InternshipPartnerListApiView(generics.CreateAPIView, generics.ListAPIView)
     serializer_class = InternshipPartnerSerializer
 
     def get_queryset(self):
+        if not hasattr(self, 'from_date'):
+            # Used for schema generation
+            return Partner.objects.none()
         return Partner.objects.prefetch_address().filter(changed__gte=self.from_date)
 
     def list(self, request, *args, **kwargs):

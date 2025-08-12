@@ -22,7 +22,6 @@
                 <th>{% trans "education_levels" %}</th>
                 <th>{% trans "partnership_year_entities" %}</th>
                 <th>{% trans "partnership_year_offers" %}</th>
-                <th>{% trans "all_student" %}</th>
                 <th>{% trans "is_valid" %}</th>
             </tr>
             </thead>
@@ -81,10 +80,6 @@
                     </td>
                     <td>
                         <i class="fas
-                                {{ partnership_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
-                    </td>
-                    <td>
-                        <i class="fas
                                 {{ partnership_year.is_valid|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
                     </td>
                 </tr>
@@ -105,6 +100,7 @@
                     <th>{% trans "partnership_diploma" %}</th>
                     <th>{% trans "diploma_with_ucl_by_partner" %}</th>
                     <th>{% trans "partnership_supplement" %}</th>
+                    <th>{% trans "all_student" %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -120,6 +116,10 @@
                         <td>{% if partnership_year.diploma_prod_by_ucl %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
                         <td>{{ partnership_year.get_type_diploma_by_ucl_display|default_if_none:"-"}}</td>
                         <td>{{ partnership_year.get_supplement_prod_by_ucl_display|default_if_none:"-"}}</td>
+                         <td><i class="fas
+                                {{ partnership_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                        </td>
+
                 </tr>
                  {% endfor %}
                 {% for partnershiprel in partnership.partnershiprelation.all %}
@@ -136,7 +136,11 @@
                         <td>{% if partner_year.diploma_prod_by_partner%}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
                         <td>{{  partner_year.get_type_diploma_by_partner_display|default_if_none:"-"}}</td>
                         <td>{{  partner_year.get_supplement_prod_by_partner_display|default_if_none:"-"}}</td>
+                        <td><i class="fas
+                                {{ partner_year.all_student|yesno:"fa-check text-success,fa-times text-danger" }}"></i>
+                        </td>
                 </tr>
+
                     {% endfor %}
                 {% endfor %}
                 </tbody>
