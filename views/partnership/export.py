@@ -77,7 +77,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
         ).prefetch_related(
             Prefetch('entities', queryset=EntityProxy.objects.with_acronym()),
             'education_levels',
-        ).filter(academic_year=self.academic_year)
+        ).filter(academic_year=self.academic_year).order_by('-academic_year__year')
         queryset = (
             queryset
             .annotate_financing(self.academic_year)
@@ -109,24 +109,20 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                     queryset=year_qs,
                     to_attr='selected_year',
                 ),
-                Prefetch(
-                    'partnership__years',
-                    queryset=PartnershipYear.objects.select_related('academic_year'),
-                ),
-                Prefetch(
-                    'partnership__years',
-                    queryset=PartnershipYear.objects.select_related('academic_year').reverse(),
-                    to_attr='reverse_years',
-                ),
                 'entity__entityversion_set',
             )
             .select_related(
                 'entity__partnerentity',
+
             )
         )
         for rel in queryset.distinct():
             partnership = rel.partnership
-            year = partnership.selected_year[0] if partnership.selected_year else ''
+
+            all_years = getattr(partnership, 'selected_year', [])
+            year = next((y for y in all_years if y.academic_year == self.academic_year), None)
+            reverse_year = all_years[0] if all_years else None
+
             last_agreement = partnership.last_valid_agreements[0] if partnership.last_valid_agreements else None
 
             # Replace funding values if financing is eligible for mobility and not overridden in year
@@ -178,7 +174,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
                 str(partnership.years.first().academic_year)
                 if partnership.is_mobility else partnership.start_date,
 
-                str(partnership.reverse_years[0].academic_year)
+                str(reverse_year.academic_year) if reverse_year else ''
                 if partnership.is_mobility else partnership.end_date,
 
                 getattr(

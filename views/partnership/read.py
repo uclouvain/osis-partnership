@@ -1,20 +1,19 @@
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Prefetch
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from django.views.generic import DetailView
-
 from base.models.organization import Organization
 from partnership.models import (
-    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear,
+    Media, Partnership, PartnershipAgreement, PartnershipType, PartnershipYear, PartnershipPartnerRelationYear
 )
 
 __all__ = [
     'PartnershipDetailView',
 ]
 
-from partnership.models.relation_year import PartnershipPartnerRelationYear
 
 
 class PartnershipDetailView(PermissionRequiredMixin, DetailView):

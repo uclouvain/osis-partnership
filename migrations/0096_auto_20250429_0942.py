@@ -21,19 +21,21 @@ def add_education_group_type_fie(apps, schema_editor):
         name='MASTER_M5',
     )
 
-    isced_master = PartnershipYearEducationLevel.objects.get(code='ISCED-7')
-    isced_master.education_group_types.add(m4_type)
-    isced_master.education_group_types.add(m5_type)
-    isced_master.save()
+    isced_master = PartnershipYearEducationLevel.objects.filter(code='ISCED-7')
+    if isced_master.exists():
+        isced_master.first().education_group_types.add(m4_type)
+        isced_master.first().education_group_types.add(m5_type)
+        isced_master.first().save()
 
     # Change label/field subtype of partnership
     PartnershipSubtype = apps.get_model("partnership", "PartnershipSubtype")
 
-    other_diplomation = PartnershipSubtype.objects.get(
+    other_diplomation = PartnershipSubtype.objects.filter(
         code='OTHER_DI'
     )
-    other_diplomation.label="autre collaboration pour la diplomation"
-    other_diplomation.save()
+    if other_diplomation.exists():
+        other_diplomation.first().label="autre collaboration pour la diplomation"
+        other_diplomation.first().save()
 
 class Migration(migrations.Migration):
 
