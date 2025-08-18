@@ -20,6 +20,8 @@ class PartnershipYear(models.Model):
     """
     Données annualisées concernant un partenariat.
     """
+    changed = models.DateTimeField(null=True, auto_now=True)
+
     partnership = models.ForeignKey(
         'partnership.Partnership',
         verbose_name=_('partnership'),

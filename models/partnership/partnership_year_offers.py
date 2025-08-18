@@ -1,11 +1,14 @@
-from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class PartnershipYearOffers(models.Model):
     """
     Le modèle représentant une relation entre le catalogue de formation et un partenariat
     """
+    external_id = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    changed = models.DateTimeField(null=True, auto_now=True)
+
     partnershipyear = models.ForeignKey(
         'partnership.PartnershipYear',
         on_delete=models.CASCADE,
