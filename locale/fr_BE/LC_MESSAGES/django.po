@@ -1295,6 +1295,9 @@ msgstr "{partnership} pour l'année {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
 
+msgid "partnership_{acronym}"
+msgstr "Acronyme ou nom abrégé du partenariat multilatéral"
+
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
 
