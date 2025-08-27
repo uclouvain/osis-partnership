@@ -15,8 +15,10 @@ from django_filters.views import FilterMixin
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
 from base.models.academic_year import AcademicYear
+from osis_common.document.xls_build import CONTENT_TYPE_XLS
 from partnership.models import (
     EntityProxy,
     AgreementStatus,
@@ -257,7 +259,7 @@ def partnership_get_export_url(request):  # pragma: no cover
     responses=OpenApiResponse(
         description='A xls file with partnerships',
         response={
-            'application/xls.ms-excel': {
+            CONTENT_TYPE_XLS: {
                 'schema': {
                     "type": "string",
                     "format": "binary",
@@ -266,11 +268,12 @@ def partnership_get_export_url(request):  # pragma: no cover
         },
     ),
 ))
-class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportView, generics.ListAPIView):
-    # This need to inherit from ListAPIView and to have filter_backends
-    # in order to have parameters in schema generation
+class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportView, APIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = PartnershipPartnerRelationFilter
+
+    schema_include_filters = True
+    schema_ignore_renderers_for_response = True
 
     def dispatch(self, request, *args, **kwargs):
         """ Ensure we do not call GenericAPIView.dispatch """
