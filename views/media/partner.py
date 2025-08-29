@@ -1,4 +1,3 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from .mixins import (
@@ -15,18 +14,18 @@ __all__ = [
 ]
 
 
-class PartnerMediaCreateView(LoginRequiredMixin, PartnerMediaFormMixin, CreateView):
+class PartnerMediaCreateView(PartnerMediaFormMixin, CreateView):
     template_name = 'partnerships/partners/medias/partner_media_create.html'
     login_url = 'access_denied'
 
 
-class PartnerMediaUpdateView(LoginRequiredMixin, PartnerMediaFormMixin, UpdateView):
+class PartnerMediaUpdateView(PartnerMediaFormMixin, UpdateView):
     template_name = 'partnerships/partners/medias/partner_media_update.html'
     context_object_name = 'media'
     login_url = 'access_denied'
 
 
-class PartnerMediaDeleteView(LoginRequiredMixin, PartnerMediaMixin, DeleteView):
+class PartnerMediaDeleteView(PartnerMediaMixin, DeleteView):
     template_name = 'partnerships/partners/medias/partner_media_delete.html'
     login_url = 'access_denied'
 

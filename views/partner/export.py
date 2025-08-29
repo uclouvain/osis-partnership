@@ -1,4 +1,5 @@
 from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import Value
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _, pgettext
 
@@ -37,7 +38,7 @@ class PartnersExportView(ExportView, PartnersListView):
         queryset = (
             queryset
             .annotate(
-                tags_list=StringAgg('tags__value', ', '),
+                tags_list=StringAgg('tags__value', ', ', default=Value('')),
             )
             .values_list(
                 'id',

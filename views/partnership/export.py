@@ -1,5 +1,5 @@
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Case, Exists, OuterRef, Prefetch, When
+from django.db.models import Case, Exists, OuterRef, Prefetch, When, Value
 from django.db.models.expressions import Subquery
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
@@ -85,7 +85,7 @@ class PartnershipExportView(ExportView, PartnershipsListView):
             .annotate(
                 tags_list=Subquery(
                     Partnership.objects.filter(pk=OuterRef('partnership__pk')).annotate(
-                        tags_list=StringAgg('tags__value', ', '),
+                        tags_list=StringAgg('tags__value', ', ', default=Value('')),
                     ).values('tags_list')[:1]
                 ),
                 is_valid_for_year=Case(
