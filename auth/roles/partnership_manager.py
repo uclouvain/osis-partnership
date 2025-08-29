@@ -1,16 +1,11 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_cte import CTEQuerySet
 from rules import RuleSet
 
 from osis_role.contrib.models import EntityRoleModel, EntityRoleModelQueryset
 from partnership.auth.predicates import *
 from partnership.models import PartnershipType
-
-
-class PartnershipEntityManagerQuerySet(CTEQuerySet, EntityRoleModelQueryset):
-    pass
 
 
 class PartnershipEntityManager(EntityRoleModel):
@@ -24,7 +19,7 @@ class PartnershipEntityManager(EntityRoleModel):
         blank=True,
     )
 
-    objects = PartnershipEntityManagerQuerySet.as_manager()
+    objects = EntityRoleModelQueryset.as_manager()
 
     class Meta:
         verbose_name = _("Partnership manager")

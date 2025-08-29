@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
-from django_cte import CTEManager
-
 __all__ = ['UCLManagementEntity']
 
 
@@ -82,8 +80,6 @@ class UCLManagementEntity(models.Model):
         blank=True,
         default='',
     )
-
-    objects = CTEManager()
 
     def __str__(self):
         return str(self.entity)
