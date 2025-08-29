@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Value
 from django.utils.translation import get_language
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -47,7 +47,7 @@ class ConfigurationView(APIView):
             Prefetch(
                 'country_set',
                 queryset=Country.objects.annotate(
-                    cities=StringAgg('entityversionaddress__city', ';', distinct=True)
+                    cities=StringAgg('entityversionaddress__city', ';', distinct=True, default=Value(''))
                 )
             )
         )
