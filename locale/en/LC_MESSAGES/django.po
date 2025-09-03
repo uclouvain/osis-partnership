@@ -612,7 +612,7 @@ msgid "description"
 msgstr "Description"
 
 msgid "diploma_prod_by_partner"
-msgstr "Diploma produced by the partner"
+msgstr "Diploma delivered by this partner"
 
 msgid "diploma_prod_by_ucl"
 msgstr "Diploma produced by UCLouvain"
@@ -1208,6 +1208,8 @@ msgstr "Partnership year {partnership} {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Show all years."
 
+#, fuzzy, python-brace-format
+#| msgid "partnership_{acronym}"
 msgid "partnership_{acronym}"
 msgstr "Multilateral partnership acronym or abbreviation"
 
@@ -1336,7 +1338,7 @@ msgid "supervisor"
 msgstr "Supervisor"
 
 msgid "supplement_prod_by_partner"
-msgstr "Supplement produced by the partner"
+msgstr "Supplement delivered by this partner"
 
 msgid "supplement_prod_by_ucl"
 msgstr "Diploma supplement produced by UCLouvain"
@@ -1355,7 +1357,7 @@ msgid "type"
 msgstr "Type"
 
 msgid "type_diploma_by_partner"
-msgstr "Type of diploma produced by partner"
+msgstr "Type of diploma delivered by this partner"
 
 msgid "type_diploma_by_ucl"
 msgstr "Type of diploma"

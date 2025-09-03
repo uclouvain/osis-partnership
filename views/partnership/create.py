@@ -207,6 +207,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                         diploma_prod_by_partner=instance["diploma_prod_by_partner"],
                         supplement_prod_by_partner=instance["supplement_prod_by_partner"],
                         partner_referent=instance["partner_referent"],
+                        all_student = instance["all_student"]
                     )
                     count = count + result
 
