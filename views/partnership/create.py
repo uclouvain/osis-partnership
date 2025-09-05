@@ -66,7 +66,7 @@ class PartnershipCreateView(NotifyAdminMailMixin,
             self.bool_partnership_type_course = True
         else:
             self.bool_partnership_type_course = False
-        context["bool_partnership_type_course"] =  self.bool_partnership_type_course
+        context["bool_partnership_type_course"] = self.bool_partnership_type_course
         return context
 
     @transaction.atomic
@@ -216,7 +216,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                         diploma_prod_by_partner=instance["diploma_prod_by_partner"],
                         supplement_prod_by_partner=instance["supplement_prod_by_partner"],
                         partner_referent=instance["partner_referent"],
-                        all_student = instance["all_student"]
+                        all_student=instance["all_student"]
                     )
                     count = count + result
 

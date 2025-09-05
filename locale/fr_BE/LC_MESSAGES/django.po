@@ -1298,8 +1298,6 @@ msgstr "{partnership} pour l'année {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
 
-#, fuzzy, python-brace-format
-#| msgid "partnership_{acronym}"
 msgid "partnership_{acronym}"
 msgstr "Acronyme ou nom abrégé du partenariat multilatéral"
 

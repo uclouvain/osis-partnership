@@ -37,7 +37,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
             self.bool_partnership_type_course = True
         else:
             self.bool_partnership_type_course = False
-        context["bool_partnership_type_course"] =  self.bool_partnership_type_course
+        context["bool_partnership_type_course"] = self.bool_partnership_type_course
         return context
 
     @transaction.atomic
