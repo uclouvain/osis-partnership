@@ -62,7 +62,11 @@ class PartnershipCreateView(NotifyAdminMailMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["bool_partnership_type_course"] =  True if self.partnership_type == PartnershipType.COURSE.name else False
+        if self.partnership_type == PartnershipType.COURSE.name:
+            bool_partnership_type_course = True
+        else:
+            bool_partnership_type_course = False
+        context["bool_partnership_type_course"] = bool_partnership_type_course
         return context
 
     @transaction.atomic
