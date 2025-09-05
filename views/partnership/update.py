@@ -33,11 +33,7 @@ class PartnershipUpdateView(PartnershipFormMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.partnership_type == PartnershipType.COURSE.name:
-            self.bool_partnership_type_course = True
-        else:
-            self.bool_partnership_type_course = False
-        context["bool_partnership_type_course"] = self.bool_partnership_type_course
+        context["bool_partnership_type_course"] =  True if self.partnership_type == PartnershipType.COURSE.name else False
         return context
 
     @transaction.atomic
