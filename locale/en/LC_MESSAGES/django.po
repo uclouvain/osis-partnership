@@ -873,8 +873,6 @@ msgstr "New media"
 msgid "new_partner"
 msgstr "New partner"
 
-#, fuzzy
-#| msgid "edit_partnership"
 msgid "next_partnership"
 msgstr "Save and next"
 
@@ -1213,8 +1211,6 @@ msgstr "Partnership year {partnership} {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Show all years."
 
-#, fuzzy, python-brace-format
-#| msgid "partnership_{acronym}"
 msgid "partnership_{acronym}"
 msgstr "Multilateral partnership acronym or abbreviation"
 
