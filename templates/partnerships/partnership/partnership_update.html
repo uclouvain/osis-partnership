@@ -41,7 +41,11 @@
             <a href="{{ partnership.get_absolute_url }}" class="btn btn-default border border-dark-subtle mb-3 mb-md-0 w-100">{% trans "cancel" %}</a>
           </div>
           <div class="col-12 col-md-6">
-            <button type="submit" class="btn btn-primary w-100">{% trans "edit_partnership" %}</button>
+              {% if bool_partnership_type_course %}
+            <button type="submit" class="btn btn-primary w-100">{% trans "next_partnership" %}</button>
+              {% else %}
+                  <button type="submit" class="btn btn-primary w-100">{% trans "edit_partnership" %}</button>
+              {% endif %}
           </div>
         </div>
       </form>

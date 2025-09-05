@@ -615,7 +615,7 @@ msgid "diploma_prod_by_partner"
 msgstr "Diploma delivered by this partner"
 
 msgid "diploma_prod_by_ucl"
-msgstr "Diploma produced by UCLouvain"
+msgstr "Diploma delivered by UCLouvain"
 
 msgid "diploma_with_ucl_by_partner"
 msgstr "Type of diploma"
@@ -872,6 +872,11 @@ msgstr "New media"
 
 msgid "new_partner"
 msgstr "New partner"
+
+#, fuzzy
+#| msgid "edit_partnership"
+msgid "next_partnership"
+msgstr "Save and next"
 
 msgid "no_agreement_yet"
 msgstr "No agreement yet"
@@ -1341,7 +1346,7 @@ msgid "supplement_prod_by_partner"
 msgstr "Supplement delivered by this partner"
 
 msgid "supplement_prod_by_ucl"
-msgstr "Diploma supplement produced by UCLouvain"
+msgstr "Diploma supplement delivered by UCLouvain"
 
 msgid "tags"
 msgstr "Tags"

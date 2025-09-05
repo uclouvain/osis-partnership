@@ -60,6 +60,15 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         self.partnership_type = self.kwargs['type'].name
         return self.kwargs['type']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.partnership_type == PartnershipType.COURSE.name:
+            self.bool_partnership_type_course = True
+        else:
+            self.bool_partnership_type_course = False
+        context["bool_partnership_type_course"] =  self.bool_partnership_type_course
+        return context
+
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
