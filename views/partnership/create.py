@@ -60,6 +60,15 @@ class PartnershipCreateView(NotifyAdminMailMixin,
         self.partnership_type = self.kwargs['type'].name
         return self.kwargs['type']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.partnership_type == PartnershipType.COURSE.name:
+            bool_partnership_type_course = True
+        else:
+            bool_partnership_type_course = False
+        context["bool_partnership_type_course"] = bool_partnership_type_course
+        return context
+
     @transaction.atomic
     def form_valid(self, form, form_year):
         partnership = form.save(commit=False)
@@ -207,6 +216,7 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                         diploma_prod_by_partner=instance["diploma_prod_by_partner"],
                         supplement_prod_by_partner=instance["supplement_prod_by_partner"],
                         partner_referent=instance["partner_referent"],
+                        all_student=instance["all_student"]
                     )
                     count = count + result
 
