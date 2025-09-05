@@ -956,7 +956,7 @@ msgid "new_partner"
 msgstr "Nouveau partenaire"
 
 msgid "next_partnership"
-msgstr "Sauvegarder et suivant"
+msgstr "Enregistrer et suivant"
 
 msgid "no_agreement_yet"
 msgstr "Il n'y a pas encore d'accord."
