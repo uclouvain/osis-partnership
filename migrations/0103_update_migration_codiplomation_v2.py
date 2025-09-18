@@ -197,7 +197,7 @@ def update_migration_data_codiplomation(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('partnership', '0102_remove_partnershipyearoffers_external_id_and_more'),
+        ('partnership', '0101_remove_partnershippartnerrelationyear_external_id_and_more'),
     ]
 
     operations = [
