@@ -39,7 +39,6 @@ def update_migration_data_codiplomation(apps, schema_editor):
             partnership_id = Partnership.objects.filter(
                 years__academic_year=academic_year,
                 years__partnership_year__educationgroup=educationgroup.education_group_id,
-                # partnershiprelation__partnershiprelation__academic_year=academic_year,
                 ).first().id
 
             relation = PartnershipPartnerRelation.objects.filter(entity_id=entity.id, partnership_id=partnership_id).first()
@@ -141,8 +140,7 @@ def update_migration_data_codiplomation(apps, schema_editor):
                     diploma_prod_by_partner=partner_year.is_producing_cerfificate,
                     supplement_prod_by_partner=supplement,
                     partner_referent=partner_year.enrollment_place,
-                    all_student=partner_year.all_students,
-                    # external_id=f"osis.partnership_partner_relation_year_{partner_year.external_id.split('_')[-1]}"
+                    all_student=partner_year.all_students
                 )
                 relation_year.save()
 
@@ -197,7 +195,7 @@ def update_migration_data_codiplomation(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('partnership', '0101_remove_partnershippartnerrelationyear_external_id_and_more'),
+        ('partnership', '0102_remove_partnershipyearoffers_external_id_and_more'),
     ]
 
     operations = [
