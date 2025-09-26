@@ -689,10 +689,10 @@ msgid "description"
 msgstr "Description"
 
 msgid "diploma_prod_by_partner"
-msgstr "Diplôme produit par le partenaire"
+msgstr "Diplôme délivré par ce partenaire"
 
 msgid "diploma_prod_by_ucl"
-msgstr "Diplôme produit par UCLouvain"
+msgstr "Diplôme délivré par UCLouvain"
 
 msgid "diploma_with_ucl_by_partner"
 msgstr "Type de diplôme"
@@ -954,6 +954,9 @@ msgstr "Nouveau média"
 
 msgid "new_partner"
 msgstr "Nouveau partenaire"
+
+msgid "next_partnership"
+msgstr "Enregistrer et suivant"
 
 msgid "no_agreement_yet"
 msgstr "Il n'y a pas encore d'accord."
@@ -1295,6 +1298,9 @@ msgstr "{partnership} pour l'année {year}"
 msgid "partnership_years_show_all_years"
 msgstr "Montrer toutes les années."
 
+msgid "partnership_{acronym}"
+msgstr "Acronyme ou nom abrégé du partenariat multilatéral"
+
 msgid "partnerships_export"
 msgstr "Exporter la liste des partenariats"
 
@@ -1420,10 +1426,10 @@ msgid "supervisor"
 msgstr "Superviseur"
 
 msgid "supplement_prod_by_partner"
-msgstr "Supplément produit par le partenaire"
+msgstr "Supplément délivré par ce partenaire"
 
 msgid "supplement_prod_by_ucl"
-msgstr "Supplément diplôme produit par UCLouvain"
+msgstr "Supplément diplôme délivré par UCLouvain"
 
 msgid "tags"
 msgstr "Tags"
@@ -1439,7 +1445,7 @@ msgid "type"
 msgstr "Type"
 
 msgid "type_diploma_by_partner"
-msgstr "Diplôme produit par le partenaire"
+msgstr "Diplôme délivré par ce partenaire"
 
 msgid "type_diploma_by_ucl"
 msgstr "Type de diplôme"
