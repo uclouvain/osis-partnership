@@ -1,26 +1,28 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views import View
-from django.views.generic import CreateView, TemplateView, UpdateView, FormView
-from base.models.academic_year import find_academic_years, AcademicYear
+from django.views.generic import CreateView, TemplateView, FormView
+
+from base.models.academic_year import find_academic_years
+from osis_role.contrib.views import PermissionRequiredMixin
 from partnership.auth.predicates import is_linked_to_adri_entity
 from partnership.forms.partnership.year import PartnerRelationYearFormSet, PartnershipRelationYearWithoutDatesForm
 from partnership.models import Partnership, PartnershipType, PartnershipPartnerRelation, PartnershipConfiguration, \
     PartnershipYearOffers
 from partnership.models.relation_year import PartnershipPartnerRelationYear
 from partnership.views.mixins import NotifyAdminMailMixin
-from osis_role.contrib.views import PermissionRequiredMixin
 
 __all__ = [
     'PartnershipCreateView',
     'PartnershipTypeChooseView',
 ]
 
-from partnership.views.partnership.mixins import PartnershipFormMixin, PartnershipRelatedMixin
+from partnership.views.partnership.mixins import PartnershipFormMixin
 
 
 class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
@@ -216,7 +218,8 @@ class PartnershipPartnerRelationUpdateView(PermissionRequiredMixin, FormView):
                         diploma_prod_by_partner=instance["diploma_prod_by_partner"],
                         supplement_prod_by_partner=instance["supplement_prod_by_partner"],
                         partner_referent=instance["partner_referent"],
-                        all_student=instance["all_student"]
+                        all_student=instance["all_student"],
+                        changed=datetime.datetime.now()
                     )
                     count = count + result
 
