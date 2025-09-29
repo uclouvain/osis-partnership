@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Partnership API
-  version: 1.1.1
+  version: 1.1.2
   description: This API delivers data for the Partnership project.
   contact:
     name: UCLouvain - OSIS
@@ -542,7 +542,7 @@ paths:
           $ref: '#/components/responses/NotFound'
   /partnerships/export:
     get:
-      operationId: partnerships_export_list
+      operationId: partnerships_export_retrieve
       description: A mixin that provides a way to show and handle a FilterSet in a
         request.
       parameters:
@@ -597,12 +597,6 @@ paths:
         name: funding_type
         schema:
           type: number
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: mobility_type
         schema:
@@ -620,12 +614,6 @@ paths:
         schema:
           type: string
           format: uuid
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
       - in: query
         name: partner
         schema:
@@ -670,33 +658,10 @@ paths:
       responses:
         '200':
           content:
-            application/xls.ms-excel:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=binary:
               schema:
-                type: object
-                required:
-                - count
-                - results
-                properties:
-                  count:
-                    type: integer
-                    example: 123
-                  next:
-                    type: string
-                    nullable: true
-                    format: uri
-                    example: http://api.example.org/accounts/?offset=400&limit=100
-                  previous:
-                    type: string
-                    nullable: true
-                    format: uri
-                    example: http://api.example.org/accounts/?offset=200&limit=100
-                  results:
-                    type: array
-                    items:
-                      application/xls.ms-excel:
-                        schema:
-                          type: string
-                          format: binary
+                type: string
+                format: binary
           description: A xls file with partnerships
         '400':
           $ref: '#/components/responses/BadRequest'
