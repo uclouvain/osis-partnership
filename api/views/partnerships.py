@@ -313,7 +313,7 @@ class PartnershipsApiExportView(FilterMixin, PartnershipsApiViewMixin, ExportVie
         queryset = (
             queryset
             .annotate_financing(self.academic_year)
-            .annotate(tags_list=StringAgg('partnership__tags__value', ', '))
+            .annotate(tags_list=StringAgg('partnership__tags__value', ', '), default=Value(''))
             .prefetch_related(
                 Prefetch(
                     'partnership__years',

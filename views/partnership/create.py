@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -25,7 +25,7 @@ __all__ = [
 from partnership.views.partnership.mixins import PartnershipFormMixin
 
 
-class PartnershipTypeChooseView(LoginRequiredMixin, UserPassesTestMixin,
+class PartnershipTypeChooseView(UserPassesTestMixin,
                                 TemplateView):
     template_name = 'partnerships/partnership/type_choose.html'
     login_url = 'access_denied'
